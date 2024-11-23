@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+@import "themes/light";
+@import "variables";
+@import "reset";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  //scrollbar-color: var(--color-bg-secondary) var(--color-bg-primary);
+  //scrollbar-width: thin;
+}
+
+html {
+  background-color: white;
+  color: var(--color-text-secondary);
+}
+
+input {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  -webkit-appearance: none;
+  color: var(--color-text-primary);
+}
+
