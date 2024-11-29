@@ -4,22 +4,19 @@ import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
 import React from "react";
 
-interface SortableSubjectCard extends SubjectCardProps {
-    activeIndex: number;
-}
+interface SortableSubjectCard extends SubjectCardProps {}
 
 function SortableSubjectCard(props: SortableSubjectCard) {
 
     const {
         id,
-        activeIndex,
+        activeId,
         ...rest
     } = props;
 
     const {
         attributes,
         listeners,
-        index,
         isDragging,
         isSorting,
         over,
@@ -27,6 +24,21 @@ function SortableSubjectCard(props: SortableSubjectCard) {
         transform,
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
+
+    const getPosition = (): Position | undefined => {
+        if (over?.id === id) {
+            if (!over?.data.current?.sortable.items.includes(activeId)) {
+                return Position.Before
+            }
+            else {
+                return (
+                    over?.data.current?.sortable.items.indexOf(over.id) > over?.data.current?.sortable.items.indexOf(activeId)
+                        ? Position.After : Position.Before
+                )
+            }
+        }
+        else return undefined;
+    }
 
     return (
         <SubjectCard
@@ -37,13 +49,7 @@ function SortableSubjectCard(props: SortableSubjectCard) {
                 transition,
                 transform: isSorting ? undefined : CSS.Translate.toString(transform),
             }}
-            insertPosition={
-                over?.id === id
-                    ? index > activeIndex
-                        ? Position.After
-                        : Position.Before
-                    : undefined
-            }
+            insertPosition={getPosition()}
             {...props}
             {...attributes}
             {...listeners}

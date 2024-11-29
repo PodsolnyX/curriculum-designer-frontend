@@ -1,4 +1,5 @@
-import {Semester} from "@/pages/PlanPage/SemesterField/SemesterField.tsx";
+import {Semester} from "@/pages/PlanPage/types/Semester.ts";
+import {SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 
 export const SemestersMocks: Semester[] = [
     {
@@ -29,7 +30,9 @@ export const SemestersMocks: Semester[] = [
             {
                 id: "222222",
                 name: "Элективные дисциплины по физической культуре и спорту",
-                credits: 3
+                credits: 3,
+                index: "dddd",
+                type: SubjectType.Practice
             },
             {
                 id: "2233333332",
@@ -40,6 +43,7 @@ export const SemestersMocks: Semester[] = [
                 id: "4444444444443",
                 name: "Наркология",
                 credits: 3,
+                type: SubjectType.Elective
             },
         ]
     },
@@ -61,6 +65,7 @@ export const SemestersMocks: Semester[] = [
                 id: "fffffffff3",
                 name: "Право",
                 credits: 3,
+                type: SubjectType.StateCertification
             },
         ]
     }

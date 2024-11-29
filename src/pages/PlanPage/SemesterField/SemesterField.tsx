@@ -1,23 +1,15 @@
 import type {UniqueIdentifier,} from '@dnd-kit/core';
 import {SortableContext,} from '@dnd-kit/sortable';
-import type {Subject} from '../SubjectCard/SubjectCard.tsx';
 import SortableSubjectCard from "@/pages/PlanPage/SubjectCard/SortableSubjectCard.tsx";
 import {useDroppable} from "@dnd-kit/core";
-
-export interface Semester {
-    id: string;
-    number: number;
-    subjects: Subject[];
-    isActive?: boolean;
-}
+import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 
 export interface SemesterFieldProps extends Semester {
+    isActive?: boolean;
     activeId: UniqueIdentifier | null;
 }
 
 export function SemesterField({number, subjects, activeId, id, isActive}: SemesterFieldProps) {
-
-    const activeIndex = activeId !== null ? subjects.findIndex((subject) => subject.id) : -1;
 
     const { setNodeRef } = useDroppable({
         id
@@ -33,12 +25,11 @@ export function SemesterField({number, subjects, activeId, id, isActive}: Semest
                 <SortableContext items={subjects} id={id}>
                     <div className={"flex flex-wrap gap-3 max-w-[120vw] h-full w-full"} ref={setNodeRef}>
                         {
-                            subjects.map((subject, index) => (
+                            subjects.map(subject => (
                                 <SortableSubjectCard
                                     id={subject.id}
-                                    index={index + 1}
                                     key={subject.id}
-                                    activeIndex={activeIndex}
+                                    activeId={activeId}
                                     {...subject}
                                 />
                             ))

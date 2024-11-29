@@ -3,42 +3,24 @@ import type {UniqueIdentifier} from '@dnd-kit/core';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Tag} from "antd";
+import {Subject, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 
 export enum Position {
     Before = -1,
     After = 1,
 }
 
-export type SubjectType = "subject" | "practice" | "stateCertification" | "elective";
-export type AttestationType = "test" | "assessmentTest" | "exam";
-
-export interface Subject {
-    id: UniqueIdentifier;
-    name?: string;
-    credits?: number;
-    attestation?: AttestationType;
-    required?: boolean;
-    _index?: string;
-    department?: number;
-    type?: SubjectType;
-    notesNumber?: number;
-    academicHours?: { key: string, name: string, value: number }[];
-    competencies?: { value: string, name: string }[];
-}
-
 export interface SubjectCardProps extends Subject {
     id: UniqueIdentifier;
-    index?: number;
     active?: boolean;
     clone?: boolean;
     insertPosition?: Position;
 }
 
-export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function Page(props, ref) {
+export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function SubjectCard(props, ref) {
 
     const {
         id,
-        index,
         active,
         clone,
         insertPosition,
@@ -47,14 +29,14 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
         credits = 0,
         attestation = "test",
         required = false,
-        _index = "",
+        index = "",
         department = 0,
-        type = "subject",
+        type = SubjectType.Subject,
         notesNumber = 0,
         academicHours = [],
         competencies = [],
         ...rest
-    } = props
+    } = props;
 
     return (
         <li
@@ -68,9 +50,14 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
             style={style}
             ref={ref}
         >
-            <div className={cls.subjectCard} {...props}>
+            <div
+                className={classNames(
+                    cls.subjectCard,
+                    cls[type],
+                )}
+                 {...props}>
                 <div>
-                    <span>{_index}</span>
+                    {/*<span>{index}</span>*/}
                     <div className={"text-black text-[14px] line-clamp-2 min-h-[42px]"}>
                         {name}
                     </div>

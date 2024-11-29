@@ -1,7 +1,7 @@
 import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
 import type {DragEndEvent, DragOverEvent, DragStartEvent,} from '@dnd-kit/core';
 import {
-    closestCenter, closestCorners, defaultDropAnimationSideEffects,
+    defaultDropAnimationSideEffects,
     DndContext,
     DragOverlay, DropAnimation,
     KeyboardSensor, MeasuringConfiguration, MeasuringStrategy,
@@ -11,10 +11,11 @@ import {
 } from '@dnd-kit/core';
 import {arrayMove, sortableKeyboardCoordinates} from '@dnd-kit/sortable';
 import React, {useState} from "react";
-import {Semester, SemesterField} from "@/pages/PlanPage/SemesterField/SemesterField.tsx";
-import SubjectCardOverlay from "@/pages/PlanPage/SubjectCard/SubjectCardOverlay.tsx";
+import {SemesterField} from "@/pages/PlanPage/SemesterField/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/PlanPage/SubjectCard/SubjectCard.module.scss";
+import {SubjectCard} from "@/pages/PlanPage/SubjectCard/SubjectCard.tsx";
+import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 
 const PlanPage = () => {
 
@@ -186,7 +187,13 @@ const PlanPage = () => {
                     <DragOverlay dropAnimation={dropAnimation}>
                         {
                             activeId !== null
-                                ? <SubjectCardOverlay id={activeId} name={"frf"} items={[]}/>
+                                ? <SubjectCard
+                                    id={activeId}
+                                    {
+                                        ...semesters[getSemesterIndex(activeId)].subjects
+                                            .find(sub => sub.id === activeId)
+                                    }
+                                />
                                 : null
                         }
                     </DragOverlay>
@@ -202,14 +209,6 @@ const measuring: MeasuringConfiguration = {
     },
 };
 
-const defaultInitializer = (index: number) => index;
-
-export function createRange<T = number>(
-    length: number,
-    initializer: (index: number) => any = defaultInitializer
-): T[] {
-    return [...new Array(length)].map((_, index) => initializer(index));
-}
 
 const dropAnimation: DropAnimation = {
     keyframes({transform}) {
@@ -217,10 +216,10 @@ const dropAnimation: DropAnimation = {
             {transform: CSS.Transform.toString(transform.initial)},
             {
                 transform: CSS.Transform.toString({
-                    scaleX: 0.98,
-                    scaleY: 0.98,
-                    x: transform.final.x - 10,
-                    y: transform.final.y - 10,
+                    scaleX: 1,
+                    scaleY: 1,
+                    x: transform.final.x,
+                    y: transform.final.y
                 }),
             },
         ];
