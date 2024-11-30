@@ -1,5 +1,5 @@
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
-import {SubjectType} from "@/pages/PlanPage/types/Subject.ts";
+import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import {AcademicType} from "@/pages/PlanPage/types/AcademicTypes.ts";
 
 export const AcademicTypes: AcademicType[] = [
@@ -51,6 +51,15 @@ export const SemestersMocks: Semester[] = [
         number: 1,
         subjects: [
             {
+                id: "2424242",
+                name: "Математика для компьютерных наук",
+                credits: 4,
+                required: true,
+                semesterOrder: 1,
+                attestation: AttestationType.Exam,
+                index: "Б1.О.05.01"
+            },
+            {
                 id: "3",
                 name: "Введение в компьютерные науки",
                 credits: 3,
@@ -60,20 +69,31 @@ export const SemestersMocks: Semester[] = [
                 name: "Безопасность жизнедеятельности",
                 credits: 2,
             }
+        ],
+        selection: [
+            {
+                name: "Выбор 1",
+                credits: 3,
+                id: "selection-1",
+                subjects: [
+                    {
+                        id: "30000",
+                        name: "Введение в компьютерные науки",
+                        credits: 3,
+                    },
+                    {
+                        id: "40000",
+                        name: "Безопасность жизнедеятельности",
+                        credits: 3
+                    }
+                ]
+            }
         ]
     },
     {
         id: "semester-2",
         number: 2,
         subjects: [
-            {
-                id: "2424242",
-                name: "Математика",
-                credits: 4,
-                required: true,
-                semesterOrder: 2,
-                index: "Б1.О.05.01"
-            },
             {
                 id: "222222",
                 name: "Элективные дисциплины по физической культуре и спорту",
@@ -90,7 +110,7 @@ export const SemestersMocks: Semester[] = [
                 name: "Математика для компьютерных наук",
                 credits: 10,
                 required: true,
-                semesterOrder: 1,
+                semesterOrder: 2,
                 department: 143,
                 index: "Б1.О.05.01",
                 competencies: [
@@ -103,43 +123,43 @@ export const SemestersMocks: Semester[] = [
                 academicHours: [
                     {
                         key: "Лек",
-                        value: 222,
+                        value: 12,
                     },
                     {
                         key: "Лаб",
-                        value: 222,
+                        value: 22,
                     },
                     {
                         key: "Пр",
-                        value: 222,
+                        value: 33,
                     },
                     {
                         key: "Сем",
-                        value: 222,
+                        value: 0,
                     },
                     {
                         key: "КРто",
-                        value: 222,
+                        value: 4,
                     },
                     {
                         key: "КРи",
-                        value: 222,
+                        value: 5,
                     },
                     {
                         key: "КРатт",
-                        value: 222,
+                        value: 6,
                     },
                     {
                         key: "Контр",
-                        value: 222,
+                        value: 4.5,
                     },
                     {
                         key: "СР",
-                        value: 222,
+                        value: 44,
                     },
                     {
                         key: "Конт",
-                        value: 222,
+                        value: 123,
                     }
                 ]
             },
@@ -172,5 +192,30 @@ export const SemestersMocks: Semester[] = [
                 type: SubjectType.StateCertification
             },
         ]
+    },
+    {
+        id: "semester-4",
+        number: 4,
+        subjects: []
+    },
+    {
+        id: "semester-5",
+        number: 5,
+        subjects: []
+    },
+    {
+        id: "semester-6",
+        number: 6,
+        subjects: []
+    },
+    {
+        id: "semester-7",
+        number: 7,
+        subjects: []
+    },
+    {
+        id: "semester-8",
+        number: 8,
+        subjects: []
     }
 ]

@@ -45,6 +45,10 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
         displaySettings
     } = usePlan();
 
+    const getSumAcademicHours = (): number => {
+        return academicHours.reduce((_sum, type) => _sum + type.value, 0)
+    }
+
     return (
         <li
             className={classNames(
@@ -57,15 +61,14 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
             style={style}
             ref={ref}
         >
-            <div
-                className={classNames(
-                    cls.subjectCard,
-                    cls[type],
-                )} >
-                <Tooltip title={required ? "Сделать по выбору" : "Сделать обязательным"}>
-                    <span className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}>*</span>
-                </Tooltip>
-                <div className={cls.dragLine} {...props}></div>
+            <div className={classNames(cls.subjectCard, cls[type])}>
+                {
+                    displaySettings.required &&
+                    <Tooltip title={required ? "Сделать по выбору" : "Сделать обязательным"}>
+                        <span className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}>*</span>
+                    </Tooltip>
+                }
+                <div className={cls.dragLine} {...props}/>
                 <div className={"flex flex-col"}>
                     <div className={"flex gap-1 items-center"}>
                         {
@@ -100,7 +103,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                     }
                 </div>
                 {
-                    displaySettings.department &&
+                    displaySettings.academicHours &&
                         <div className={"flex flex-col gap-1"}>
                             <div className={"grid grid-cols-2 gap-1"}>
                                 {
@@ -114,7 +117,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                             </div>
                             <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
                                 <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
-                                <div className={"text-[12px] pr-1"}>{`${0}/${credits*36}`}</div>
+                                <div className={"text-[12px] pr-1"}>{`${getSumAcademicHours()}/${credits*36}`}</div>
                             </div>
                         </div>
                 }

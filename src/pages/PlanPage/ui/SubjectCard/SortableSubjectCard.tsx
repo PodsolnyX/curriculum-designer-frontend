@@ -1,4 +1,4 @@
-import {Position, SubjectCard, SubjectCardProps} from "@/pages/PlanPage/SubjectCard/SubjectCard.tsx";
+import {Position, SubjectCard, SubjectCardProps} from "@/pages/PlanPage/ui/SubjectCard/SubjectCard.tsx";
 import {useSortable} from "@dnd-kit/sortable";
 import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";

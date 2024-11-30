@@ -6,19 +6,29 @@ interface DisplaySettings {
     attestation: boolean;
     required: boolean;
     department: boolean;
-    type: boolean;
     notesNumber: boolean;
     academicHours: boolean;
     competencies: boolean;
 }
 
-interface PreSetting {
+export const DisplaySettingsList: {key: keyof DisplaySettings, name: string}[] = [
+    { key: "index", name: "Индексы" },
+    { key: "credits", name: "ЗЕТ" },
+    { key: "attestation", name: "Промежуточная аттестация" },
+    { key: "required", name: "Обязательность" },
+    { key: "department", name: "Кафедры" },
+    { key: "notesNumber", name: "Заметки" },
+    { key: "academicHours", name: "Распределение часов" },
+    { key: "competencies", name: "Компетенции" }
+];
+
+interface PreDisplaySetting {
     key: string;
     name: string;
     settings: DisplaySettings
 }
 
-const PreSettings: PreSetting[] = [
+export const PreDisplaySettings: PreDisplaySetting[] = [
     {
         key: "subjectsCreate",
         name: "Создание дисциплин",
@@ -28,7 +38,6 @@ const PreSettings: PreSetting[] = [
             attestation: true,
             required: true,
             department: false,
-            type: true,
             notesNumber: true,
             academicHours: false,
             competencies: false
@@ -43,7 +52,6 @@ const PreSettings: PreSetting[] = [
             attestation: true,
             required: true,
             department: true,
-            type: true,
             notesNumber: true,
             academicHours: true,
             competencies: true
@@ -53,18 +61,25 @@ const PreSettings: PreSetting[] = [
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
-    const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreSettings[1].settings)
+    const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
 
     const onChangeDisplaySetting = (key: keyof DisplaySettings) => {
         setDisplaySettings({
             ...displaySettings,
-            key: !displaySettings[key]
+            [key]: !displaySettings[key]
+        })
+    }
+
+    const onSelectPreDisplaySetting = (key: string) => {
+        setDisplaySettings({
+            ...PreDisplaySettings.find(setting => setting.key === key).settings
         })
     }
     
     const value: PlanContextValue = {
         displaySettings,
-        onChangeDisplaySetting
+        onChangeDisplaySetting,
+        onSelectPreDisplaySetting
     }
 
     return (
@@ -83,9 +98,11 @@ export const usePlan = () => {
 interface PlanContextValue {
     displaySettings: DisplaySettings;
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
+    onSelectPreDisplaySetting(key: string): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
-    displaySettings: PreSettings[0].settings,
-    onChangeDisplaySetting: (key: keyof DisplaySettings) => {}
+    displaySettings: PreDisplaySettings[0].settings,
+    onChangeDisplaySetting: (key: keyof DisplaySettings) => {},
+    onSelectPreDisplaySetting: (key: string) => {}
 })

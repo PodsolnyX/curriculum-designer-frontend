@@ -11,12 +11,14 @@ import {
 } from '@dnd-kit/core';
 import {arrayMove, sortableKeyboardCoordinates} from '@dnd-kit/sortable';
 import React, {useState} from "react";
-import {SemesterField} from "@/pages/PlanPage/SemesterField/SemesterField.tsx";
+import {SemesterField} from "@/pages/PlanPage/ui/SemesterField/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
-import pageStyles from "@/pages/PlanPage/SubjectCard/SubjectCard.module.scss";
-import {SubjectCard} from "@/pages/PlanPage/SubjectCard/SubjectCard.tsx";
+import pageStyles from "@/pages/PlanPage/ui/SubjectCard/SubjectCard.module.scss";
+import {SubjectCard} from "@/pages/PlanPage/ui/SubjectCard/SubjectCard.tsx";
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 import {PlanProvider} from "@/pages/PlanPage/provider/PlanProvider.tsx";
+import {Popover} from "antd";
+import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -42,6 +44,10 @@ const PlanPageWrapped = () => {
         return id.split("-")[0] === "semester";
     }
 
+    const isSelectionId = (id: string) => {
+        return id.split("-")[0] === "selection";
+    }
+
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const { id } = active;
@@ -50,6 +56,7 @@ const PlanPageWrapped = () => {
     }
 
     function handleDragOver({over}: DragOverEvent) {
+
         if (!over) return;
         const { id: overId } = over;
 
@@ -57,82 +64,21 @@ const PlanPageWrapped = () => {
         else setActiveSemester(null);
     }
 
-    function handleDragEnd({active, over}: DragEndEvent) {
-
-        if (!active && !over) return;
+    function handleDragEndSubjectToSemester({active, over}: DragEndEvent) {
 
         const { id: activeId } = active;
         const { id: overId } = over;
 
         const activeSemesterIndex = getSemesterIndex(activeId);
 
-        if (isSemesterId(overId)) {
-
-            if (semesters.find(semester => semester.id === overId).subjects.find(subject => subject.id === activeId)) {
-                setActiveId(null);
-                setActiveSemester(null)
-                return;
-            }
-            else {
-                const activeSubjectIndex = semesters[activeSemesterIndex].subjects.findIndex(subject => subject.id === activeId);
-                const overSemesterIndex = semesters.findIndex(semester => semester.id === overId);
-                let updateSemesters = [...semesters];
-
-                updateSemesters = updateSemesters.map((semester, index) =>
-                    index !== activeSemesterIndex ? semester :
-                        {
-                            ...semester,
-                            subjects: semester.subjects.filter((subject, _index) =>
-                                _index !== activeSubjectIndex
-                            )
-                        }
-                );
-
-                updateSemesters = updateSemesters.map((semester, index) => {
-                    if (index !== overSemesterIndex) return semester;
-                    const subjects = [...semester.subjects];
-                    return {
-                        ...semester,
-                        subjects: [...subjects, semesters[activeSemesterIndex].subjects[activeSubjectIndex]]
-                    }
-                });
-
-                setSemesters(updateSemesters)
-
-                setActiveId(null);
-                setActiveSemester(null)
-                return;
-            }
-        }
-
-        const overSemesterIndex = getSemesterIndex(overId);
-
-        if (activeSemesterIndex === undefined || overSemesterIndex === undefined) {
+        if (semesters.find(semester => semester.id === overId).subjects.find(subject => subject.id === activeId)) {
             setActiveId(null);
             setActiveSemester(null)
             return;
         }
-
-        if (activeSemesterIndex === overSemesterIndex) {
-            const subjects = semesters[activeSemesterIndex].subjects;
-
-            const activeSubjectIndex = subjects.findIndex(subject => subject.id === activeId);
-            const overSubjectIndex = subjects.findIndex(subject => subject.id === overId);
-
-            if (activeSubjectIndex !== overSubjectIndex) {
-                setSemesters(semesters.map((semester, index) => index !== overSemesterIndex ? semester : {
-                    ...semester,
-                    subjects: arrayMove(semester.subjects, activeSubjectIndex, overSubjectIndex)
-                }))
-            }
-        }
         else {
-            const activeSubjects = semesters[activeSemesterIndex].subjects;
-            const overSubjects = semesters[overSemesterIndex].subjects;
-
-            const activeSubjectIndex = activeSubjects.findIndex(subject => subject.id === activeId);
-            const overSubjectIndex = overSubjects.findIndex(subject => subject.id === overId);
-
+            const activeSubjectIndex = semesters[activeSemesterIndex].subjects.findIndex(subject => subject.id === activeId);
+            const overSemesterIndex = semesters.findIndex(semester => semester.id === overId);
             let updateSemesters = [...semesters];
 
             updateSemesters = updateSemesters.map((semester, index) =>
@@ -148,14 +94,105 @@ const PlanPageWrapped = () => {
             updateSemesters = updateSemesters.map((semester, index) => {
                 if (index !== overSemesterIndex) return semester;
                 const subjects = [...semester.subjects];
-                subjects.splice(overSubjectIndex, 0, semesters[activeSemesterIndex].subjects[activeSubjectIndex]);
                 return {
                     ...semester,
-                    subjects: [...subjects]
+                    subjects: [...subjects, semesters[activeSemesterIndex].subjects[activeSubjectIndex]]
                 }
             });
 
             setSemesters(updateSemesters)
+
+            setActiveId(null);
+            setActiveSemester(null)
+            return;
+        }
+    }
+
+    function handleDragEndSubjectToSubjectSameSemester(event: DragEndEvent, semesterIndex: number) {
+
+        const {active, over} = event;
+
+        const { id: activeId } = active;
+        const { id: overId } = over;
+
+        const subjects = semesters[semesterIndex].subjects;
+
+        const activeSubjectIndex = subjects.findIndex(subject => subject.id === activeId);
+        const overSubjectIndex = subjects.findIndex(subject => subject.id === overId);
+
+        if (activeSubjectIndex !== overSubjectIndex) {
+            setSemesters(semesters.map((semester, index) => index !== semesterIndex ? semester : {
+                ...semester,
+                subjects: arrayMove(semester.subjects, activeSubjectIndex, overSubjectIndex)
+            }))
+        }
+    }
+
+    function handleDragEndSubjectToSubjectAnotherSemester(event: DragEndEvent, activeSemesterIndex: number, overSemesterIndex: number) {
+
+        const {active, over} = event;
+
+        const { id: activeId } = active;
+        const { id: overId } = over;
+
+        const activeSubjects = semesters[activeSemesterIndex].subjects;
+        const overSubjects = semesters[overSemesterIndex].subjects;
+
+        const activeSubjectIndex = activeSubjects.findIndex(subject => subject.id === activeId);
+        const overSubjectIndex = overSubjects.findIndex(subject => subject.id === overId);
+
+        let updateSemesters = [...semesters];
+
+        updateSemesters = updateSemesters.map((semester, index) =>
+            index !== activeSemesterIndex ? semester :
+                {
+                    ...semester,
+                    subjects: semester.subjects.filter((subject, _index) =>
+                        _index !== activeSubjectIndex
+                    )
+                }
+        );
+
+        updateSemesters = updateSemesters.map((semester, index) => {
+            if (index !== overSemesterIndex) return semester;
+            const subjects = [...semester.subjects];
+            subjects.splice(overSubjectIndex, 0, semesters[activeSemesterIndex].subjects[activeSubjectIndex]);
+            return {
+                ...semester,
+                subjects: [...subjects]
+            }
+        });
+
+        setSemesters(updateSemesters)
+    }
+
+    function handleDragEnd(event: DragEndEvent) {
+
+        const {active, over} = event;
+
+        if (!active && !over) return;
+
+        const { id: activeId } = active;
+        const { id: overId } = over;
+
+        if (isSemesterId(overId)) {
+            handleDragEndSubjectToSemester(event)
+        }
+
+        const activeSemesterIndex = getSemesterIndex(activeId);
+        const overSemesterIndex = getSemesterIndex(overId);
+
+        if (activeSemesterIndex === undefined || overSemesterIndex === undefined) {
+            setActiveId(null);
+            setActiveSemester(null)
+            return;
+        }
+
+        if (activeSemesterIndex === overSemesterIndex) {
+            handleDragEndSubjectToSubjectSameSemester(event, activeSemesterIndex)
+        }
+        else {
+            handleDragEndSubjectToSubjectAnotherSemester(event, activeSemesterIndex, overSemesterIndex)
         }
 
         setActiveId(null);
@@ -163,43 +200,48 @@ const PlanPageWrapped = () => {
     }
 
     return (
-        <div className={"flex flex-col min-h-screen bg-stone-100"}>
-            <div className={"flex flex-col shadow-lg overflow-x-auto"}>
-                <DndContext
-                    sensors={sensors}
-                    onDragStart={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragEnd={handleDragEnd}
-                    measuring={measuring}
-                >
-                    {
-                        semesters.map(semester =>
-                            <SemesterField
-                                number={semester.number}
-                                subjects={semester.subjects}
-                                activeId={activeId}
-                                id={semester.id}
-                                key={semester.id}
-                                isActive={activeSemester === semester.id}
-                            />
-                        )
-                    }
+        <div className={"flex flex-col min-h-screen bg-stone-100 relative"}>
+            <header className={"sticky top-0 p-3 bg-white/[0.7] backdrop-blur z-50 shadow-md flex justify-end"}>
+                <Popover content={DisplaySettingsPopover} title="Настройки отображения" trigger="click" placement={"bottomLeft"}>
+                    <span className={"cursor-pointer"}>
+                        Отображение
+                    </span>
+                </Popover>
+            </header>
+            <DndContext
+                sensors={sensors}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+                measuring={measuring}
+            >
+                {
+                    semesters.map(semester =>
+                        <SemesterField
+                            number={semester.number}
+                            subjects={semester.subjects}
+                            activeId={activeId}
+                            id={semester.id}
+                            key={semester.id}
+                            isActive={activeSemester === semester.id}
+                        />
+                    )
+                }
 
-                    <DragOverlay dropAnimation={dropAnimation}>
-                        {
-                            activeId !== null
-                                ? <SubjectCard
-                                    id={activeId}
-                                    {
-                                        ...semesters[getSemesterIndex(activeId)].subjects
-                                            .find(sub => sub.id === activeId)
-                                    }
-                                />
-                                : null
-                        }
-                    </DragOverlay>
-                </DndContext>
-            </div>
+                <DragOverlay dropAnimation={dropAnimation}>
+                    {
+                        activeId !== null
+                            ? <SubjectCard
+                                id={activeId}
+                                {
+                                    ...semesters[getSemesterIndex(activeId)].subjects
+                                        .find(sub => sub.id === activeId)
+                                }
+                            />
+                            : null
+                    }
+                </DragOverlay>
+            </DndContext>
         </div>
     )
 }
