@@ -16,8 +16,9 @@ import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/PlanPage/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/PlanPage/SubjectCard/SubjectCard.tsx";
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
+import {PlanProvider} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 
-const PlanPage = () => {
+const PlanPageWrapped = () => {
 
     const [semesters, setSemesters] = useState<Semester[]>(SemestersMocks);
     const [activeSemester, setActiveSemester] = useState<UniqueIdentifier | null>(null)
@@ -230,5 +231,13 @@ const dropAnimation: DropAnimation = {
         },
     }),
 } as DropAnimation;
+
+const PlanPage = () => {
+    return (
+        <PlanProvider>
+            <PlanPageWrapped/>
+        </PlanProvider>
+    )
+};
 
 export default PlanPage;
