@@ -34,8 +34,14 @@ const PlanPageWrapped = () => {
         })
     );
 
-    function getSemesterIndex(subjectId: UniqueIdentifier): number | undefined {
+    function getSemesterIndex(subjectId: UniqueIdentifier): number {
         return semesters.findIndex(semester =>
+            semester.subjects.find(subject => subject.id === subjectId)
+        );
+    }
+
+    function getSemesterBySubjectId(subjectId: UniqueIdentifier): Semester | undefined {
+        return semesters.find(semester =>
             semester.subjects.find(subject => subject.id === subjectId)
         );
     }
@@ -68,6 +74,18 @@ const PlanPageWrapped = () => {
         const { id: overId } = event.over;
 
         setActiveOverId(overId);
+    }
+
+    //// Handle drag end ////
+
+    const removeSubjectFromSemester = (semesters: Semester[], semesterIndex: number, subjectId: UniqueIdentifier): Semester[] => {
+        return semesters.map((semester, index) =>
+            index !== semesterIndex ? semester :
+                {
+                    ...semester,
+                    subjects: semester.subjects.filter(subject => subject.id !== subjectId)
+                }
+        );
     }
 
     function handleDragEndSubjectToSemester({active, over}: DragEndEvent) {
@@ -117,6 +135,10 @@ const PlanPageWrapped = () => {
         const { id: activeId } = active;
         const { id: overId } = over;
 
+        const subjectSemester = getSemesterBySubjectId(activeId)
+
+        if (!subjectSemester) return;
+
         const subjectSemesterIndex = getSemesterIndex(activeId);
         const selectionSemesterIndex = semesters.findIndex(semesters => semesters.selections ? semesters.selections?.find(selection => selection.id === overId).id : undefined);
         const activeSubjectIndex = semesters[subjectSemesterIndex].subjects.findIndex(subject => subject.id === activeId);
@@ -124,20 +146,15 @@ const PlanPageWrapped = () => {
         if (subjectSemesterIndex === -1 || selectionSemesterIndex === -1) return;
 
         let updateSemesters = [...semesters];
+        updateSemesters = removeSubjectFromSemester(updateSemesters, subjectSemesterIndex, activeId);
 
-        updateSemesters = updateSemesters.map((semester, index) =>
-            index !== subjectSemesterIndex ? semester :
-                {
-                    ...semester,
-                    subjects: semester.subjects.filter(subject => subject.id !== activeId)
-                }
-        );
+        const key: keyof Semester = "selections";
 
         updateSemesters = updateSemesters.map((semester, index) => {
             if (index !== selectionSemesterIndex) return semester;
             return {
                 ...semester,
-                selections: semester.selections ? semester.selections.map(
+                [key]: (semester[key] && Array.isArray(semester[key])) ? semester[key]?.map(
                     selection => selection.id !== overId ? selection : {
                         ...selection,
                         subjects: [
@@ -249,6 +266,8 @@ const PlanPageWrapped = () => {
 
         resetAllActiveIds()
     }
+
+    //// ////
 
     return (
         <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
