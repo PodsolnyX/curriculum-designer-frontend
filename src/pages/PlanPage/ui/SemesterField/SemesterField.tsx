@@ -11,11 +11,11 @@ import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 
 export interface SemesterFieldProps extends Semester {
-    isActive?: boolean;
+    activeOverId?: UniqueIdentifier | null;
     activeId: UniqueIdentifier | null;
 }
 
-export function SemesterField({number, subjects, activeId, id, isActive, selections}: SemesterFieldProps) {
+export function SemesterField({number, subjects, activeId, id, activeOverId, selections}: SemesterFieldProps) {
 
     const { setNodeRef } = useDroppable({
         id
@@ -45,8 +45,8 @@ export function SemesterField({number, subjects, activeId, id, isActive, selecti
 
     return (
         <div ref={setNodeRef}
-             className={`flex flex-col min-h-[180px] p-5 gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${isActive ? "border-blue-400" : "border-transparent"} border-2 border-solid`}>
-            <div className={`sticky top-16 z-10 w-max flex gap-2`}>
+             className={`flex flex-col p-5 gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${activeOverId === id ? "border-blue-400" : "border-transparent"} border-2 border-solid`}>
+            <div className={`sticky top-4 left-4 z-10 w-max flex gap-2`}>
                 <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                     <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {number}</span>
                     <div className={"flex gap-1"}>
@@ -84,7 +84,7 @@ export function SemesterField({number, subjects, activeId, id, isActive, selecti
                 }
             </div>
             {
-                subjects.length ?
+                (subjects.length || selections?.length) ?
                     <div className={`flex flex-1 items-start gap-3`}>
                         <div className={"flex flex-wrap gap-3 max-w-[100vw] h-full w-full"}>
                             <SortableContext items={subjects} id={id}>
@@ -100,7 +100,9 @@ export function SemesterField({number, subjects, activeId, id, isActive, selecti
                                 }
                             </SortableContext>
                             {
-                                selections?.map(selection => <SelectionField key={selection.id} {...selection}/>)
+                                selections?.map(selection =>
+                                    <SelectionField key={selection.id} {...selection} activeOverId={activeOverId}/>
+                                )
                             }
                         </div>
                     </div> :

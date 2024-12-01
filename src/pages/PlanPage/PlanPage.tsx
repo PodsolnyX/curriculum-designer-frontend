@@ -23,7 +23,7 @@ import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.t
 const PlanPageWrapped = () => {
 
     const [semesters, setSemesters] = useState<Semester[]>(SemestersMocks);
-    const [activeSemester, setActiveSemester] = useState<UniqueIdentifier | null>(null)
+    const [activeOverId, setActiveOverId] = useState<UniqueIdentifier | null>(null)
 
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
@@ -55,13 +55,19 @@ const PlanPageWrapped = () => {
         setActiveId(id);
     }
 
-    function handleDragOver({over}: DragOverEvent) {
+    function resetAllActiveIds() {
+        setActiveId(null);
+        setActiveOverId(null);
+    }
 
-        if (!over) return;
-        const { id: overId } = over;
+    function handleDragOver(event: DragOverEvent) {
 
-        if (isSemesterId(String(overId))) setActiveSemester(overId);
-        else setActiveSemester(null);
+        console.log(event)
+
+        if (!event.over) return;
+        const { id: overId } = event.over;
+
+        setActiveOverId(overId);
     }
 
     function handleDragEndSubjectToSemester({active, over}: DragEndEvent) {
@@ -72,8 +78,7 @@ const PlanPageWrapped = () => {
         const activeSemesterIndex = getSemesterIndex(activeId);
 
         if (semesters.find(semester => semester.id === overId).subjects.find(subject => subject.id === activeId)) {
-            setActiveId(null);
-            setActiveSemester(null)
+            resetAllActiveIds()
             return;
         }
         else {
@@ -102,10 +107,52 @@ const PlanPageWrapped = () => {
 
             setSemesters(updateSemesters)
 
-            setActiveId(null);
-            setActiveSemester(null)
+            resetAllActiveIds()
             return;
         }
+    }
+
+    function handleDragEndSubjectToSelection({active, over}: DragEndEvent) {
+
+        const { id: activeId } = active;
+        const { id: overId } = over;
+
+        const subjectSemesterIndex = getSemesterIndex(activeId);
+        const selectionSemesterIndex = semesters.findIndex(semesters => semesters.selections ? semesters.selections?.find(selection => selection.id === overId).id : undefined);
+        const activeSubjectIndex = semesters[subjectSemesterIndex].subjects.findIndex(subject => subject.id === activeId);
+
+        if (subjectSemesterIndex === -1 || selectionSemesterIndex === -1) return;
+
+        let updateSemesters = [...semesters];
+
+        updateSemesters = updateSemesters.map((semester, index) =>
+            index !== subjectSemesterIndex ? semester :
+                {
+                    ...semester,
+                    subjects: semester.subjects.filter(subject => subject.id !== activeId)
+                }
+        );
+
+        updateSemesters = updateSemesters.map((semester, index) => {
+            if (index !== selectionSemesterIndex) return semester;
+            return {
+                ...semester,
+                selections: semester.selections ? semester.selections.map(
+                    selection => selection.id !== overId ? selection : {
+                        ...selection,
+                        subjects: [
+                            ...selection.subjects,
+                            {...semesters[subjectSemesterIndex].subjects[activeSubjectIndex]}
+                        ]
+                    }
+                ) : undefined
+            }
+        });
+
+        setSemesters(updateSemesters)
+
+        resetAllActiveIds()
+        return;
     }
 
     function handleDragEndSubjectToSubjectSameSemester(event: DragEndEvent, semesterIndex: number) {
@@ -177,14 +224,19 @@ const PlanPageWrapped = () => {
 
         if (isSemesterId(overId)) {
             handleDragEndSubjectToSemester(event)
+            return;
+        }
+
+        if (isSelectionId(overId)) {
+            handleDragEndSubjectToSelection(event)
+            return;
         }
 
         const activeSemesterIndex = getSemesterIndex(activeId);
         const overSemesterIndex = getSemesterIndex(overId);
 
         if (activeSemesterIndex === undefined || overSemesterIndex === undefined) {
-            setActiveId(null);
-            setActiveSemester(null)
+            resetAllActiveIds()
             return;
         }
 
@@ -195,13 +247,12 @@ const PlanPageWrapped = () => {
             handleDragEndSubjectToSubjectAnotherSemester(event, activeSemesterIndex, overSemesterIndex)
         }
 
-        setActiveId(null);
-        setActiveSemester(null)
+        resetAllActiveIds()
     }
 
     return (
-        <div className={"flex flex-col min-h-screen bg-stone-100 relative"}>
-            <header className={"sticky top-0 p-3 bg-white/[0.7] backdrop-blur z-50 shadow-md flex justify-end"}>
+        <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
+            <header className={"fixed left-0 top-0 p-3 bg-white/[0.7] backdrop-blur z-50 shadow-md flex justify-end max-w-screen w-full"}>
                 <Popover content={DisplaySettingsPopover} title="Настройки отображения" trigger="click" placement={"bottomLeft"}>
                     <span className={"cursor-pointer"}>
                         Отображение
@@ -220,8 +271,8 @@ const PlanPageWrapped = () => {
                         <SemesterField
                             {...semester}
                             activeId={activeId}
+                            activeOverId={activeOverId}
                             key={semester.id}
-                            isActive={activeSemester === semester.id}
                         />
                     )
                 }
@@ -232,7 +283,7 @@ const PlanPageWrapped = () => {
                             ? <SubjectCard
                                 id={activeId}
                                 {
-                                    ...semesters[getSemesterIndex(activeId)].subjects
+                                    ...semesters[getSemesterIndex(activeId)]?.subjects
                                         .find(sub => sub.id === activeId)
                                 }
                             />

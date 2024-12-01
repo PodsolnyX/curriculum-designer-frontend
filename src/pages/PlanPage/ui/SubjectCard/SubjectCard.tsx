@@ -69,7 +69,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                     </Tooltip>
                 }
                 <div className={cls.dragLine} {...props}/>
-                <div className={"flex flex-col"}>
+                <div className={"flex flex-col flex-1"}>
                     <div className={"flex gap-1 items-center"}>
                         {
                             displaySettings.index &&
