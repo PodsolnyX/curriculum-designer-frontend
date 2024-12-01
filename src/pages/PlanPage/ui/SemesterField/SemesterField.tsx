@@ -8,13 +8,14 @@ import React from "react";
 import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
 import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
+import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 
 export interface SemesterFieldProps extends Semester {
     isActive?: boolean;
     activeId: UniqueIdentifier | null;
 }
 
-export function SemesterField({number, subjects, activeId, id, isActive}: SemesterFieldProps) {
+export function SemesterField({number, subjects, activeId, id, isActive, selections}: SemesterFieldProps) {
 
     const { setNodeRef } = useDroppable({
         id
@@ -85,8 +86,8 @@ export function SemesterField({number, subjects, activeId, id, isActive}: Semest
             {
                 subjects.length ?
                     <div className={`flex flex-1 items-start gap-3`}>
-                        <SortableContext items={subjects} id={id}>
-                            <div className={"flex flex-wrap gap-3 max-w-[100vw] h-full w-full"}>
+                        <div className={"flex flex-wrap gap-3 max-w-[100vw] h-full w-full"}>
+                            <SortableContext items={subjects} id={id}>
                                 {
                                     subjects.map(subject => (
                                         <SortableSubjectCard
@@ -97,8 +98,11 @@ export function SemesterField({number, subjects, activeId, id, isActive}: Semest
                                         />
                                     ))
                                 }
-                            </div>
-                        </SortableContext>
+                            </SortableContext>
+                            {
+                                selections?.map(selection => <SelectionField key={selection.id} {...selection}/>)
+                            }
+                        </div>
                     </div> :
                     <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400"}>
                         <span>Семестр пуст</span>

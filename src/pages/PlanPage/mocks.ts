@@ -70,22 +70,22 @@ export const SemestersMocks: Semester[] = [
                 credits: 2,
             }
         ],
-        selection: [
+        selections: [
             {
                 name: "Выбор 1",
                 credits: 3,
                 id: "selection-1",
                 subjects: [
-                    {
-                        id: "30000",
-                        name: "Введение в компьютерные науки",
-                        credits: 3,
-                    },
-                    {
-                        id: "40000",
-                        name: "Безопасность жизнедеятельности",
-                        credits: 3
-                    }
+                    // {
+                    //     id: "30000",
+                    //     name: "Введение в компьютерные науки",
+                    //     credits: 3,
+                    // },
+                    // {
+                    //     id: "40000",
+                    //     name: "Безопасность жизнедеятельности",
+                    //     credits: 3
+                    // }
                 ]
             }
         ]

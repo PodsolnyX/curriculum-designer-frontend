@@ -218,10 +218,8 @@ const PlanPageWrapped = () => {
                 {
                     semesters.map(semester =>
                         <SemesterField
-                            number={semester.number}
-                            subjects={semester.subjects}
+                            {...semester}
                             activeId={activeId}
-                            id={semester.id}
                             key={semester.id}
                             isActive={activeSemester === semester.id}
                         />
