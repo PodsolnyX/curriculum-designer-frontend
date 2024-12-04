@@ -87,7 +87,7 @@ export function SemesterField({number, subjects, activeId, id, activeOverId, sel
                 (subjects.length || selections?.length) ?
                     <div className={`flex flex-1 items-start gap-3`}>
                         <div className={"flex flex-wrap gap-3 max-w-[100vw] h-full w-full"}>
-                            <SortableContext items={subjects} id={id}>
+                            <SortableContext items={[...subjects, ...selections]} id={id}>
                                 {
                                     subjects.map(subject => (
                                         <SortableSubjectCard
@@ -98,12 +98,12 @@ export function SemesterField({number, subjects, activeId, id, activeOverId, sel
                                         />
                                     ))
                                 }
+                                {
+                                    selections.map(selection =>
+                                        <SelectionField key={selection.id} {...selection} activeOverId={activeOverId}/>
+                                    )
+                                }
                             </SortableContext>
-                            {
-                                selections?.map(selection =>
-                                    <SelectionField key={selection.id} {...selection} activeOverId={activeOverId}/>
-                                )
-                            }
                         </div>
                     </div> :
                     <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400"}>

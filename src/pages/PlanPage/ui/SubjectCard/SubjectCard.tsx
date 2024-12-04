@@ -73,7 +73,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                     <div className={"flex gap-1 items-center"}>
                         {
                             displaySettings.index &&
-                            <span className={"text-[12px] text-stone-400"}>{index}</span>
+                            <span className={"text-[10px] text-stone-400"}>{index}</span>
                         }
                         {
                             (displaySettings.index && semesterOrder)
@@ -81,25 +81,25 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                         }
                         {
                             semesterOrder &&
-                            <span className={"text-[12px] text-blue-500"}>{`Семестр: ${semesterOrder}`}</span>
+                            <span className={"text-[10px] text-blue-500"}>{`Семестр: ${semesterOrder}`}</span>
                         }
                     </div>
-                    <div className={"text-black text-[14px] line-clamp-2 min-h-[42px]"}>
+                    <div className={"text-black text-[12px] line-clamp-2 min-h-[36px]"}>
                         {name}
                     </div>
                 </div>
                 <div className={"flex gap-1"}>
                     {
                         displaySettings.credits &&
-                            <Tag color={"blue"} className={"m-0"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
+                            <Tag color={"blue"} className={"m-0 text-[10px]"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
                     }
                     {
                         displaySettings.attestation &&
-                            <Tag color={"default"} className={"m-0"} bordered={false}>{AttestationTypeName[attestation]}</Tag>
+                            <Tag color={"default"} className={"m-0 text-[10px]"} bordered={false}>{AttestationTypeName[attestation]}</Tag>
                     }
                     {
                         displaySettings.department &&
-                            <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department}</Tag>
+                            <Tag className={"m-0"} rootClassName={"bg-transparent text-[10px]"}>{department}</Tag>
                     }
                 </div>
                 {
@@ -109,15 +109,15 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                                 {
                                     AcademicTypes.map(type =>
                                         <div key={type.key} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                            <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{type.name}</div>
-                                            <div className={"text-[12px] pr-1"}>{academicHours.find(_type => _type.key === type.key)?.value || 0}</div>
+                                            <div className={"bg-stone-100 pr-1 text-stone-600 text-[10px]"}>{type.name}</div>
+                                            <div className={"text-[10px] pr-1"}>{academicHours.find(_type => _type.key === type.key)?.value || 0}</div>
                                         </div>
                                     )
                                 }
                             </div>
                             <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
-                                <div className={"text-[12px] pr-1"}>{`${getSumAcademicHours()}/${credits*36}`}</div>
+                                <div className={"bg-stone-100 pr-1 text-stone-600 text-[10px]"}>{"Всего"}</div>
+                                <div className={"text-[10px] pr-1"}>{`${getSumAcademicHours()}/${credits*36}`}</div>
                             </div>
                         </div>
                 }
@@ -128,7 +128,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                                 competencies.length ?
                                     competencies.map(competence =>
                                         <Tag color={"default"} className={"m-0"} bordered={false} key={competence.value}>{competence.name}</Tag>
-                                    ) : <span className={"text-[12px] text-stone-400"}>Нет компетенций</span>
+                                    ) : <span className={"text-[10px] text-stone-400"}>Нет компетенций</span>
                             }
                             <Tag color={"default"} className={"m-0 group-hover:opacity-100 opacity-0 cursor-pointer min-w-10 text-center text-stone-400"} bordered={false}>+</Tag>
                         </div>

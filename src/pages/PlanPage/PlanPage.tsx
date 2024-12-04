@@ -20,6 +20,8 @@ import {PlanProvider} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {Popover} from "antd";
 import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.tsx";
 
+const keys = ["subjects", "selections", "semesters"];
+
 const PlanPageWrapped = () => {
 
     const [semesters, setSemesters] = useState<Semester[]>(SemestersMocks);
@@ -47,11 +49,11 @@ const PlanPageWrapped = () => {
     }
 
     const isSemesterId = (id: string) => {
-        return id.split("-")[0] === "semester";
+        return id.split("-")[0] === "semesters";
     }
 
     const isSelectionId = (id: string) => {
-        return id.split("-")[0] === "selection";
+        return id.split("-")[0] === "selections";
     }
 
     function handleDragStart(event: DragStartEvent) {
@@ -68,8 +70,6 @@ const PlanPageWrapped = () => {
 
     function handleDragOver(event: DragOverEvent) {
 
-        console.log(event)
-
         if (!event.over) return;
         const { id: overId } = event.over;
 
@@ -77,6 +77,14 @@ const PlanPageWrapped = () => {
     }
 
     //// Handle drag end ////
+
+    //Предмет к предмету в одном семестре
+    //Предмет к предмету в разных семестрах
+    //Предмет из семестра в семестр
+    //Предмет из семестра в выбор
+    //Предмет к предмету в одном выборе
+    //Предмет к предмету в разных выборах
+    //Предмет из выбора в семестр
 
     const removeSubjectFromSemester = (semesters: Semester[], semesterIndex: number, subjectId: UniqueIdentifier): Semester[] => {
         return semesters.map((semester, index) =>
@@ -86,6 +94,88 @@ const PlanPageWrapped = () => {
                     subjects: semester.subjects.filter(subject => subject.id !== subjectId)
                 }
         );
+    }
+
+    const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
+
+        let parentIds: (UniqueIdentifier)[] = [];
+
+        const checkKeys = (obj: any) => {
+            return keys.some(key => Object.keys(obj).includes(key));
+        }
+        const findParentIdActiveItem = (item: any): boolean => {
+            for (let key of keys) {
+                if (Array.isArray(item[key])) {
+                    if (item[key].find(item => item.id === id)) {
+                        parentIds.unshift(id);
+                        item.id && parentIds.unshift(item.id);
+                        return true;
+                    }
+                    else {
+                        for (let subItem of item[key]) {
+                            if (checkKeys(subItem) && findParentIdActiveItem(subItem)) {
+                                item.id && parentIds.unshift(item.id);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+
+        findParentIdActiveItem({semesters})
+
+        return parentIds;
+    }
+
+    const getItemTypeById = (id: UniqueIdentifier): string => {
+        const type = String(id).split("-")[0];
+        return keys.includes(type) ? type : "";
+    }
+
+    const onDragEndNextGen = (event: DragEndEvent) => {
+        if (!event.active?.id || !event?.over?.id) return;
+
+        const parentsIdsActive = getParentsIdsByChildId(event.active.id);
+        const parentsIdsOver = getParentsIdsByChildId(event.over.id);
+
+        const updateSemesters = JSON.parse(JSON.stringify(semesters));
+
+        console.log("ACTIVE", getParentsIdsByChildId(event.active.id), "PASSIVE", getParentsIdsByChildId(event.over.id))
+
+        let activeSubject;
+
+        const removeSubjectFromParents = (item: any, currentDeep: number) => {
+            const type = getItemTypeById(parentsIdsActive[currentDeep]);
+            if (!type)
+                item.subjects = item.subjects.filter(item => {
+                    if (item.id !== parentsIdsActive[currentDeep]) return true
+                    else {
+                        activeSubject = item;
+                        return false;
+                    }
+                })
+            else {
+                const subItem = item[type].find(_item => _item.id === parentsIdsActive[currentDeep])
+                removeSubjectFromParents(subItem, currentDeep + 1);
+            }
+        }
+
+        const addSubjectToNewParents = (item: any, currentDeep: number) => {
+            const type = getItemTypeById(parentsIdsOver[currentDeep]);
+            if (!type || currentDeep === parentsIdsOver.length)
+                item.subjects = [...item.subjects, activeSubject]
+            else {
+                const subItem = item[type].find(_item => _item.id === parentsIdsOver[currentDeep])
+                addSubjectToNewParents(subItem, currentDeep + 1);
+            }
+        }
+
+        removeSubjectFromParents({semesters: updateSemesters}, 0)
+        addSubjectToNewParents({semesters: updateSemesters}, 0)
+
+        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
     }
 
     function handleDragEndSubjectToSemester({active, over}: DragEndEvent) {
@@ -140,7 +230,7 @@ const PlanPageWrapped = () => {
         if (!subjectSemester) return;
 
         const subjectSemesterIndex = getSemesterIndex(activeId);
-        const selectionSemesterIndex = semesters.findIndex(semesters => semesters.selections ? semesters.selections?.find(selection => selection.id === overId).id : undefined);
+        const selectionSemesterIndex = semesters.findIndex(semesters => semesters.selections.find(selection => selection.id === overId).id);
         const activeSubjectIndex = semesters[subjectSemesterIndex].subjects.findIndex(subject => subject.id === activeId);
 
         if (subjectSemesterIndex === -1 || selectionSemesterIndex === -1) return;
@@ -252,7 +342,7 @@ const PlanPageWrapped = () => {
         const activeSemesterIndex = getSemesterIndex(activeId);
         const overSemesterIndex = getSemesterIndex(overId);
 
-        if (activeSemesterIndex === undefined || overSemesterIndex === undefined) {
+        if (activeSemesterIndex === -1 || overSemesterIndex === -1) {
             resetAllActiveIds()
             return;
         }
@@ -282,7 +372,8 @@ const PlanPageWrapped = () => {
                 sensors={sensors}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
+                // onDragEnd={handleDragEnd}
+                onDragEnd={onDragEndNextGen}
                 measuring={measuring}
             >
                 {

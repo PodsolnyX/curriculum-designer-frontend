@@ -23,7 +23,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const {data: userProfile} = useQuery({
         queryKey: queryKeys.userProfile(),
         queryFn: () => userService.getProfile(),
-        select: ({data}) => data
+        select: ({data}) => data,
+        enabled: false
     })
 
     const signIn = (accessToken: string, refreshToken: string, rememberMe: boolean) => {
@@ -93,7 +94,8 @@ export const useRefreshToken = (isAuth: boolean) => {
         queryKey: queryKeys.refreshToken(),
         queryFn: () => userService.refreshToken(getRefreshToken() || getSessionToken()),
         select: ({data}) => data,
-        enabled: isAuth && (!!getRefreshToken() || !!getSessionToken()),
+        enabled: false,
+        // enabled: isAuth && (!!getRefreshToken() || !!getSessionToken()),
         refetchInterval: REFRESH_TOKEN_INTERVAL,
         refetchIntervalInBackground: true
     })

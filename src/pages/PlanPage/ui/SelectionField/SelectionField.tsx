@@ -3,6 +3,7 @@ import {Tag} from "antd";
 import React from "react";
 import {Selection} from "@/pages/PlanPage/types/Semester.ts";
 import {UniqueIdentifier, useDroppable} from "@dnd-kit/core";
+import {SortableContext} from "@dnd-kit/sortable";
 
 interface SelectionFieldProps extends Selection {
     activeOverId?: UniqueIdentifier | null;
@@ -23,11 +24,13 @@ const SelectionField = ({subjects, name, credits, id, activeOverId}: SelectionFi
                 <Tag color={"blue"} className={"m-0"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
             </div>
             <div className={"flex gap-3"}>
-                {
-                    subjects.length ?
-                    subjects.map(subject => <SortableSubjectCard key={subject.id} {...subject}/>)
-                        : <span className={"text-blue-400 max-w-[250px] text-center my-auto p-2"}>Перенесите дисциплину внутрь для добавления в выбор </span>
-                }
+                <SortableContext items={subjects} id={id}>
+                    {
+                        subjects.length ?
+                            subjects.map(subject => <SortableSubjectCard key={subject.id} {...subject}/>)
+                            : <span className={"text-blue-400 max-w-[250px] text-center my-auto p-2"}>Перенесите дисциплину внутрь для добавления в выбор </span>
+                    }
+                </SortableContext>
             </div>
         </div>
     )

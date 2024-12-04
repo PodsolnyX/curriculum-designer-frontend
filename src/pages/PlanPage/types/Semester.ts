@@ -4,7 +4,7 @@ export interface Semester {
     id: string;
     number: number;
     subjects: Subject[];
-    selections?: Selection[]
+    selections: Selection[]
 }
 
 export interface Selection {

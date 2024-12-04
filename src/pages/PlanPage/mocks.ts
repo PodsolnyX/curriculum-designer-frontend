@@ -47,7 +47,7 @@ export const AcademicTypes: AcademicType[] = [
 
 export const SemestersMocks: Semester[] = [
     {
-        id: "semester-1",
+        id: "semesters-1",
         number: 1,
         subjects: [
             {
@@ -74,19 +74,19 @@ export const SemestersMocks: Semester[] = [
             {
                 name: "Выбор 1",
                 credits: 3,
-                id: "selection-1",
+                id: "selections-1",
                 subjects: []
             }
         ]
     },
     {
-        id: "semester-2",
+        id: "semesters-2",
         number: 2,
         selections: [
             {
                 name: "Выбор 2",
                 credits: 3,
-                id: "selection-2",
+                id: "selections-2",
                 subjects: []
             }
         ],
@@ -169,8 +169,9 @@ export const SemestersMocks: Semester[] = [
         ]
     },
     {
-        id: "semester-3",
+        id: "semesters-3",
         number: 3,
+        selections: [],
         subjects: [
             {
                 id: "11fffffffff1",
@@ -191,28 +192,33 @@ export const SemestersMocks: Semester[] = [
         ]
     },
     {
-        id: "semester-4",
+        id: "semesters-4",
         number: 4,
+        selections: [],
         subjects: []
     },
     {
-        id: "semester-5",
+        id: "semesters-5",
         number: 5,
+        selections: [],
         subjects: []
     },
     {
-        id: "semester-6",
+        id: "semesters-6",
         number: 6,
+        selections: [],
         subjects: []
     },
     {
-        id: "semester-7",
+        id: "semesters-7",
         number: 7,
+        selections: [],
         subjects: []
     },
     {
-        id: "semester-8",
+        id: "semesters-8",
         number: 8,
+        selections: [],
         subjects: []
     }
 ]
