@@ -95,7 +95,7 @@ const PlanPageWrapped = () => {
     }
 
     const onDragEndNextGen = (event: DragEndEvent) => {
-        if (!event.active?.id || !event?.over?.id) return;
+        if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) return;
 
         const parentsIdsActive = getParentsIdsByChildId(event.active.id);
         const parentsIdsOver = getParentsIdsByChildId(event.over.id);
@@ -122,18 +122,18 @@ const PlanPageWrapped = () => {
 
         const addSubjectToNewParents = (item: any, currentDeep: number) => {
             const type = getItemTypeById(parentsIdsOver[currentDeep]);
-            if (!type)
-                item.subjects.splice(item.subjects.findIndex(_item => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
-            else if (currentDeep === parentsIdsOver.length) {
+
+            if (!type && currentDeep === parentsIdsOver.length) {
                 item.subjects = [...item.subjects, activeSubject]
+            }
+            else if (!type) {
+                item.subjects.splice(item.subjects.findIndex(_item => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
             }
             else {
                 const subItem = item[type].find(_item => _item.id === parentsIdsOver[currentDeep])
                 addSubjectToNewParents(subItem, currentDeep + 1);
             }
         }
-
-        // arrayMove(semester.subjects, activeSubjectIndex, overSubjectIndex)
 
         removeSubjectFromParents({semesters: updateSemesters}, 0)
         addSubjectToNewParents({semesters: updateSemesters}, 0)

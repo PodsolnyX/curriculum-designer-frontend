@@ -31,10 +31,11 @@ function SortableSubjectCard(props: SortableSubjectCard) {
                 return Position.Before
             }
             else {
-                return (
-                    over?.data.current?.sortable.items.indexOf(over.id) > over?.data.current?.sortable.items.indexOf(activeId)
-                        ? Position.After : Position.Before
-                )
+                return Position.Before
+                // return (
+                //     over?.data.current?.sortable.items.indexOf(over.id) > over?.data.current?.sortable.items.indexOf(activeId)
+                //         ? Position.Before : Position.After
+                // )
             }
         }
         else return undefined;
