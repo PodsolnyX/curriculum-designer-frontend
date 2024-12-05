@@ -2,21 +2,22 @@ import SortableSubjectCard from "@/pages/PlanPage/ui/SubjectCard/SortableSubject
 import {Tag} from "antd";
 import React from "react";
 import {Selection} from "@/pages/PlanPage/types/Semester.ts";
-import {UniqueIdentifier, useDroppable} from "@dnd-kit/core";
+import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
+import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 
-interface SelectionFieldProps extends Selection {
-    activeOverId?: UniqueIdentifier | null;
-}
+interface SelectionFieldProps extends Selection {}
 
-const SelectionField = ({subjects, name, credits, id, activeOverId}: SelectionFieldProps) => {
+const SelectionField = ({subjects, name, credits, id}: SelectionFieldProps) => {
+
+    const { overItemId } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
     });
 
     return (
-        <div className={`flex flex-col border-2 border-dashed border-blue-200 px-2 rounded-lg ${activeOverId === id ? "bg-blue-400/[0.1]" : "bg-blue-400/[0.05]"}`} ref={setNodeRef}>
+        <div className={`flex flex-col border-2 border-dashed px-2 rounded-lg ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`} ref={setNodeRef}>
             <div className={"flex justify-between py-2"}>
                 <span className={"text-blue-400 font-bold"}>
                     {name}

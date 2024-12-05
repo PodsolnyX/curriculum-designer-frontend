@@ -1,6 +1,7 @@
-import {DisplaySettingsList, PreDisplaySettings, usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
+import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {Checkbox, Tag, Typography} from "antd";
 import React from "react";
+import {DisplaySettingsList, PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 
 const DisplaySettingsPopover = () => {
 

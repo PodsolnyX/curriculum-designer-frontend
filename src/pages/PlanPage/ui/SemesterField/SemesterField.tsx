@@ -1,4 +1,3 @@
-import type {UniqueIdentifier,} from '@dnd-kit/core';
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/PlanPage/ui/SubjectCard/SortableSubjectCard.tsx";
@@ -10,12 +9,11 @@ import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 
-export interface SemesterFieldProps extends Semester {
-    activeOverId?: UniqueIdentifier | null;
-    activeId: UniqueIdentifier | null;
-}
+export interface SemesterFieldProps extends Semester {}
 
-export function SemesterField({number, subjects, activeId, id, activeOverId, selections}: SemesterFieldProps) {
+export function SemesterField({number, subjects, id, selections}: SemesterFieldProps) {
+
+    const { overItemId } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
@@ -45,7 +43,7 @@ export function SemesterField({number, subjects, activeId, id, activeOverId, sel
 
     return (
         <div ref={setNodeRef}
-             className={`flex flex-col p-5 gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${activeOverId === id ? "border-blue-400" : "border-transparent"} border-2 border-solid`}>
+             className={`flex flex-col p-5 gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
             <div className={`sticky top-4 left-4 z-10 w-max flex gap-2`}>
                 <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                     <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {number}</span>
@@ -93,14 +91,13 @@ export function SemesterField({number, subjects, activeId, id, activeOverId, sel
                                         <SortableSubjectCard
                                             id={subject.id}
                                             key={subject.id}
-                                            activeId={activeId}
                                             {...subject}
                                         />
                                     ))
                                 }
                                 {
                                     selections.map(selection =>
-                                        <SelectionField key={selection.id} {...selection} activeOverId={activeOverId}/>
+                                        <SelectionField key={selection.id} {...selection}/>
                                     )
                                 }
                             </SortableContext>

@@ -2,17 +2,14 @@ import {Position, SubjectCard, SubjectCardProps} from "@/pages/PlanPage/ui/Subje
 import {useSortable} from "@dnd-kit/sortable";
 import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
-import React from "react";
+import React, {useEffect} from "react";
+import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 
 interface SortableSubjectCard extends SubjectCardProps {}
 
 function SortableSubjectCard(props: SortableSubjectCard) {
 
-    const {
-        id,
-        activeId,
-        ...rest
-    } = props;
+    const { id } = props;
 
     const {
         attributes,
@@ -25,19 +22,16 @@ function SortableSubjectCard(props: SortableSubjectCard) {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const getPosition = (): Position | undefined => {
-        if (over?.id === id) {
-            if (!over?.data.current?.sortable.items.includes(activeId)) {
-                return Position.Before
-            }
-            else {
-                return Position.Before
-                // return (
-                //     over?.data.current?.sortable.items.indexOf(over.id) > over?.data.current?.sortable.items.indexOf(activeId)
-                //         ? Position.Before : Position.After
-                // )
-            }
+    const { activeItemId, setActiveSubject } = usePlan();
+
+    useEffect(() => {
+        if (activeItemId === id) {
+            setActiveSubject(props)
         }
+    }, [activeItemId])
+
+    const getPosition = (): Position | undefined => {
+        if (over?.id === id) return Position.Before
         else return undefined;
     }
 
@@ -57,5 +51,21 @@ function SortableSubjectCard(props: SortableSubjectCard) {
         />
     );
 }
+
+// const getPosition = (): Position | undefined => {
+//     if (over?.id === id) {
+//         if (!over?.data.current?.sortable.items.includes(activeItemId)) {
+//             return Position.Before
+//         }
+//         else {
+//             return Position.Before
+//             // return (
+//             //     over?.data.current?.sortable.items.indexOf(over.id) > over?.data.current?.sortable.items.indexOf(activeId)
+//             //         ? Position.Before : Position.After
+//             // )
+//         }
+//     }
+//     else return undefined;
+// }
 
 export default SortableSubjectCard;

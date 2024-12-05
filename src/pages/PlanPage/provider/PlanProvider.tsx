@@ -1,67 +1,132 @@
 import {createContext, ReactNode, useContext, useState} from "react";
+import {DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
+import {Semester} from "@/pages/PlanPage/types/Semester.ts";
+import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
+import {DisplaySettings} from "@/pages/PlanPage/provider/types.ts";
+import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
+import {Subject} from "@/pages/PlanPage/types/Subject.ts";
 
-interface DisplaySettings {
-    index: boolean;
-    credits: boolean;
-    attestation: boolean;
-    required: boolean;
-    department: boolean;
-    notesNumber: boolean;
-    academicHours: boolean;
-    competencies: boolean;
-}
-
-export const DisplaySettingsList: {key: keyof DisplaySettings, name: string}[] = [
-    { key: "index", name: "Индексы" },
-    { key: "credits", name: "ЗЕТ" },
-    { key: "attestation", name: "Промежуточная аттестация" },
-    { key: "required", name: "Обязательность" },
-    { key: "department", name: "Кафедры" },
-    { key: "notesNumber", name: "Заметки" },
-    { key: "academicHours", name: "Распределение часов" },
-    { key: "competencies", name: "Компетенции" }
-];
-
-interface PreDisplaySetting {
-    key: string;
-    name: string;
-    settings: DisplaySettings
-}
-
-export const PreDisplaySettings: PreDisplaySetting[] = [
-    {
-        key: "subjectsCreate",
-        name: "Создание дисциплин",
-        settings: {
-            index: false,
-            credits: true,
-            attestation: true,
-            required: true,
-            department: false,
-            notesNumber: true,
-            academicHours: false,
-            competencies: false
-        }
-    },
-    {
-        key: "all",
-        name: "Кабина пилота",
-        settings: {
-            index: true,
-            credits: true,
-            attestation: true,
-            required: true,
-            department: true,
-            notesNumber: true,
-            academicHours: true,
-            competencies: true
-        }
-    }
-]
+const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters"];
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
+    const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
+    const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
+    const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
+
     const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
+
+    const [semesters, setSemesters] = useState<Semester[]>(SemestersMocks);
+
+    // Обработка DnD
+
+    function resetAllActiveIds() {
+        setActiveItemId(null);
+        setOverItemId(null);
+    }
+
+    const getItemTypeById = (id: UniqueIdentifier): string => {
+        const type = String(id).split("-")[0];
+        return PREFIX_ITEM_ID_KEYS.includes(type) ? type : "";
+    }
+
+    const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
+
+        let parentIds: (UniqueIdentifier)[] = [];
+
+        const checkKeys = (obj: any) => {
+            return PREFIX_ITEM_ID_KEYS.some(key => Object.keys(obj).includes(key));
+        }
+        const findParentIdActiveItem = (item: any): boolean => {
+            for (let key of PREFIX_ITEM_ID_KEYS) {
+                if (Array.isArray(item[key])) {
+                    if (item[key].find(item => item.id === id)) {
+                        parentIds.unshift(id);
+                        item.id && parentIds.unshift(item.id);
+                        return true;
+                    }
+                    else {
+                        for (let subItem of item[key]) {
+                            if (checkKeys(subItem) && findParentIdActiveItem(subItem)) {
+                                item.id && parentIds.unshift(item.id);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        };
+
+        findParentIdActiveItem({semesters})
+
+        return parentIds;
+    }
+
+    function handleDragStart(event: DragStartEvent) {
+        const { active } = event;
+        const { id } = active;
+
+        setActiveItemId(id);
+    }
+
+    function handleDragOver(event: DragOverEvent) {
+
+        if (!event.over) return;
+        const { id: overId } = event.over;
+
+        setOverItemId(overId);
+    }
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) return;
+
+        const parentsIdsActive = getParentsIdsByChildId(event.active.id);
+        const parentsIdsOver = getParentsIdsByChildId(event.over.id);
+
+        const updateSemesters = JSON.parse(JSON.stringify(semesters));
+
+        let activeSubject;
+
+        const removeSubjectFromParents = (item: any, currentDeep: number) => {
+            const type = getItemTypeById(parentsIdsActive[currentDeep]);
+            if (!type)
+                item.subjects = item.subjects.filter(item => {
+                    if (item.id !== parentsIdsActive[currentDeep]) return true
+                    else {
+                        activeSubject = item;
+                        return false;
+                    }
+                })
+            else {
+                const subItem = item[type].find(_item => _item.id === parentsIdsActive[currentDeep])
+                removeSubjectFromParents(subItem, currentDeep + 1);
+            }
+        }
+
+        const addSubjectToNewParents = (item: any, currentDeep: number) => {
+            const type = getItemTypeById(parentsIdsOver[currentDeep]);
+
+            if (!type && currentDeep === parentsIdsOver.length) {
+                item.subjects = [...item.subjects, activeSubject]
+            }
+            else if (!type) {
+                item.subjects.splice(item.subjects.findIndex(_item => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
+            }
+            else {
+                const subItem = item[type].find(_item => _item.id === parentsIdsOver[currentDeep])
+                addSubjectToNewParents(subItem, currentDeep + 1);
+            }
+        }
+
+        removeSubjectFromParents({semesters: updateSemesters}, 0)
+        addSubjectToNewParents({semesters: updateSemesters}, 0)
+
+        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
+        resetAllActiveIds()
+    }
+
+    // Изменение настроек отображения
 
     const onChangeDisplaySetting = (key: keyof DisplaySettings) => {
         setDisplaySettings({
@@ -77,7 +142,15 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     }
     
     const value: PlanContextValue = {
+        activeItemId,
+        activeSubject,
+        overItemId,
+        semesters,
         displaySettings,
+        setActiveSubject,
+        handleDragStart,
+        handleDragOver,
+        handleDragEnd,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -96,13 +169,29 @@ export const usePlan = () => {
 }
 
 interface PlanContextValue {
+    activeItemId: UniqueIdentifier | null;
+    activeSubject: Subject | null;
+    overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
+    semesters: Semester[];
+    setActiveSubject(subject: Subject | null): void;
+    handleDragStart(event: DragStartEvent): void;
+    handleDragOver(event: DragOverEvent): void;
+    handleDragEnd(event: DragEndEvent): void;
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
     onSelectPreDisplaySetting(key: string): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
+    activeItemId: null,
+    activeSubject: null,
+    overItemId: null,
     displaySettings: PreDisplaySettings[0].settings,
-    onChangeDisplaySetting: (key: keyof DisplaySettings) => {},
-    onSelectPreDisplaySetting: (key: string) => {}
+    semesters: [],
+    setActiveSubject: (_subject: Subject | null) => {},
+    handleDragStart: (_event: DragEndEvent) => {},
+    handleDragOver: (_event: DragOverEvent) => {},
+    handleDragEnd: (_event: DragEndEvent) => {},
+    onChangeDisplaySetting: (_key: keyof DisplaySettings) => {},
+    onSelectPreDisplaySetting: (_key: string) => {}
 })
