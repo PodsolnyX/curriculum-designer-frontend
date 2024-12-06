@@ -17,7 +17,7 @@ const SelectionField = ({subjects, name, credits, id}: SelectionFieldProps) => {
     });
 
     return (
-        <div className={`flex flex-col border-2 border-dashed px-2 rounded-lg ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`} ref={setNodeRef}>
+        <div className={`flex flex-col border-2 border-dashed h-max px-2 rounded-lg ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`} ref={setNodeRef}>
             <div className={"flex justify-between py-2"}>
                 <span className={"text-blue-400 font-bold"}>
                     {name}
@@ -29,7 +29,7 @@ const SelectionField = ({subjects, name, credits, id}: SelectionFieldProps) => {
                     {
                         subjects.length ?
                             subjects.map(subject => <SortableSubjectCard key={subject.id} {...subject}/>)
-                            : <span className={"text-blue-400 max-w-[250px] text-center my-auto p-2"}>Перенесите дисциплину внутрь для добавления в выбор </span>
+                            : <span className={"text-blue-400 max-w-[250px] text-center my-auto pb-4 pt-2 px-2"}>Перенесите дисциплину внутрь для добавления в выбор </span>
                     }
                 </SortableContext>
             </div>

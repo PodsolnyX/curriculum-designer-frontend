@@ -1,12 +1,16 @@
-import {createContext, ReactNode, useContext, useState} from "react";
+import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
-import {DisplaySettings} from "@/pages/PlanPage/provider/types.ts";
+import {
+    DisplaySettings,
+    ModuleSemesters,
+    ModuleSemestersInfo
+} from "@/pages/PlanPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/PlanPage/types/Subject.ts";
 
-const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters"];
+const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules"] as const;
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
@@ -14,9 +18,76 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
 
+    const [semesters, setSemesters] = useState<Semester[]>([]);
+    const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
+
     const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
 
-    const [semesters, setSemesters] = useState<Semester[]>(SemestersMocks);
+    // Добавление префиксов для контейнеров
+
+    const addPrefixesForItems = (semesters: Semester[]) => {
+
+        let modules: ModuleSemesters[] = [];
+
+        const addPrefixes = (item: any, key: typeof PREFIX_ITEM_ID_KEYS[number]) => {
+
+            let children = {};
+
+            for (let _key of PREFIX_ITEM_ID_KEYS.filter(key => key !== "subjects")) {
+                if (Array.isArray(item[_key])) {
+                    children[_key] = item[_key].map(subItem => {
+                        if (_key === "modules") {
+                            return addPrefixes({...subItem, id: getPrefixId(`${item.id}-${subItem.id}`, key)}, _key)
+                        }
+                        return addPrefixes(subItem, _key)
+                    })
+                }
+            }
+
+            if (key === "modules") {
+                if (modules.find(module => module.id === getItemIdFromPrefix(item.id))) {
+                    modules = modules.map(module => module.id !== getItemIdFromPrefix(item.id) ? module : {
+                        ...module,
+                        semesters: [...module.semesters, getPrefixId(item.id, key)]
+                    })
+                }
+                else {
+                    modules.push({
+                        id: getItemIdFromPrefix(item.id),
+                        name: item.name,
+                        semesters: [getPrefixId(item.id, key)]
+                    })
+                }
+            }
+
+
+            return {
+                ...item,
+                id: getPrefixId(item.id, key),
+                ...children
+            }
+        }
+
+        const _semesters = addPrefixes({semesters: semesters}, "semesters").semesters;
+
+        setModulesSemesters([...modules]);
+
+        return _semesters;
+    }
+
+    useEffect(() => {
+        setSemesters(addPrefixesForItems(SemestersMocks))
+    }, [])
+
+    const getModuleSemesterPosition = (id: UniqueIdentifier): ModuleSemestersInfo => {
+        const module = modulesSemesters.find(module => getItemIdFromPrefix(id) === module.id);
+        if (!module || module.semesters.length === 1) return { position: "single", countSemesters: 1 }
+        const index = module.semesters.findIndex(module => module === id);
+        return {
+            position: index === 0 ? "first" : index === module?.semesters.length - 1 ? "last" : "middle",
+            countSemesters: module.semesters.length
+        }
+    }
 
     // Обработка DnD
 
@@ -146,11 +217,13 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         activeSubject,
         overItemId,
         semesters,
+        modulesSemesters,
         displaySettings,
         setActiveSubject,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
+        getModuleSemesterPosition,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -164,6 +237,15 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     )
 }
 
+const getPrefixId = (id: UniqueIdentifier, key: typeof PREFIX_ITEM_ID_KEYS[number]): string => {
+    return `${key}-${id}`
+}
+
+const getItemIdFromPrefix = (id: UniqueIdentifier): string => {
+    const _result = String(id).split("-");
+    return _result[_result.length - 1];
+}
+
 export const usePlan = () => {
     return useContext(PlanContext);
 }
@@ -174,10 +256,12 @@ interface PlanContextValue {
     overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
     semesters: Semester[];
+    modulesSemesters: ModuleSemesters[];
     setActiveSubject(subject: Subject | null): void;
     handleDragStart(event: DragStartEvent): void;
     handleDragOver(event: DragOverEvent): void;
     handleDragEnd(event: DragEndEvent): void;
+    getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
     onSelectPreDisplaySetting(key: string): void;
 }
@@ -188,10 +272,12 @@ const PlanContext = createContext<PlanContextValue>({
     overItemId: null,
     displaySettings: PreDisplaySettings[0].settings,
     semesters: [],
+    modulesSemesters: [],
     setActiveSubject: (_subject: Subject | null) => {},
     handleDragStart: (_event: DragEndEvent) => {},
     handleDragOver: (_event: DragOverEvent) => {},
     handleDragEnd: (_event: DragEndEvent) => {},
+    getModuleSemesterPosition: (_id: UniqueIdentifier) => { return { position: "single", countSemesters: 0 } },
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {},
     onSelectPreDisplaySetting: (_key: string) => {}
 })

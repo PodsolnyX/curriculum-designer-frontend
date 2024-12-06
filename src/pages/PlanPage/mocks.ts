@@ -47,7 +47,7 @@ export const AcademicTypes: AcademicType[] = [
 
 export const SemestersMocks: Semester[] = [
     {
-        id: "semesters-1",
+        id: "s1",
         number: 1,
         subjects: [
             {
@@ -76,11 +76,18 @@ export const SemestersMocks: Semester[] = [
                 credits: 3,
                 id: "selections-1",
                 subjects: []
+            },
+        ],
+        modules: [
+            {
+                name: "Модуль крутой",
+                id: "12345",
+                subjects: []
             }
         ]
     },
     {
-        id: "semesters-2",
+        id: "s2",
         number: 2,
         selections: [
             {
@@ -166,10 +173,17 @@ export const SemestersMocks: Semester[] = [
                 credits: 3,
                 type: SubjectType.Elective
             },
+        ],
+        modules: [
+            {
+                name: "Модуль крутой",
+                id: "12345",
+                subjects: []
+            }
         ]
     },
     {
-        id: "semesters-3",
+        id: "s3",
         number: 3,
         selections: [],
         subjects: [
@@ -189,36 +203,58 @@ export const SemestersMocks: Semester[] = [
                 credits: 3,
                 type: SubjectType.StateCertification
             },
+        ],
+        modules: [
+            {
+                name: "Модуль крутой",
+                id: "12345",
+                subjects: []
+            }
         ]
     },
     {
-        id: "semesters-4",
+        id: "s4",
         number: 4,
         selections: [],
-        subjects: []
+        subjects: [],
+        modules: [
+
+        ]
     },
     {
-        id: "semesters-5",
+        id: "s5",
         number: 5,
         selections: [],
-        subjects: []
+        subjects: [],
+        modules: [
+
+        ]
     },
     {
-        id: "semesters-6",
+        id: "s6",
         number: 6,
         selections: [],
-        subjects: []
+        subjects: [],
+        modules: [
+
+        ]
     },
     {
-        id: "semesters-7",
+        id: "s7",
         number: 7,
         selections: [],
-        subjects: []
+        subjects: [],
+        modules: [
+
+        ]
     },
     {
-        id: "semesters-8",
+        id: "s8",
         number: 8,
         selections: [],
-        subjects: []
+        subjects: [],
+        modules: [
+
+        ]
     }
 ]

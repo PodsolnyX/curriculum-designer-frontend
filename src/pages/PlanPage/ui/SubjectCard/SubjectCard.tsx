@@ -68,7 +68,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                         <span className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}>*</span>
                     </Tooltip>
                 }
-                <div className={cls.dragLine} {...props}/>
+                <div className={cls.dragLine} {...rest}/>
                 <div className={"flex flex-col flex-1"}>
                     <div className={"flex gap-1 items-center"}>
                         {
