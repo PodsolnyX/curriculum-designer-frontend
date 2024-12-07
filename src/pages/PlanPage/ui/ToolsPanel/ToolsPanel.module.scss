@@ -1,0 +1,59 @@
+
+.icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  &:hover {
+    color: #388be1;
+
+    .fill {
+      * {
+        fill: #388be1;
+      }
+    }
+
+    .stroke {
+      * {
+        fill: none;
+        stroke: #388be1;
+      }
+    }
+  }
+
+  &__selected {
+    color: #388be1;
+
+    .fill {
+      * {
+        fill: #388be1;
+      }
+    }
+
+    .stroke {
+      * {
+        fill: none;
+        stroke: #388be1;
+      }
+    }
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.fill {
+  * {
+    fill: #6e6e6e;
+  }
+}
+
+.stroke {
+  * {
+    fill: none;
+    stroke: #6e6e6e;
+  }
+}

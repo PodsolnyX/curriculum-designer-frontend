@@ -5,12 +5,10 @@ import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
 import {
     DisplaySettings,
     ModuleSemesters,
-    ModuleSemestersInfo
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions
 } from "@/pages/PlanPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/PlanPage/types/Subject.ts";
-
-const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules"] as const;
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
@@ -21,6 +19,10 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     const [semesters, setSemesters] = useState<Semester[]>([]);
     const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
 
+    const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
+        editMode: false,
+        selectedEditItem: "subjects"
+    });
     const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
 
     // Добавление префиксов для контейнеров
@@ -219,6 +221,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         semesters,
         modulesSemesters,
         displaySettings,
+        toolsOptions,
+        setToolsOptions,
         setActiveSubject,
         handleDragStart,
         handleDragOver,
@@ -255,8 +259,10 @@ interface PlanContextValue {
     activeSubject: Subject | null;
     overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
+    toolsOptions: ToolsOptions;
     semesters: Semester[];
     modulesSemesters: ModuleSemesters[];
+    setToolsOptions(options: ToolsOptions): void;
     setActiveSubject(subject: Subject | null): void;
     handleDragStart(event: DragStartEvent): void;
     handleDragOver(event: DragOverEvent): void;
@@ -271,8 +277,13 @@ const PlanContext = createContext<PlanContextValue>({
     activeSubject: null,
     overItemId: null,
     displaySettings: PreDisplaySettings[0].settings,
+    toolsOptions: {
+      editMode: false,
+      selectedEditItem: "subjects"
+    },
     semesters: [],
     modulesSemesters: [],
+    setToolsOptions: (_options: ToolsOptions) => {},
     setActiveSubject: (_subject: Subject | null) => {},
     handleDragStart: (_event: DragEndEvent) => {},
     handleDragOver: (_event: DragOverEvent) => {},

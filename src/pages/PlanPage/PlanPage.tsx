@@ -15,6 +15,7 @@ import {SubjectCard} from "@/pages/PlanPage/ui/SubjectCard/SubjectCard.tsx";
 import {PlanProvider, usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {Popover} from "antd";
 import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.tsx";
+import ToolsPanel from "@/pages/PlanPage/ui/ToolsPanel/ToolsPanel.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -36,7 +37,8 @@ const PlanPageWrapped = () => {
 
     return (
         <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
-            <header className={"fixed left-0 top-0 p-3 bg-white/[0.7] backdrop-blur z-50 shadow-md flex justify-end max-w-screen w-full"}>
+            <header className={"fixed left-0 top-0 p-3 py-1 bg-white/[0.7] backdrop-blur z-50 shadow-md flex justify-end items-center gap-5 max-w-screen w-full"}>
+                <ToolsPanel/>
                 <Popover
                     content={DisplaySettingsPopover}
                     title={"Настройки отображения"}
@@ -60,7 +62,6 @@ const PlanPageWrapped = () => {
                         <SemesterField {...semester} key={semester.id}/>
                     )
                 }
-
                 <DragOverlay dropAnimation={dropAnimation}>
                     { activeItemId ? <SubjectCard id={activeItemId} {...activeSubject}/> : null }
                 </DragOverlay>

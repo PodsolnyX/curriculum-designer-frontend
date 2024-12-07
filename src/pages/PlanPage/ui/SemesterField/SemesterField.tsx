@@ -3,18 +3,21 @@ import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/PlanPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 import {Tag} from "antd";
-import React from "react";
+import React, {useState} from "react";
 import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
 import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/PlanPage/ui/ModuleField/ModuleField.tsx";
+import NewItemCard from "@/pages/PlanPage/ui/NewItemCard/NewItemCard.tsx";
 
 export interface SemesterFieldProps extends Semester {}
 
 export function SemesterField({number, subjects, modules, id, selections}: SemesterFieldProps) {
 
-    const { overItemId } = usePlan();
+    const { overItemId, toolsOptions } = usePlan();
+
+    const [addSubjectCard, setAddSubjectCard] = useState(false);
 
     const { setNodeRef } = useDroppable({
         id
@@ -40,6 +43,15 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
 
     const getSumAcademicHours = (): number => {
         return subjects.reduce((sum, sub) => sum + (sub.academicHours ? sub.academicHours.reduce((_sum, type) => _sum + type.value, 0) : 0), 0)
+    }
+
+    const onHoverSemester = () => {
+        if (toolsOptions.editMode)
+            setAddSubjectCard(true)
+    }
+
+    const onLeaveSemester = () => {
+        setAddSubjectCard(false)
     }
 
     return (
@@ -86,9 +98,10 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
             </div>
             {
                 (subjects.length || selections.length || modules.length) ?
-                    <div className={`flex flex-1 items-start gap-3`}>
+                    <div className={`flex flex-1 items-start gap-3`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
                         <SortableContext items={[...subjects, ...selections]} id={id}>
-                            <div className={"flex flex-wrap gap-3 max-w-[40vw] h-full w-full p-5 pt-20"}>
+                            <div className={"flex flex-wrap gap-3 w-full max-w-[60vw] p-5 pt-20"}
+                            >
                                 {
                                     subjects.map(subject => (
                                         <SortableSubjectCard
@@ -99,12 +112,15 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
                                     ))
                                 }
                                 {
+                                    addSubjectCard ? <NewItemCard/>  : null
+                                }
+                                {
                                     selections.map(selection =>
                                         <SelectionField key={selection.id} {...selection}/>
                                     )
                                 }
                             </div>
-                            <div className={"flex gap-3 px-5 h-full"}>
+                            <div className={"flex gap-3 pr-5 h-full"}>
                                 {
                                     modules.map(module =>
                                         <ModuleField key={module.id} {...module}/>
@@ -113,8 +129,13 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
                             </div>
                         </SortableContext>
                     </div> :
-                    <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400 py-16"}>
-                        <span>Семестр пуст</span>
+                    <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400 py-16"}
+                         onMouseEnter={onHoverSemester}
+                         onMouseLeave={onLeaveSemester}
+                    >
+                        {
+                            addSubjectCard ? <NewItemCard/> : <span>Семестр пуст</span>
+                        }
                     </div>
             }
         </div>

@@ -80,9 +80,22 @@ export const SemestersMocks: Semester[] = [
         ],
         modules: [
             {
-                name: "Модуль крутой",
+                name: "Математика для компьютерных наук",
                 id: "12345",
-                subjects: []
+                subjects: [
+                    {
+                        id: "рр44р3443",
+                        name: "Математика для компьютерных наук ч.1",
+                        credits: 4,
+                        attestation: AttestationType.Exam,
+                    },
+                    {
+                        id: "рр44р3443000",
+                        name: "Математика для компьютерных наук ч.2",
+                        credits: 4,
+                        attestation: AttestationType.Exam,
+                    },
+                ]
             }
         ]
     },
@@ -178,7 +191,26 @@ export const SemestersMocks: Semester[] = [
             {
                 name: "Модуль крутой",
                 id: "12345",
-                subjects: []
+                subjects: [
+                    {
+                        id: "рр44р34000043",
+                        name: "Математика для компьютерных наук ч.3",
+                        credits: 4,
+                        attestation: AttestationType.Exam,
+                    },
+                ]
+            },
+            {
+                name: "Экономика и предпринимательство",
+                id: "98765",
+                subjects: [
+                    {
+                        id: "876543rgthth",
+                        name: "Экономика",
+                        credits: 4,
+                        attestation: AttestationType.AssessmentTest,
+                    },
+                ]
             }
         ]
     },
@@ -209,6 +241,18 @@ export const SemestersMocks: Semester[] = [
                 name: "Модуль крутой",
                 id: "12345",
                 subjects: []
+            },
+            {
+                name: "Экономика и предпринимательство",
+                id: "98765",
+                subjects: [
+                    {
+                        id: "8765439444rgthth",
+                        name: "Предпринимательство",
+                        credits: 4,
+                        attestation: AttestationType.AssessmentTest,
+                    },
+                ]
             }
         ]
     },
@@ -218,7 +262,11 @@ export const SemestersMocks: Semester[] = [
         selections: [],
         subjects: [],
         modules: [
-
+            {
+                name: "Модуль крутой",
+                id: "12345",
+                subjects: []
+            }
         ]
     },
     {
