@@ -42,7 +42,7 @@ const Items: Item[] = [
         name: "Трек",
         icon: TracksIcon,
         iconStyle: "fill"
-    },
+    }
 ]
 
 const ToolsPanel = () => {

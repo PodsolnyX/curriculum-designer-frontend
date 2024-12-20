@@ -57,16 +57,18 @@
   gap: 10px;
   width: 100%;
   //height: 100%;
+  cursor: pointer;
   background-color: white;
   background-size: cover;
   border-radius: 8px;
   padding: 10px;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1 );
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
   outline: none;
   appearance: none;
   border: none;
   touch-action: none;
   border-left: 4px solid;
+  transition: scale .2s, box-shadow .2s;
 
   &:focus-visible:not(.active &) {
     box-shadow: 0 0 0 2px #4c9ffe;
@@ -74,6 +76,10 @@
 
   &:hover {
     .requiredIcon {
+      opacity: 1;
+    }
+
+    .notesIcon {
       opacity: 1;
     }
 
@@ -109,6 +115,31 @@
     }
   }
 
+  .notesIcon {
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    transition: .3s;
+    margin-left: auto;
+
+    &:hover {
+      * {
+        stroke: #3b3b3b;
+        color: #3b3b3b;
+      }
+    }
+
+    * {
+      fill: none;
+      stroke: #b6b6b6;
+    }
+
+    &_selected {
+      opacity: 1;
+    }
+  }
+
   .requiredIcon {
     position: absolute;
     color: #b6b6b6;
@@ -119,9 +150,13 @@
     transition: .3s;
     cursor: pointer;
 
+    &:hover {
+      color: #3b3b3b;
+    }
+
     &_selected {
       opacity: 1;
-      color: #4c9ffe;
+      color: #F90C0C;
     }
   }
 }
@@ -140,4 +175,10 @@
 
 .Elective {
   border-color: #8300B7;
+}
+
+.selected {
+  scale: 1.05;
+  z-index: 2;
+  box-shadow: 0 2px 8px 0 rgba(3, 137, 246, 0.6);
 }

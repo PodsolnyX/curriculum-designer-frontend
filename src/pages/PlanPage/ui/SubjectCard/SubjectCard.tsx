@@ -6,6 +6,9 @@ import {Tag, Tooltip} from "antd";
 import {AttestationType, AttestationTypeName, Subject, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
 import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
+import CommentIcon from "@/shared/assets/icons/comment.svg?react";
+import Icon from "@ant-design/icons";
+import CompetenceSelector from "@/pages/PlanPage/ui/CompetenceSelector.tsx";
 
 export enum Position {
     Before = -1,
@@ -38,11 +41,14 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
         semesterOrder,
         academicHours = [],
         competencies = [],
+        notes = [],
         ...rest
     } = props;
 
     const {
-        displaySettings
+        displaySettings,
+        selectedSubject,
+        onSelectSubject
     } = usePlan();
 
     const getSumAcademicHours = (): number => {
@@ -60,8 +66,9 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
             )}
             style={style}
             ref={ref}
+            onClick={() => onSelectSubject(selectedSubject?.id === props.id ? null : props)}
         >
-            <div className={classNames(cls.subjectCard, cls[type])}>
+            <div className={classNames(cls.subjectCard, cls[type], selectedSubject?.id === props.id && cls.selected)}>
                 {
                     displaySettings.required &&
                     <Tooltip title={required ? "Сделать по выбору" : "Сделать обязательным"}>
@@ -91,15 +98,22 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                 <div className={"flex gap-1"}>
                     {
                         displaySettings.credits &&
-                            <Tag color={"blue"} className={"m-0 text-[10px]"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
+                            <Tag color={"blue"} className={"m-0"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
                     }
                     {
                         displaySettings.attestation &&
-                            <Tag color={"default"} className={"m-0 text-[10px]"} bordered={false}>{AttestationTypeName[attestation]}</Tag>
+                            <Tag color={"default"} className={"m-0"} bordered={false}>{AttestationTypeName[attestation]}</Tag>
                     }
                     {
                         displaySettings.department &&
-                            <Tag className={"m-0"} rootClassName={"bg-transparent text-[10px]"}>{department}</Tag>
+                            <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department}</Tag>
+                    }
+                    {
+                        displaySettings.notesNumber &&
+                        <div className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}>
+                            <Icon component={CommentIcon}/>
+                            <span className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
+                        </div>
                     }
                 </div>
                 {
@@ -122,16 +136,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                         </div>
                 }
                 {
-                    displaySettings.competencies &&
-                        <div className={`flex flex-wrap gap-1 group items-center ${!competencies.length ? "justify-between": ""}`}>
-                            {
-                                competencies.length ?
-                                    competencies.map(competence =>
-                                        <Tag color={"default"} className={"m-0"} bordered={false} key={competence.value}>{competence.name}</Tag>
-                                    ) : <span className={"text-[10px] text-stone-400"}>Нет компетенций</span>
-                            }
-                            <Tag color={"default"} className={"m-0 group-hover:opacity-100 opacity-0 cursor-pointer min-w-10 text-center text-stone-400"} bordered={false}>+</Tag>
-                        </div>
+                    displaySettings.competencies && <CompetenceSelector competencies={competencies}/>
                 }
             </div>
         </li>

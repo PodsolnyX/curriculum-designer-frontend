@@ -13,6 +13,14 @@ export interface Subject {
     semesterOrder?: number;
     academicHours?: AcademicHours[];
     competencies?: Competencies[];
+    notes?: SubjectNote[];
+}
+
+export interface SubjectNote {
+    id: string;
+    author: string;
+    date: string;
+    text: string;
 }
 
 export interface AcademicHours {
@@ -21,6 +29,14 @@ export interface AcademicHours {
 }
 
 export interface Competencies {
+    id: string,
+    value: string,
+    name: string,
+    indicators: CompetenceIndicator[]
+}
+
+export interface CompetenceIndicator {
+    id: string,
     value: string,
     name: string
 }
@@ -28,8 +44,8 @@ export interface Competencies {
 export enum SubjectType {
     Subject = "Subject",
     Practice = "Practice",
-    StateCertification = "StateCertification",
-    Elective = "Elective"
+    Elective = "Elective",
+    StateCertification = "StateCertification"
 }
 
 export enum AttestationType {
@@ -42,4 +58,17 @@ export const AttestationTypeName: Record<AttestationType, string> = {
     [AttestationType.Test]: "За",
     [AttestationType.AssessmentTest]: "ЗаО",
     [AttestationType.Exam]: "Эк"
+}
+
+export const AttestationTypeFullName: Record<AttestationType, string> = {
+    [AttestationType.Test]: "Зачёт",
+    [AttestationType.AssessmentTest]: "Зачёт с оценкой",
+    [AttestationType.Exam]: "Экзамен"
+}
+
+export const SubjectTypeFullName: Record<SubjectType, {name: string, color: string}> = {
+    [SubjectType.Subject]: {name: "Дисциплина", color: "blue"},
+    [SubjectType.Practice]: {name: "Практика", color: "orange"},
+    [SubjectType.StateCertification]: {name: "ГИА", color: "red"},
+    [SubjectType.Elective]: {name: "Факультатив", color: "purple"}
 }

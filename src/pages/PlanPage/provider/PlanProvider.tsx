@@ -14,6 +14,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
+    const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
 
     const [semesters, setSemesters] = useState<Semester[]>([]);
@@ -24,6 +25,12 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         selectedEditItem: "subjects"
     });
     const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
+
+    // Выбор предмета
+
+    const onSelectSubject = (subject: Subject | null) => {
+      setSelectedSubject(subject);
+    }
 
     // Добавление префиксов для контейнеров
 
@@ -213,6 +220,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
             ...PreDisplaySettings.find(setting => setting.key === key).settings
         })
     }
+
+    console.log(selectedSubject);
     
     const value: PlanContextValue = {
         activeItemId,
@@ -222,6 +231,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         modulesSemesters,
         displaySettings,
         toolsOptions,
+        selectedSubject,
+        onSelectSubject,
         setToolsOptions,
         setActiveSubject,
         handleDragStart,
@@ -262,6 +273,8 @@ interface PlanContextValue {
     toolsOptions: ToolsOptions;
     semesters: Semester[];
     modulesSemesters: ModuleSemesters[];
+    selectedSubject: Subject | null;
+    onSelectSubject(subject: Subject | null): void;
     setToolsOptions(options: ToolsOptions): void;
     setActiveSubject(subject: Subject | null): void;
     handleDragStart(event: DragStartEvent): void;
@@ -283,6 +296,8 @@ const PlanContext = createContext<PlanContextValue>({
     },
     semesters: [],
     modulesSemesters: [],
+    selectedSubject: null,
+    onSelectSubject: (_subject: Subject | null) => {},
     setToolsOptions: (_options: ToolsOptions) => {},
     setActiveSubject: (_subject: Subject | null) => {},
     handleDragStart: (_event: DragEndEvent) => {},

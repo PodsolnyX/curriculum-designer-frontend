@@ -16,6 +16,7 @@ import {PlanProvider, usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx"
 import {Popover} from "antd";
 import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.tsx";
 import ToolsPanel from "@/pages/PlanPage/ui/ToolsPanel/ToolsPanel.tsx";
+import Sidebar from "@/pages/PlanPage/ui/Sidebar/Sidebar.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -34,6 +35,7 @@ const PlanPageWrapped = () => {
             coordinateGetter: sortableKeyboardCoordinates
         })
     );
+    
 
     return (
         <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
@@ -57,15 +59,18 @@ const PlanPageWrapped = () => {
                 onDragEnd={handleDragEnd}
                 measuring={measuring}
             >
-                {
-                    semesters.map(semester =>
-                        <SemesterField {...semester} key={semester.id}/>
-                    )
-                }
+                <div className={"flex flex-col min-w-[1500px]"}>
+                    {
+                        semesters.map(semester =>
+                            <SemesterField {...semester} key={semester.id}/>
+                        )
+                    }
+                </div>
                 <DragOverlay dropAnimation={dropAnimation}>
                     { activeItemId ? <SubjectCard id={activeItemId} {...activeSubject}/> : null }
                 </DragOverlay>
             </DndContext>
+            <Sidebar/>
         </div>
     )
 }
@@ -97,6 +102,13 @@ const dropAnimation: DropAnimation = {
         },
     }),
 } as DropAnimation;
+
+function removeTimestamps(text) {
+    // Regular expression to match time formats like 20:54, 0:15, 1:03:24, etc.
+    const timeRegex = /\b(?:\d{1,2}:){1,2}\d{2}\b/g;
+    // Replace all matches with an empty string
+    return text.replace(timeRegex, '').trim();
+}
 
 const PlanPage = () => {
     return (

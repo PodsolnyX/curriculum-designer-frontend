@@ -22,13 +22,13 @@ const ModuleField = ({subjects, name, id}: ModuleFieldProps) => {
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg`,
-        "first": `h-max mt-auto relative pb-3 mt-20 border-2 rounded-t-lg after:content-[''] after:w-full after:h-[2px] after:bg-stone-700 after:absolute after:bottom-[-2px] after:left-0`,
-        "middle": `${displaySettings.academicHours ? "pt-20" : "pt-3"} py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-stone-700 after:absolute after:bottom-[-2px] after:left-0`,
+        "first": `h-max mt-auto relative pb-3 mt-20 border-2 rounded-t-lg after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
+        "middle": `${displaySettings.academicHours ? "pt-20" : "pt-3"} py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
         "last": `${displaySettings.academicHours ? "pt-20" : "pt-3"} h-max py-3 pt-20 border-x-2 border-b-2 rounded-b-lg mb-5`
     }
 
     return (
-        <div className={`${styles[position]} flex w-[230px] flex-col border-dashed px-3 ${overItemId === id ? "border-blue-300" : "border-stone-700"}`} ref={setNodeRef}>
+        <div className={`${styles[position]} flex w-[230px] flex-col border-dashed px-3 ${overItemId === id ? "border-blue-300" : "border-stone-500"}`} ref={setNodeRef}>
             {
                 position === "first" ?
                     <div className={"flex justify-center py-2"}>

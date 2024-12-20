@@ -131,11 +131,11 @@ export const SemestersMocks: Semester[] = [
                 department: 143,
                 index: "Б1.О.05.01",
                 competencies: [
-                    { value: "БК-1", name: "БК-1" },
-                    { value: "БК-2", name: "БК-2" },
-                    { value: "УК-1", name: "УК-1" },
-                    { value: "УК-3", name: "УК-3" },
-                    { value: "ОПК-3", name: "ОПК-3" }
+                    { id: "БК-1", name: "БК-1", indicators: [] },
+                    { id: "БК-2", name: "БК-2", indicators: []},
+                    { id: "УК-1", name: "УК-1", indicators: [] },
+                    { id: "УК-3", name: "УК-3", indicators: [] },
+                    { id: "ОПК-3", name: "ОПК-3", indicators: [] }
                 ],
                 academicHours: [
                     {
@@ -178,6 +178,20 @@ export const SemestersMocks: Semester[] = [
                         key: "Конт",
                         value: 123,
                     }
+                ],
+                notes: [
+                    {
+                        id: "4444444444443",
+                        author: "Змеев Д. О.",
+                        date: "31-12-2022",
+                        text: "Проект на человек 8-10"
+                    },
+                    {
+                        id: "4444444444443",
+                        author: "Носков Б. А.",
+                        date: "12-12-2022",
+                        text: "Комментарий по поводу ведения предмета"
+                    },
                 ]
             },
             {
