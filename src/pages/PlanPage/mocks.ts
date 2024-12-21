@@ -131,11 +131,11 @@ export const SemestersMocks: Semester[] = [
                 department: 143,
                 index: "Б1.О.05.01",
                 competencies: [
-                    { id: "БК-1", name: "БК-1", indicators: [] },
-                    { id: "БК-2", name: "БК-2", indicators: []},
-                    { id: "УК-1", name: "УК-1", indicators: [] },
-                    { id: "УК-3", name: "УК-3", indicators: [] },
-                    { id: "ОПК-3", name: "ОПК-3", indicators: [] }
+                    { id: "БК-1", value: "БК-1" },
+                    { id: "БК-2", value: "БК-2" },
+                    { id: "УК-1", value: "УК-1" },
+                    { id: "УК-3", value: "УК-3" },
+                    { id: "ОПК-3", value: "ОПК-3" }
                 ],
                 academicHours: [
                     {

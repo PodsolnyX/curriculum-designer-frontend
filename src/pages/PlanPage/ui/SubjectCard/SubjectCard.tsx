@@ -9,6 +9,9 @@ import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
 import Icon from "@ant-design/icons";
 import CompetenceSelector from "@/pages/PlanPage/ui/CompetenceSelector.tsx";
+import AttestationTypeSelector from "@/pages/PlanPage/ui/AttestationTypeSelector.tsx";
+import CreditsSelector from "@/pages/PlanPage/ui/CreditsSelector.tsx";
+import CommentsPopover from "@/pages/PlanPage/ui/CommentsPopover.tsx";
 
 export enum Position {
     Before = -1,
@@ -72,7 +75,10 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                 {
                     displaySettings.required &&
                     <Tooltip title={required ? "Сделать по выбору" : "Сделать обязательным"}>
-                        <span className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}>*</span>
+                        <span
+                            onClick={(event) => event.stopPropagation()}
+                            className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}
+                        >*</span>
                     </Tooltip>
                 }
                 <div className={cls.dragLine} {...rest}/>
@@ -97,12 +103,10 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                 </div>
                 <div className={"flex gap-1"}>
                     {
-                        displaySettings.credits &&
-                            <Tag color={"blue"} className={"m-0"} bordered={false}>{`${credits} ЗЕТ`}</Tag>
+                        displaySettings.credits && <CreditsSelector credits={credits}/>
                     }
                     {
-                        displaySettings.attestation &&
-                            <Tag color={"default"} className={"m-0"} bordered={false}>{AttestationTypeName[attestation]}</Tag>
+                        displaySettings.attestation && <AttestationTypeSelector attestation={attestation}/>
                     }
                     {
                         displaySettings.department &&
@@ -110,10 +114,15 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                     }
                     {
                         displaySettings.notesNumber &&
-                        <div className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}>
-                            <Icon component={CommentIcon}/>
-                            <span className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
-                        </div>
+                        <CommentsPopover comments={notes}>
+                            <div
+                                className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                <Icon component={CommentIcon}/>
+                                <span className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
+                            </div>
+                        </CommentsPopover>
                     }
                 </div>
                 {

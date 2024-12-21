@@ -12,11 +12,11 @@ export interface Subject {
     notesNumber?: number;
     semesterOrder?: number;
     academicHours?: AcademicHours[];
-    competencies?: Competencies[];
-    notes?: SubjectNote[];
+    competencies?: {id: string, value: string}[];
+    notes?: SubjectComment[];
 }
 
-export interface SubjectNote {
+export interface SubjectComment {
     id: string;
     author: string;
     date: string;
