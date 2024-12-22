@@ -97,7 +97,8 @@ export const SemestersMocks: Semester[] = [
                     },
                 ]
             }
-        ]
+        ],
+        tracks: []
     },
     {
         id: "s2",
@@ -226,7 +227,8 @@ export const SemestersMocks: Semester[] = [
                     },
                 ]
             }
-        ]
+        ],
+        tracks: []
     },
     {
         id: "s3",
@@ -268,19 +270,30 @@ export const SemestersMocks: Semester[] = [
                     },
                 ]
             }
-        ]
+        ],
+        tracks: []
     },
     {
         id: "s4",
         number: 4,
         selections: [],
         subjects: [],
-        modules: [
+        modules: [],
+        tracks: [
             {
-                name: "Модуль крутой",
-                id: "12345",
+                id: "t433443",
+                name: "Профессиональный",
+                credits: 4,
+                color: "#6304c5",
                 subjects: []
-            }
+            },
+            {
+                id: "t2525252525225",
+                name: "Научный",
+                credits: 4,
+                color: "#04c548",
+                subjects: []
+            },
         ]
     },
     {
@@ -290,6 +303,20 @@ export const SemestersMocks: Semester[] = [
         subjects: [],
         modules: [
 
+        ],
+        tracks: [
+            {
+                id: "t433443",
+                name: "Профессиональный",
+                credits: 5,
+                subjects: []
+            },
+            {
+                id: "t2525252525225",
+                name: "Научный",
+                credits: 5,
+                subjects: []
+            },
         ]
     },
     {
@@ -299,7 +326,8 @@ export const SemestersMocks: Semester[] = [
         subjects: [],
         modules: [
 
-        ]
+        ],
+        tracks: []
     },
     {
         id: "s7",
@@ -308,7 +336,8 @@ export const SemestersMocks: Semester[] = [
         subjects: [],
         modules: [
 
-        ]
+        ],
+        tracks: []
     },
     {
         id: "s8",
@@ -317,6 +346,7 @@ export const SemestersMocks: Semester[] = [
         subjects: [],
         modules: [
 
-        ]
+        ],
+        tracks: []
     }
 ]

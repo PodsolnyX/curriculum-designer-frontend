@@ -10,10 +10,11 @@ import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/PlanPage/ui/ModuleField/ModuleField.tsx";
 import NewItemCard from "@/pages/PlanPage/ui/NewItemCard/NewItemCard.tsx";
+import TrackField from "@/pages/PlanPage/ui/TrackField/TrackField.tsx";
 
 export interface SemesterFieldProps extends Semester {}
 
-export function SemesterField({number, subjects, modules, id, selections}: SemesterFieldProps) {
+export function SemesterField({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
 
     const { overItemId, toolsOptions } = usePlan();
 
@@ -97,9 +98,9 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
                 </div>
             </div>
             {
-                (subjects.length || selections.length || modules.length) ?
+                (subjects.length || selections.length || modules.length || tracks.length) ?
                     <div className={`flex flex-1 items-start gap-3`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
-                        <SortableContext items={[...subjects, ...selections]} id={id}>
+                        <SortableContext items={[...subjects, ...selections, ...tracks, ...modules]} id={id}>
                             <div className={"flex flex-wrap gap-3 w-full max-w-[60vw] p-5 pt-20"}
                             >
                                 {
@@ -127,6 +128,16 @@ export function SemesterField({number, subjects, modules, id, selections}: Semes
                                     )
                                 }
                             </div>
+                            {
+                                tracks.length ?
+                                    <div className={"flex gap-3 pr-5 h-full"}>
+                                        {
+                                            tracks.map(track =>
+                                                <TrackField key={track.id} {...track}/>
+                                            )
+                                        }
+                                    </div> : null
+                            }
                         </SortableContext>
                     </div> :
                     <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400 py-16"}

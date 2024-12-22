@@ -5,7 +5,7 @@ import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
 import {
     DisplaySettings,
     ModuleSemesters,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSemesters, TrackSemestersInfo
 } from "@/pages/PlanPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/PlanPage/types/Subject.ts";
@@ -19,6 +19,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
     const [semesters, setSemesters] = useState<Semester[]>([]);
     const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
+    const [tracksSemesters, setTracksSemesters] = useState<TrackSemesters[]>([]);
 
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
         editMode: false,
@@ -37,6 +38,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     const addPrefixesForItems = (semesters: Semester[]) => {
 
         let modules: ModuleSemesters[] = [];
+        let tracks: TrackSemesters[] = [];
 
         const addPrefixes = (item: any, key: typeof PREFIX_ITEM_ID_KEYS[number]) => {
 
@@ -45,10 +47,27 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
             for (let _key of PREFIX_ITEM_ID_KEYS.filter(key => key !== "subjects")) {
                 if (Array.isArray(item[_key])) {
                     children[_key] = item[_key].map(subItem => {
-                        if (_key === "modules") {
+                        if (_key === "modules" || _key === "tracks") {
                             return addPrefixes({...subItem, id: getPrefixId(`${item.id}-${subItem.id}`, key)}, _key)
                         }
                         return addPrefixes(subItem, _key)
+                    })
+                }
+            }
+
+            if (key === "tracks") {
+                if (tracks.find(track => track.id === getItemIdFromPrefix(item.id))) {
+                    tracks = tracks.map(track => track.id !== getItemIdFromPrefix(item.id) ? track : {
+                        ...track,
+                        semesters: [...track.semesters, getPrefixId(item.id, key)]
+                    })
+                }
+                else {
+                    tracks.push({
+                        id: getItemIdFromPrefix(item.id),
+                        name: item.name,
+                        color: item.color || "#000000",
+                        semesters: [getPrefixId(item.id, key)]
                     })
                 }
             }
@@ -80,6 +99,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         const _semesters = addPrefixes({semesters: semesters}, "semesters").semesters;
 
         setModulesSemesters([...modules]);
+        setTracksSemesters([...tracks]);
 
         return _semesters;
     }
@@ -95,6 +115,17 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         return {
             position: index === 0 ? "first" : index === module?.semesters.length - 1 ? "last" : "middle",
             countSemesters: module.semesters.length
+        }
+    }
+
+    const getTrackSemesterPosition = (id: UniqueIdentifier): TrackSemestersInfo => {
+        const track = tracksSemesters.find(track => getItemIdFromPrefix(id) === track.id);
+        if (!track || track.semesters.length === 1) return { position: "single", countSemesters: 1, color: track.color }
+        const index = track.semesters.findIndex(module => module === id);
+        return {
+            position: index === 0 ? "first" : index === track?.semesters.length - 1 ? "last" : "middle",
+            countSemesters: track.semesters.length,
+            color: track.color
         }
     }
 
@@ -117,6 +148,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         const checkKeys = (obj: any) => {
             return PREFIX_ITEM_ID_KEYS.some(key => Object.keys(obj).includes(key));
         }
+
         const findParentIdActiveItem = (item: any): boolean => {
             for (let key of PREFIX_ITEM_ID_KEYS) {
                 if (Array.isArray(item[key])) {
@@ -221,7 +253,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         })
     }
 
-    console.log(selectedSubject);
+    console.log(tracksSemesters);
     
     const value: PlanContextValue = {
         activeItemId,
@@ -239,6 +271,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         handleDragOver,
         handleDragEnd,
         getModuleSemesterPosition,
+        getTrackSemesterPosition,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -281,6 +314,7 @@ interface PlanContextValue {
     handleDragOver(event: DragOverEvent): void;
     handleDragEnd(event: DragEndEvent): void;
     getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
+    getTrackSemesterPosition(id: UniqueIdentifier): TrackSemestersInfo;
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
     onSelectPreDisplaySetting(key: string): void;
 }
@@ -304,6 +338,7 @@ const PlanContext = createContext<PlanContextValue>({
     handleDragOver: (_event: DragOverEvent) => {},
     handleDragEnd: (_event: DragEndEvent) => {},
     getModuleSemesterPosition: (_id: UniqueIdentifier) => { return { position: "single", countSemesters: 0 } },
+    getTrackSemesterPosition: (_id: UniqueIdentifier) => { return { position: "single", countSemesters: 0, color : "#000000" } },
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {},
     onSelectPreDisplaySetting: (_key: string) => {}
 })

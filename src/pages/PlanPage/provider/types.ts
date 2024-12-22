@@ -1,6 +1,6 @@
 import {UniqueIdentifier} from "@dnd-kit/core";
 
-export const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules"] as const;
+export const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules", "tracks"] as const;
 
 export interface DisplaySettings {
     index: boolean;
@@ -25,10 +25,23 @@ export interface ModuleSemesters {
     semesters: UniqueIdentifier[];
 }
 
+export interface TrackSemesters {
+    id: string;
+    name: string;
+    color: string;
+    semesters: UniqueIdentifier[];
+}
+
 export type ModuleSemestersPosition = "first" | "middle" | "last" | "single";
 
 export interface ModuleSemestersInfo {
     position: ModuleSemestersPosition,
+    countSemesters: number
+}
+
+export interface TrackSemestersInfo {
+    position: ModuleSemestersPosition,
+    color: string,
     countSemesters: number
 }
 
