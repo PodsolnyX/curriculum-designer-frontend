@@ -63,7 +63,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                 insertPosition === Position.After && cls.insertAfter
             )}
             ref={ref}
-            onClick={() => onSelectSubject(selectedSubject?.id === props.id ? null : props)}
+            onClick={() => onSelectSubject(selectedSubject?.id === props.id ? null : props.id)}
         >
             <div className={classNames(cls.subjectCard, cls[type], selectedSubject?.id === props.id && cls.selected)}>
                 {

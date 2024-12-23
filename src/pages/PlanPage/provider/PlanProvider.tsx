@@ -10,13 +10,13 @@ import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/PlanPage/types/Subject.ts";
 import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
-import {IAttestationDto, ICompetenceDto} from "@/api/axios-client.ts";
+import {AtomDto, IAtomDto, IAttestationDto, ICompetenceDto} from "@/api/axios-client.ts";
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
-    const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+    const [selectedSubjectId, setSelectedSubjectId] = useState<UniqueIdentifier | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
 
     const {data} = useGetCurriculumQuery({id: 1});
@@ -34,8 +34,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
     // Выбор предмета
 
-    const onSelectSubject = (subject: Subject | null) => {
-      setSelectedSubject(subject);
+    const onSelectSubject = (id: number | null) => {
+        setSelectedSubjectId(id);
     }
 
     // Добавление префиксов для контейнеров
@@ -147,7 +147,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
                                     }
 
                                     return {
-                                        id: getPrefixId(atom.id, "subjects"),
+                                        id: atom.id,
                                         name: atom.name,
                                         type: atom.type,
                                         required: atom.isRequired,
@@ -322,7 +322,7 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         modulesSemesters,
         displaySettings,
         toolsOptions,
-        selectedSubject,
+        selectedSubject: data?.atoms ? data.atoms.find(atom => atom.id === selectedSubjectId) || null : null,
         attestationTypes,
         competences: data?.competences || [],
         onSelectSubject,
@@ -368,9 +368,9 @@ interface PlanContextValue {
     semesters: Semester[];
     attestationTypes: IAttestationDto[];
     modulesSemesters: ModuleSemesters[];
-    selectedSubject: Subject | null;
+    selectedSubject: IAtomDto | null;
     competences: ICompetenceDto[];
-    onSelectSubject(subject: Subject | null): void;
+    onSelectSubject(is: number | null): void;
     setToolsOptions(options: ToolsOptions): void;
     setActiveSubject(subject: Subject | null): void;
     handleDragStart(event: DragStartEvent): void;
@@ -396,7 +396,7 @@ const PlanContext = createContext<PlanContextValue>({
     selectedSubject: null,
     attestationTypes: [],
     competences: [],
-    onSelectSubject: (_subject: Subject | null) => {},
+    onSelectSubject: (_id: number | null) => {},
     setToolsOptions: (_options: ToolsOptions) => {},
     setActiveSubject: (_subject: Subject | null) => {},
     handleDragStart: (_event: DragEndEvent) => {},
