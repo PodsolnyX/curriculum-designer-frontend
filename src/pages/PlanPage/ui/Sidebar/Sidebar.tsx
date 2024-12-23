@@ -5,9 +5,11 @@ import {
     AttestationTypeFullName,
     SubjectType, SubjectTypeFullName
 } from "@/pages/PlanPage/types/Subject.ts";
-import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
 import React from "react";
 import CompetenceSelector from "@/pages/PlanPage/ui/CompetenceSelector.tsx";
+import AcademicHoursPanel from "@/pages/PlanPage/ui/AcademicHoursPanel.tsx";
+import {AtomType} from "@/api/axios-client.ts";
+import {AtomTypeFullName} from "@/pages/PlanPage/const/constants.ts";
 
 const Sidebar = () => {
 
@@ -84,13 +86,13 @@ const Sidebar = () => {
                 <span className={"font-bold text-[14px]"}>Тип</span>
                 <div className={"gap-1 flex flex-wrap"}>
                     {
-                        Object.values(SubjectType).map(_type =>
+                        Object.values(AtomType).map(_type =>
                             <Tag
-                                color={_type === type ? SubjectTypeFullName[_type].color : "default"}
+                                color={_type === type ? AtomTypeFullName[_type].color : "default"}
                                 className={"m-0 bg-transparent cursor-pointer"}
                                 key={_type}
                             >
-                                {SubjectTypeFullName[_type].name}
+                                {AtomTypeFullName[_type].name}
                             </Tag>
                         )
                     }
@@ -98,22 +100,7 @@ const Sidebar = () => {
             </div>
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Академические часы</span>
-                <div className={"flex flex-col gap-1"}>
-                    <div className={"grid grid-cols-2 gap-1"}>
-                        {
-                            AcademicTypes.map(type =>
-                                <div key={type.key} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                    <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{type.name}</div>
-                                    <div className={"text-[12px] pr-1"}>{academicHours.find(_type => _type.key === type.key)?.value || 0}</div>
-                                </div>
-                            )
-                        }
-                    </div>
-                    <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                        <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
-                        <div className={"text-[12px] pr-1"}>{`${getSumAcademicHours()}/${credits*36}`}</div>
-                    </div>
-                </div>
+                <AcademicHoursPanel credits={credits} academicHours={academicHours} size={"large"}/>
             </div>
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Компетенции</span>

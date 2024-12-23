@@ -2,48 +2,48 @@ import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import {AcademicType} from "@/pages/PlanPage/types/AcademicTypes.ts";
 
-export const AcademicTypes: AcademicType[] = [
-    {
-        key: "Лек",
-        name: "Лек",
-    },
-    {
-        key: "Лаб",
-        name: "Лаб",
-    },
-    {
-        key: "Пр",
-        name: "Пр",
-    },
-    {
-        key: "Сем",
-        name: "Сем",
-    },
-    {
-        key: "КРто",
-        name: "КРто",
-    },
-    {
-        key: "КРи",
-        name: "КРи",
-    },
-    {
-        key: "КРатт",
-        name: "КРатт",
-    },
-    {
-        key: "Контр",
-        name: "Контр",
-    },
-    {
-        key: "СР",
-        name: "СР",
-    },
-    {
-        key: "Конт",
-        name: "Конт",
-    }
-]
+// export const AcademicTypes: AcademicType[] = [
+//     {
+//         key: "Лек",
+//         name: "Лек",
+//     },
+//     {
+//         key: "Лаб",
+//         name: "Лаб",
+//     },
+//     {
+//         key: "Пр",
+//         name: "Пр",
+//     },
+//     {
+//         key: "Сем",
+//         name: "Сем",
+//     },
+//     {
+//         key: "КРто",
+//         name: "КРто",
+//     },
+//     {
+//         key: "КРи",
+//         name: "КРи",
+//     },
+//     {
+//         key: "КРатт",
+//         name: "КРатт",
+//     },
+//     {
+//         key: "Контр",
+//         name: "Контр",
+//     },
+//     {
+//         key: "СР",
+//         name: "СР",
+//     },
+//     {
+//         key: "Конт",
+//         name: "Конт",
+//     }
+// ]
 
 export const SemestersMocks: Semester[] = [
     {

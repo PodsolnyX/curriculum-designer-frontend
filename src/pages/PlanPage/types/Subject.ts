@@ -1,18 +1,20 @@
 import {UniqueIdentifier} from "@dnd-kit/core";
+import {
+    AtomType,
+    CompetenceDto,
+    CompetenceIndicatorDto,
+    IAtomDto, IAttestationDto, IHoursDistributionDto,
+    RefComponentSemesterDto
+} from "@/api/axios-client.ts";
 
-export interface Subject {
-    id: UniqueIdentifier;
-    name?: string;
-    credits?: number;
-    attestation?: AttestationType;
-    required?: boolean;
+export interface Subject extends IAtomDto {
     index?: string;
+    credits: number;
+    attestation?: IAttestationDto;
     department?: number;
-    type?: SubjectType;
-    notesNumber?: number;
     semesterOrder?: number;
-    academicHours?: AcademicHours[];
-    competencies?: {id: string, value: string}[];
+    academicHours?: IHoursDistributionDto[];
+    competencies?: {id: string, value: string, description: string}[];
     notes?: SubjectComment[];
 }
 
@@ -31,14 +33,14 @@ export interface AcademicHours {
 export interface Competencies {
     id: string,
     value: string,
-    name: string,
+    description: string,
     indicators: CompetenceIndicator[]
 }
 
 export interface CompetenceIndicator {
     id: string,
     value: string,
-    name: string
+    description: string
 }
 
 export enum SubjectType {

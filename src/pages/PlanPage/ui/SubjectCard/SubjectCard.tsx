@@ -1,10 +1,8 @@
 import React, {forwardRef} from 'react';
-import type {UniqueIdentifier} from '@dnd-kit/core';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Tag, Tooltip} from "antd";
-import {AttestationType, AttestationTypeName, Subject, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
-import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
+import {Subject} from "@/pages/PlanPage/types/Subject.ts";
 import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
 import Icon from "@ant-design/icons";
@@ -12,6 +10,8 @@ import CompetenceSelector from "@/pages/PlanPage/ui/CompetenceSelector.tsx";
 import AttestationTypeSelector from "@/pages/PlanPage/ui/AttestationTypeSelector.tsx";
 import CreditsSelector from "@/pages/PlanPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/PlanPage/ui/CommentsPopover.tsx";
+import {AtomType,} from "@/api/axios-client.ts";
+import AcademicHoursPanel from "@/pages/PlanPage/ui/AcademicHoursPanel.tsx";
 
 export enum Position {
     Before = -1,
@@ -19,9 +19,9 @@ export enum Position {
 }
 
 export interface SubjectCardProps extends Subject {
-    id: UniqueIdentifier;
     active?: boolean;
     clone?: boolean;
+    credits?: number;
     insertPosition?: Position;
 }
 
@@ -32,18 +32,17 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
         active,
         clone,
         insertPosition,
-        style,
+        parentModuleId,
         name = "",
-        credits = 0,
-        attestation = AttestationType.Test,
-        required = false,
         index = "Без индекса",
         department = "-",
-        type = SubjectType.Subject,
-        notesNumber = 0,
         semesterOrder,
+        isRequired = false,
+        type = AtomType.Subject,
         academicHours = [],
+        credits = 0,
         competencies = [],
+        attestation = [],
         notes = [],
         ...rest
     } = props;
@@ -54,10 +53,6 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
         onSelectSubject
     } = usePlan();
 
-    const getSumAcademicHours = (): number => {
-        return academicHours.reduce((_sum, type) => _sum + type.value, 0)
-    }
-
     return (
         <li
             className={classNames(
@@ -67,17 +62,16 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                 insertPosition === Position.Before && cls.insertBefore,
                 insertPosition === Position.After && cls.insertAfter
             )}
-            style={style}
             ref={ref}
             onClick={() => onSelectSubject(selectedSubject?.id === props.id ? null : props)}
         >
             <div className={classNames(cls.subjectCard, cls[type], selectedSubject?.id === props.id && cls.selected)}>
                 {
                     displaySettings.required &&
-                    <Tooltip title={required ? "Сделать по выбору" : "Сделать обязательным"}>
+                    <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
                         <span
                             onClick={(event) => event.stopPropagation()}
-                            className={classNames(cls.requiredIcon, required && cls.requiredIcon_selected)}
+                            className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
                         >*</span>
                     </Tooltip>
                 }
@@ -126,23 +120,7 @@ export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function 
                     }
                 </div>
                 {
-                    displaySettings.academicHours &&
-                        <div className={"flex flex-col gap-1"}>
-                            <div className={"grid grid-cols-2 gap-1"}>
-                                {
-                                    AcademicTypes.map(type =>
-                                        <div key={type.key} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                            <div className={"bg-stone-100 pr-1 text-stone-600 text-[10px]"}>{type.name}</div>
-                                            <div className={"text-[10px] pr-1"}>{academicHours.find(_type => _type.key === type.key)?.value || 0}</div>
-                                        </div>
-                                    )
-                                }
-                            </div>
-                            <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                <div className={"bg-stone-100 pr-1 text-stone-600 text-[10px]"}>{"Всего"}</div>
-                                <div className={"text-[10px] pr-1"}>{`${getSumAcademicHours()}/${credits*36}`}</div>
-                            </div>
-                        </div>
+                    displaySettings.academicHours && <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
                 }
                 {
                     displaySettings.competencies && <CompetenceSelector competencies={competencies}/>

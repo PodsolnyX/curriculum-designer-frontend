@@ -1,11 +1,24 @@
 import {QueryClient} from "@tanstack/react-query";
+import axios from "axios";
+import {setAxiosFactory} from "@/api/axios-client.ts";
+import {instance} from "@/shared/lib/api/api.ts";
+
+
+
+setAxiosFactory(() => instance);
 
 export const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             refetchOnWindowFocus: false,
-            //Время в мс, после которого данные из запросов будут считаться устаревшими
-            staleTime: 10 * 60 * 1000
+            throwOnError: false,
+            retry(failureCount, error) {
+                if (failureCount >= 3) return false;
+                if (axios.isAxiosError(error) && error.response?.status === 401) {
+                    return false;
+                }
+                return true;
+            },
         }
     }
 })

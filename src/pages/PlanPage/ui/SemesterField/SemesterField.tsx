@@ -4,19 +4,18 @@ import SortableSubjectCard from "@/pages/PlanPage/ui/SubjectCard/SortableSubject
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
 import {Tag} from "antd";
 import React, {useState} from "react";
-import {AcademicTypes} from "@/pages/PlanPage/mocks.ts";
 import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
-import {AttestationType, SubjectType} from "@/pages/PlanPage/types/Subject.ts";
 import SelectionField from "@/pages/PlanPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/PlanPage/ui/ModuleField/ModuleField.tsx";
 import NewItemCard from "@/pages/PlanPage/ui/NewItemCard/NewItemCard.tsx";
 import TrackField from "@/pages/PlanPage/ui/TrackField/TrackField.tsx";
+import {AtomType} from "@/api/axios-client.ts";
 
 export interface SemesterFieldProps extends Semester {}
 
 export function SemesterField({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
 
-    const { overItemId, toolsOptions } = usePlan();
+    const { overItemId, toolsOptions, attestationTypes } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
 
@@ -27,19 +26,19 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
     const {displaySettings} = usePlan();
 
     const getSumCredits = (): number => {
-        return subjects.reduce((sum, sub) => sum + (sub.type !== SubjectType.Elective ? sub.credits : 0), 0)
+        return subjects.reduce((sum, sub) => sum + (sub.type !== AtomType.Elective ? sub.credits : 0), 0)
     }
 
     const getSumElectiveCredits = (): number => {
-        return subjects.reduce((sum, sub) => sum + (sub.type === SubjectType.Elective ? sub.credits : 0), 0)
+        return subjects.reduce((sum, sub) => sum + (sub.type === AtomType.Elective ? sub.credits : 0), 0)
     }
 
     const getSumExams = (): number => {
-        return subjects.reduce((sum, sub) => sum + (sub.attestation === AttestationType.Exam ? 1 : 0), 0)
+        return subjects.reduce((sum, sub) => sum + (!(sub.attestation) || sub.attestation[0]?.shortName === "Эк" ? 1 : 0), 0)
     }
 
-    const getSumAcademicTypeHours = (key: string): number => {
-        return subjects.reduce((sum, sub) => sum + (sub.academicHours ? sub.academicHours.find(type => type.key === key).value : 0), 0)
+    const getSumAcademicTypeHours = (key: number): number => {
+        return subjects.reduce((sum, sub) => sum + (sub.academicHours ? (sub.academicHours.find(type => type.academicActivity.id === key)?.value || 0) : 0), 0)
     }
 
     const getSumAcademicHours = (): number => {
@@ -85,14 +84,14 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
                                 <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
                                 <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${getSumAcademicHours()}/${36*30}`}</div>
                             </div>
-                            {
-                                AcademicTypes.map(type =>
-                                    <div key={type.key} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                        <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{type.name}</div>
-                                        <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${getSumAcademicTypeHours(type.key)}`}</div>
-                                    </div>
-                                )
-                            }
+                            {/*{*/}
+                            {/*    attestationTypes.map(type =>*/}
+                            {/*        <div key={type.id} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>*/}
+                            {/*            <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{type.shortName}</div>*/}
+                            {/*            <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${getSumAcademicTypeHours(type.id)}`}</div>*/}
+                            {/*        </div>*/}
+                            {/*    )*/}
+                            {/*}*/}
                         </div>
                     }
                 </div>
@@ -101,7 +100,7 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
                 (subjects.length || selections.length || modules.length || tracks.length) ?
                     <div className={`flex flex-1 items-start gap-3`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
                         <SortableContext items={[...subjects, ...selections, ...tracks, ...modules]} id={id}>
-                            <div className={"flex flex-wrap gap-3 w-full max-w-[60vw] p-5 pt-20"}
+                            <div className={`flex flex-wrap gap-3 w-full ${modules.length ? "max-w-[60vw]" : "max-w-[100vw]"} p-5 pt-20`}
                             >
                                 {
                                     subjects.map(subject => (

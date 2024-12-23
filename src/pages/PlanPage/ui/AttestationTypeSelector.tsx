@@ -1,12 +1,13 @@
-import {AttestationType, AttestationTypeFullName, AttestationTypeName} from "@/pages/PlanPage/types/Subject.ts";
-import {Popover, Radio, Tag} from "antd";
+import {AttestationType, AttestationTypeFullName} from "@/pages/PlanPage/types/Subject.ts";
+import {Checkbox, Popover, Tag} from "antd";
 import React from "react";
+import {IAttestationDto} from "@/api/axios-client.ts";
 
 interface AttestationTypeSelectorProps {
-    attestation: AttestationType;
+    attestation?: IAttestationDto[];
 }
 
-const AttestationTypeSelector = ({attestation}: AttestationTypeSelectorProps) => {
+const AttestationTypeSelector = ({attestation = []}: AttestationTypeSelectorProps) => {
 
     const Selector = () => {
         return (
@@ -14,20 +15,22 @@ const AttestationTypeSelector = ({attestation}: AttestationTypeSelectorProps) =>
                 {
                     Object.values(AttestationType).map(type =>
                         <li key={type} className={"flex gap-1 items-center"}>
-                            <Radio
+                            <Checkbox
                                 value={type}
-                                checked={attestation === type}
+                                // checked={attestation. === type}
                             >
                                 <span className={"text-[12px]"}>
                                     {AttestationTypeFullName[type]}
                                 </span>
-                            </Radio>
+                            </Checkbox>
                         </li>
                     )
                 }
             </ul>
         )
     }
+
+    const _attestation = attestation && attestation[0];
 
     return (
         <Popover content={Selector} trigger={"click"} placement={"bottom"}>
@@ -37,7 +40,9 @@ const AttestationTypeSelector = ({attestation}: AttestationTypeSelectorProps) =>
                 bordered={false}
                 onClick={(event) => event.stopPropagation()}
             >
-                {AttestationTypeName[attestation]}
+                {
+                    _attestation ? _attestation.shortName : "-"
+                }
             </Tag>
         </Popover>
     )

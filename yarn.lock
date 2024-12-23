@@ -2151,6 +2151,11 @@ normalize-range@^0.1.2:
   resolved "https://registry.yarnpkg.com/normalize-range/-/normalize-range-0.1.2.tgz#2d10c06bdfd312ea9777695a4d28439456b75942"
   integrity sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==
 
+nswag-portable@13.20.0-v.17:
+  version "13.20.0-v.17"
+  resolved "https://registry.yarnpkg.com/nswag-portable/-/nswag-portable-13.20.0-v.17.tgz#dc25a2723ca5595f3c50999302d2a083b06c234e"
+  integrity sha512-rK1WrAGA62fEVLiyMFMI6U3oanbqIWrsvFCLS0faKrbKuPewF1FF6qZW/6eoakYoZOsNtU/U+SSG+/ktye5SWw==
+
 object-assign@^4.0.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
@@ -2697,6 +2702,13 @@ react-is@^18.2.0:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
+react-query-swagger@^15.12.3:
+  version "15.12.3"
+  resolved "https://registry.yarnpkg.com/react-query-swagger/-/react-query-swagger-15.12.3.tgz#a49d0b2ddb2175bd0b724965eb1f550472dbe7bc"
+  integrity sha512-CQobcO/gCYJd4382O8UXOWwmeUK9Za/JY9jCoXeJvKstmtRAsN+rpuDCbSTqWoHIdGOwQPI1jbIImXalM4+6hQ==
+  dependencies:
+    nswag-portable "13.20.0-v.17"
 
 react-router-dom@^7.0.1:
   version "7.0.1"

@@ -1,7 +1,6 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
 import {Semester} from "@/pages/PlanPage/types/Semester.ts";
-import {SemestersMocks} from "@/pages/PlanPage/mocks.ts";
 import {
     DisplaySettings,
     ModuleSemesters,
@@ -9,6 +8,9 @@ import {
 } from "@/pages/PlanPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/PlanPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/PlanPage/types/Subject.ts";
+import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
+import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
+import {IAttestationDto, ICompetenceDto} from "@/api/axios-client.ts";
 
 export const PlanProvider = ({ children }: { children: ReactNode }) => {
 
@@ -16,6 +18,9 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
     const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
+
+    const {data} = useGetCurriculumQuery({id: 1});
+    const {data: attestationTypes} = useSearchAttestationsQuery();
 
     const [semesters, setSemesters] = useState<Semester[]>([]);
     const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
@@ -105,8 +110,64 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
     }
 
     useEffect(() => {
-        setSemesters(addPrefixesForItems(SemestersMocks))
-    }, [])
+        if (data) {
+            setSemesters([
+                ...data.semesters?.map(semester => {
+                    return {
+                        id: getPrefixId(semester.id, "semesters"),
+                        number: semester.number,
+                        subjects: data.atoms
+                            ? data.atoms.filter(atom => atom.semesters
+                                ? (!atom?.parentModuleId && (!!atom.semesters.find(atomSemester => semester.id === atomSemester.semester.id)))
+                                : false).map(atom => {
+
+                                    const atomSemester = atom.semesters ? atom.semesters.find(atomSemester => semester.id === atomSemester.semester.id) : null;
+
+                                    if (!atomSemester) return null;
+
+                                    let competencies: {id: number, index: string, description: string}[] = [];
+
+                                    if (atom.competences.length) {
+                                        competencies = atom.competences.map(competence => {
+                                            return {
+                                                id: competence.id || 0,
+                                                index: competence.index || "",
+                                                description: competence.description
+                                            }
+                                        })
+                                    }
+                                    else if (atom.competenceIndicators.length) {
+                                        competencies = atom.competenceIndicators.map(competence => {
+                                            return {
+                                                id: competence.id,
+                                                index: competence.index,
+                                                description: competence.description
+                                            }
+                                        })
+                                    }
+
+                                    return {
+                                        id: getPrefixId(atom.id, "subjects"),
+                                        name: atom.name,
+                                        type: atom.type,
+                                        required: atom.isRequired,
+                                        credits: atomSemester.credit,
+                                        attestation: atomSemester.attestations,
+                                        semesterOrder: atom.semesters.length > 1 ? atom.semesters.findIndex(atomSemester => semester.id === atomSemester.semester.id) + 1 : null,
+                                        competencies: competencies,
+                                        academicHours: atomSemester.academicActivityHours
+                                    }
+                                })
+                            : [],
+                        selections: [],
+                        modules: [],
+                        tracks: []
+                    }
+                })
+            ])
+        }
+        // setSemesters(addPrefixesForItems(SemestersMocks))
+    }, [data])
 
     const getModuleSemesterPosition = (id: UniqueIdentifier): ModuleSemestersInfo => {
         const module = modulesSemesters.find(module => getItemIdFromPrefix(id) === module.id);
@@ -253,8 +314,6 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         })
     }
 
-    console.log(tracksSemesters);
-    
     const value: PlanContextValue = {
         activeItemId,
         activeSubject,
@@ -264,6 +323,8 @@ export const PlanProvider = ({ children }: { children: ReactNode }) => {
         displaySettings,
         toolsOptions,
         selectedSubject,
+        attestationTypes,
+        competences: data?.competences || [],
         onSelectSubject,
         setToolsOptions,
         setActiveSubject,
@@ -305,8 +366,10 @@ interface PlanContextValue {
     displaySettings: DisplaySettings;
     toolsOptions: ToolsOptions;
     semesters: Semester[];
+    attestationTypes: IAttestationDto[];
     modulesSemesters: ModuleSemesters[];
     selectedSubject: Subject | null;
+    competences: ICompetenceDto[];
     onSelectSubject(subject: Subject | null): void;
     setToolsOptions(options: ToolsOptions): void;
     setActiveSubject(subject: Subject | null): void;
@@ -331,6 +394,8 @@ const PlanContext = createContext<PlanContextValue>({
     semesters: [],
     modulesSemesters: [],
     selectedSubject: null,
+    attestationTypes: [],
+    competences: [],
     onSelectSubject: (_subject: Subject | null) => {},
     setToolsOptions: (_options: ToolsOptions) => {},
     setActiveSubject: (_subject: Subject | null) => {},
