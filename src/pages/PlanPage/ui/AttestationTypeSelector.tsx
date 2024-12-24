@@ -1,4 +1,4 @@
-import {AttestationType, AttestationTypeFullName} from "@/pages/PlanPage/types/Subject.ts";
+import {AttestationType} from "@/pages/PlanPage/types/Subject.ts";
 import {Checkbox, Popover, Tag} from "antd";
 import React from "react";
 import {IAttestationDto} from "@/api/axios-client.ts";
@@ -20,7 +20,7 @@ const AttestationTypeSelector = ({attestation = []}: AttestationTypeSelectorProp
                                 // checked={attestation. === type}
                             >
                                 <span className={"text-[12px]"}>
-                                    {AttestationTypeFullName[type]}
+                                    {/*{AttestationTypeFullName[type]}*/}
                                 </span>
                             </Checkbox>
                         </li>

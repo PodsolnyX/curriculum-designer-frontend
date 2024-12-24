@@ -17,7 +17,6 @@ import {Popover} from "antd";
 import DisplaySettingsPopover from "@/pages/PlanPage/ui/DisplaySettingsPopover.tsx";
 import ToolsPanel from "@/pages/PlanPage/ui/ToolsPanel/ToolsPanel.tsx";
 import Sidebar from "@/pages/PlanPage/ui/Sidebar/Sidebar.tsx";
-import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 
 const PlanPageWrapped = () => {
 

@@ -17,14 +17,14 @@ const CreditsSelector = ({credits}: CreditsSelectorProps) => {
                         size={"small"}
                         min={0}
                         max={30}
+                        className={"w-[50px]"}
                         value={credits}
-                        suffix={"ЗЕТ"}
                         onBlur={(value) => setIsEdit(false)}
                         autoFocus={true}
                     />
                     : <Tag
                         color={"blue"}
-                        className={"m-0 hover:cursor-text"}
+                        className={"m-0 hover:cursor-text hover:opacity-50"}
                         bordered={false}
                         onClick={() => setIsEdit(true)}
                     >
