@@ -3,4 +3,17 @@
     scrollbar-width: thin;
     scrollbar-color: #c4c4c4 white;
   }
+
+  .icon-24px {
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .icon-fill-white {
+    * {
+      fill: white;
+    }
+  }
 }

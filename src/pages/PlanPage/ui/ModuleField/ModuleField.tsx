@@ -7,10 +7,10 @@ import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 import {ModuleSemestersPosition} from "@/pages/PlanPage/provider/types.ts";
 
 interface ModuleFieldProps extends Module {
-
+    columnIndex: number;
 }
 
-const ModuleField = ({subjects, name, id}: ModuleFieldProps) => {
+const ModuleField = ({subjects, name, id, columnIndex}: ModuleFieldProps) => {
 
     const { overItemId, getModuleSemesterPosition, displaySettings } = usePlan();
 
@@ -18,9 +18,9 @@ const ModuleField = ({subjects, name, id}: ModuleFieldProps) => {
         id
     });
 
-    const {position} = getModuleSemesterPosition(id);
+    console.log(columnIndex)
 
-    console.log(position)
+    const {position} = getModuleSemesterPosition(id);
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg h-max`,
@@ -30,7 +30,7 @@ const ModuleField = ({subjects, name, id}: ModuleFieldProps) => {
     }
 
     return (
-        <div className={`${styles[position]} flex w-[230px] flex-col border-dashed px-3 ${overItemId === id ? "border-blue-300" : "border-stone-500"}`} ref={setNodeRef}>
+        <div className={`${styles[position]} flex w-[230px] flex-col border-dashed px-3 ${overItemId === id ? "border-blue-300" : "border-stone-500"}`} ref={setNodeRef} style={{gridColumn: columnIndex}}>
             {
                 (position === "first" || position === "single") ?
                     <div className={"flex justify-center py-2"}>

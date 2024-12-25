@@ -7,31 +7,6 @@ import { useContext } from 'react';
 import axios from 'axios';
 import type { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
-type ClientFactoryFunction = <T>(type: (new (...params: any[]) => T)) => T;
-let _clientFactoryFunction: ClientFactoryFunction = <T>(type: (new (...params: any[]) => T)) => {
-  const params = [_baseUrl, _axiosFactory()];
-  return new type(...params);
-};
-/*
-  Overrides default Client factory function
-*/
-export function setClientFactory(value: ClientFactoryFunction) {
-  _clientFactoryFunction = value;
-}
-
-/*
-  Returns current Client factory function
-*/
-export function getClientFactory() {
-  return _clientFactoryFunction;
-}
-
-/*
-  Function that will be called from `useQuery...` methods to get a client of certain type
-*/
-export function createClient<T>(type: (new () => T)) {
-  return _clientFactoryFunction(type);
-}
 const _resultTypesByQueryKey: Record<string, (data: any) => any> = {};
 export function addResultTypeFactory(typeName: string, factory: (data: any) => any) {
   _resultTypesByQueryKey[typeName] = factory;

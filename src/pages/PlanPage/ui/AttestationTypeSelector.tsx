@@ -1,26 +1,28 @@
-import {AttestationType} from "@/pages/PlanPage/types/Subject.ts";
 import {Checkbox, Popover, Tag} from "antd";
 import React from "react";
-import {IAttestationDto} from "@/api/axios-client.ts";
+import {AttestationDto} from "@/api/axios-client.types.ts";
+import {usePlan} from "@/pages/PlanPage/provider/PlanProvider.tsx";
 
 interface AttestationTypeSelectorProps {
-    attestation?: IAttestationDto[];
+    attestation?: AttestationDto[];
 }
 
 const AttestationTypeSelector = ({attestation = []}: AttestationTypeSelectorProps) => {
+
+    const {attestationTypes} = usePlan()
 
     const Selector = () => {
         return (
             <ul>
                 {
-                    Object.values(AttestationType).map(type =>
-                        <li key={type} className={"flex gap-1 items-center"}>
+                    attestationTypes.map(type =>
+                        <li key={type.id} className={"flex gap-1 items-center"}>
                             <Checkbox
-                                value={type}
-                                // checked={attestation. === type}
+                                value={type.id}
+                                checked={attestation?.some(attestation => attestation.id === type.id)}
                             >
                                 <span className={"text-[12px]"}>
-                                    {/*{AttestationTypeFullName[type]}*/}
+                                    {type.name}
                                 </span>
                             </Checkbox>
                         </li>
@@ -29,8 +31,6 @@ const AttestationTypeSelector = ({attestation = []}: AttestationTypeSelectorProp
             </ul>
         )
     }
-
-    const _attestation = attestation && attestation[0];
 
     return (
         <Popover content={Selector} trigger={"click"} placement={"bottom"}>
@@ -41,7 +41,7 @@ const AttestationTypeSelector = ({attestation = []}: AttestationTypeSelectorProp
                 onClick={(event) => event.stopPropagation()}
             >
                 {
-                    _attestation ? _attestation.shortName : "-"
+                    attestation?.length ? attestation.map(attestation => attestation.shortName).join(", ") : "-"
                 }
             </Tag>
         </Popover>

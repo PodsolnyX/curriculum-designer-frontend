@@ -7,21 +7,23 @@
 /* tslint:disable */
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
-import * as Types from '../axios-client';
+import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
 import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import { CurriculumClient as CurriculumClientClass } from '../axios-client';
-import { createClient, getClientFactory } from './helpers';
-
-export const Client = () => getClientFactory()(CurriculumClientClass);
+import * as Client from './CurriculumClient'
+export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 
 export type GetCurriculumCurriculumQueryParameters = {
+  id: number ;
+}
+
+export type DeleteCurriculumCurriculumQueryParameters = {
   id: number ;
 }
 
@@ -46,7 +48,7 @@ export function useCreateCurriculumMutation<TContext>(options?: Omit<UseMutation
   
   return useMutation({
     ...options,
-    mutationFn: (createCurriculumDto: Types.CreateCurriculumDto) => Client().createCurriculum(createCurriculumDto),
+    mutationFn: (createCurriculumDto: Types.CreateCurriculumDto) => Client.createCurriculum(createCurriculumDto),
     mutationKey: key,
   });
 }
@@ -74,8 +76,8 @@ export function searchCurriculumsQueryKey(...params: any[]): QueryKey {
     ]);
 }
 export function __searchCurriculums(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client().searchCurriculums(
-);
+  return Client.searchCurriculums(
+axiosConfig    );
 }
 
 export function useSearchCurriculumsQuery<TSelectData = Types.CurriculumShortDto[], TError = unknown>(options?: Omit<UseQueryOptions<Types.CurriculumShortDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
@@ -145,8 +147,8 @@ export function getCurriculumQueryKey(...params: any[]): QueryKey {
   }
 }
 export function __getCurriculum(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client().getCurriculum(
-      context.queryKey[2] as number);
+  return Client.getCurriculum(
+      context.queryKey[2] as number,axiosConfig    );
 }
 
 export function useGetCurriculumQuery<TSelectData = Types.CurriculumDto, TError = unknown>(dto: GetCurriculumCurriculumQueryParameters, options?: Omit<UseQueryOptions<Types.CurriculumDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
@@ -186,4 +188,49 @@ export function setGetCurriculumData(queryClient: QueryClient, updater: (data: T
 
 export function setGetCurriculumDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CurriculumDto | undefined) => Types.CurriculumDto) {
   queryClient.setQueryData(queryKey, updater);
+}
+    
+export function deleteCurriculumUrl(id: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{id}";
+if (id === undefined || id === null)
+  throw new Error("The parameter 'id' must be defined.");
+url_ = url_.replace("{id}", encodeURIComponent("" + id));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function deleteCurriculumMutationKey(id: number): MutationKey {
+  return trimArrayEnd([
+      'CurriculumClient',
+      'deleteCurriculum',
+      id as any,
+    ]);
+}
+
+export function useDeleteCurriculumMutation<TContext>(id: number, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+  const key = deleteCurriculumMutationKey(id);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: () => Client.deleteCurriculum(id),
+    mutationKey: key,
+  });
+}
+  
+type DeleteCurriculum__MutationParameters = DeleteCurriculumCurriculumQueryParameters
+
+export function useDeleteCurriculumMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteCurriculum__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteCurriculumCurriculumQueryParameters}): UseMutationResult<void, unknown, DeleteCurriculum__MutationParameters, TContext> {
+  const key = deleteCurriculumMutationKey(options?.parameters?.id!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: DeleteCurriculum__MutationParameters) => Client.deleteCurriculum(data.id ?? options?.parameters?.id!),
+  mutationKey: key,
+});
 }

@@ -15,7 +15,7 @@ export interface SemesterFieldProps extends Semester {}
 
 export function SemesterField({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
 
-    const { overItemId, toolsOptions, attestationTypes } = usePlan();
+    const { overItemId, toolsOptions, attestationTypes, modulesSemesters } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
 
@@ -120,10 +120,14 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
                                     )
                                 }
                             </div>
-                            <div className={"flex gap-3 pr-5 h-full"}>
+                            <div className={"grid pr-5 gap-x-2 h-full"} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>
                                 {
                                     modules.map(module =>
-                                        <ModuleField key={module.id} {...module}/>
+                                        <ModuleField
+                                            key={module.id}
+                                            {...module}
+                                            columnIndex={modulesSemesters.find(item =>item.semesters.includes(module.id))?.columnIndex + 1 || 1}
+                                        />
                                     )
                                 }
                             </div>

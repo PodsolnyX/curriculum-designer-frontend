@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api-client": "npx react-query-swagger /tanstack /input:http://45.142.122.53/swagger/v1/swagger.json /output:src/api/axios-client.ts /template:Axios"
+    "generate-api-client": "react-query-swagger openapi2tsclient /tanstack /input:http://45.142.122.53/swagger/v1/swagger.json /output:src/api/axios-client.ts /template:Axios /serviceHost:. /minimal"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
@@ -19,6 +19,7 @@
     "antd": "^5.22.2",
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

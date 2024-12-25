@@ -1,16 +1,18 @@
 import {
     AppRoutes,
     getRouteLogin,
-    getRouteMain, getRoutePlan
+    getRouteMain, getRoutePlan, getRoutePlanTitle
 } from "@/shared/const/router";
 import {AppRoutesProps} from "@/app/providers/router/AppRouter.tsx";
 import PlanPage from "@/pages/PlanPage/PlanPage.tsx";
+import PlansListPage from "@/pages/PlansListPage/PlansaListPage.tsx";
+import PlanTitlePage from "@/pages/PlanTitlePage/PlanTitlePage.tsx";
 
 export const routeConfig = (): Record<AppRoutes, AppRoutesProps> => {
     return ({
         [AppRoutes.MAIN]: {
             path: getRouteMain(),
-            element: <PlanPage/>
+            element: <PlansListPage/>
         },
         [AppRoutes.LOGIN]: {
             path: getRouteLogin(),
@@ -19,6 +21,10 @@ export const routeConfig = (): Record<AppRoutes, AppRoutesProps> => {
         [AppRoutes.PLAN]: {
             path: getRoutePlan(":id"),
             element: <PlanPage/>
+        },
+        [AppRoutes.TITLE]: {
+            path: getRoutePlanTitle(":id"),
+            element: <PlanTitlePage/>
         },
         [AppRoutes.NOT_FOUND]: {
             path: '*',

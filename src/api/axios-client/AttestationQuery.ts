@@ -7,17 +7,15 @@
 /* tslint:disable */
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
-import * as Types from '../axios-client';
+import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
 import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import { AttestationClient as AttestationClientClass } from '../axios-client';
-import { createClient, getClientFactory } from './helpers';
-
-export const Client = () => getClientFactory()(AttestationClientClass);
+import * as Client from './AttestationClient'
+export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export function searchAttestationsUrl(): string {
@@ -43,8 +41,8 @@ export function searchAttestationsQueryKey(...params: any[]): QueryKey {
     ]);
 }
 export function __searchAttestations(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client().searchAttestations(
-);
+  return Client.searchAttestations(
+axiosConfig    );
 }
 
 export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[], TError = unknown>(options?: Omit<UseQueryOptions<Types.AttestationDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;

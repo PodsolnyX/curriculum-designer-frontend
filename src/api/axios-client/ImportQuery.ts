@@ -7,29 +7,27 @@
 /* tslint:disable */
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
-import * as Types from '../axios-client';
+import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
 import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import { ImportClient as ImportClientClass } from '../axios-client';
-import { createClient, getClientFactory } from './helpers';
-
-export const Client = () => getClientFactory()(ImportClientClass);
+import * as Client from './ImportClient'
+export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type ImportImportQueryParameters = {
-  curriculumId: number | undefined ;
-  file: Types.FileParameter | null | undefined ;
+  curriculumId?: number | undefined ;
+  file?: Types.FileParameter | null | undefined ;
 }
 
 export type ImportImportMutationParameters = {
-  file: Types.FileParameter | null | undefined ;
+  file?: Types.FileParameter | null | undefined ;
 }
 
-export function importUrl(curriculumId: number | undefined): string {
+export function importUrl(curriculumId?: number | undefined): string {
   let url_ = getBaseUrl() + "/import?";
 if (curriculumId === null)
     throw new Error("The parameter 'curriculumId' cannot be null.");
@@ -39,7 +37,7 @@ else if (curriculumId !== undefined)
   return url_;
 }
 
-export function importMutationKey(curriculumId: number | undefined): MutationKey {
+export function importMutationKey(curriculumId?: number | undefined): MutationKey {
   return trimArrayEnd([
       'ImportClient',
       'import',
@@ -47,7 +45,7 @@ export function importMutationKey(curriculumId: number | undefined): MutationKey
     ]);
 }
 
-export function useImportMutation<TContext>(curriculumId: number | undefined, options?: Omit<UseMutationOptions<void, unknown, ImportImportMutationParameters, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, ImportImportMutationParameters, TContext> {
+export function useImportMutation<TContext>(curriculumId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, ImportImportMutationParameters, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, ImportImportMutationParameters, TContext> {
   const key = importMutationKey(curriculumId);
   
   const metaContext = useContext(QueryMetaContext);
@@ -55,7 +53,7 @@ export function useImportMutation<TContext>(curriculumId: number | undefined, op
   
   return useMutation({
     ...options,
-    mutationFn: (importImportMutationParameters: ImportImportMutationParameters) => Client().import(curriculumId, importImportMutationParameters.file),
+    mutationFn: (importImportMutationParameters: ImportImportMutationParameters) => Client.import_(curriculumId, importImportMutationParameters.file),
     mutationKey: key,
   });
 }
@@ -72,7 +70,7 @@ export function useImportMutationWithParameters<TContext>(options?: Omit<UseMuta
   
   return useMutation({
     ...options, 
-    mutationFn: (data: Import__MutationParameters) => Client().import(data.curriculumId, data.file),
+    mutationFn: (data: Import__MutationParameters) => Client.import_(data.curriculumId, data.file),
     mutationKey: key,
   });
 }

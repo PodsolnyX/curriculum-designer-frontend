@@ -2,6 +2,7 @@ export enum AppRoutes {
     MAIN = 'main',
     LOGIN = 'login',
     PLAN = 'plan',
+    TITLE = 'title',
     NOT_FOUND = 'not_found'
 }
 
@@ -9,7 +10,9 @@ export const getRouteMain = () => '/';
 
 export const getRouteLogin = () => '/login';
 
-export const getRoutePlan = (id: string) => `/curriculum/${id}/plan`;
+export const getRoutePlan = (id: string | number) => `/curriculum/${id}/plan`;
+
+export const getRoutePlanTitle = (id: string | number) => `/curriculum/${id}/title`;
 
 export const AppRouteByPathPattern: Record<string, AppRoutes> = {
     [getRouteMain()]: AppRoutes.MAIN,

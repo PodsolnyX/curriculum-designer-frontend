@@ -22,6 +22,8 @@ export interface PreDisplaySetting {
 export interface ModuleSemesters {
     id: string;
     name: string;
+    columnIndex: number;
+    startSemesterNumber: number;
     semesters: UniqueIdentifier[];
 }
 
