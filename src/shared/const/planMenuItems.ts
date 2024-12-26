@@ -1,4 +1,4 @@
-import {getRoutePlan, getRoutePlanTitle} from "@/shared/const/router.ts";
+import {getRoutePlan, getRoutePlanCompetencies, getRoutePlanTitle} from "@/shared/const/router.ts";
 import {PlanPageLayoutMenuItem} from "@/widgets/PlanPageLayout/PlanPageLayout.tsx";
 import DocumentIcon from "@/shared/assets/icons/document.svg?react";
 import BoardIcon from "@/shared/assets/icons/board.svg?react";
@@ -22,7 +22,7 @@ export const getPlanMenuItems = (id: number | string): PlanPageLayoutMenuItem[] 
         value: "competencies",
         name: "Компетенции",
         icon: HatIcon,
-        path: getRoutePlanTitle(id)
+        path: getRoutePlanCompetencies(id)
     },
     {
         value: "departments",

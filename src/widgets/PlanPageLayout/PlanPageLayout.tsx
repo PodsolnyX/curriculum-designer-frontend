@@ -29,7 +29,7 @@ const PlanPageLayout = ({menuItems, children, headerExtra, currentMenuItem}: Pla
                 <div className={"bg-[#1f2c37] flex-1 pt-10"}>
                     {
                         menuItems.map(item =>
-                            <Link to={item.path} className={`flex gap-4 border-l-4 border-solid pl-4 py-4 ${currentMenuItem === item.value ? "border-l-[#74a4a8]" : "border-l-transparent brightness-75"}`}>
+                            <Link key={item.name} to={item.path} className={`flex gap-4 border-l-4 border-solid pl-4 py-4 ${currentMenuItem === item.value ? "border-l-[#74a4a8]" : "border-l-transparent brightness-75"}`}>
                                 <Icon component={item.icon} className={"icon-24px icon-fill-white"}/>
                                 <Typography className={"text-white"}>{item.name}</Typography>
                             </Link>
