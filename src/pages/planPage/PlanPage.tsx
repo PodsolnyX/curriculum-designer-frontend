@@ -13,12 +13,9 @@ import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/planPage/ui/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import {PlanProvider, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {Button, Popover} from "antd";
-import DisplaySettingsPopover from "@/pages/planPage/ui/DisplaySettingsPopover.tsx";
-import ToolsPanel from "@/pages/planPage/ui/ToolsPanel/ToolsPanel.tsx";
 import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
-import {getRouteMain, getRoutePlanTitle} from "@/shared/const/router.ts";
-import {Link, useParams} from "react-router-dom";
+import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
+import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -26,12 +23,11 @@ const PlanPageWrapped = () => {
         semesters,
         activeItemId,
         activeSubject,
+        loadingPlan,
         handleDragStart,
         handleDragOver,
         handleDragEnd
     } = usePlan();
-
-    const {id} = useParams<{id: string | number}>();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -42,20 +38,8 @@ const PlanPageWrapped = () => {
 
     return (
         <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
-            <header className={"fixed left-0 top-0 p-3 py-1 bg-white/[0.7] backdrop-blur z-50 shadow-md flex items-center gap-5 max-w-screen w-full"}>
-                <Link to={getRoutePlanTitle(id || "")}>Титул</Link>
-                <Popover
-                    content={DisplaySettingsPopover}
-                    title={"Настройки отображения"}
-                    trigger={"click"}
-                    placement={"bottomLeft"}
-                >
-                    <span className={"cursor-pointer"}>
-                        Отображение
-                    </span>
-                </Popover>
-                <ToolsPanel/>
-            </header>
+            <PageLoader loading={loadingPlan}/>
+            <PlanHeader/>
             <DndContext
                 sensors={sensors}
                 onDragStart={handleDragStart}

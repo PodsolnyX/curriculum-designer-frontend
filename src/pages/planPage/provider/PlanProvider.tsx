@@ -22,7 +22,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {id} = useParams<{ id: string | number }>();
 
-    const {data} = useGetCurriculumQuery({id: Number(id)});
+    const {data, isLoading: loadingPlan} = useGetCurriculumQuery({id: Number(id)});
     const {data: attestationTypes} = useSearchAttestationsQuery();
 
     const [semesters, setSemesters] = useState<Semester[]>([]);
@@ -376,6 +376,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         selectedSubject: data?.atoms ? data.atoms.find(atom => String(atom.id) === selectedSubjectId) || null : null,
         attestationTypes,
         competences: data?.competences || [],
+        loadingPlan,
         onSelectSubject,
         setToolsOptions,
         setActiveSubject,
@@ -421,6 +422,7 @@ interface PlanContextValue {
     modulesSemesters: ModuleSemesters[];
     selectedSubject: AtomDto | null;
     competences: CompetenceDto[];
+    loadingPlan: boolean;
 
     onSelectSubject(is: UniqueIdentifier | null): void;
 
@@ -457,6 +459,7 @@ const PlanContext = createContext<PlanContextValue>({
     selectedSubject: null,
     attestationTypes: [],
     competences: [],
+    loadingPlan: true,
     onSelectSubject: (_id: number | null) => {
     },
     setToolsOptions: (_options: ToolsOptions) => {

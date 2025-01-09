@@ -58,7 +58,7 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
         <div ref={setNodeRef}
              className={`flex flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
             <div className={"absolute top-5 h-full left-5"}>
-                <div className={`sticky top-4 bottom-4 left-4 z-10 w-max flex gap-2`}>
+                <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
                     <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                         <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {number}</span>
                         <div className={"flex gap-1"}>
@@ -100,7 +100,10 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
                 (subjects.length || selections.length || modules.length || tracks.length) ?
                     <div className={`flex flex-1 items-start gap-3`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
                         <SortableContext items={[...subjects, ...selections, ...tracks, ...modules]} id={id}>
-                            <div className={`flex flex-wrap gap-3 w-full ${modules.length ? "max-w-[60vw]" : "max-w-[100vw]"} p-5 pt-20`}
+                            <div className={`flex flex-wrap gap-3 w-full p-5 pt-20`}
+                                 style={{
+                                     maxWidth: modules.length ? `calc(100vw - ${modulesSemesters.reduce((previousValue, currentValue) => Math.max(previousValue, currentValue.columnIndex),0) * 230}px)` : "100vw"
+                                 }}
                             >
                                 {
                                     subjects.map(subject => (
@@ -120,7 +123,7 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
                                     )
                                 }
                             </div>
-                            <div className={"grid pr-5 gap-x-2 h-full"} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>
+                            <div className={`grid pr-5 gap-x-2 h-full ${modules.length ? "w-auto" : "w-0"}`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, minmax(240px, 1fr))`}}>
                                 {
                                     modules.map(module =>
                                         <ModuleField

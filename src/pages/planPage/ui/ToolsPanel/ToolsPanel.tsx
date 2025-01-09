@@ -1,6 +1,4 @@
-import {Popover} from "antd";
 import Icon from '@ant-design/icons';
-import CursorIcon from "@/shared/assets/icons/cursor.svg?react";
 import SubjectIcon from "@/shared/assets/icons/subject.svg?react";
 import ModuleIcon from "@/shared/assets/icons/module.svg?react";
 import SelectionIcon from "@/shared/assets/icons/selection.svg?react";
@@ -70,26 +68,39 @@ const ToolsPanel = () => {
             </div>
         )
     }
-
+    const color = "#e5f1f3";
     return (
-        <div className={"flex gap-2 px-3 py-1 rounded-lg"}>
-            <div
-                className={classNames(cls.icon, !toolsOptions.editMode && cls.icon__selected)}
-                onClick={() => setToolsOptions({...toolsOptions, editMode: false})}
-            >
-                <Icon component={CursorIcon} className={cls.stroke}/>
-            </div>
-            <Popover content={ItemsSelect}>
-                <div
-                    className={classNames(cls.icon, toolsOptions.editMode && cls.icon__selected)}
-                    onClick={() => setToolsOptions({...toolsOptions, editMode: true})}
-                >
-                    <Icon
-                        component={Items.find(item => item.key === toolsOptions.selectedEditItem)?.icon}
-                        className={Items.find(item => item.key === toolsOptions.selectedEditItem)?.iconStyle === "stroke" ? cls.stroke : cls.fill}
-                    />
-                </div>
-            </Popover>
+        <div className={"flex gap-2 bg-[#f0f4f9] p-3 rounded-2xl"}>
+            {/*<div*/}
+            {/*    className={classNames(cls.icon, !toolsOptions.editMode && cls.icon__selected)}*/}
+            {/*    onClick={() => setToolsOptions({...toolsOptions, editMode: false})}*/}
+            {/*>*/}
+            {/*    <Icon component={CursorIcon} className={cls.stroke}/>*/}
+            {/*</div>*/}
+            {
+                Items.map(item =>
+                    <div
+                        className={classNames(cls.icon, toolsOptions.editMode && cls.icon__selected)}
+                        onClick={() => setToolsOptions({...toolsOptions, editMode: true})}
+                    >
+                        <Icon
+                            component={item.icon}
+                            className={item.iconStyle === "stroke" ? cls.stroke : cls.fill}
+                        />
+                    </div>
+                )
+            }
+            {/*<Popover content={ItemsSelect}>*/}
+            {/*    <div*/}
+            {/*        className={classNames(cls.icon, toolsOptions.editMode && cls.icon__selected)}*/}
+            {/*        onClick={() => setToolsOptions({...toolsOptions, editMode: true})}*/}
+            {/*    >*/}
+            {/*        <Icon*/}
+            {/*            component={Items.find(item => item.key === toolsOptions.selectedEditItem)?.icon}*/}
+            {/*            className={Items.find(item => item.key === toolsOptions.selectedEditItem)?.iconStyle === "stroke" ? cls.stroke : cls.fill}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*</Popover>*/}
         </div>
     )
 }
