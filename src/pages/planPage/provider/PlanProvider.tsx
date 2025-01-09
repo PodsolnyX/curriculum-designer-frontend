@@ -149,6 +149,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }
         }
 
+        console.log(data)
+
         if (data) {
             setSemesters([
                 ...data.semesters?.map(semester => {

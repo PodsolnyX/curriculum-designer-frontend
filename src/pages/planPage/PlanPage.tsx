@@ -7,6 +7,7 @@ import {
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
+import { Scrollbars } from 'react-custom-scrollbars';
 import {sortableKeyboardCoordinates} from '@dnd-kit/sortable';
 import {SemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
@@ -37,28 +38,34 @@ const PlanPageWrapped = () => {
     );
 
     return (
-        <div className={"flex flex-col bg-stone-100 relative pt-12 h-screen overflow-auto"}>
+        <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={loadingPlan}/>
             <PlanHeader/>
-            <DndContext
-                sensors={sensors}
-                onDragStart={handleDragStart}
-                onDragOver={handleDragOver}
-                onDragEnd={handleDragEnd}
-                measuring={measuring}
-            >
-                <div className={"flex flex-col min-w-[1500px]"}>
-                    {
-                        semesters.map(semester =>
-                            <SemesterField {...semester} key={semester.id}/>
-                        )
-                    }
-                </div>
-                <DragOverlay dropAnimation={dropAnimation}>
-                    { activeItemId ? <SubjectCard id={activeItemId} {...activeSubject}/> : null }
-                </DragOverlay>
-            </DndContext>
-            <Sidebar/>
+            <div className={"flex"}>
+                <DndContext
+                    sensors={sensors}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDragEnd={handleDragEnd}
+                    measuring={measuring}
+                >
+                    <Scrollbars
+                        style={{height: "calc(100vh - 62px)", width: "calc(100vw)"}}
+                    >
+                        <div className={"flex flex-col w-max h-full"}>
+                            {
+                                semesters.map(semester =>
+                                    <SemesterField {...semester} key={semester.id}/>
+                                )
+                            }
+                        </div>
+                    </Scrollbars>
+                    <DragOverlay dropAnimation={dropAnimation}>
+                        { activeItemId ? <SubjectCard id={activeItemId} {...activeSubject}/> : null }
+                    </DragOverlay>
+                </DndContext>
+                <Sidebar/>
+            </div>
         </div>
     )
 }

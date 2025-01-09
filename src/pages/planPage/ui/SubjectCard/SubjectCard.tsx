@@ -1,4 +1,4 @@
-import React, {forwardRef} from 'react';
+import React, {forwardRef, memo} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Tag, Tooltip} from "antd";
@@ -25,107 +25,112 @@ export interface SubjectCardProps extends Subject {
     insertPosition?: Position;
 }
 
-export const SubjectCard = forwardRef<HTMLLIElement, SubjectCardProps>(function SubjectCard(props, ref) {
+export const SubjectCardMemo =
+    forwardRef<HTMLLIElement, SubjectCardProps>((props, ref) => {
+        const {
+            id,
+            active,
+            clone,
+            insertPosition,
+            parentModuleId,
+            name = "",
+            index = "Без индекса",
+            department = "-",
+            semesterOrder,
+            isRequired = false,
+            type = AtomType.Subject,
+            academicHours = [],
+            credits = 0,
+            competencies = [],
+            attestation = [],
+            notes = [],
+            ...rest
+        } = props;
 
-    const {
-        id,
-        active,
-        clone,
-        insertPosition,
-        parentModuleId,
-        name = "",
-        index = "Без индекса",
-        department = "-",
-        semesterOrder,
-        isRequired = false,
-        type = AtomType.Subject,
-        academicHours = [],
-        credits = 0,
-        competencies = [],
-        attestation = [],
-        notes = [],
-        ...rest
-    } = props;
+        const {
+            displaySettings,
+            selectedSubject,
+            onSelectSubject
+        } = usePlan();
 
-    const {
-        displaySettings,
-        selectedSubject,
-        onSelectSubject
-    } = usePlan();
-
-    return (
-        <li
-            className={classNames(
-                cls.subjectCardWrapper,
-                active && cls.active,
-                clone && cls.clone,
-                insertPosition === Position.Before && cls.insertBefore,
-                insertPosition === Position.After && cls.insertAfter
-            )}
-            ref={ref}
-            onClick={() => onSelectSubject(String(selectedSubject?.id) === String(props.id) ? null : props.id)}
-        >
-            <div className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
-                {
-                    displaySettings.required &&
-                    <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
-                        <span
-                            onClick={(event) => event.stopPropagation()}
-                            className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
-                        >*</span>
-                    </Tooltip>
-                }
-                <div className={cls.dragLine} {...rest}/>
-                <div className={"flex flex-col flex-1"}>
-                    <div className={"flex gap-1 items-center"}>
-                        {
-                            displaySettings.index &&
-                            <span className={"text-[10px] text-stone-400"}>{index}</span>
-                        }
-                        {
-                            (displaySettings.index && semesterOrder)
-                                && <span className={"text-[8px] text-stone-400"}>•</span>
-                        }
-                        {
-                            semesterOrder &&
-                            <span className={"text-[10px] text-blue-500"}>{`Семестр: ${semesterOrder}`}</span>
-                        }
-                    </div>
-                    <div className={"text-black text-[12px] line-clamp-2 min-h-[36px]"}>
-                        {name}
-                    </div>
-                </div>
-                <div className={"flex gap-1"}>
+        return (
+            <li
+                className={classNames(
+                    cls.subjectCardWrapper,
+                    active && cls.active,
+                    clone && cls.clone,
+                    insertPosition === Position.Before && cls.insertBefore,
+                    insertPosition === Position.After && cls.insertAfter
+                )}
+                ref={ref}
+                onClick={() => onSelectSubject(String(selectedSubject?.id) === String(props.id) ? null : props.id)}
+            >
+                <div
+                    className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
                     {
-                        displaySettings.credits && <CreditsSelector credits={credits}/>
-                    }
-                    {
-                        displaySettings.attestation && <AttestationTypeSelector attestation={attestation}/>
-                    }
-                    {
-                        displaySettings.department &&
-                            <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department}</Tag>
-                    }
-                    {
-                        displaySettings.notesNumber &&
-                        <CommentsPopover comments={notes}>
-                            <div
-                                className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}
+                        displaySettings.required &&
+                        <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
+                            <span
                                 onClick={(event) => event.stopPropagation()}
-                            >
-                                <Icon component={CommentIcon}/>
-                                <span className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
-                            </div>
-                        </CommentsPopover>
+                                className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
+                            >*</span>
+                        </Tooltip>
+                    }
+                    <div className={cls.dragLine} {...rest}/>
+                    <div className={"flex flex-col flex-1"}>
+                        <div className={"flex gap-1 items-center"}>
+                            {
+                                displaySettings.index &&
+                                <span className={"text-[10px] text-stone-400"}>{index}</span>
+                            }
+                            {
+                                (displaySettings.index && semesterOrder)
+                                && <span className={"text-[8px] text-stone-400"}>•</span>
+                            }
+                            {
+                                semesterOrder &&
+                                <span className={"text-[10px] text-blue-500"}>{`Семестр: ${semesterOrder}`}</span>
+                            }
+                        </div>
+                        <div className={"text-black text-[12px] line-clamp-2 min-h-[36px]"}>
+                            {name}
+                        </div>
+                    </div>
+                    <div className={"flex gap-1"}>
+                        {
+                            displaySettings.credits && <CreditsSelector credits={credits}/>
+                        }
+                        {
+                            displaySettings.attestation && <AttestationTypeSelector attestation={attestation}/>
+                        }
+                        {
+                            displaySettings.department &&
+                            <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department}</Tag>
+                        }
+                        {
+                            displaySettings.notesNumber &&
+                            <CommentsPopover comments={notes}>
+                                <div
+                                    className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    <Icon component={CommentIcon}/>
+                                    <span
+                                        className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
+                                </div>
+                            </CommentsPopover>
+                        }
+                    </div>
+                    {
+                        displaySettings.academicHours &&
+                        <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
+                    }
+                    {
+                        displaySettings.competencies && <CompetenceSelector competencies={competencies}/>
                     }
                 </div>
-                {
-                    displaySettings.academicHours && <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
-                }
-                {
-                    displaySettings.competencies && <CompetenceSelector competencies={competencies}/>
-                }
-            </div>
-        </li>
-    );
-});
+            </li>
+        );
+    })
+
+export const SubjectCard = memo(SubjectCardMemo);

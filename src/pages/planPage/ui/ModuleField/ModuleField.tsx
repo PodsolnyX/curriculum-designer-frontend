@@ -1,5 +1,5 @@
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import React from "react";
+import React, {memo} from "react";
 import {Module} from "@/pages/planPage/types/Semester.ts";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
@@ -10,7 +10,7 @@ interface ModuleFieldProps extends Module {
     columnIndex: number;
 }
 
-const ModuleField = ({subjects, name, id, columnIndex}: ModuleFieldProps) => {
+const ModuleField = memo(({subjects, name, id, columnIndex}: ModuleFieldProps) => {
 
     const { overItemId, getModuleSemesterPosition, displaySettings } = usePlan();
 
@@ -49,6 +49,6 @@ const ModuleField = ({subjects, name, id, columnIndex}: ModuleFieldProps) => {
             </div>
         </div>
     )
-}
+})
 
 export default ModuleField;

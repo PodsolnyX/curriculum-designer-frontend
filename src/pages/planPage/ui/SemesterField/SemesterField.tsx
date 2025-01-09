@@ -3,7 +3,7 @@ import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {Tag} from "antd";
-import React, {useState} from "react";
+import React, {memo, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
@@ -13,7 +13,7 @@ import {AtomType} from "@/api/axios-client.ts";
 
 export interface SemesterFieldProps extends Semester {}
 
-export function SemesterField({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
+export const SemesterField = memo(function ({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
 
     const { overItemId, toolsOptions, attestationTypes, modulesSemesters } = usePlan();
 
@@ -56,8 +56,8 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
 
     return (
         <div ref={setNodeRef}
-             className={`flex flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
-            <div className={"absolute top-5 h-full left-5"}>
+             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
+            <div className={"absolute top-5 h-full w-full"}>
                 <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
                     <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                         <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {number}</span>
@@ -98,9 +98,9 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
             </div>
             {
                 (subjects.length || selections.length || modules.length || tracks.length) ?
-                    <div className={`flex flex-1 items-start gap-3`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
+                    <div className={`flex flex-1 items-start gap-3 px-5`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
                         <SortableContext items={[...subjects, ...selections, ...tracks, ...modules]} id={id}>
-                            <div className={`flex flex-wrap gap-3 w-full p-5 pt-20`}
+                            <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5`}
                                  style={{
                                      maxWidth: modules.length ? `calc(100vw - ${modulesSemesters.reduce((previousValue, currentValue) => Math.max(previousValue, currentValue.columnIndex),0) * 230}px)` : "100vw"
                                  }}
@@ -157,7 +157,7 @@ export function SemesterField({number, subjects, modules, tracks, id, selections
             }
         </div>
     );
-}
+})
 
 
 
