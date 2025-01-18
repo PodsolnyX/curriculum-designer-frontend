@@ -4,7 +4,7 @@ import {
     useSearchCurriculumsQuery
 } from "@/api/axios-client/CurriculumQuery.ts";
 import {Link} from "react-router-dom";
-import {getRouteMain, getRoutePlan, getRoutePlanTitle} from "@/shared/const/router.ts";
+import {getRouteMain, getRoutePlanTitle} from "@/shared/const/router.ts";
 import {Button, List, Popover, Skeleton, Table, TableProps, Typography} from "antd";
 import {DeleteOutlined, MoreOutlined} from "@ant-design/icons";
 import {AddPlanModal} from "@/pages/plansListPage/AddPlanModal.tsx";

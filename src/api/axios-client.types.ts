@@ -27,7 +27,6 @@ export interface CurriculumDto  {
   semesters: SemesterDto[];
   atoms: AtomDto[];
   modules: ModuleDto[];
-  competences: CompetenceDto[];
 }
 export function deserializeCurriculumDto(json: string): CurriculumDto {
   const data = JSON.parse(json) as CurriculumDto;
@@ -49,11 +48,6 @@ export function initCurriculumDto(_data: CurriculumDto) {
     if (Array.isArray(_data["modules"])) {
       _data.modules = _data["modules"].map(item => 
         initModuleDto(item)
-      );
-    }
-    if (Array.isArray(_data["competences"])) {
-      _data.competences = _data["competences"].map(item => 
-        initCompetenceDto(item)
       );
     }
   }
@@ -80,11 +74,6 @@ export function prepareSerializeCurriculumDto(_data: CurriculumDto): CurriculumD
   if (Array.isArray(_data.modules)) {
     data["modules"] = _data.modules.map(item => 
         prepareSerializeModuleDto(item)
-    );
-  }
-  if (Array.isArray(_data.competences)) {
-    data["competences"] = _data.competences.map(item => 
-        prepareSerializeCompetenceDto(item)
     );
   }
   return data as CurriculumDto;
@@ -311,7 +300,7 @@ export interface CompetenceDto  {
   id: number;
   index: string;
   category: string;
-  description: string;
+  name: string;
   type: CompetenceType;
   indicators: CompetenceIndicatorDto[];
 }
@@ -355,7 +344,7 @@ export enum CompetenceType {
 export interface CompetenceIndicatorDto  {
   id: number;
   index: string;
-  description: string;
+  name: string;
 }
 export function deserializeCompetenceIndicatorDto(json: string): CompetenceIndicatorDto {
   const data = JSON.parse(json) as CompetenceIndicatorDto;
@@ -473,6 +462,102 @@ export function serializeCurriculumShortDto(_data: CurriculumShortDto | undefine
 export function prepareSerializeCurriculumShortDto(_data: CurriculumShortDto): CurriculumShortDto {
   const data: Record<string, any> = { ..._data };
   return data as CurriculumShortDto;
+}
+export interface CreateCompetenceDto  {
+  category?: string;
+  name: string;
+  type: CompetenceType;
+}
+export function deserializeCreateCompetenceDto(json: string): CreateCompetenceDto {
+  const data = JSON.parse(json) as CreateCompetenceDto;
+  initCreateCompetenceDto(data);
+  return data;
+}
+export function initCreateCompetenceDto(_data: CreateCompetenceDto) {
+  if (_data) {
+    _data.type = _data["type"];
+  }
+  return _data;
+}
+export function serializeCreateCompetenceDto(_data: CreateCompetenceDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCreateCompetenceDto(_data as CreateCompetenceDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreateCompetenceDto(_data: CreateCompetenceDto): CreateCompetenceDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreateCompetenceDto;
+}
+export interface UpdateCompetenceDto  {
+  name?: string | null;
+  category?: string | null;
+  type?: CompetenceType | null;
+  order?: number | null;
+}
+export function deserializeUpdateCompetenceDto(json: string): UpdateCompetenceDto {
+  const data = JSON.parse(json) as UpdateCompetenceDto;
+  initUpdateCompetenceDto(data);
+  return data;
+}
+export function initUpdateCompetenceDto(_data: UpdateCompetenceDto) {
+  if (_data) {
+    _data.type = _data["type"];
+  }
+  return _data;
+}
+export function serializeUpdateCompetenceDto(_data: UpdateCompetenceDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUpdateCompetenceDto(_data as UpdateCompetenceDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUpdateCompetenceDto(_data: UpdateCompetenceDto): UpdateCompetenceDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UpdateCompetenceDto;
+}
+export interface CreateCompetenceIndicatorDto  {
+  name: string;
+}
+export function deserializeCreateCompetenceIndicatorDto(json: string): CreateCompetenceIndicatorDto {
+  const data = JSON.parse(json) as CreateCompetenceIndicatorDto;
+  initCreateCompetenceIndicatorDto(data);
+  return data;
+}
+export function initCreateCompetenceIndicatorDto(_data: CreateCompetenceIndicatorDto) {
+    return _data;
+}
+export function serializeCreateCompetenceIndicatorDto(_data: CreateCompetenceIndicatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCreateCompetenceIndicatorDto(_data as CreateCompetenceIndicatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreateCompetenceIndicatorDto(_data: CreateCompetenceIndicatorDto): CreateCompetenceIndicatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreateCompetenceIndicatorDto;
+}
+export interface UpdateCompetenceIndicatorDto  {
+  name?: string | null;
+  order?: number | null;
+}
+export function deserializeUpdateCompetenceIndicatorDto(json: string): UpdateCompetenceIndicatorDto {
+  const data = JSON.parse(json) as UpdateCompetenceIndicatorDto;
+  initUpdateCompetenceIndicatorDto(data);
+  return data;
+}
+export function initUpdateCompetenceIndicatorDto(_data: UpdateCompetenceIndicatorDto) {
+    return _data;
+}
+export function serializeUpdateCompetenceIndicatorDto(_data: UpdateCompetenceIndicatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUpdateCompetenceIndicatorDto(_data as UpdateCompetenceIndicatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUpdateCompetenceIndicatorDto(_data: UpdateCompetenceIndicatorDto): UpdateCompetenceIndicatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UpdateCompetenceIndicatorDto;
 }
 export function formatDate(d: Date) {
     return d.getFullYear() + '-' + 
