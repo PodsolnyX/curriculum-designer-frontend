@@ -1,5 +1,5 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {Badge, Checkbox, InputNumber, Segmented, Select, Tag} from "antd";
+import {Badge, Checkbox, InputNumber, Segmented, Select} from "antd";
 import React, {useEffect, useState} from "react";
 import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
@@ -41,7 +41,7 @@ const Sidebar = () => {
             return {
                 id: competence.id || 0,
                 index: competence.index || "",
-                description: competence.description
+                description: competence.name
             }
         })
     }
@@ -50,14 +50,14 @@ const Sidebar = () => {
             return {
                 id: competence.id,
                 index: competence.index,
-                description: competence.description
+                description: competence.name
             }
         })
     }
 
     return (
         <Scrollbars style={{height: "calc(100vh - 62px)", width: "300px"}}>
-            <div className={"bg-white/[0.8] backdrop-blur p-5 min-h-full w-full shadow-md flex flex-col gap-3"}>
+            <div className={"bg-white/[0.8] backdrop-blur p-5 min-h-full w-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
                 <div className={"flex flex-col"}>
                     <span className={"text-[12px] text-stone-400"}>{index}</span>
                     <div className={"text-black text-[18px]"}>
@@ -103,19 +103,6 @@ const Sidebar = () => {
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Промежуточная аттестация</span>
                     <Select options={attestationTypes.map(type => {return{value: type.id, label: type.name}})} mode={"multiple"} size={"small"} value={atomSemester.attestations.map(att => att.id)}/>
-                    {/*<div className={"gap-1 flex flex-wrap"}>*/}
-                    {/*    {*/}
-                    {/*        attestationTypes.map(type =>*/}
-                    {/*            <Tag*/}
-                    {/*                color={type.id === atomSemester.attestations[0].id ? "blue" : "default"}*/}
-                    {/*                className={"m-0 bg-transparent cursor-pointer"}*/}
-                    {/*                key={type.id}*/}
-                    {/*            >*/}
-                    {/*                {type.name}*/}
-                    {/*            </Tag>*/}
-                    {/*        )*/}
-                    {/*    }*/}
-                    {/*</div>*/}
                 </div>
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Академические часы</span>

@@ -1,5 +1,5 @@
 import {Checkbox, Input, Popover, Segmented, Tag, Tooltip} from "antd";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {DownOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
@@ -22,6 +22,17 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
     const AddCompetencePopover = () => {
 
         const [selectedType, setSelectedType] = useState<string>(CompetenceTypeName[CompetenceType.Basic].shortName);
+        const [search, setSearch] = useState<string>("");
+        const [selectedCompetence, setSelectedCompetence] = useState<CompetenceDto[]>([]);
+
+        useEffect(() => {
+            if (data) {
+                setSelectedCompetence(data
+                        .filter(competence => CompetenceTypeName[competence.type].shortName === selectedType)
+                        .filter(competence => competence.name.toLowerCase().indexOf(search.toLowerCase()) !== -1)
+                )
+            }
+        }, [selectedType, data, search]);
 
         return (
             <div className={"flex flex-col gap-1"}>
@@ -32,13 +43,17 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                     block
                     size={"small"}
                 />
-                <Input.Search size={"small"} placeholder={"Введите начало описания"}/>
+                <Input.Search
+                    size={"small"}
+                    placeholder={"Введите часть названия"}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
                 <div className={"flex flex-col max-h-[300px] overflow-y-auto scrollbar"}>
                     {
-                        data?.filter(competence => CompetenceTypeName[competence.type].shortName === selectedType)
-                            .map(competence =>
+                        selectedCompetence.length ? selectedCompetence.map(competence =>
                                 <CompetenceItem key={competence.id} {...competence}/>
-                        )
+                        ) : <span className={"text-stone-400 text-sm pt-2"}>Компетенций не найдено</span>
                     }
                 </div>
             </div>
