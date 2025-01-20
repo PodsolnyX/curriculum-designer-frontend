@@ -15,10 +15,9 @@ export interface SemesterFieldProps extends Semester {}
 
 export const SemesterField = memo(function ({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
 
-    const { overItemId, toolsOptions, attestationTypes, modulesSemesters } = usePlan();
+    const { overItemId, toolsOptions, modulesSemesters } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
-
     const { setNodeRef } = useDroppable({
         id
     });

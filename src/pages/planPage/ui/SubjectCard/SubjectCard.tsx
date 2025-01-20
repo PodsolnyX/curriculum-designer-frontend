@@ -1,4 +1,4 @@
-import React, {forwardRef, memo} from 'react';
+import React, {forwardRef, memo, useRef} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Tag, Tooltip} from "antd";
@@ -53,6 +53,8 @@ export const SubjectCardMemo =
             onSelectSubject
         } = usePlan();
 
+        const refScroll = useRef<HTMLDivElement | null>(null);
+
         return (
             <li
                 className={classNames(
@@ -66,6 +68,7 @@ export const SubjectCardMemo =
                 onClick={() => onSelectSubject(String(selectedSubject?.id) === String(props.id) ? null : props.id)}
             >
                 <div
+                    ref={refScroll}
                     className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
                     {
                         displaySettings.required &&
@@ -76,7 +79,7 @@ export const SubjectCardMemo =
                             >*</span>
                         </Tooltip>
                     }
-                    <div className={cls.dragLine} {...rest}/>
+                    <div  className={cls.dragLine} {...rest}/>
                     <div className={"flex flex-col flex-1"}>
                         <div className={"flex gap-1 items-center"}>
                             {

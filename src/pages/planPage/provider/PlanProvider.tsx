@@ -10,7 +10,7 @@ import {PreDisplaySettings} from "@/pages/planPage/provider/displaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
-import {AtomDto, AttestationDto, CompetenceDto, ModuleDto, SemesterDto} from "@/api/axios-client.ts";
+import {AtomDto, AttestationDto, ModuleDto, SemesterDto} from "@/api/axios-client.ts";
 import {useParams} from "react-router-dom";
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
@@ -19,6 +19,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
     const [selectedSubjectId, setSelectedSubjectId] = useState<UniqueIdentifier | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
+    const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
     const {id} = useParams<{ id: string | number }>();
 
@@ -41,73 +42,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setSelectedSubjectId(id);
     }
 
-    // Добавление префиксов для контейнеров
-
-    const addPrefixesForItems = (semesters: Semester[]) => {
-
-        let modules: ModuleSemesters[] = [];
-        let tracks: TrackSemesters[] = [];
-
-        const addPrefixes = (item: any, key: typeof PREFIX_ITEM_ID_KEYS[number]) => {
-
-            let children = {};
-
-            for (let _key of PREFIX_ITEM_ID_KEYS.filter(key => key !== "subjects")) {
-                if (Array.isArray(item[_key])) {
-                    children[_key] = item[_key].map(subItem => {
-                        if (_key === "modules" || _key === "tracks") {
-                            return addPrefixes({...subItem, id: getPrefixId(`${item.id}-${subItem.id}`, key)}, _key)
-                        }
-                        return addPrefixes(subItem, _key)
-                    })
-                }
-            }
-
-            if (key === "tracks") {
-                if (tracks.find(track => track.id === getItemIdFromPrefix(item.id))) {
-                    tracks = tracks.map(track => track.id !== getItemIdFromPrefix(item.id) ? track : {
-                        ...track,
-                        semesters: [...track.semesters, getPrefixId(item.id, key)]
-                    })
-                } else {
-                    tracks.push({
-                        id: getItemIdFromPrefix(item.id),
-                        name: item.name,
-                        color: item.color || "#000000",
-                        semesters: [getPrefixId(item.id, key)]
-                    })
-                }
-            }
-
-            if (key === "modules") {
-                if (modules.find(module => module.id === getItemIdFromPrefix(item.id))) {
-                    modules = modules.map(module => module.id !== getItemIdFromPrefix(item.id) ? module : {
-                        ...module,
-                        semesters: [...module.semesters, getPrefixId(item.id, key)]
-                    })
-                } else {
-                    modules.push({
-                        id: getItemIdFromPrefix(item.id),
-                        name: item.name,
-                        semesters: [getPrefixId(item.id, key)]
-                    })
-                }
-            }
-
-
-            return {
-                ...item,
-                id: getPrefixId(item.id, key),
-                ...children
-            }
-        }
-
-        const _semesters = addPrefixes({semesters: semesters}, "semesters").semesters;
-
-        setModulesSemesters([...modules]);
-        setTracksSemesters([...tracks]);
-
-        return _semesters;
+    const onSelectCompetence = (id: UniqueIdentifier | null) => {
+        setSelectedCompetenceId(id);
     }
 
     useEffect(() => {
@@ -149,8 +85,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }
         }
 
-        console.log(data)
-
         if (data) {
             setSemesters([
                 ...data.semesters?.map(semester => {
@@ -188,7 +122,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                 return {
                     id: competence.id || 0,
                     index: competence.index || "",
-                    description: competence.description
+                    description: competence.name
                 }
             })
         } else if (atom.competenceIndicators.length) {
@@ -196,7 +130,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                 return {
                     id: competence.id,
                     index: competence.index,
-                    description: competence.description
+                    description: competence.name
                 }
             })
         }
@@ -377,8 +311,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         toolsOptions,
         selectedSubject: data?.atoms ? data.atoms.find(atom => String(atom.id) === selectedSubjectId) || null : null,
         attestationTypes,
-        competences: data?.competences || [],
         loadingPlan,
+        selectedCompetenceId,
+        onSelectCompetence,
         onSelectSubject,
         setToolsOptions,
         setActiveSubject,
@@ -423,10 +358,12 @@ interface PlanContextValue {
     attestationTypes: AttestationDto[];
     modulesSemesters: ModuleSemesters[];
     selectedSubject: AtomDto | null;
-    competences: CompetenceDto[];
     loadingPlan: boolean;
+    selectedCompetenceId: UniqueIdentifier | null;
 
-    onSelectSubject(is: UniqueIdentifier | null): void;
+    onSelectCompetence(id: number | null): void;
+
+    onSelectSubject(id: UniqueIdentifier | null): void;
 
     setToolsOptions(options: ToolsOptions): void;
 
@@ -460,8 +397,10 @@ const PlanContext = createContext<PlanContextValue>({
     modulesSemesters: [],
     selectedSubject: null,
     attestationTypes: [],
-    competences: [],
     loadingPlan: true,
+    selectedCompetenceId: null,
+
+    onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: number | null) => {
     },
     setToolsOptions: (_options: ToolsOptions) => {
@@ -485,3 +424,72 @@ const PlanContext = createContext<PlanContextValue>({
     onSelectPreDisplaySetting: (_key: string) => {
     }
 })
+
+// Добавление префиксов для контейнеров
+
+// const addPrefixesForItems = (semesters: Semester[]) => {
+//
+//     let modules: ModuleSemesters[] = [];
+//     let tracks: TrackSemesters[] = [];
+//
+//     const addPrefixes = (item: any, key: typeof PREFIX_ITEM_ID_KEYS[number]) => {
+//
+//         let children = {};
+//
+//         for (let _key of PREFIX_ITEM_ID_KEYS.filter(key => key !== "subjects")) {
+//             if (Array.isArray(item[_key])) {
+//                 children[_key] = item[_key].map(subItem => {
+//                     if (_key === "modules" || _key === "tracks") {
+//                         return addPrefixes({...subItem, id: getPrefixId(`${item.id}-${subItem.id}`, key)}, _key)
+//                     }
+//                     return addPrefixes(subItem, _key)
+//                 })
+//             }
+//         }
+//
+//         if (key === "tracks") {
+//             if (tracks.find(track => track.id === getItemIdFromPrefix(item.id))) {
+//                 tracks = tracks.map(track => track.id !== getItemIdFromPrefix(item.id) ? track : {
+//                     ...track,
+//                     semesters: [...track.semesters, getPrefixId(item.id, key)]
+//                 })
+//             } else {
+//                 tracks.push({
+//                     id: getItemIdFromPrefix(item.id),
+//                     name: item.name,
+//                     color: item.color || "#000000",
+//                     semesters: [getPrefixId(item.id, key)]
+//                 })
+//             }
+//         }
+//
+//         if (key === "modules") {
+//             if (modules.find(module => module.id === getItemIdFromPrefix(item.id))) {
+//                 modules = modules.map(module => module.id !== getItemIdFromPrefix(item.id) ? module : {
+//                     ...module,
+//                     semesters: [...module.semesters, getPrefixId(item.id, key)]
+//                 })
+//             } else {
+//                 modules.push({
+//                     id: getItemIdFromPrefix(item.id),
+//                     name: item.name,
+//                     semesters: [getPrefixId(item.id, key)]
+//                 })
+//             }
+//         }
+//
+//
+//         return {
+//             ...item,
+//             id: getPrefixId(item.id, key),
+//             ...children
+//         }
+//     }
+//
+//     const _semesters = addPrefixes({semesters: semesters}, "semesters").semesters;
+//
+//     setModulesSemesters([...modules]);
+//     setTracksSemesters([...tracks]);
+//
+//     return _semesters;
+// }

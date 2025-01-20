@@ -11,7 +11,6 @@ interface SelectionFieldProps extends Selection {}
 const SelectionField = memo(({subjects, name, credits, id}: SelectionFieldProps) => {
 
     const { overItemId } = usePlan();
-
     const { setNodeRef } = useDroppable({
         id
     });

@@ -4,6 +4,8 @@ import {DownOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
+import {useParams} from "react-router-dom";
+import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
 
 interface CompetenceSelectorProps {
     competencies: {id: number, index: string, description: string}[];
@@ -12,7 +14,10 @@ interface CompetenceSelectorProps {
 
 const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorProps) => {
 
-    const { competences } = usePlan();
+    const { selectedCompetenceId, onSelectCompetence } = usePlan();
+
+    const {id} = useParams<{ id: string }>();
+    const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
 
     const AddCompetencePopover = () => {
 
@@ -30,8 +35,7 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                 <Input.Search size={"small"} placeholder={"Введите начало описания"}/>
                 <div className={"flex flex-col max-h-[300px] overflow-y-auto scrollbar"}>
                     {
-                        competences
-                            .filter(competence => CompetenceTypeName[competence.type].shortName === selectedType)
+                        data?.filter(competence => CompetenceTypeName[competence.type].shortName === selectedType)
                             .map(competence =>
                                 <CompetenceItem key={competence.id} {...competence}/>
                         )
@@ -41,7 +45,7 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
         )
     }
 
-    const CompetenceItem = ({id, description, index, indicators}: CompetenceDto) => {
+    const CompetenceItem = ({id, name, index, indicators}: CompetenceDto) => {
 
         const [showIndicators, setShowIndicators] = useState(false);
 
@@ -62,7 +66,7 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                         </span>
                     </div>
                     <div className={"flex gap-1 items-center"}>
-                        <Tooltip title={description} placement={"right"}>
+                        <Tooltip title={name} placement={"right"}>
                             <InfoCircleOutlined className={"w-[12px] text-stone-400"} />
                         </Tooltip>
                         <DownOutlined className={"w-[10px] text-stone-400"} rotate={showIndicators ? 180 : 0} onClick={() => setShowIndicators(!showIndicators)}/>
@@ -80,7 +84,7 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                                                 {indicator.index}
                                             </span>
                                         </div>
-                                        <Tooltip title={indicator.description} placement={"right"}>
+                                        <Tooltip title={indicator.name} placement={"right"}>
                                             <InfoCircleOutlined className={"w-[12px] text-stone-400"} type={"secondary"}/>
                                         </Tooltip>
                                     </div>
@@ -100,10 +104,11 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                 competencies.length ?
                     competencies.map(competence =>
                         <Tag
-                            color={"default"}
+                            color={selectedCompetenceId === competence.id ? "purple" : "default"}
                             className={`m-0 group/item flex gap-1 cursor-pointer`}
                             bordered={size !== "small"}
                             key={competence.id}
+                            onClick={() => onSelectCompetence(competence.id)}
                         >
                             <Tooltip title={competence.description}>
                                 <span className={`${size === "small" ? "text-[12px]" : "text-[14px]"}`}>
