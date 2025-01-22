@@ -23,13 +23,13 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const { activeItemId, setActiveSubject, selectedSubject } = usePlan();
+    const { selectedSubject } = usePlan();
 
-    useEffect(() => {
-        if (activeItemId === id) {
-            setActiveSubject(props)
-        }
-    }, [activeItemId])
+    // useEffect(() => {
+    //     if (activeItemId === id) {
+    //         setActiveSubject(props)
+    //     }
+    // }, [activeItemId])
 
     const getPosition = (): Position | undefined => {
         if (over?.id === id) return Position.Before

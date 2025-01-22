@@ -6,7 +6,7 @@ export interface Semester {
     subjects: Subject[];
     selections: Selection[];
     modules: Module[];
-    tracks: Track[];
+    trackSelection: TrackSelection[];
 }
 
 export interface Selection {
@@ -20,6 +20,12 @@ export interface Module {
     id: string;
     name: string;
     subjects: Subject[];
+}
+
+export interface TrackSelection {
+    id: number;
+    name: string;
+    tracks: Track[];
 }
 
 export interface Track {

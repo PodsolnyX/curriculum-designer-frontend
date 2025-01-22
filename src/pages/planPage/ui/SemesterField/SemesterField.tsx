@@ -3,48 +3,52 @@ import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {Tag} from "antd";
-import React, {memo, useState} from "react";
+import React, {memo, useMemo, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
 import NewItemCard from "@/pages/planPage/ui/NewItemCard/NewItemCard.tsx";
 import TrackField from "@/pages/planPage/ui/TrackField/TrackField.tsx";
 import {AtomType} from "@/api/axios-client.ts";
+import {AttestationType, Subject} from "@/pages/planPage/types/Subject.ts";
+import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 
 export interface SemesterFieldProps extends Semester {}
 
-export const SemesterField = memo(function ({number, subjects, modules, tracks, id, selections}: SemesterFieldProps) {
+export const SemesterField = memo(function ({number, subjects, modules, trackSelection, id, selections}: SemesterFieldProps) {
 
     const { overItemId, toolsOptions, modulesSemesters } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
+    const [newSubject, setNewSubject] = useState<Subject | null>(null);
+
     const { setNodeRef } = useDroppable({
         id
     });
 
     const {displaySettings} = usePlan();
 
-    const getSumCredits = (): number => {
+    const sumCredits: number = useMemo(() => {
         return subjects.reduce((sum, sub) => sum + (sub.type !== AtomType.Elective ? sub.credits : 0), 0)
-    }
+    }, [subjects])
 
-    const getSumElectiveCredits = (): number => {
+    const sumElectiveCredits: number = useMemo(() => {
         return subjects.reduce((sum, sub) => sum + (sub.type === AtomType.Elective ? sub.credits : 0), 0)
-    }
+    }, [subjects])
 
-    const getSumExams = (): number => {
+    const sumExams: number = useMemo(() => {
         return subjects.reduce((sum, sub) => sum + (!(sub.attestation) || sub.attestation[0]?.shortName === "Эк" ? 1 : 0), 0)
-    }
+    }, [subjects])
 
     const getSumAcademicTypeHours = (key: number): number => {
         return subjects.reduce((sum, sub) => sum + (sub.academicHours ? (sub.academicHours.find(type => type.academicActivity.id === key)?.value || 0) : 0), 0)
     }
 
-    const getSumAcademicHours = (): number => {
+    const sumAcademicHours: number = useMemo(() => {
         return subjects.reduce((sum, sub) => sum + (sub.academicHours ? sub.academicHours.reduce((_sum, type) => _sum + type.value, 0) : 0), 0)
-    }
+    }, [subjects])
 
-    const onHoverSemester = () => {
+    const onHoverSemester = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (toolsOptions.editMode)
             setAddSubjectCard(true)
     }
@@ -53,8 +57,23 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
         setAddSubjectCard(false)
     }
 
+    const onAddSubject = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (addSubjectCard) {
+            event.stopPropagation()
+            console.log("Я добавил карточку в семестр")
+            setNewSubject({
+                id: 1,
+                name: "Новый предмет",
+                credits: 0,
+                isRequired: false,
+                type: AtomType.Subject,
+            })
+        }
+    }
+
     return (
         <div ref={setNodeRef}
+             onClick={(event) => onAddSubject(event)}
              className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
             <div className={"absolute top-5 h-full w-full"}>
                 <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
@@ -63,15 +82,15 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
                         <div className={"flex gap-1"}>
                             {
                                 displaySettings.credits &&
-                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${getSumCredits()} / 30 ЗЕТ`}</Tag>
+                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${sumCredits} / 30 ЗЕТ`}</Tag>
                             }
                             {
                                 displaySettings.attestation &&
-                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${getSumExams()} / 3 Эк`}</Tag>
+                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${sumExams} / 3 Эк`}</Tag>
                             }
                             {
-                                (displaySettings.credits && getSumElectiveCredits()) ?
-                                    <Tag color={"purple"} className={"m-0"} bordered={false}>{`${getSumElectiveCredits()} ЗЕТ`}</Tag>
+                                (displaySettings.credits && sumElectiveCredits) ?
+                                    <Tag color={"purple"} className={"m-0"} bordered={false}>{`${sumElectiveCredits} ЗЕТ`}</Tag>
                                     : null
                             }
                         </div>
@@ -81,7 +100,7 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
                         <div className={"flex gap-2 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                             <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
                                 <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
-                                <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${getSumAcademicHours()}/${36*30}`}</div>
+                                <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${sumAcademicHours}/${36*30}`}</div>
                             </div>
                             {/*{*/}
                             {/*    attestationTypes.map(type =>*/}
@@ -97,8 +116,13 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
             </div>
             {
                 (subjects.length || selections.length || modules.length || tracks.length) ?
-                    <div className={`flex flex-1 items-start gap-3 px-5`} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}>
-                        <SortableContext items={[...subjects, ...selections, ...tracks, ...modules]} id={id}>
+                    <div className={`flex flex-1 items-start gap-3 px-5 relative`}
+                         onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}
+                    >
+                        {
+                            addSubjectCard ? <div className={"absolute w-full -ml-5 h-full border-sky-500 cursor-pointer border-dashed border-2"}></div>  : null
+                        }
+                        <SortableContext items={[...subjects, ...selections, ...trackSelection, ...modules]} id={id}>
                             <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5`}
                                  style={{
                                      maxWidth: modules.length ? `calc(100vw - ${modulesSemesters.reduce((previousValue, currentValue) => Math.max(previousValue, currentValue.columnIndex),0) * 230}px)` : "100vw"
@@ -114,7 +138,7 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
                                     ))
                                 }
                                 {
-                                    addSubjectCard ? <NewItemCard/>  : null
+                                    newSubject && <SubjectCard {...newSubject}/>
                                 }
                                 {
                                     selections.map(selection =>
@@ -134,14 +158,19 @@ export const SemesterField = memo(function ({number, subjects, modules, tracks, 
                                 }
                             </div>
                             {
-                                tracks.length ?
-                                    <div className={"flex gap-3 pr-5 h-full"}>
-                                        {
-                                            tracks.map(track =>
-                                                <TrackField key={track.id} {...track}/>
-                                            )
-                                        }
-                                    </div> : null
+                                trackSelection.length ?
+                                    trackSelection.map(selection =>
+                                        <div key={selection.id}>
+                                            <span>{selection.name}</span>
+                                            <div className={"flex gap-3 pr-5 h-full"}>
+                                                {
+                                                    selection.tracks.map(track =>
+                                                        <TrackField key={track.id} {...track}/>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                    ) : null
                             }
                         </SortableContext>
                     </div> :

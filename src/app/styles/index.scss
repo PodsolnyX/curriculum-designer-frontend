@@ -1,11 +1,11 @@
+@use "themes/light";
+@use "variables";
+@use "reset";
+@use "tailwindcss/base";
+@use "tailwindcss/components";
+@use "tailwindcss/utilities";
+@use "tailwindUtilities";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-@import "themes/light";
-@import "variables";
-@import "reset";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@import "utilities";
 
 * {
   font-family: "Inter", sans-serif;

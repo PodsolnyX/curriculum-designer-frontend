@@ -2,7 +2,7 @@ import {PlusOutlined} from "@ant-design/icons";
 
 const NewItemCard = () => {
     return (
-        <div className={"bg-white/[0.6] w-[200px] min-h-[80px] flex justify-center items-center rounded-xl cursor-pointer"}>
+        <div className={"w-full h-full bg-sky-500"}>
             <PlusOutlined style={{ fontSize: "64px" }}/>
         </div>
     )

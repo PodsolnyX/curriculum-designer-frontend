@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
-import {Module, Selection, Semester} from "@/pages/planPage/types/Semester.ts";
+import {Module, Selection, Semester, Track, TrackSelection} from "@/pages/planPage/types/Semester.ts";
 import {
     DisplaySettings,
     ModuleSemesters,
@@ -38,8 +38,23 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     // Выбор предмета
 
-    const onSelectSubject = (id: UniqueIdentifier | null) => {
+    const onSelectSubject = (id: UniqueIdentifier | null, semesterOrder?: number) => {
+
+        if (String(selectedSubjectId) === String(id)) {
+            setSelectedSubjectId(null);
+            setActiveSubject(null);
+            return;
+        }
+
         setSelectedSubjectId(id);
+
+        const atom = data ? (data.atoms.find(atom => String(atom.id) === String(id)) || null) : null;
+
+        if (atom === null) return;
+
+        const semester = atom.semesters[0];
+
+        setActiveSubject(parseAtomToSubject(atom, semester.semester.id))
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
@@ -85,6 +100,20 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }
         }
 
+        const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSelection => {
+            console.log(module, semester)
+
+            return (
+                {
+                    id: module.id,
+                    name: module.name,
+                    tracks: module.modules
+                        .filter(module => module.semesterIds.some(id => id === semester.id))
+                        .map(module => { return { ...parseModule(module, semester), color: "#ff0000", credits: 0 } })
+                }
+            )
+        }
+
         if (data) {
             setSemesters([
                 ...data.semesters?.map(semester => {
@@ -102,7 +131,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                         modules: data.modules
                             .filter(module => !module.selection && module.atoms.some(atom => atom.semesters.some(_semester => _semester.semester.id === semester.id)))
                             .map(module => parseModule(module, semester)),
-                        tracks: []
+                        trackSelection: data.modules
+                            .filter(module => module.modules.length && module.modules.some(module => module.semesterIds.some(id => id === semester.id)))
+                            .map(module => parseTrackSelection(module, semester)),
                     }
                 })
             ])
@@ -363,7 +394,7 @@ interface PlanContextValue {
 
     onSelectCompetence(id: number | null): void;
 
-    onSelectSubject(id: UniqueIdentifier | null): void;
+    onSelectSubject(id: UniqueIdentifier | null, semesterOrder?: number): void;
 
     setToolsOptions(options: ToolsOptions): void;
 
@@ -401,7 +432,7 @@ const PlanContext = createContext<PlanContextValue>({
     selectedCompetenceId: null,
 
     onSelectCompetence: (_id: number | null) => { },
-    onSelectSubject: (_id: number | null) => {
+    onSelectSubject: (_id: number | null, semesterOrder?: number) => {
     },
     setToolsOptions: (_options: ToolsOptions) => {
     },

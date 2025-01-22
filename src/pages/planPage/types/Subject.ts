@@ -1,8 +1,5 @@
 import {
-    AtomType,
-    IAtomDto,
-    IAttestationDto,
-    IHoursDistributionDto
+    AtomType, AttestationDto, HoursDistributionDto,
 } from "@/api/axios-client.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
 
@@ -13,10 +10,10 @@ export interface Subject {
     isRequired: boolean,
     index?: string;
     credits: number;
-    attestation?: IAttestationDto[];
+    attestation?: AttestationDto[];
     department?: number;
     semesterOrder?: number;
-    academicHours?: IHoursDistributionDto[];
+    academicHours?: HoursDistributionDto[];
     competencies?: {id: number, index: string, description: string}[];
     notes?: SubjectComment[];
 }

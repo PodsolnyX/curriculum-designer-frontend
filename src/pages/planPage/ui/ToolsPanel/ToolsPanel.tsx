@@ -80,8 +80,12 @@ const ToolsPanel = () => {
             {
                 Items.map(item =>
                     <div
-                        className={classNames(cls.icon, toolsOptions.editMode && cls.icon__selected)}
-                        onClick={() => setToolsOptions({...toolsOptions, editMode: true})}
+                        key={item.key}
+                        className={classNames(cls.icon, (toolsOptions.editMode && toolsOptions.selectedEditItem === item.key) && cls.icon__selected)}
+                        onClick={() => (toolsOptions.editMode && toolsOptions.selectedEditItem === item.key)
+                            ? setToolsOptions({...toolsOptions, editMode: false})
+                            : setToolsOptions({...toolsOptions, selectedEditItem: item.key, editMode: true})
+                        }
                     >
                         <Icon
                             component={item.icon}

@@ -8,7 +8,7 @@ import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 
 interface TrackFieldProps extends Track {}
 
-const TrackField = ({subjects, name, id}: TrackFieldProps) => {
+const TrackField = ({subjects, name, id, color}: TrackFieldProps) => {
 
     const { overItemId, getTrackSemesterPosition, displaySettings } = usePlan();
 
@@ -16,7 +16,9 @@ const TrackField = ({subjects, name, id}: TrackFieldProps) => {
         id
     });
 
-    const { position, color } = getTrackSemesterPosition(id);
+    // const { position, color } = getTrackSemesterPosition(id);
+
+    const position = "first";
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg`,

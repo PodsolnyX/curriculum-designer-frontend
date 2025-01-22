@@ -1,7 +1,7 @@
 import React, {forwardRef, memo, useRef} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
-import {Tag, Tooltip} from "antd";
+import {Tag, Tooltip, Typography} from "antd";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
@@ -50,6 +50,7 @@ export const SubjectCardMemo =
         const {
             displaySettings,
             selectedSubject,
+            toolsOptions,
             onSelectSubject
         } = usePlan();
 
@@ -64,8 +65,11 @@ export const SubjectCardMemo =
                     insertPosition === Position.Before && cls.insertBefore,
                     insertPosition === Position.After && cls.insertAfter
                 )}
+                style={{
+                    pointerEvents: toolsOptions.editMode ? "none" : "auto",
+                }}
                 ref={ref}
-                onClick={() => onSelectSubject(String(selectedSubject?.id) === String(props.id) ? null : props.id)}
+                onClick={() => onSelectSubject(props.id)}
             >
                 <div
                     ref={refScroll}
@@ -80,7 +84,7 @@ export const SubjectCardMemo =
                         </Tooltip>
                     }
                     <div  className={cls.dragLine} {...rest}/>
-                    <div className={"flex flex-col flex-1"}>
+                    <div className={"flex flex-col flex-1"} onClick={(event) => event.stopPropagation()}>
                         <div className={"flex gap-1 items-center"}>
                             {
                                 displaySettings.index &&
@@ -95,9 +99,12 @@ export const SubjectCardMemo =
                                 <span className={"text-[10px] text-blue-500"}>{`Семестр: ${semesterOrder}`}</span>
                             }
                         </div>
-                        <div className={"text-black text-[12px] line-clamp-2 min-h-[36px]"}>
+                        <Typography.Text
+                            editable={{icon: null, triggerType: ["text"]}}
+                            className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text"}
+                        >
                             {name}
-                        </div>
+                        </Typography.Text>
                     </div>
                     <div className={"flex gap-1"}>
                         {
