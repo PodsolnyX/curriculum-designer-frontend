@@ -1,17 +1,18 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
-import {DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
-import {Module, Selection, Semester, Track, TrackSelection} from "@/pages/planPage/types/Semester.ts";
+import {DragCancelEvent, DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
+import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
 import {
     DisplaySettings,
     ModuleSemesters,
     ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSemesters, TrackSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
-import {PreDisplaySettings} from "@/pages/planPage/provider/displaySettings.ts";
+import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
 import {AtomDto, AttestationDto, ModuleDto, SemesterDto} from "@/api/axios-client.ts";
 import {useParams} from "react-router-dom";
+import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
@@ -34,7 +35,14 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         editMode: false,
         selectedEditItem: "subjects"
     });
-    const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[0].settings)
+
+    const {
+        displaySettings,
+        disableSettings,
+        enableSettings,
+        onChangeDisplaySetting,
+        onSelectPreDisplaySetting
+    } = useDisplaySettings();
 
     // Выбор предмета
 
@@ -260,6 +268,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const {active} = event;
         const {id} = active;
 
+        disableSettings()
+
         setActiveItemId(id);
     }
 
@@ -271,8 +281,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setOverItemId(overId);
     }
 
+    const handleDragCancel = (event: DragCancelEvent) => {
+        console.log(event)
+        enableSettings()
+    }
+
     const handleDragEnd = (event: DragEndEvent) => {
-        if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) return;
+        if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) {
+            enableSettings()
+            return;
+        }
 
         const parentsIdsActive = getParentsIdsByChildId(event.active.id);
         const parentsIdsOver = getParentsIdsByChildId(event.over.id);
@@ -315,21 +333,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
         resetAllActiveIds()
-    }
 
-    // Изменение настроек отображения
-
-    const onChangeDisplaySetting = (key: keyof DisplaySettings) => {
-        setDisplaySettings({
-            ...displaySettings,
-            [key]: !displaySettings[key]
-        })
-    }
-
-    const onSelectPreDisplaySetting = (key: string) => {
-        setDisplaySettings({
-            ...PreDisplaySettings.find(setting => setting.key === key).settings
-        })
+        enableSettings()
     }
 
     const value: PlanContextValue = {
@@ -351,6 +356,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragStart,
         handleDragOver,
         handleDragEnd,
+        handleDragCancel,
         getModuleSemesterPosition,
         getTrackSemesterPosition,
         onChangeDisplaySetting,
@@ -406,6 +412,8 @@ interface PlanContextValue {
 
     handleDragEnd(event: DragEndEvent): void;
 
+    handleDragCancel(event: DragCancelEvent): void;
+
     getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
 
     getTrackSemesterPosition(id: UniqueIdentifier): TrackSemestersInfo;
@@ -443,6 +451,8 @@ const PlanContext = createContext<PlanContextValue>({
     handleDragOver: (_event: DragOverEvent) => {
     },
     handleDragEnd: (_event: DragEndEvent) => {
+    },
+    handleDragCancel: (_event: DragCancelEvent) => {
     },
     getModuleSemesterPosition: (_id: UniqueIdentifier) => {
         return {position: "single", countSemesters: 0}

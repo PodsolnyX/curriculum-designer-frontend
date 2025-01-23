@@ -13,6 +13,20 @@ export const DisplaySettingsList: {key: keyof DisplaySettings, name: string}[] =
 
 export const PreDisplaySettings: PreDisplaySetting[] = [
     {
+        key: "disableAll",
+        name: "Отключить всё",
+        settings: {
+            index: false,
+            credits: false,
+            attestation: false,
+            required: false,
+            department: false,
+            notesNumber: false,
+            academicHours: false,
+            competencies: false
+        }
+    },
+    {
         key: "subjectsCreate",
         name: "Создание дисциплин",
         settings: {

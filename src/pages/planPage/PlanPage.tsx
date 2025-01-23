@@ -27,7 +27,8 @@ const PlanPageWrapped = () => {
         loadingPlan,
         handleDragStart,
         handleDragOver,
-        handleDragEnd
+        handleDragEnd,
+        handleDragCancel
     } = usePlan();
 
     const sensors = useSensors(
@@ -47,6 +48,7 @@ const PlanPageWrapped = () => {
                     onDragStart={handleDragStart}
                     onDragOver={handleDragOver}
                     onDragEnd={handleDragEnd}
+                    onDragCancel={handleDragCancel}
                     measuring={measuring}
                 >
                     <Scrollbars
