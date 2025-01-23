@@ -6,19 +6,17 @@ import {SortableContext} from "@dnd-kit/sortable";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 
-interface TrackFieldProps extends Track {}
+interface TrackFieldProps extends Track {
+    position?: ModuleSemestersPosition;
+}
 
-const TrackField = ({subjects, name, id, color}: TrackFieldProps) => {
+const TrackField = ({subjects, name, id, color, position = "single"}: TrackFieldProps) => {
 
-    const { overItemId, getTrackSemesterPosition, displaySettings } = usePlan();
+    const { overItemId, displaySettings } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
     });
-
-    // const { position, color } = getTrackSemesterPosition(id);
-
-    const position = "first";
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg`,
@@ -29,12 +27,12 @@ const TrackField = ({subjects, name, id, color}: TrackFieldProps) => {
 
     return (
         <div
-            className={`${styles[position]} flex w-[230px] flex-col border-dashed px-3 ${overItemId === id ? "border-blue-300" : ""}`}
+            className={`${styles[position]} flex w-[230px] flex-col border-dotted px-3 ${overItemId === id ? "border-blue-300" : ""}`}
             ref={setNodeRef}
             style={{backgroundColor: `${color}20`, borderColor: color}}
         >
             {
-                position === "first" ?
+                (position === "first" || position === "single") ?
                     <div className={"flex justify-center py-2"}>
                         <span className={"font-bold text-center overflow-hidden text-nowrap text-ellipsis"} style={{color}}>
                             {name}

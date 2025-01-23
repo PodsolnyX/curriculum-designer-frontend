@@ -8,10 +8,10 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
 import NewItemCard from "@/pages/planPage/ui/NewItemCard/NewItemCard.tsx";
-import TrackField from "@/pages/planPage/ui/TrackField/TrackField.tsx";
 import {AtomType} from "@/api/axios-client.ts";
-import {AttestationType, Subject} from "@/pages/planPage/types/Subject.ts";
+import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
+import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 
 export interface SemesterFieldProps extends Semester {}
 
@@ -115,7 +115,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                 </div>
             </div>
             {
-                (subjects.length || selections.length || modules.length || tracks.length) ?
+                (subjects.length || selections.length || modules.length || trackSelection.length) ?
                     <div className={`flex flex-1 items-start gap-3 px-5 relative`}
                          onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}
                     >
@@ -160,16 +160,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                             {
                                 trackSelection.length ?
                                     trackSelection.map(selection =>
-                                        <div key={selection.id}>
-                                            <span>{selection.name}</span>
-                                            <div className={"flex gap-3 pr-5 h-full"}>
-                                                {
-                                                    selection.tracks.map(track =>
-                                                        <TrackField key={track.id} {...track}/>
-                                                    )
-                                                }
-                                            </div>
-                                        </div>
+                                        <TrackSelectionField {...selection} key={selection.id}/>
                                     ) : null
                             }
                         </SortableContext>
