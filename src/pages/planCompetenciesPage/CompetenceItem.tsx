@@ -166,6 +166,7 @@ const CompetenceItem = ({name, index, indicators: _indicators, id, type}: Compet
                     <SortableContext
                         items={indicators.map((i) => i.id)}
                         strategy={verticalListSortingStrategy}
+                        id={`competence-${id}`}
                     >
                         <div className={"flex flex-col gap-2 border-l border-stone-100 ml-2 mt-2"}>
                             {

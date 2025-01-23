@@ -299,7 +299,6 @@ export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto):
 export interface CompetenceDto  {
   id: number;
   index: string;
-  category: string;
   name: string;
   type: CompetenceType;
   indicators: CompetenceIndicatorDto[];
@@ -464,7 +463,6 @@ export function prepareSerializeCurriculumShortDto(_data: CurriculumShortDto): C
   return data as CurriculumShortDto;
 }
 export interface CreateCompetenceDto  {
-  category?: string;
   name: string;
   type: CompetenceType;
 }
@@ -491,7 +489,6 @@ export function prepareSerializeCreateCompetenceDto(_data: CreateCompetenceDto):
 }
 export interface UpdateCompetenceDto  {
   name?: string | null;
-  category?: string | null;
   type?: CompetenceType | null;
   order?: number | null;
 }

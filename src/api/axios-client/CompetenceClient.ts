@@ -140,7 +140,7 @@ export function updateCompetence(competenceId: number, updateCompetenceDto: Type
         ..._requestConfigUpdateCompetence,
         ...config,
         data: content_,
-        method: "PUT",
+        method: "PATCH",
         url: url_,
         headers: {
             ..._requestConfigUpdateCompetence?.headers,
@@ -302,7 +302,7 @@ export function updateIndicator(indicatorId: number, updateIndicatorDto: Types.U
         ..._requestConfigUpdateIndicator,
         ...config,
         data: content_,
-        method: "PUT",
+        method: "PATCH",
         url: url_,
         headers: {
             ..._requestConfigUpdateIndicator?.headers,

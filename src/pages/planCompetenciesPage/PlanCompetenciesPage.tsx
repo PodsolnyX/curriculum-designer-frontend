@@ -6,7 +6,10 @@ import React, {useEffect, useMemo, useState} from "react";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
 import {CompetenceDto, CompetenceType} from "@/api/axios-client.types.ts";
 import {
+    getCompetencesQueryKey,
     useGetCompetencesQuery,
+    useUpdateCompetenceMutationWithParameters,
+    useUpdateIndicatorMutationWithParameters,
 } from "@/api/axios-client/CompetenceQuery.ts";
 import {
     Active,
@@ -27,16 +30,30 @@ import CompetenceItem from "@/pages/planCompetenciesPage/CompetenceItem.tsx";
 import IndicatorItem from "@/pages/planCompetenciesPage/IndicatorItem.tsx";
 import AddCompetenceButton from "@/pages/planCompetenciesPage/AddCompetenceButton.tsx";
 import {SortableOverlay} from "@/pages/planCompetenciesPage/SortableOverlay.tsx";
+import {useQueryClient} from "@tanstack/react-query";
 
 const PlanCompetenciesPage = () => {
 
     const {id} = useParams<{ id: string }>();
     const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
+    const queryClient = useQueryClient();
 
     const [selectedType, setSelectedType] = useState<string>(CompetenceTypeName[CompetenceType.Universal].name);
     const [items, setItems] = useState<CompetenceDto[]>([]);
 
     const [active, setActive] = useState<Active | null>(null);
+
+    const {mutate: updateCompetence} = useUpdateCompetenceMutationWithParameters({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getCompetencesQueryKey(Number(id))});
+        }
+    })
+
+    const {mutate: updateIndicator} = useUpdateIndicatorMutationWithParameters({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getCompetencesQueryKey(Number(id))});
+        }
+    })
 
     useEffect(() => {
         if (data) {
@@ -75,23 +92,31 @@ const PlanCompetenciesPage = () => {
     const onDragEnd = ({active, over}: DragEndEvent) => {
         if (over && active.id !== over?.id) {
 
-            const activeIndex = items.findIndex(({id}) => id === active.id);
-            const overIndex = items.findIndex(({id}) => id === over.id);
+            let activeIndex = items.findIndex(({id}) => id === active.id);
+            let overIndex = items.findIndex(({id}) => id === over.id);
             if (activeIndex !== -1 && overIndex !== -1) {
                 setItems(arrayMove(items, activeIndex, overIndex));
+                updateCompetence({
+                    competenceId: Number(active.id),
+                    updateCompetenceDto: {order: activeIndex < overIndex ? overIndex + 1 : overIndex }
+                });
             }
             else {
                 const indicatorCompetenceIndex = items.findIndex((item) => item?.indicators.find(indicator => indicator.id === active.id));
-                setItems([...items.map((item, index) => index === indicatorCompetenceIndex
-                    ? {
-                        ...item, indicators: arrayMove(
-                            item.indicators,
-                            item.indicators.findIndex(indicator => indicator.id === active.id),
-                            item.indicators.findIndex(indicator => indicator.id === over.id)
-                        )
-                    }
-                    : item
-                )]);
+                setItems([...items.map((item, index) => {
+                     if (index === indicatorCompetenceIndex) {
+                         activeIndex = item.indicators.findIndex(indicator => indicator.id === active.id);
+                         overIndex = item.indicators.findIndex(indicator => indicator.id === over.id);
+                         return { ...item, indicators: arrayMove(item.indicators, activeIndex, overIndex)}
+                     }
+                     else return item;
+                })]);
+                console.log(active.data.current?.sortable.containerId.split("-")[1])
+                updateIndicator({
+                    competenceId: String(active.data.current?.sortable.containerId.split("-")[1]),
+                    indicatorId: Number(active.id),
+                    updateIndicatorDto: {order: activeIndex < overIndex ? overIndex + 1 : overIndex }
+                });
             }
         }
         setActive(null)
