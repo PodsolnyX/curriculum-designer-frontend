@@ -109,7 +109,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         }
 
         const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSelection => {
-            console.log(module, semester)
+            // console.log(module, semester)
 
             return (
                 {
@@ -268,7 +268,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const {active} = event;
         const {id} = active;
 
-        disableSettings()
+        // disableSettings()
 
         setActiveItemId(id);
     }

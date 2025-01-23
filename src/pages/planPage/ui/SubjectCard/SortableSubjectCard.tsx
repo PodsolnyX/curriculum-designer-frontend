@@ -2,7 +2,7 @@ import {Position, SubjectCard, SubjectCardProps} from "@/pages/planPage/ui/Subje
 import {useSortable} from "@dnd-kit/sortable";
 import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
-import React, {memo, useEffect, useRef} from "react";
+import React, {memo, useRef} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useInView} from "react-intersection-observer";
 
@@ -23,6 +23,8 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
+    // const {transform: transform2} = useDraggable({id});
+
     const { selectedSubject } = usePlan();
 
     // useEffect(() => {
@@ -36,6 +38,39 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         else return undefined;
     }
 
+    // const {transformState} = useTransformContext();
+    // const {scale, positionY, positionX} = transformState;
+
+    // function transformWithZoom(transform) {
+    //     if (transform) {
+    //         console.log(transform.x, transform.y, props.name)
+    //         return {
+    //             ...transform,
+    //             x: transform.x * (1 /scale),
+    //             y: transform.y / scale,
+    //             // x: (positionX - transform.x ) * (1 / scale),
+    //             // y: (positionY -transform.y ) * (1 / scale),
+    //         };
+    //     }
+    //     return transform;
+    // }
+
+    // const scaledTransform = transformWithZoom(transform);
+
+    // const adjustedTransform = transform
+    //     ? {
+    //         x: (transform.x - positionX) / scale,
+    //         y: (transform.y - positionY) / scale,
+    //     }
+    //     : { x: 0, y: 0 };
+    //
+    // console.log(adjustedTransform)
+
+    // if (transform)
+    //     console.log((transform.x - positionX) / scale,  (transform.y - positionY) / scale)
+
+    // console.log(positionY, positionX)
+
     return (
         <SubjectCardOutView
             enable={String(selectedSubject?.id) === String(props.id)}
@@ -47,7 +82,8 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
                 active={isDragging}
                 style={{
                     transition,
-                    transform: isSorting ? undefined : CSS.Translate.toString(transform),
+                    // transform: isSorting ? undefined : CSS.Translate.toString(transform),
+                    transform: isSorting ? undefined : CSS.Transform.toString(transform),
                 }}
                 insertPosition={getPosition()}
                 {...props}
