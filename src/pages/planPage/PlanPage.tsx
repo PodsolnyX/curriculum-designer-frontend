@@ -43,6 +43,8 @@ const PlanPageWrapped = () => {
         })
     );
 
+    const [subjectsContainerWidth, setSubjectsContainerWidth] = useState(50);
+
     return (
         <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={loadingPlan}/>
@@ -74,7 +76,10 @@ const PlanPageWrapped = () => {
                             <div className={`flex flex-col w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                 {
                                     semesters.map(semester =>
-                                        <SemesterField {...semester} key={semester.id}/>
+                                        <SemesterField {...semester} key={semester.id}
+                                                        subjectsContainerWidth={subjectsContainerWidth}
+                                                       setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
+                                        />
                                     )
                                 }
                             </div>

@@ -3,7 +3,7 @@ import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {Tag} from "antd";
-import React, {memo, useMemo, useState} from "react";
+import React, {memo, useEffect, useMemo, useRef, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
@@ -13,19 +13,30 @@ import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
 
-export interface SemesterFieldProps extends Semester {}
+export interface SemesterFieldProps extends Semester {
+    subjectsContainerWidth: number;
+    setSubjectsContainerWidth(width: number): void;
+}
 
-export const SemesterField = memo(function ({number, subjects, modules, trackSelection, id, selections}: SemesterFieldProps) {
+export const SemesterField = memo(function ({number, subjects, modules, trackSelection, id, selections, subjectsContainerWidth, setSubjectsContainerWidth}: SemesterFieldProps) {
 
     const { overItemId, toolsOptions, modulesSemesters } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
     const [newSubject, setNewSubject] = useState<Subject | null>(null);
 
+    const subjectsPanelRef = useRef<ImperativePanelHandle>(null);
+
     const { setNodeRef } = useDroppable({
         id
     });
+
+    useEffect(() => {
+        if (subjectsPanelRef.current)
+            subjectsPanelRef.current.resize(subjectsContainerWidth)
+    }, [subjectsContainerWidth])
 
     const {displaySettings} = usePlan();
 
@@ -124,46 +135,55 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                             addSubjectCard ? <div className={"absolute w-full -ml-5 h-full border-sky-500 cursor-pointer border-dashed border-2"}></div>  : null
                         }
                         <SortableContext items={[...subjects, ...selections, ...trackSelection, ...modules]} id={id}>
-                            <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5`}
-                                 style={{
-                                     maxWidth: modules.length ? `calc(100vw - ${modulesSemesters.reduce((previousValue, currentValue) => Math.max(previousValue, currentValue.columnIndex),0) * 230}px)` : "100vw"
-                                 }}
-                            >
-                                {
-                                    subjects.map(subject => (
-                                        <SortableSubjectCard
-                                            id={subject.id}
-                                            key={subject.id}
-                                            {...subject}
-                                        />
-                                    ))
-                                }
-                                {
-                                    newSubject && <SubjectCard {...newSubject}/>
-                                }
-                                {
-                                    selections.map(selection =>
-                                        <SelectionField key={selection.id} {...selection}/>
-                                    )
-                                }
-                            </div>
-                            <div className={`grid pr-5 gap-x-2 h-full ${modules.length ? "w-auto" : "w-0"}`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, minmax(240px, 1fr))`}}>
-                                {
-                                    modules.map(module =>
-                                        <ModuleField
-                                            key={module.id}
-                                            {...module}
-                                            columnIndex={modulesSemesters.find(item =>item.semesters.includes(module.id))?.columnIndex + 1 || 1}
-                                        />
-                                    )
-                                }
-                            </div>
-                            {
-                                trackSelection.length ?
-                                    trackSelection.map(selection =>
-                                        <TrackSelectionField {...selection} key={selection.id}/>
-                                    ) : null
-                            }
+                            <PanelGroup direction="horizontal" autoSaveId="widthSubjects" className={"w-[200vw]"}>
+                                <Panel
+                                    ref={subjectsPanelRef}
+                                    order={1}
+                                    onResize={(width) => setSubjectsContainerWidth(width)}
+                                    style={{overflow: "auto"}}
+                                    className={"pr-5"}
+                                >
+                                    <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5`}>
+                                        {
+                                            subjects.map(subject => (
+                                                <SortableSubjectCard
+                                                    id={subject.id}
+                                                    key={subject.id}
+                                                    {...subject}
+                                                />
+                                            ))
+                                        }
+                                        {
+                                            newSubject && <SubjectCard {...newSubject}/>
+                                        }
+                                        {
+                                            selections.map(selection =>
+                                                <SelectionField key={selection.id} {...selection}/>
+                                            )
+                                        }
+                                    </div>
+                                </Panel>
+                                <PanelResizeHandle className={"w-[1px] bg-stone-300"}/>
+                                <Panel order={2} style={{overflow: "auto"}} className={"flex pl-5"}>
+                                    <div className={`grid pr-5 gap-x-2 h-full`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, minmax(240px, 1fr))`}}>
+                                        {
+                                            modules.map(module =>
+                                                <ModuleField
+                                                    key={module.id}
+                                                    {...module}
+                                                    columnIndex={modulesSemesters.find(item =>item.semesters.includes(module.id))?.columnIndex + 1 || 1}
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                    {
+                                        trackSelection.length ?
+                                            trackSelection.map(selection =>
+                                                <TrackSelectionField {...selection} key={selection.id}/>
+                                            ) : null
+                                    }
+                                </Panel>
+                            </PanelGroup>
                         </SortableContext>
                     </div> :
                     <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400 py-16"}
