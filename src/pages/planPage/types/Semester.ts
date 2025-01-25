@@ -19,6 +19,7 @@ export interface Selection {
 export interface Module {
     id: string;
     name: string;
+    semesterId: string;
     subjects: Subject[];
 }
 

@@ -1,7 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import locale from "antd/locale/ru_RU";
 import 'dayjs/locale/ru';
-import {ConfigProvider} from "antd";
+import {App, ConfigProvider} from "antd";
 
 import dayjs from 'dayjs';
 import weekday from "dayjs/plugin/weekday"
@@ -38,14 +38,16 @@ export const ThemeProvider: React.FC<{children: React.ReactNode}> = ({children})
 
     return (
         <ThemeContext.Provider value={value}>
-            <ConfigProvider locale={locale} theme={{
-                token: {
-                    colorPrimary: "#74a4a8",
-                    fontFamily: "Inter, sans-serif",
-                },
-            }}>
-                {children}
-            </ConfigProvider>
+            <App>
+                <ConfigProvider locale={locale} theme={{
+                    token: {
+                        colorPrimary: "#74a4a8",
+                        fontFamily: "Inter, sans-serif",
+                    },
+                }}>
+                    {children}
+                </ConfigProvider>
+            </App>
         </ThemeContext.Provider>
     );
 }

@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useRef} from 'react';
+import React, {forwardRef, memo, useRef, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Tag, Tooltip, Typography} from "antd";
@@ -12,6 +12,7 @@ import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/planPage/ui/CommentsPopover.tsx";
 import {AtomType,} from "@/api/axios-client.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
+import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 export enum Position {
     Before = -1,
@@ -54,6 +55,16 @@ export const SubjectCardMemo =
         } = usePlan();
 
         const refScroll = useRef<HTMLDivElement | null>(null);
+        const [newName, setNewName] = useState(props.name);
+
+        const editSubject = useEditSubject(id);
+
+        const onNameChange = (value: string) => {
+            setNewName(value);
+            if (name !== value) {
+                editSubject({name: value})
+            }
+        }
 
         return (
             <li
@@ -64,9 +75,6 @@ export const SubjectCardMemo =
                     insertPosition === Position.Before && cls.insertBefore,
                     insertPosition === Position.After && cls.insertAfter
                 )}
-                // style={{
-                //     pointerEvents: toolsOptions.editMode ? "none" : "auto",
-                // }}
                 ref={ref}
                 onClick={() => onSelectSubject(props.id)}
             >
@@ -77,7 +85,10 @@ export const SubjectCardMemo =
                         displaySettings.required &&
                         <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
                             <span
-                                onClick={(event) => event.stopPropagation()}
+                                onClick={(event) => {
+                                    event.stopPropagation()
+                                    editSubject({isRequired: !isRequired})
+                                }}
                                 className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
                             >*</span>
                         </Tooltip>
@@ -99,10 +110,10 @@ export const SubjectCardMemo =
                             }
                         </div>
                         <Typography.Text
-                            editable={{icon: null, triggerType: ["text"]}}
+                            editable={{icon: null, triggerType: ["text"], onChange: onNameChange}}
                             className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text"}
                         >
-                            {name}
+                            {newName}
                         </Typography.Text>
                     </div>
                     <div className={"flex gap-1"}>
@@ -135,7 +146,7 @@ export const SubjectCardMemo =
                         <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
                     }
                     {
-                        displaySettings.competencies && <CompetenceSelector competencies={competencies}/>
+                        displaySettings.competencies && <CompetenceSelector subjectId={id} competencies={competencies}/>
                     }
                 </div>
             </li>

@@ -103,6 +103,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             return {
                 id: getPrefixId(`${getPrefixId(semester.id, "semesters")}-${module.id}`, "modules"),
                 name: module.name,
+                semesterId: getPrefixId(semester.id, "semesters"),
                 subjects: module.atoms
                     .filter(atom => atom.semesters.some(atomSemester => semester.id === atomSemester.semester.id))
                     .map(atom => parseAtomToSubject(atom, semester.id))

@@ -6,18 +6,30 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
 import {useParams} from "react-router-dom";
 import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
+import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 interface CompetenceSelectorProps {
+    subjectId?: string | number;
     competencies: {id: number, index: string, description: string}[];
     size?: "small" | "large";
 }
 
-const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorProps) => {
+const CompetenceSelector = ({competencies, size = "small", subjectId}: CompetenceSelectorProps) => {
 
     const { selectedCompetenceId, onSelectCompetence } = usePlan();
 
     const {id} = useParams<{ id: string }>();
     const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
+
+    const editSubject = useEditSubject(subjectId || "");
+
+    const onSelectIndicator = (id: number, remove?: boolean) => {
+        editSubject({
+            competenceIndicatorIds: remove
+                ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
+                : [...competencies.map(competence => competence.id), id]
+        })
+    }
 
     const AddCompetencePopover = () => {
 
@@ -75,6 +87,7 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                         <Checkbox
                             indeterminate={countSelectedIndicators > 0 && countSelectedIndicators < indicators.length}
                             checked={countSelectedIndicators === indicators.length}
+                            disabled={true}
                         />
                         <span className={"text-[12px] text-black"}>
                             {index}
@@ -94,7 +107,10 @@ const CompetenceSelector = ({competencies, size = "small"}: CompetenceSelectorPr
                                 indicators.map(indicator =>
                                     <div key={indicator.id} className={"ps-2 flex justify-between items-center gap-1"}>
                                         <div className={"flex gap-1 items-center"}>
-                                            <Checkbox checked={!!competencies.find(competence => competence.id === indicator.id)}/>
+                                            <Checkbox
+                                                checked={!!competencies.find(competence => competence.id === indicator.id)}
+                                                onChange={() => onSelectIndicator(indicator.id, !!competencies.find(competence => competence.id === indicator.id))}
+                                            />
                                             <span className={"text-[12px] text-black"}>
                                                 {indicator.index}
                                             </span>

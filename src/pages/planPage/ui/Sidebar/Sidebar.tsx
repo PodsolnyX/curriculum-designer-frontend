@@ -24,6 +24,7 @@ const Sidebar = () => {
     if (!selectedSubject || !atomSemester) return null;
 
     const {
+        id,
         name = "",
         isRequired = false,
         index = "Без индекса",
@@ -85,7 +86,7 @@ const Sidebar = () => {
                 </div>
                 <div className={"flex-col flex gap-1 border-b border-stone-300 border-solid pb-3"}>
                     <span className={"font-bold text-[14px]"}>Компетенции</span>
-                    <CompetenceSelector competencies={_competencies} size={"large"}/>
+                    <CompetenceSelector competencies={_competencies} size={"large"} subjectId={id}/>
                 </div>
                 {
                     selectedSubject.semesters.length > 1 ?

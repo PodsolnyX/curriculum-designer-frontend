@@ -14,6 +14,9 @@ import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
+import {useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
+import {useParams} from "react-router-dom";
+import {useCreateSubject} from "@/pages/planPage/hooks/useCreateSubject.ts";
 
 export interface SemesterFieldProps extends Semester {
     subjectsContainerWidth: number;
@@ -27,15 +30,17 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
     const [addSubjectCard, setAddSubjectCard] = useState(false);
     const [newSubject, setNewSubject] = useState<Subject | null>(null);
 
-    const subjectsPanelRef = useRef<ImperativePanelHandle>(null);
+    const subjectsPanelRef = useRef<ImperativePanelHandle | null>(null);
 
     const { setNodeRef } = useDroppable({
         id
     });
 
+    const createSubject = useCreateSubject(id);
+
     useEffect(() => {
         if (subjectsPanelRef.current)
-            subjectsPanelRef.current.resize(subjectsContainerWidth)
+            subjectsPanelRef.current?.resize(subjectsContainerWidth)
     }, [subjectsContainerWidth])
 
     const {displaySettings} = usePlan();
@@ -72,14 +77,14 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
     const onAddSubject = (event: React.MouseEvent<HTMLDivElement>) => {
         if (addSubjectCard) {
             event.stopPropagation()
-            console.log("Я добавил карточку в семестр")
-            setNewSubject({
-                id: 1,
-                name: "Новый предмет",
-                credits: 0,
-                isRequired: false,
-                type: AtomType.Subject,
-            })
+            createSubject()
+            // setNewSubject({
+            //     id: 1,
+            //     name: "Новый предмет",
+            //     credits: 0,
+            //     isRequired: false,
+            //     type: AtomType.Subject,
+            // })
         }
     }
 
@@ -186,7 +191,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                             </PanelGroup>
                         </SortableContext>
                     </div> :
-                    <div className={"w-full h-full flex flex-1 items-center justify-center text-stone-400 py-16"}
+                    <div className={"w-screen h-full flex flex-1 items-center justify-center text-stone-400 py-16"}
                          onMouseEnter={onHoverSemester}
                          onMouseLeave={onLeaveSemester}
                     >

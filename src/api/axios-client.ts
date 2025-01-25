@@ -26,6 +26,18 @@ export * as CurriculumQuery from './axios-client/CurriculumQuery';
 
 
 
+export * as AtomClient from './axios-client/AtomClient';
+
+export * as AtomQuery from './axios-client/AtomQuery';
+
+
+
+export * as ModuleClient from './axios-client/ModuleClient';
+
+export * as ModuleQuery from './axios-client/ModuleQuery';
+
+
+
 export * as CompetenceClient from './axios-client/CompetenceClient';
 
 export * as CompetenceQuery from './axios-client/CompetenceQuery';
@@ -139,6 +151,10 @@ export function initPersister() {
 
   addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
+
+
+
+
 
 
   addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceDto(data));

@@ -50,7 +50,7 @@ const PlanPageWrapped = () => {
             <PageLoader loading={loadingPlan}/>
             <TransformWrapper
                 minScale={.3}
-                maxScale={1}
+                maxScale={1.5}
                 initialScale={1}
                 limitToBounds={true}
                 disablePadding={true}
