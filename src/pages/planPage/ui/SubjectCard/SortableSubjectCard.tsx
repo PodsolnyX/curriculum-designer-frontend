@@ -23,53 +23,11 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    // const {transform: transform2} = useDraggable({id});
-
     const { selectedSubject } = usePlan();
-
-    // useEffect(() => {
-    //     if (activeItemId === id) {
-    //         setActiveSubject(props)
-    //     }
-    // }, [activeItemId])
-
     const getPosition = (): Position | undefined => {
         if (over?.id === id) return Position.Before
         else return undefined;
     }
-
-    // const {transformState} = useTransformContext();
-    // const {scale, positionY, positionX} = transformState;
-
-    // function transformWithZoom(transform) {
-    //     if (transform) {
-    //         console.log(transform.x, transform.y, props.name)
-    //         return {
-    //             ...transform,
-    //             x: transform.x * (1 /scale),
-    //             y: transform.y / scale,
-    //             // x: (positionX - transform.x ) * (1 / scale),
-    //             // y: (positionY -transform.y ) * (1 / scale),
-    //         };
-    //     }
-    //     return transform;
-    // }
-
-    // const scaledTransform = transformWithZoom(transform);
-
-    // const adjustedTransform = transform
-    //     ? {
-    //         x: (transform.x - positionX) / scale,
-    //         y: (transform.y - positionY) / scale,
-    //     }
-    //     : { x: 0, y: 0 };
-    //
-    // console.log(adjustedTransform)
-
-    // if (transform)
-    //     console.log((transform.x - positionX) / scale,  (transform.y - positionY) / scale)
-
-    // console.log(positionY, positionX)
 
     return (
         <SubjectCardOutView

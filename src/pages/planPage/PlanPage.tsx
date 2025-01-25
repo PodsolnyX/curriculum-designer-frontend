@@ -1,9 +1,12 @@
 import {
     defaultDropAnimationSideEffects,
-    DndContext, DragMoveEvent,
-    DragOverlay, DropAnimation,
+    DndContext,
+    DragOverlay,
+    DropAnimation,
     KeyboardSensor,
-    PointerSensor, pointerWithin, rectIntersection,
+    PointerSensor,
+    pointerWithin,
+    rectIntersection,
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
@@ -19,14 +22,14 @@ import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
 import {TransformComponent, TransformWrapper, useTransformContext} from "react-zoom-pan-pinch";
 import {useEffect, useState} from "react";
 import {createPortal} from "react-dom";
+import {CursorMode} from "@/pages/planPage/provider/types.ts";
 
 const PlanPageWrapped = () => {
 
     const {
         semesters,
-        activeItemId,
-        activeSubject,
         loadingPlan,
+        toolsOptions,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
@@ -40,27 +43,9 @@ const PlanPageWrapped = () => {
         })
     );
 
-    const [pos, setPos] = useState<{x: number, y: number}>({x: 0, y: 0});
-
-    const handleDragMove = (event: DragMoveEvent) => {
-        const { delta, activatorEvent, cl } = event;
-
-        // console.log((activatorEvent?.clientX + delta.x) / , activatorEvent?.clientY + delta.y)
-
-        // const cursorX = activatorEvent.clientX;
-        // const cursorY = activatorEvent.clientY;
-        //
-        // // Учитываем масштаб
-        // setOverlayPosition({
-        //     x: cursorX / scale,
-        //     y: cursorY / scale,
-        // });
-    };
-
     return (
         <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={loadingPlan}/>
-            <PlanHeader/>
             <TransformWrapper
                 minScale={.5}
                 maxScale={1}
@@ -68,125 +53,36 @@ const PlanPageWrapped = () => {
                 limitToBounds={true}
                 disablePadding={true}
                 panning={{
-                    allowLeftClickPan: false,
+                    allowLeftClickPan: toolsOptions.cursorMode === CursorMode.Hand,
                 }}
             >
-                {
-                    ({instance}) => {
-
-                        const {scale, positionY, positionX} = instance.transformState;
-
-                        return (
-                            <DndContext
-                                sensors={sensors}
-                                onDragStart={handleDragStart}
-                                onDragOver={handleDragOver}
-                                onDragEnd={handleDragEnd}
-                                onDragCancel={handleDragCancel}
-                                // modifiers={[(args) => {
-                                //     console.log(args, args.transform.y, positionX, positionY);
-                                //     return {
-                                //         ...args.transform,
-                                //         x: (args.transform.x - positionX ) / scale ,
-                                //         y: (args.transform.y - positionY ) / scale,
-                                //     }
-                                // }]}
-                                collisionDetection={(args) => {
-                                    const pointerCollisions = pointerWithin(args);
-                                    if (pointerCollisions.length > 0) return pointerCollisions;
-                                    return rectIntersection(args);
-                                }}
-                            >
-                                <div className={"flex"}>
-                                    <TransformComponent
-                                        // contentClass={"flex absolute"}
-                                        wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw' }}
-                                    >
-
-                                        {/*<Scrollbars*/}
-                                        {/*    style={{height: "calc(100vh - 62px)", width: "calc(100vw)"}}*/}
-                                        {/*>*/}
-                                        <div className={"flex flex-col w-max"} >
-                                            {
-                                                semesters.map(semester =>
-                                                    <SemesterField {...semester} key={semester.id}/>
-                                                )
-                                            }
-                                        </div>
-                                        <Overlay/>
-                                        {/*</Scrollbars>*/}
-                                        {/*<DragOverlay dropAnimation={dropAnimation}>*/}
-                                        {/*    /!*{ activeItemId ?*!/*/}
-                                        {/*    /!*    // <div style={{position: "absolute", left: pos.x, top: pos.y}} className={"h-36 w-36 bg-red-700"}>*!/*/}
-                                        {/*    /!*    //*!/*/}
-                                        {/*    /!*    // </div>*!/*/}
-                                        {/*    /!*    <SubjectCard*!/*/}
-                                        {/*    /!*        id={activeItemId}*!/*/}
-                                        {/*    /!*        {...activeSubject}*!/*/}
-                                        {/*    /!*        style={{*!/*/}
-                                        {/*    /!*            position: "absolute",*!/*/}
-                                        {/*    /!*            transform: CSS.Translate.toString({*!/*/}
-                                        {/*    /!*                x: pos.x,*!/*/}
-                                        {/*    /!*                y: pos.y,*!/*/}
-                                        {/*    /!*                scaleY: 1,*!/*/}
-                                        {/*    /!*                scaleX: 1,*!/*/}
-                                        {/*    /!*            })*!/*/}
-                                        {/*    /!*        }}*!/*/}
-                                        {/*    /!*    />*!/*/}
-                                        {/*    /!*    : null*!/*/}
-                                        {/*    /!*}*!/*/}
-                                        {/*    {*/}
-                                        {/*        activeItemId ?*/}
-                                        {/*        createPortal(*/}
-                                        {/*        <DragOverlay style={{*/}
-                                        {/*            position: "absolute",*/}
-                                        {/*            left: 500,*/}
-                                        {/*            top: 300,*/}
-                                        {/*        }}>*/}
-                                        {/*            <SubjectCard*/}
-                                        {/*                    id={activeItemId}*/}
-                                        {/*                    {...activeSubject}*/}
-                                        {/*                    // style={{*/}
-                                        {/*                    //     position: "absolute",*/}
-                                        {/*                    //     transform: CSS.Translate.toString({*/}
-                                        {/*                    //         x: pos.x,*/}
-                                        {/*                    //         y: pos.y,*/}
-                                        {/*                    //         scaleY: 1,*/}
-                                        {/*                    //         scaleX: 1,*/}
-                                        {/*                    //     })*/}
-                                        {/*                    // }}*/}
-                                        {/*                />*/}
-                                        {/*        </DragOverlay>,*/}
-                                        {/*        document.body,*/}
-                                        {/*    ) : null}*/}
-                                        {/*    /!*{ activeItemId ?*!/*/}
-                                        {/*    /!*    // <div style={{position: "absolute", left: pos.x, top: pos.y}} className={"h-36 w-36 bg-red-700"}>*!/*/}
-                                        {/*    /!*    //*!/*/}
-                                        {/*    /!*    // </div>*!/*/}
-                                        {/*    /!*    <SubjectCard*!/*/}
-                                        {/*    /!*        id={activeItemId}*!/*/}
-                                        {/*    /!*        {...activeSubject}*!/*/}
-                                        {/*    /!*        style={{*!/*/}
-                                        {/*    /!*            position: "absolute",*!/*/}
-                                        {/*    /!*            transform: CSS.Translate.toString({*!/*/}
-                                        {/*    /!*                x: pos.x,*!/*/}
-                                        {/*    /!*                y: pos.y,*!/*/}
-                                        {/*    /!*                scaleY: 1,*!/*/}
-                                        {/*    /!*                scaleX: 1,*!/*/}
-                                        {/*    /!*            })*!/*/}
-                                        {/*    /!*        }}*!/*/}
-                                        {/*    /!*    />*!/*/}
-                                        {/*    /!*    : null*!/*/}
-                                        {/*    /!*}*!/*/}
-                                        {/*</DragOverlay>*/}
-
-                                    </TransformComponent>
-                                    <Sidebar/>
-                                </div>
-                            </DndContext>
-                        )
-                    }
-                }
+                <PlanHeader/>
+                <DndContext
+                    sensors={sensors}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDragEnd={handleDragEnd}
+                    onDragCancel={handleDragCancel}
+                    collisionDetection={(args) => {
+                        const pointerCollisions = pointerWithin(args);
+                        if (pointerCollisions.length > 0) return pointerCollisions;
+                        return rectIntersection(args);
+                    }}
+                >
+                    <div className={"flex"}>
+                        <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
+                            <div className={`flex flex-col w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
+                                {
+                                    semesters.map(semester =>
+                                        <SemesterField {...semester} key={semester.id}/>
+                                    )
+                                }
+                            </div>
+                            <Overlay/>
+                        </TransformComponent>
+                        <Sidebar/>
+                    </div>
+                </DndContext>
             </TransformWrapper>
 
         </div>
@@ -194,77 +90,53 @@ const PlanPageWrapped = () => {
 }
 
 const Overlay = () => {
-    const [coords, setCoords] = useState({x: 0, y: 0});
-    const {transformState} = useTransformContext();
-    const {
-        activeItemId
-    } = usePlan();
 
-    const {scale, positionY, positionX} = transformState;
+    const { activeItemId } = usePlan();
 
-    useEffect(() => {
-        const handleWindowMouseMove = event => {
-            setCoords({
-                x: event.clientX,
-                y: event.clientY,
-            });
-        };
+    const DraggableCard = () => {
 
-        if (!activeItemId) return;
+        const [coords, setCoords] = useState({x: 0, y: 0});
+        const {transformState} = useTransformContext();
 
-        window.addEventListener('mousemove', handleWindowMouseMove);
+        useEffect(() => {
+            const handleWindowMouseMove = event => {
+                setCoords({
+                    x: event.clientX,
+                    y: event.clientY,
+                });
+            };
 
-        return () => {
-            window.removeEventListener(
-                'mousemove',
-                handleWindowMouseMove,
-            );
-        };
-    }, [activeItemId]);
+            window.addEventListener('mousemove', handleWindowMouseMove);
 
-    console.log(coords)
+            return () => {
+                window.removeEventListener(
+                    'mousemove',
+                    handleWindowMouseMove,
+                );
+            };
+        }, []);
+
+        return (
+            <SubjectCard
+                id={activeItemId || ""}
+                style={{
+                    position: "absolute",
+                    left: (coords.x),
+                    top: (coords.y),
+                }}
+            />
+        )
+    }
 
     return (
         createPortal(
-            <DragOverlay
-                dropAnimation={dropAnimation}
-
-            >
-                {
-                    activeItemId ?
-                        <SubjectCard
-                            id={activeItemId}
-                            style={{
-                                position: "absolute",
-                                left: (coords.x),
-                                top: (coords.y),
-                                // transform: `scale(${scale})`,
-                            }}
-                            // {...activeSubject}
-                            // style={{
-                            //     position: "absolute",
-                            //     transform: CSS.Translate.toString({
-                            //         x: pos.x,
-                            //         y: pos.y,
-                            //         scaleY: 1,
-                            //         scaleX: 1,
-                            //     })
-                            // }}
-                        />
-                        : null
-                }
+            <DragOverlay dropAnimation={dropAnimation}>
+                { activeItemId ? <DraggableCard/> : null }
             </DragOverlay>,
             document.body,
         )
     );
 };
-
-// const measuring: MeasuringConfiguration = {
-//     droppable: {
-//         strategy: MeasuringStrategy.WhileDragging,
-//     },
-// };
-
 
 const dropAnimation: DropAnimation = {
     keyframes({transform}) {

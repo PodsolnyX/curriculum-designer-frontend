@@ -50,7 +50,6 @@ export const SubjectCardMemo =
         const {
             displaySettings,
             selectedSubject,
-            toolsOptions,
             onSelectSubject
         } = usePlan();
 
@@ -65,9 +64,9 @@ export const SubjectCardMemo =
                     insertPosition === Position.Before && cls.insertBefore,
                     insertPosition === Position.After && cls.insertAfter
                 )}
-                style={{
-                    pointerEvents: toolsOptions.editMode ? "none" : "auto",
-                }}
+                // style={{
+                //     pointerEvents: toolsOptions.editMode ? "none" : "auto",
+                // }}
                 ref={ref}
                 onClick={() => onSelectSubject(props.id)}
             >

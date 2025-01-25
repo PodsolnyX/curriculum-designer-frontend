@@ -1,10 +1,10 @@
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import React, {memo, MouseEventHandler, useState} from "react";
+import React, {memo, useState} from "react";
 import {Module} from "@/pages/planPage/types/Semester.ts";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
+import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 
 interface ModuleFieldProps extends Module {
     columnIndex: number;
@@ -30,7 +30,7 @@ const ModuleField = memo(({subjects, name, id, columnIndex}: ModuleFieldProps) =
     }
 
     const onHover = () => {
-        if (toolsOptions.editMode)
+        if (toolsOptions.cursorMode === CursorMode.Create)
             setOnAdd(true)
     }
 

@@ -3,40 +3,61 @@ import SubjectIcon from "@/shared/assets/icons/subject.svg?react";
 import ModuleIcon from "@/shared/assets/icons/module.svg?react";
 import SelectionIcon from "@/shared/assets/icons/selection.svg?react";
 import TracksIcon from "@/shared/assets/icons/tracks.svg?react";
+import CursorIcon from "@/shared/assets/icons/cursor.svg?react";
+import HandIcon from "@/shared/assets/icons/hand.svg?react";
+import MinusIcon from "@/shared/assets/icons/minus-lens.svg?react";
+import PlusIcon from "@/shared/assets/icons/plus-lens.svg?react";
 import cls from "./ToolsPanel.module.scss"
 import classNames from "classnames";
-import {ReactNode} from "react";
-import {ItemType} from "@/pages/planPage/provider/types.ts";
+import React, {useState} from "react";
+import {CursorMode, ItemType} from "@/pages/planPage/provider/types.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import {Tooltip} from "antd";
+import {useControls, useTransformContext, useTransformEffect} from "react-zoom-pan-pinch";
 
-interface Item {
-    key: ItemType;
+interface ToolsItem {
+    value: ItemType;
     name: string;
-    icon: ReactNode;
+    icon: React.SVGProps<SVGSVGElement>,
     iconStyle: "fill" | "stroke";
 }
 
-const Items: Item[] = [
+const CursorItems: ToolsItem[] = [
     {
-        key: "subjects",
+        value: CursorMode.Move,
+        name: "Курсор",
+        icon: CursorIcon,
+        iconStyle: "stroke"
+    },
+    {
+        value: CursorMode.Hand,
+        name: "Рука",
+        icon: HandIcon,
+        iconStyle: "stroke"
+    }
+]
+
+const EditItems: ToolsItem[] = [
+    {
+        value: "subjects",
         name: "Дисциплина",
         icon: SubjectIcon,
         iconStyle: "stroke"
     },
     {
-        key: "modules",
+        value: "modules",
         name: "Модуль",
         icon: ModuleIcon,
         iconStyle: "stroke"
     },
     {
-        key: "selections",
+        value: "selections",
         name: "Выбор дисциплин",
         icon: SelectionIcon,
         iconStyle: "fill"
     },
     {
-        key: "Трек",
+        value: "Трек",
         name: "Трек",
         icon: TracksIcon,
         iconStyle: "fill"
@@ -50,62 +71,76 @@ const ToolsPanel = () => {
         setToolsOptions
     } = usePlan();
 
-    const ItemsSelect = () => {
-        return (
-            <div className={"flex flex-col gap-2"}>
+    const { zoomIn, zoomOut } = useControls();
+    const { props} = useTransformContext();
+
+    const [currentScale, setCurrentScale] = useState(props.initialScale);
+
+    useTransformEffect(({ state }) => {
+        setCurrentScale(state.scale);
+
+        return () => {}
+    });
+
+    return (
+        <div className={"flex bg-[#f0f4f9] p-2 px-4 gap-2 rounded-2xl"}>
+            <div className={"flex border-r-stone-300 border-r border-solid pr-2"}>
                 {
-                    Items.map(item =>
-                        <div
-                            className={classNames(cls.icon, toolsOptions.selectedEditItem === item.key && cls.icon__selected)}
-                            key={item.key}
-                            onClick={() => setToolsOptions({...toolsOptions, selectedEditItem: item.key})}
-                        >
-                            <Icon component={item.icon} className={item.iconStyle === "stroke" ? cls.stroke : cls.fill}/>
-                            { item.name }
-                        </div>
+                    CursorItems.map(item =>
+                        <ToolsButton
+                            {...item}
+                            key={item.value}
+                            selected={toolsOptions.cursorMode === item.value}
+                            onClick={() => setToolsOptions({...toolsOptions, cursorMode: item.value as CursorMode})}
+                        />
                     )
                 }
             </div>
-        )
-    }
-    const color = "#e5f1f3";
-    return (
-        <div className={"flex gap-2 bg-[#f0f4f9] p-3 rounded-2xl"}>
-            {/*<div*/}
-            {/*    className={classNames(cls.icon, !toolsOptions.editMode && cls.icon__selected)}*/}
-            {/*    onClick={() => setToolsOptions({...toolsOptions, editMode: false})}*/}
-            {/*>*/}
-            {/*    <Icon component={CursorIcon} className={cls.stroke}/>*/}
-            {/*</div>*/}
-            {
-                Items.map(item =>
-                    <div
-                        key={item.key}
-                        className={classNames(cls.icon, (toolsOptions.editMode && toolsOptions.selectedEditItem === item.key) && cls.icon__selected)}
-                        onClick={() => (toolsOptions.editMode && toolsOptions.selectedEditItem === item.key)
-                            ? setToolsOptions({...toolsOptions, editMode: false})
-                            : setToolsOptions({...toolsOptions, selectedEditItem: item.key, editMode: true})
-                        }
-                    >
-                        <Icon
-                            component={item.icon}
-                            className={item.iconStyle === "stroke" ? cls.stroke : cls.fill}
+            <div className={"flex border-r-stone-300 border-r border-solid pr-2"}>
+                {
+                    EditItems.map(item =>
+                        <ToolsButton
+                            {...item}
+                            key={item.value}
+                            selected={(toolsOptions.cursorMode === CursorMode.Create && toolsOptions.selectedCreateEntityType === item.value)}
+                            onClick={() => setToolsOptions({...toolsOptions, selectedCreateEntityType: item.value, cursorMode: CursorMode.Create})}
                         />
-                    </div>
-                )
-            }
-            {/*<Popover content={ItemsSelect}>*/}
-            {/*    <div*/}
-            {/*        className={classNames(cls.icon, toolsOptions.editMode && cls.icon__selected)}*/}
-            {/*        onClick={() => setToolsOptions({...toolsOptions, editMode: true})}*/}
-            {/*    >*/}
-            {/*        <Icon*/}
-            {/*            component={Items.find(item => item.key === toolsOptions.selectedEditItem)?.icon}*/}
-            {/*            className={Items.find(item => item.key === toolsOptions.selectedEditItem)?.iconStyle === "stroke" ? cls.stroke : cls.fill}*/}
-            {/*        />*/}
-            {/*    </div>*/}
-            {/*</Popover>*/}
+                    )
+                }
+            </div>
+            <div className={"flex items-center"}>
+                <ToolsButton value={"zoomIn"} name={"Приблизить"} icon={PlusIcon} iconStyle={"fill"} onClick={() => zoomIn(0.15)}/>
+                <ToolsButton value={"zoomOut"} name={"Отдалить"} icon={MinusIcon} iconStyle={"fill"} onClick={() => zoomOut(0.15)}/>
+                <Tooltip title={"Масштаб"}>
+                    <span className={"w-10 flex items-center ml-1 select-none"}>
+                        {(currentScale * 100).toFixed(0)}%
+                    </span>
+                </Tooltip>
+            </div>
         </div>
+    )
+}
+
+interface ToolsButtonProps extends ToolsItem {
+    selected?: boolean;
+    onClick?(): void;
+}
+
+const ToolsButton = ({icon, name, value, iconStyle, selected, onClick}: ToolsButtonProps) => {
+
+    return (
+        <Tooltip title={name}>
+            <div
+                key={value}
+                className={classNames(cls.icon, selected && cls.icon__selected)}
+                onClick={onClick && (() => onClick())}
+            >
+                <Icon
+                    component={icon}
+                    className={iconStyle === "stroke" ? cls.stroke : cls.fill}
+                />
+            </div>
+        </Tooltip>
     )
 }
 

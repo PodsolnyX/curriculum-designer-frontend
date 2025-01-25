@@ -12,6 +12,7 @@ import {AtomType} from "@/api/axios-client.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
+import {CursorMode} from "@/pages/planPage/provider/types.ts";
 
 export interface SemesterFieldProps extends Semester {}
 
@@ -49,7 +50,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
     }, [subjects])
 
     const onHoverSemester = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (toolsOptions.editMode)
+        if (toolsOptions.cursorMode === CursorMode.Create)
             setAddSubjectCard(true)
     }
 

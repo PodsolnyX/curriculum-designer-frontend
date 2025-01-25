@@ -49,7 +49,13 @@ export interface TrackSemestersInfo {
 
 export type ItemType = typeof PREFIX_ITEM_ID_KEYS[number];
 
+export enum CursorMode {
+    Move = "move",
+    Hand = "hand",
+    Create = "create"
+}
+
 export interface ToolsOptions {
-    editMode: boolean;
-    selectedEditItem: ItemType;
+    cursorMode: CursorMode;
+    selectedCreateEntityType: ItemType;
 }

@@ -2,6 +2,7 @@ import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {DragCancelEvent, DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
 import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
 import {
+    CursorMode,
     DisplaySettings,
     ModuleSemesters,
     ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSemesters, TrackSemestersInfo
@@ -32,8 +33,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [tracksSemesters, setTracksSemesters] = useState<TrackSemesters[]>([]);
 
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
-        editMode: false,
-        selectedEditItem: "subjects"
+        cursorMode: CursorMode.Move,
+        selectedCreateEntityType: "subjects"
     });
 
     const {
@@ -268,7 +269,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const {active} = event;
         const {id} = active;
 
-        // disableSettings()
+        disableSettings()
 
         setActiveItemId(id);
     }
@@ -282,7 +283,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }
 
     const handleDragCancel = (event: DragCancelEvent) => {
-        console.log(event)
         enableSettings()
     }
 
@@ -429,8 +429,8 @@ const PlanContext = createContext<PlanContextValue>({
     overItemId: null,
     displaySettings: PreDisplaySettings[0].settings,
     toolsOptions: {
-        editMode: false,
-        selectedEditItem: "subjects"
+        cursorMode: CursorMode.Move,
+        selectedCreateEntityType: "subjects"
     },
     semesters: [],
     modulesSemesters: [],

@@ -12,7 +12,7 @@ const PlanHeader = () => {
     const {data} = useGetCurriculumQuery({id: Number(id)});
 
     return (
-        <header className={"sticky top-0 px-5 py-2 bg-white/[0.7] backdrop-blur z-40 border-b border-b-stone-200 border-solid flex items-center justify-between gap-5 max-w-screen w-full"}>
+        <header className={"top-0 px-5 py-2 bg-white/[0.8] backdrop-blur z-40 border-b border-b-stone-200 border-solid flex items-center justify-between gap-5 max-w-screen w-full"}>
             <div className={"flex flex-col gap-0.5"}>
                 <div className={"max-w-[800px]"}>
                     <Typography.Text ellipsis={true} className={"text-lg"}>{data?.name}</Typography.Text>
@@ -33,7 +33,9 @@ const PlanHeader = () => {
                     </Popover>
                 </div>
             </div>
-            <ToolsPanel/>
+            <div className={"flex gap-5"}>
+                <ToolsPanel/>
+            </div>
         </header>
     )
 }

@@ -4,9 +4,12 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  padding: 3px;
+  border-radius: 100%;
 
   &:hover {
     color: #388be1;
+    background-color: rgba(0, 0, 0, 0.03);
 
     .fill {
       * {
