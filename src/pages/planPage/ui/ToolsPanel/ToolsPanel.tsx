@@ -109,8 +109,8 @@ const ToolsPanel = () => {
                 }
             </div>
             <div className={"flex items-center"}>
-                <ToolsButton value={"zoomIn"} name={"Приблизить"} icon={PlusIcon} iconStyle={"fill"} onClick={() => zoomIn(0.15)}/>
-                <ToolsButton value={"zoomOut"} name={"Отдалить"} icon={MinusIcon} iconStyle={"fill"} onClick={() => zoomOut(0.15)}/>
+                <ToolsButton value={"zoomIn"} name={"Приблизить"} icon={PlusIcon} iconStyle={"fill"} onClick={() => zoomIn(0.3)}/>
+                <ToolsButton value={"zoomOut"} name={"Отдалить"} icon={MinusIcon} iconStyle={"fill"} onClick={() => zoomOut(0.3)}/>
                 <Tooltip title={"Масштаб"}>
                     <span className={"w-10 flex items-center ml-1 select-none"}>
                         {(currentScale * 100).toFixed(0)}%

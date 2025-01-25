@@ -47,7 +47,7 @@ const PlanPageWrapped = () => {
         <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={loadingPlan}/>
             <TransformWrapper
-                minScale={.5}
+                minScale={.3}
                 maxScale={1}
                 initialScale={1}
                 limitToBounds={true}
