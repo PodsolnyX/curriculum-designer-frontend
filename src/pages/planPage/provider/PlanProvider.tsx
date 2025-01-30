@@ -1,21 +1,23 @@
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
 import {DragCancelEvent, DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
-import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
+import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {
     CursorMode,
     DisplaySettings,
     ModuleSemesters,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSemesters, TrackSemestersInfo
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemesters, TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
-import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
-import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
-import {AtomDto, AttestationDto, ModuleDto, SemesterDto} from "@/api/axios-client.ts";
-import {useParams} from "react-router-dom";
+import {AtomDto, AttestationDto} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
+import {parseAtomToSubject, parseCurriculum} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
+import {useModulesPosition} from "@/pages/planPage/provider/useModulesPosition.ts";
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
+
+    const [semesters, setSemesters] = useState<Semester[]>([]);
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
@@ -23,14 +25,20 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
     const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
-    const {id} = useParams<{ id: string | number }>();
+    const {
+        curriculumData,
+        atomsData,
+        modulesData,
+        attestationTypesData,
+        isLoading
+    } = useCurriculumData();
 
-    const {data, isLoading: loadingPlan} = useGetCurriculumQuery({id: Number(id)});
-    const {data: attestationTypes} = useSearchAttestationsQuery();
-
-    const [semesters, setSemesters] = useState<Semester[]>([]);
-    const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
-    const [tracksSemesters, setTracksSemesters] = useState<TrackSemesters[]>([]);
+    const {
+        modulesSemesters,
+        tracksSelectionSemesters,
+        getModulePosition,
+        getTrackSelectionPosition
+    } = useModulesPosition();
 
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
         cursorMode: CursorMode.Move,
@@ -45,6 +53,12 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         onSelectPreDisplaySetting
     } = useDisplaySettings();
 
+    useEffect(() => {
+        if (curriculumData && modulesData && atomsData) {
+            setSemesters(parseCurriculum(curriculumData.semesters, atomsData, modulesData))
+        }
+    }, [curriculumData, modulesData, atomsData])
+
     // Выбор предмета
 
     const onSelectSubject = (id: UniqueIdentifier | null, semesterOrder?: number) => {
@@ -57,7 +71,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         setSelectedSubjectId(id);
 
-        const atom = data ? (data.atoms.find(atom => String(atom.id) === String(id)) || null) : null;
+        const atom = atomsData ? (atomsData.find(atom => String(atom.id) === String(id)) || null) : null;
 
         if (atom === null) return;
 
@@ -68,157 +82,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
         setSelectedCompetenceId(id);
-    }
-
-    useEffect(() => {
-
-        let modules: ModuleSemesters[] = [];
-
-        const parseModules2 = () => {
-
-            if (data) {
-                data.modules.filter(modules => modules.semesterIds.length && !modules.selection).map(module => {
-                    const startSemester = data.semesters.find(semester => semester.id === module.semesterIds[0]);
-                    const intersectionModules = modules.filter(_module => {
-                        return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + module.semesterIds.length - 1);
-
-                    })
-
-                    modules.push({
-                        id: String(module.id),
-                        name: module.name,
-                        startSemesterNumber: startSemester?.number || 0,
-                        columnIndex: intersectionModules.slice(-1)[0]?.columnIndex + 1 || 0,
-                        semesters: module.semesterIds.map(id => getPrefixId(`${getPrefixId(id, "semesters")}-${module.id}`, "modules"))
-                    })
-                })
-            }
-
-
-            setModulesSemesters([...modules]);
-        }
-
-        const parseModule = (module: ModuleDto, semester: SemesterDto): Module => {
-
-            return {
-                id: getPrefixId(`${getPrefixId(semester.id, "semesters")}-${module.id}`, "modules"),
-                name: module.name,
-                semesterId: getPrefixId(semester.id, "semesters"),
-                subjects: module.atoms
-                    .filter(atom => atom.semesters.some(atomSemester => semester.id === atomSemester.semester.id))
-                    .map(atom => parseAtomToSubject(atom, semester.id))
-            }
-        }
-
-        const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSelection => {
-            // console.log(module, semester)
-
-            return (
-                {
-                    id: module.id,
-                    name: module.name,
-                    tracks: module.modules
-                        .filter(module => module.semesterIds.some(id => id === semester.id))
-                        .map(module => { return { ...parseModule(module, semester), color: "#ff0000", credits: 0 } })
-                }
-            )
-        }
-
-        if (data) {
-            setSemesters([
-                ...data.semesters?.map(semester => {
-                    return {
-                        id: getPrefixId(semester.id, "semesters"),
-                        number: semester.number,
-                        subjects: data.atoms
-                            ? data.atoms.filter(atom => atom.semesters
-                                ? (!atom?.parentModuleId && (!!atom.semesters.find(atomSemester => semester.id === atomSemester.semester.id)))
-                                : false).map(atom => parseAtomToSubject(atom, semester.id))
-                            : [],
-                        selections: data.modules
-                            .filter(module => module.selection && module.atoms.some(atom => atom.semesters.some(_semester => _semester.semester.id === semester.id)))
-                            .map(module => parseSelection(module, semester.id)),
-                        modules: data.modules
-                            .filter(module => !module.selection && module.atoms.some(atom => atom.semesters.some(_semester => _semester.semester.id === semester.id)))
-                            .map(module => parseModule(module, semester)),
-                        trackSelection: data.modules
-                            .filter(module => module.modules.length && module.modules.some(module => module.semesterIds.some(id => id === semester.id)))
-                            .map(module => parseTrackSelection(module, semester)),
-                    }
-                })
-            ])
-
-            setModulesSemesters([...modules]);
-            parseModules2()
-        }
-    }, [data])
-
-    const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject => {
-        const atomSemester = atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id);
-
-        let competencies: { id: number, index: string, description: string }[] = [];
-
-        if (atom.competences.length) {
-            competencies = atom.competences.map(competence => {
-                return {
-                    id: competence.id || 0,
-                    index: competence.index || "",
-                    description: competence.name
-                }
-            })
-        } else if (atom.competenceIndicators.length) {
-            competencies = atom.competenceIndicators.map(competence => {
-                return {
-                    id: competence.id,
-                    index: competence.index,
-                    description: competence.name
-                }
-            })
-        }
-
-        return {
-            id: `${atom.id}`,
-            name: atom.name,
-            type: atom.type,
-            isRequired: atom.isRequired,
-            credits: atomSemester.credit,
-            attestation: atomSemester.attestations,
-            competencies: competencies,
-            academicHours: atomSemester.academicActivityHours,
-            semesterOrder: atom.semesters.length > 1 ? atom.semesters.findIndex(atomSemester => semesterId === atomSemester.semester.id) + 1 : undefined,
-        }
-    }
-
-    const parseSelection = (module: ModuleDto, semesterId: number): Selection => {
-        return {
-            id: getPrefixId(module.id, "selections"),
-            name: module.name,
-            credits: module.selection?.creditPerSemester[0] || 0,
-            subjects: module.atoms
-                .filter(atom => atom.semesters.some(atomSemester => semesterId === atomSemester.semester.id))
-                .map(atom => parseAtomToSubject(atom, semesterId))
-        }
-    }
-
-    const getModuleSemesterPosition = (id: UniqueIdentifier): ModuleSemestersInfo => {
-        const module = modulesSemesters.find(module => getItemIdFromPrefix(id) === module.id);
-        if (!module || module.semesters.length === 1) return {position: "single", countSemesters: 1}
-        const index = module.semesters.findIndex(module => module === id);
-        return {
-            position: index === 0 ? "first" : index === module?.semesters.length - 1 ? "last" : "middle",
-            countSemesters: module.semesters.length
-        }
-    }
-
-    const getTrackSemesterPosition = (id: UniqueIdentifier): TrackSemestersInfo => {
-        const track = tracksSemesters.find(track => getItemIdFromPrefix(id) === track.id);
-        if (!track || track.semesters.length === 1) return {position: "single", countSemesters: 1, color: track.color}
-        const index = track.semesters.findIndex(module => module === id);
-        return {
-            position: index === 0 ? "first" : index === track?.semesters.length - 1 ? "last" : "middle",
-            countSemesters: track.semesters.length,
-            color: track.color
-        }
     }
 
     // Обработка DnD
@@ -346,9 +209,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         modulesSemesters,
         displaySettings,
         toolsOptions,
-        selectedSubject: data?.atoms ? data.atoms.find(atom => String(atom.id) === selectedSubjectId) || null : null,
-        attestationTypes,
-        loadingPlan,
+        selectedSubject: atomsData.find(atom => String(atom.id) === selectedSubjectId) || null,
+        attestationTypes: attestationTypesData,
+        loadingPlan: isLoading || semesters.length === 0,
         selectedCompetenceId,
         onSelectCompetence,
         onSelectSubject,
@@ -358,8 +221,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragOver,
         handleDragEnd,
         handleDragCancel,
-        getModuleSemesterPosition,
-        getTrackSemesterPosition,
+        getModuleSemesterPosition: getModulePosition,
+        getTrackSemesterPosition: getTrackSelectionPosition,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -371,15 +234,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }
         </PlanContext.Provider>
     )
-}
-
-const getPrefixId = (id: UniqueIdentifier, key: typeof PREFIX_ITEM_ID_KEYS[number]): string => {
-    return `${key}-${id}`
-}
-
-const getItemIdFromPrefix = (id: UniqueIdentifier): string => {
-    const _result = String(id).split("-");
-    return _result[_result.length - 1];
 }
 
 export const usePlan = () => {
@@ -417,7 +271,7 @@ interface PlanContextValue {
 
     getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
 
-    getTrackSemesterPosition(id: UniqueIdentifier): TrackSemestersInfo;
+    getTrackSemesterPosition(id: UniqueIdentifier): TrackSelectionSemestersInfo;
 
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
 

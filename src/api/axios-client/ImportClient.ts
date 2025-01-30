@@ -13,6 +13,11 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
+/**
+ * Import a curriculum from a file
+ * @param curriculumId (optional) Curriculum Id
+ * @param file (optional) 
+ */
 export function import_(curriculumId?: number | undefined, file?: Types.FileParameter | null | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/import?";
     if (curriculumId === null)

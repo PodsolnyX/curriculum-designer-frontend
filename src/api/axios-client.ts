@@ -38,6 +38,12 @@ export * as ModuleQuery from './axios-client/ModuleQuery';
 
 
 
+export * as AtomCompetenceClient from './axios-client/AtomCompetenceClient';
+
+export * as AtomCompetenceQuery from './axios-client/AtomCompetenceQuery';
+
+
+
 export * as CompetenceClient from './axios-client/CompetenceClient';
 
 export * as CompetenceQuery from './axios-client/CompetenceQuery';
@@ -53,6 +59,12 @@ export * as AttestationQuery from './axios-client/AttestationQuery';
 export * as AcademicActivityClient from './axios-client/AcademicActivityClient';
 
 export * as AcademicActivityQuery from './axios-client/AcademicActivityQuery';
+
+
+
+export * as HoursDistributionClient from './axios-client/HoursDistributionClient';
+
+export * as HoursDistributionQuery from './axios-client/HoursDistributionQuery';
 
 
 
@@ -153,6 +165,10 @@ export function initPersister() {
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
 
 
+  addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) => Types.initAtomDto(data));
+
+
+  addResultTypeFactory('ModuleClient___getModulesByCurriculum', (data: any) => Types.initModuleDto(data));
 
 
 
@@ -163,7 +179,9 @@ export function initPersister() {
   addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));
 
 
-  addResultTypeFactory('AcademicActivityClient___searchAcademicActivities', (data: any) => Types.initAcademicActivityDto(data));
+  addResultTypeFactory('AcademicActivityClient___getAcademicActivities', (data: any) => Types.initAcademicActivityDto(data));
+
+
 
 
 }

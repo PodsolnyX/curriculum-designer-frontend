@@ -10,10 +10,10 @@ interface TrackSelectionProps extends TrackSelection {
 
 const TrackSelectionField = (props: TrackSelectionProps) => {
 
-    const { name, tracks } = props;
-    const { displaySettings } = usePlan();
+    const { id, name, tracks } = props;
+    const { displaySettings, getTrackSemesterPosition } = usePlan();
 
-    const position = "first";
+    const {position} = getTrackSemesterPosition(id);
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg h-max`,

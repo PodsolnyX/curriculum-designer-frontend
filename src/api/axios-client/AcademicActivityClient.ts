@@ -13,21 +13,20 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function searchAcademicActivities(curriculumId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.AcademicActivityDto[]> {
-    let url_ = getBaseUrl() + "/academic-activity?";
-    if (curriculumId === null)
-        throw new Error("The parameter 'curriculumId' cannot be null.");
-    else if (curriculumId !== undefined)
-        url_ += "curriculumId=" + encodeURIComponent("" + curriculumId) + "&";
+export function getAcademicActivities(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.AcademicActivityDto[]> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
-        ..._requestConfigSearchAcademicActivities,
+        ..._requestConfigGetAcademicActivities,
         ...config,
         method: "GET",
         url: url_,
         headers: {
-            ..._requestConfigSearchAcademicActivities?.headers,
+            ..._requestConfigGetAcademicActivities?.headers,
             "Accept": "application/json"
         }
     };
@@ -39,11 +38,11 @@ export function searchAcademicActivities(curriculumId?: number | undefined, conf
             throw _error;
         }
     }).then((_response: AxiosResponse) => {
-        return processSearchAcademicActivities(_response);
+        return processGetAcademicActivities(_response);
     });
 }
 
-function processSearchAcademicActivities(response: AxiosResponse): Promise<Types.AcademicActivityDto[]> {
+function processGetAcademicActivities(response: AxiosResponse): Promise<Types.AcademicActivityDto[]> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -70,13 +69,207 @@ function processSearchAcademicActivities(response: AxiosResponse): Promise<Types
     }
     return Promise.resolve<Types.AcademicActivityDto[]>(null as any);
 }
-let _requestConfigSearchAcademicActivities: Partial<AxiosRequestConfig> | null;
-export function getSearchAcademicActivitiesRequestConfig() {
-  return _requestConfigSearchAcademicActivities;
+
+export function createAcademicActivity(curriculumId: number, createAcademicActivityDto: Types.CreateAcademicActivityDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeCreateAcademicActivityDto(createAcademicActivityDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigCreateAcademicActivity,
+        ...config,
+        data: content_,
+        method: "POST",
+        url: url_,
+        headers: {
+            ..._requestConfigCreateAcademicActivity?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processCreateAcademicActivity(_response);
+    });
 }
-export function setSearchAcademicActivitiesRequestConfig(value: Partial<AxiosRequestConfig>) {
-  _requestConfigSearchAcademicActivities = value;
+
+function processCreateAcademicActivity(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
 }
-export function patchSearchAcademicActivitiesRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigSearchAcademicActivities = patch(_requestConfigSearchAcademicActivities ?? {});
+
+export function updateAcademicActivity(academicActivityId: number, updateAcademicActivityDto: Types.UpdateAcademicActivityDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+    if (academicActivityId === undefined || academicActivityId === null)
+      throw new Error("The parameter 'academicActivityId' must be defined.");
+    url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeUpdateAcademicActivityDto(updateAcademicActivityDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigUpdateAcademicActivity,
+        ...config,
+        data: content_,
+        method: "PATCH",
+        url: url_,
+        headers: {
+            ..._requestConfigUpdateAcademicActivity?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processUpdateAcademicActivity(_response);
+    });
+}
+
+function processUpdateAcademicActivity(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
+
+export function deleteAcademicActivity(academicActivityId: number, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+    if (academicActivityId === undefined || academicActivityId === null)
+      throw new Error("The parameter 'academicActivityId' must be defined.");
+    url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigDeleteAcademicActivity,
+        ...config,
+        method: "DELETE",
+        url: url_,
+        headers: {
+            ..._requestConfigDeleteAcademicActivity?.headers,
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processDeleteAcademicActivity(_response);
+    });
+}
+
+function processDeleteAcademicActivity(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
+let _requestConfigGetAcademicActivities: Partial<AxiosRequestConfig> | null;
+export function getGetAcademicActivitiesRequestConfig() {
+  return _requestConfigGetAcademicActivities;
+}
+export function setGetAcademicActivitiesRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetAcademicActivities = value;
+}
+export function patchGetAcademicActivitiesRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetAcademicActivities = patch(_requestConfigGetAcademicActivities ?? {});
+}
+
+let _requestConfigCreateAcademicActivity: Partial<AxiosRequestConfig> | null;
+export function getCreateAcademicActivityRequestConfig() {
+  return _requestConfigCreateAcademicActivity;
+}
+export function setCreateAcademicActivityRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigCreateAcademicActivity = value;
+}
+export function patchCreateAcademicActivityRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigCreateAcademicActivity = patch(_requestConfigCreateAcademicActivity ?? {});
+}
+
+let _requestConfigUpdateAcademicActivity: Partial<AxiosRequestConfig> | null;
+export function getUpdateAcademicActivityRequestConfig() {
+  return _requestConfigUpdateAcademicActivity;
+}
+export function setUpdateAcademicActivityRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigUpdateAcademicActivity = value;
+}
+export function patchUpdateAcademicActivityRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigUpdateAcademicActivity = patch(_requestConfigUpdateAcademicActivity ?? {});
+}
+
+let _requestConfigDeleteAcademicActivity: Partial<AxiosRequestConfig> | null;
+export function getDeleteAcademicActivityRequestConfig() {
+  return _requestConfigDeleteAcademicActivity;
+}
+export function setDeleteAcademicActivityRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigDeleteAcademicActivity = value;
+}
+export function patchDeleteAcademicActivityRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigDeleteAcademicActivity = patch(_requestConfigDeleteAcademicActivity ?? {});
 }

@@ -13,6 +13,9 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
+/**
+ * Get all attestations
+ */
 export function searchAttestations(config?: AxiosRequestConfig | undefined): Promise<Types.AttestationDto[]> {
     let url_ = getBaseUrl() + "/attestation";
       url_ = url_.replace(/[?&]$/, "");
@@ -66,6 +69,59 @@ function processSearchAttestations(response: AxiosResponse): Promise<Types.Attes
     }
     return Promise.resolve<Types.AttestationDto[]>(null as any);
 }
+
+/**
+ * Set attestations for a component in semester
+ */
+export function setAttestation(setAttestationDto: Types.SetAttestationDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/attestation";
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeSetAttestationDto(setAttestationDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigSetAttestation,
+        ...config,
+        data: content_,
+        method: "POST",
+        url: url_,
+        headers: {
+            ..._requestConfigSetAttestation?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processSetAttestation(_response);
+    });
+}
+
+function processSetAttestation(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
 let _requestConfigSearchAttestations: Partial<AxiosRequestConfig> | null;
 export function getSearchAttestationsRequestConfig() {
   return _requestConfigSearchAttestations;
@@ -75,4 +131,15 @@ export function setSearchAttestationsRequestConfig(value: Partial<AxiosRequestCo
 }
 export function patchSearchAttestationsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigSearchAttestations = patch(_requestConfigSearchAttestations ?? {});
+}
+
+let _requestConfigSetAttestation: Partial<AxiosRequestConfig> | null;
+export function getSetAttestationRequestConfig() {
+  return _requestConfigSetAttestation;
+}
+export function setSetAttestationRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigSetAttestation = value;
+}
+export function patchSetAttestationRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigSetAttestation = patch(_requestConfigSetAttestation ?? {});
 }

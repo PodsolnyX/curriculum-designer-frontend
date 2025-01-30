@@ -27,6 +27,10 @@ export type DeleteCurriculumCurriculumQueryParameters = {
   id: number ;
 }
 
+export type SetCurriculumSettingsCurriculumQueryParameters = {
+  id: number ;
+}
+
 export function createCurriculumUrl(): string {
   let url_ = getBaseUrl() + "/curriculum";
   url_ = url_.replace(/[?&]$/, "");
@@ -231,6 +235,53 @@ export function useDeleteCurriculumMutationWithParameters<TContext>(options?: Om
 return useMutation({
   ...options, 
   mutationFn: (data: DeleteCurriculum__MutationParameters) => Client.deleteCurriculum(data.id ?? options?.parameters?.id!),
+  mutationKey: key,
+});
+}
+  
+export function setCurriculumSettingsUrl(id: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{id}/settings";
+if (id === undefined || id === null)
+  throw new Error("The parameter 'id' must be defined.");
+url_ = url_.replace("{id}", encodeURIComponent("" + id));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function setCurriculumSettingsMutationKey(id: number): MutationKey {
+  return trimArrayEnd([
+      'CurriculumClient',
+      'setCurriculumSettings',
+      id as any,
+    ]);
+}
+
+export function useSetCurriculumSettingsMutation<TContext>(id: number, options?: Omit<UseMutationOptions<void, unknown, Types.SetCurriculumSettingsDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetCurriculumSettingsDto, TContext> {
+  const key = setCurriculumSettingsMutationKey(id);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (setCurriculumSettingsDto: Types.SetCurriculumSettingsDto) => Client.setCurriculumSettings(id, setCurriculumSettingsDto),
+    mutationKey: key,
+  });
+}
+  
+type SetCurriculumSettings__MutationParameters = SetCurriculumSettingsCurriculumQueryParameters & {
+  setCurriculumSettingsDto: Types.SetCurriculumSettingsDto;
+}
+
+export function useSetCurriculumSettingsMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, SetCurriculumSettings__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: SetCurriculumSettingsCurriculumQueryParameters}): UseMutationResult<void, unknown, SetCurriculumSettings__MutationParameters, TContext> {
+  const key = setCurriculumSettingsMutationKey(options?.parameters?.id!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: SetCurriculumSettings__MutationParameters) => Client.setCurriculumSettings(data.id ?? options?.parameters?.id!, data.setCurriculumSettingsDto),
   mutationKey: key,
 });
 }

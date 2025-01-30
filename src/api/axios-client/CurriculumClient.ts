@@ -224,6 +224,59 @@ function processDeleteCurriculum(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
+
+export function setCurriculumSettings(id: number, setCurriculumSettingsDto: Types.SetCurriculumSettingsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/curriculum/{id}/settings";
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeSetCurriculumSettingsDto(setCurriculumSettingsDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigSetCurriculumSettings,
+        ...config,
+        data: content_,
+        method: "PUT",
+        url: url_,
+        headers: {
+            ..._requestConfigSetCurriculumSettings?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processSetCurriculumSettings(_response);
+    });
+}
+
+function processSetCurriculumSettings(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
 let _requestConfigCreateCurriculum: Partial<AxiosRequestConfig> | null;
 export function getCreateCurriculumRequestConfig() {
   return _requestConfigCreateCurriculum;
@@ -266,4 +319,15 @@ export function setDeleteCurriculumRequestConfig(value: Partial<AxiosRequestConf
 }
 export function patchDeleteCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigDeleteCurriculum = patch(_requestConfigDeleteCurriculum ?? {});
+}
+
+let _requestConfigSetCurriculumSettings: Partial<AxiosRequestConfig> | null;
+export function getSetCurriculumSettingsRequestConfig() {
+  return _requestConfigSetCurriculumSettings;
+}
+export function setSetCurriculumSettingsRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigSetCurriculumSettings = value;
+}
+export function patchSetCurriculumSettingsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigSetCurriculumSettings = patch(_requestConfigSetCurriculumSettings ?? {});
 }

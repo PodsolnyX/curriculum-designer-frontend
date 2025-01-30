@@ -18,6 +18,7 @@ import * as Client from './AttestationClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
+
 export function searchAttestationsUrl(): string {
   let url_ = getBaseUrl() + "/attestation";
   url_ = url_.replace(/[?&]$/, "");
@@ -45,6 +46,9 @@ export function __searchAttestations(context: QueryFunctionContext, axiosConfig?
 axiosConfig    );
 }
 
+/**
+ * Get all attestations
+ */
 export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[], TError = unknown>(options?: Omit<UseQueryOptions<Types.AttestationDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
 export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
   let options: UseQueryOptions<Types.AttestationDto[], TError, TSelectData> | undefined = undefined;
@@ -64,13 +68,47 @@ export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[],
     ...options,
   });
 }
-
+/**
+ * Get all attestations
+ */
 export function setSearchAttestationsData(queryClient: QueryClient, updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[], ) {
   queryClient.setQueryData(searchAttestationsQueryKey(),
     updater
   );
 }
 
+/**
+ * Get all attestations
+ */
 export function setSearchAttestationsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[]) {
   queryClient.setQueryData(queryKey, updater);
+}
+    
+export function setAttestationUrl(): string {
+  let url_ = getBaseUrl() + "/attestation";
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function setAttestationMutationKey(): MutationKey {
+  return trimArrayEnd([
+      'AttestationClient',
+      'setAttestation',
+    ]);
+}
+
+/**
+ * Set attestations for a component in semester
+ */
+export function useSetAttestationMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, Types.SetAttestationDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetAttestationDto, TContext> {
+  const key = setAttestationMutationKey();
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (setAttestationDto: Types.SetAttestationDto) => Client.setAttestation(setAttestationDto),
+    mutationKey: key,
+  });
 }

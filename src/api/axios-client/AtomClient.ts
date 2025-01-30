@@ -69,11 +69,11 @@ function processCreateAtom(response: AxiosResponse): Promise<number> {
     return Promise.resolve<number>(null as any);
 }
 
-export function updateAtom(id: number, updateAtomDto: Types.UpdateAtomDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+export function updateAtom(atomId: number, updateAtomDto: Types.UpdateAtomDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/atom/{atomId}";
+    if (atomId === undefined || atomId === null)
+      throw new Error("The parameter 'atomId' must be defined.");
+    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeUpdateAtomDto(updateAtomDto);
@@ -122,11 +122,11 @@ function processUpdateAtom(response: AxiosResponse): Promise<void> {
     return Promise.resolve<void>(null as any);
 }
 
-export function deleteAtom(id: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+export function deleteAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/atom/{atomId}";
+    if (atomId === undefined || atomId === null)
+      throw new Error("The parameter 'atomId' must be defined.");
+    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
@@ -170,6 +170,71 @@ function processDeleteAtom(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
+
+/**
+ * Get atoms of a curriculum
+ * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
+ */
+export function getAtomsByCurriculum(curriculumId: number, hasNoParentModule?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto[]> {
+    let url_ = getBaseUrl() + "/atom/curriculum/{curriculumId}?";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+    if (hasNoParentModule === null)
+        throw new Error("The parameter 'hasNoParentModule' cannot be null.");
+    else if (hasNoParentModule !== undefined)
+        url_ += "hasNoParentModule=" + encodeURIComponent("" + hasNoParentModule) + "&";
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetAtomsByCurriculum,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetAtomsByCurriculum?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetAtomsByCurriculum(_response);
+    });
+}
+
+function processGetAtomsByCurriculum(response: AxiosResponse): Promise<Types.AtomDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        if (Array.isArray(resultData200)) {
+              result200 = resultData200.map(item => 
+                Types.initAtomDto(item)
+              );
+            }
+        return Promise.resolve<Types.AtomDto[]>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.AtomDto[]>(null as any);
+}
 let _requestConfigCreateAtom: Partial<AxiosRequestConfig> | null;
 export function getCreateAtomRequestConfig() {
   return _requestConfigCreateAtom;
@@ -201,4 +266,15 @@ export function setDeleteAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
 }
 export function patchDeleteAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigDeleteAtom = patch(_requestConfigDeleteAtom ?? {});
+}
+
+let _requestConfigGetAtomsByCurriculum: Partial<AxiosRequestConfig> | null;
+export function getGetAtomsByCurriculumRequestConfig() {
+  return _requestConfigGetAtomsByCurriculum;
+}
+export function setGetAtomsByCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetAtomsByCurriculum = value;
+}
+export function patchGetAtomsByCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetAtomsByCurriculum = patch(_requestConfigGetAtomsByCurriculum ?? {});
 }

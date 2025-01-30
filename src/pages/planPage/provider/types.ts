@@ -27,10 +27,12 @@ export interface ModuleSemesters {
     semesters: UniqueIdentifier[];
 }
 
-export interface TrackSemesters {
+export interface TrackSelectionSemesters {
     id: string;
     name: string;
-    color: string;
+    tracks: UniqueIdentifier[];
+    columnIndex: number;
+    startSemesterNumber: number;
     semesters: UniqueIdentifier[];
 }
 
@@ -41,7 +43,7 @@ export interface ModuleSemestersInfo {
     countSemesters: number
 }
 
-export interface TrackSemestersInfo {
+export interface TrackSelectionSemestersInfo {
     position: ModuleSemestersPosition,
     color: string,
     countSemesters: number

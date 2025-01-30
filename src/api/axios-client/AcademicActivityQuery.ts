@@ -18,63 +18,76 @@ import * as Client from './AcademicActivityClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-export type SearchAcademicActivitiesAcademicActivityQueryParameters = {
-  curriculumId?: number | undefined ;
+export type GetAcademicActivitiesAcademicActivityQueryParameters = {
+  curriculumId: number ;
 }
 
-export function searchAcademicActivitiesUrl(curriculumId?: number | undefined): string {
-  let url_ = getBaseUrl() + "/academic-activity?";
-if (curriculumId === null)
-    throw new Error("The parameter 'curriculumId' cannot be null.");
-else if (curriculumId !== undefined)
-    url_ += "curriculumId=" + encodeURIComponent("" + curriculumId) + "&";
+export type CreateAcademicActivityAcademicActivityQueryParameters = {
+  curriculumId: number ;
+}
+
+export type UpdateAcademicActivityAcademicActivityQueryParameters = {
+  academicActivityId: number ;
+  curriculumId: string ;
+}
+
+export type DeleteAcademicActivityAcademicActivityQueryParameters = {
+  academicActivityId: number ;
+  curriculumId: string ;
+}
+
+export function getAcademicActivitiesUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
 
-let searchAcademicActivitiesDefaultOptions: Omit<UseQueryOptions<Types.AcademicActivityDto[], unknown, Types.AcademicActivityDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.AcademicActivityDto[], unknown, Types.AcademicActivityDto[]>, 'queryFn'>> = {
+let getAcademicActivitiesDefaultOptions: Omit<UseQueryOptions<Types.AcademicActivityDto[], unknown, Types.AcademicActivityDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.AcademicActivityDto[], unknown, Types.AcademicActivityDto[]>, 'queryFn'>> = {
 };
-export function getSearchAcademicActivitiesDefaultOptions() {
-  return searchAcademicActivitiesDefaultOptions;
+export function getGetAcademicActivitiesDefaultOptions() {
+  return getAcademicActivitiesDefaultOptions;
 };
-export function setSearchAcademicActivitiesDefaultOptions(options: typeof searchAcademicActivitiesDefaultOptions) {
-  searchAcademicActivitiesDefaultOptions = options;
+export function setGetAcademicActivitiesDefaultOptions(options: typeof getAcademicActivitiesDefaultOptions) {
+  getAcademicActivitiesDefaultOptions = options;
 }
 
-export function searchAcademicActivitiesQueryKey(curriculumId?: number | undefined): QueryKey;
-export function searchAcademicActivitiesQueryKey(...params: any[]): QueryKey {
+export function getAcademicActivitiesQueryKey(curriculumId: number): QueryKey;
+export function getAcademicActivitiesQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as SearchAcademicActivitiesAcademicActivityQueryParameters;
+    const { curriculumId,  } = params[0] as GetAcademicActivitiesAcademicActivityQueryParameters;
 
     return trimArrayEnd([
         'AcademicActivityClient',
-        'searchAcademicActivities',
+        'getAcademicActivities',
         curriculumId as any,
       ]);
   } else {
     return trimArrayEnd([
         'AcademicActivityClient',
-        'searchAcademicActivities',
+        'getAcademicActivities',
         ...params
       ]);
   }
 }
-export function __searchAcademicActivities(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.searchAcademicActivities(
-      context.queryKey[2] as number | undefined,axiosConfig    );
+export function __getAcademicActivities(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+  return Client.getAcademicActivities(
+      context.queryKey[2] as number,axiosConfig    );
 }
 
-export function useSearchAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(dto: SearchAcademicActivitiesAcademicActivityQueryParameters, options?: Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(dto: GetAcademicActivitiesAcademicActivityQueryParameters, options?: Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
 
-export function useSearchAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(curriculumId?: number | undefined, options?: Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useSearchAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+export function useGetAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetAcademicActivitiesQuery<TSelectData = Types.AcademicActivityDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
   let options: UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData> | undefined = undefined;
   let axiosConfig: AxiosRequestConfig |undefined = undefined;
   let curriculumId: any = undefined;
   
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as SearchAcademicActivitiesAcademicActivityQueryParameters);
+      ({ curriculumId,  } = params[0] as GetAcademicActivitiesAcademicActivityQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -86,19 +99,166 @@ export function useSearchAcademicActivitiesQuery<TSelectData = Types.AcademicAct
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.AcademicActivityDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __searchAcademicActivities(context, axiosConfig) : __searchAcademicActivities,
-    queryKey: searchAcademicActivitiesQueryKey(curriculumId),
-    ...searchAcademicActivitiesDefaultOptions as unknown as Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>,
+    queryFn: axiosConfig ? (context) => __getAcademicActivities(context, axiosConfig) : __getAcademicActivities,
+    queryKey: getAcademicActivitiesQueryKey(curriculumId),
+    ...getAcademicActivitiesDefaultOptions as unknown as Omit<UseQueryOptions<Types.AcademicActivityDto[], TError, TSelectData>, 'queryKey'>,
     ...options,
   });
 }
 
-export function setSearchAcademicActivitiesData(queryClient: QueryClient, updater: (data: Types.AcademicActivityDto[] | undefined) => Types.AcademicActivityDto[], curriculumId?: number | undefined) {
-  queryClient.setQueryData(searchAcademicActivitiesQueryKey(curriculumId),
+export function setGetAcademicActivitiesData(queryClient: QueryClient, updater: (data: Types.AcademicActivityDto[] | undefined) => Types.AcademicActivityDto[], curriculumId: number) {
+  queryClient.setQueryData(getAcademicActivitiesQueryKey(curriculumId),
     updater
   );
 }
 
-export function setSearchAcademicActivitiesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AcademicActivityDto[] | undefined) => Types.AcademicActivityDto[]) {
+export function setGetAcademicActivitiesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AcademicActivityDto[] | undefined) => Types.AcademicActivityDto[]) {
   queryClient.setQueryData(queryKey, updater);
+}
+    
+export function createAcademicActivityUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function createAcademicActivityMutationKey(curriculumId: number): MutationKey {
+  return trimArrayEnd([
+      'AcademicActivityClient',
+      'createAcademicActivity',
+      curriculumId as any,
+    ]);
+}
+
+export function useCreateAcademicActivityMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<void, unknown, Types.CreateAcademicActivityDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.CreateAcademicActivityDto, TContext> {
+  const key = createAcademicActivityMutationKey(curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (createAcademicActivityDto: Types.CreateAcademicActivityDto) => Client.createAcademicActivity(curriculumId, createAcademicActivityDto),
+    mutationKey: key,
+  });
+}
+  
+type CreateAcademicActivity__MutationParameters = CreateAcademicActivityAcademicActivityQueryParameters & {
+  createAcademicActivityDto: Types.CreateAcademicActivityDto;
+}
+
+export function useCreateAcademicActivityMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, CreateAcademicActivity__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateAcademicActivityAcademicActivityQueryParameters}): UseMutationResult<void, unknown, CreateAcademicActivity__MutationParameters, TContext> {
+  const key = createAcademicActivityMutationKey(options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: CreateAcademicActivity__MutationParameters) => Client.createAcademicActivity(data.curriculumId ?? options?.parameters?.curriculumId!, data.createAcademicActivityDto),
+  mutationKey: key,
+});
+}
+  
+export function updateAcademicActivityUrl(academicActivityId: number, curriculumId: string): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+if (academicActivityId === undefined || academicActivityId === null)
+  throw new Error("The parameter 'academicActivityId' must be defined.");
+url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function updateAcademicActivityMutationKey(academicActivityId: number, curriculumId: string): MutationKey {
+  return trimArrayEnd([
+      'AcademicActivityClient',
+      'updateAcademicActivity',
+      academicActivityId as any,
+      curriculumId as any,
+    ]);
+}
+
+export function useUpdateAcademicActivityMutation<TContext>(academicActivityId: number, curriculumId: string, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateAcademicActivityDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateAcademicActivityDto, TContext> {
+  const key = updateAcademicActivityMutationKey(academicActivityId, curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (updateAcademicActivityDto: Types.UpdateAcademicActivityDto) => Client.updateAcademicActivity(academicActivityId, updateAcademicActivityDto, curriculumId),
+    mutationKey: key,
+  });
+}
+  
+type UpdateAcademicActivity__MutationParameters = UpdateAcademicActivityAcademicActivityQueryParameters & {
+  updateAcademicActivityDto: Types.UpdateAcademicActivityDto;
+}
+
+export function useUpdateAcademicActivityMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateAcademicActivity__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateAcademicActivityAcademicActivityQueryParameters}): UseMutationResult<void, unknown, UpdateAcademicActivity__MutationParameters, TContext> {
+  const key = updateAcademicActivityMutationKey(options?.parameters?.academicActivityId!, options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: UpdateAcademicActivity__MutationParameters) => Client.updateAcademicActivity(data.academicActivityId ?? options?.parameters?.academicActivityId!, data.updateAcademicActivityDto, data.curriculumId ?? options?.parameters?.curriculumId!),
+  mutationKey: key,
+});
+}
+  
+export function deleteAcademicActivityUrl(academicActivityId: number, curriculumId: string): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+if (academicActivityId === undefined || academicActivityId === null)
+  throw new Error("The parameter 'academicActivityId' must be defined.");
+url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function deleteAcademicActivityMutationKey(academicActivityId: number, curriculumId: string): MutationKey {
+  return trimArrayEnd([
+      'AcademicActivityClient',
+      'deleteAcademicActivity',
+      academicActivityId as any,
+      curriculumId as any,
+    ]);
+}
+
+export function useDeleteAcademicActivityMutation<TContext>(academicActivityId: number, curriculumId: string, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+  const key = deleteAcademicActivityMutationKey(academicActivityId, curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: () => Client.deleteAcademicActivity(academicActivityId, curriculumId),
+    mutationKey: key,
+  });
+}
+  
+type DeleteAcademicActivity__MutationParameters = DeleteAcademicActivityAcademicActivityQueryParameters
+
+export function useDeleteAcademicActivityMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteAcademicActivity__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteAcademicActivityAcademicActivityQueryParameters}): UseMutationResult<void, unknown, DeleteAcademicActivity__MutationParameters, TContext> {
+  const key = deleteAcademicActivityMutationKey(options?.parameters?.academicActivityId!, options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: DeleteAcademicActivity__MutationParameters) => Client.deleteAcademicActivity(data.academicActivityId ?? options?.parameters?.academicActivityId!, data.curriculumId ?? options?.parameters?.curriculumId!),
+  mutationKey: key,
+});
 }

@@ -69,11 +69,11 @@ function processCreateModule(response: AxiosResponse): Promise<number> {
     return Promise.resolve<number>(null as any);
 }
 
-export function updateModule(id: number, updateModuleDto: Types.UpdateModuleDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/module/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+export function updateModule(moduleId: number, updateModuleDto: Types.UpdateModuleDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/module/{moduleId}";
+    if (moduleId === undefined || moduleId === null)
+      throw new Error("The parameter 'moduleId' must be defined.");
+    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeUpdateModuleDto(updateModuleDto);
@@ -122,11 +122,21 @@ function processUpdateModule(response: AxiosResponse): Promise<void> {
     return Promise.resolve<void>(null as any);
 }
 
-export function deleteModule(id: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/module/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
+/**
+ * Delete module
+ * @param moduleId Module id
+ * @param deleteChildren (optional) If true, deletes all children of the module (modules and atoms).
+            Else, only deletes the module, moving its children to the parent module.
+ */
+export function deleteModule(moduleId: number, deleteChildren?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/module/{moduleId}?";
+    if (moduleId === undefined || moduleId === null)
+      throw new Error("The parameter 'moduleId' must be defined.");
+    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
+    if (deleteChildren === null)
+        throw new Error("The parameter 'deleteChildren' cannot be null.");
+    else if (deleteChildren !== undefined)
+        url_ += "deleteChildren=" + encodeURIComponent("" + deleteChildren) + "&";
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
@@ -170,6 +180,72 @@ function processDeleteModule(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
+
+/**
+ * Get modules by curriculum
+ * @param curriculumId Curriculum id
+ * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
+ */
+export function getModulesByCurriculum(curriculumId: number, plainList?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.ModuleDto[]> {
+    let url_ = getBaseUrl() + "/module/curriculum/{curriculumId}?";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+    if (plainList === null)
+        throw new Error("The parameter 'plainList' cannot be null.");
+    else if (plainList !== undefined)
+        url_ += "plainList=" + encodeURIComponent("" + plainList) + "&";
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetModulesByCurriculum,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetModulesByCurriculum?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetModulesByCurriculum(_response);
+    });
+}
+
+function processGetModulesByCurriculum(response: AxiosResponse): Promise<Types.ModuleDto[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        if (Array.isArray(resultData200)) {
+              result200 = resultData200.map(item => 
+                Types.initModuleDto(item)
+              );
+            }
+        return Promise.resolve<Types.ModuleDto[]>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.ModuleDto[]>(null as any);
+}
 let _requestConfigCreateModule: Partial<AxiosRequestConfig> | null;
 export function getCreateModuleRequestConfig() {
   return _requestConfigCreateModule;
@@ -201,4 +277,15 @@ export function setDeleteModuleRequestConfig(value: Partial<AxiosRequestConfig>)
 }
 export function patchDeleteModuleRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigDeleteModule = patch(_requestConfigDeleteModule ?? {});
+}
+
+let _requestConfigGetModulesByCurriculum: Partial<AxiosRequestConfig> | null;
+export function getGetModulesByCurriculumRequestConfig() {
+  return _requestConfigGetModulesByCurriculum;
+}
+export function setGetModulesByCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetModulesByCurriculum = value;
+}
+export function patchGetModulesByCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetModulesByCurriculum = patch(_requestConfigGetModulesByCurriculum ?? {});
 }
