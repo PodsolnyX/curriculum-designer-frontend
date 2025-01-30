@@ -23,7 +23,7 @@ export interface SemesterFieldProps extends Semester {
 
 export const SemesterField = memo(function ({number, subjects, modules, trackSelection, id, selections, subjectsContainerWidth, setSubjectsContainerWidth}: SemesterFieldProps) {
 
-    const { overItemId, toolsOptions, modulesSemesters } = usePlan();
+    const { overItemId, toolsOptions, modulesSemesters, tracksSelectionSemesters } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
     const [newSubject, setNewSubject] = useState<Subject | null>(null);
@@ -168,7 +168,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                                 </Panel>
                                 <PanelResizeHandle className={"w-[1px] bg-stone-300"}/>
                                 <Panel order={2} style={{overflow: "auto"}} className={"flex pl-5"}>
-                                    <div className={`grid pr-5 gap-x-2 h-full`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, minmax(240px, 1fr))`}}>
+                                    <div className={`grid pr-5 gap-x-2 h-full`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>
                                         {
                                             modules.map(module =>
                                                 <ModuleField
@@ -179,11 +179,15 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                                             )
                                         }
                                     </div>
-                                    <div className={"flex gap-x-2"}>
+                                    <div className={"grid gap-x-2"} style={{gridTemplateColumns: `repeat(${tracksSelectionSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>
                                         {
                                             trackSelection.length ?
                                                 trackSelection.map(selection =>
-                                                    <TrackSelectionField {...selection} key={selection.id}/>
+                                                    <TrackSelectionField
+                                                        {...selection}
+                                                        key={selection.id}
+                                                        columnIndex={tracksSelectionSemesters.find(item =>item.semesters.includes(selection.id))?.columnIndex + 1 || 1}
+                                                    />
                                                 ) : null
                                         }
                                     </div>

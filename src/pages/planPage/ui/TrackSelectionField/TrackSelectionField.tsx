@@ -5,13 +5,13 @@ import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 
 interface TrackSelectionProps extends TrackSelection {
-
+    columnIndex: number;
 }
 
 const TrackSelectionField = (props: TrackSelectionProps) => {
 
-    const { id, name, tracks } = props;
-    const { displaySettings, getTrackSemesterPosition } = usePlan();
+    const { id, name, tracks, columnIndex } = props;
+    const { getTrackSemesterPosition } = usePlan();
 
     const {position} = getTrackSemesterPosition(id);
 
@@ -23,7 +23,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
     }
 
     return (
-        <div className={`${styles[position]} flex flex-col relative border-dashed px-3 border-stone-500`}>
+        <div className={`${styles[position]} w-max flex flex-col relative border-dashed px-3 border-stone-500`} style={{gridColumn: columnIndex}}>
             {
                 (position === "first" || position === "single") ?
                     <div className={"flex justify-center py-2"}>

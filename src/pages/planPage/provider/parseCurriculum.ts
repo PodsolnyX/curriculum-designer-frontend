@@ -169,13 +169,15 @@ const getSemesterTrackSelections = (semester: SemesterDto, modules: ModuleDto[])
 
 const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSelection => {
 
+    const colors = ["#25b600", "#8019f1", "#e80319", "#f56b0a"];
+
     return (
         {
             id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "tracks"),
             name: module.name,
             tracks: module.modules
                 .filter(module => module.semesterIds.some(id => id === semester.id))
-                .map(module => { return { ...parseModule(module, semester), color: "#ff0000", credits: 0 } })
+                .map((module, index) => { return { ...parseModule(module, semester), color: index < 5 ? colors[index] : colors[0], credits: 0 } })
         }
     )
 }

@@ -5,7 +5,7 @@ import {
     CursorMode,
     DisplaySettings,
     ModuleSemesters,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemestersInfo
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemesters, TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
@@ -202,6 +202,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         overItemId,
         semesters,
         modulesSemesters,
+        tracksSelectionSemesters,
         displaySettings,
         toolsOptions,
         selectedSubject: atomsData.find(atom => String(atom.id) === selectedSubjectId) || null,
@@ -244,6 +245,7 @@ interface PlanContextValue {
     semesters: Semester[];
     attestationTypes: AttestationDto[];
     modulesSemesters: ModuleSemesters[];
+    tracksSelectionSemesters: TrackSelectionSemesters[];
     selectedSubject: AtomDto | null;
     loadingPlan: boolean;
     selectedCompetenceId: UniqueIdentifier | null;
@@ -284,6 +286,7 @@ const PlanContext = createContext<PlanContextValue>({
     },
     semesters: [],
     modulesSemesters: [],
+    tracksSelectionSemesters: [],
     selectedSubject: null,
     attestationTypes: [],
     loadingPlan: true,
