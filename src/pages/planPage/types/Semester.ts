@@ -24,7 +24,7 @@ export interface Module {
 }
 
 export interface TrackSelection {
-    id: number;
+    id: string;
     name: string;
     tracks: Track[];
 }

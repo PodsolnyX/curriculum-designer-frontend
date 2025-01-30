@@ -10,7 +10,7 @@ export const useCurriculumData = () => {
 
     const {data: curriculumData, isLoading: loadingPlan} = useGetCurriculumQuery({id: Number(id)});
     const {data: atomsData, isLoading: loadingAtoms} = useGetAtomsByCurriculumQuery({curriculumId: Number(id), hasNoParentModule: false});
-    const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: true});
+    const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: false});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
 
     return {

@@ -8,8 +8,6 @@ import {PREFIX_ITEM_ID_KEYS} from "@/pages/planPage/provider/types.ts";
 
 export const parseCurriculum = (semesters: SemesterDto[], atoms: AtomDto[], modules: ModuleDto[]): Semester[] => {
 
-    console.log(modules.filter(module => module))
-
     return ([
         ...semesters.map(semester => {
             return {
@@ -34,6 +32,11 @@ export const setPrefixToId = (id: UniqueIdentifier, key: typeof PREFIX_ITEM_ID_K
 export const getIdFromPrefix = (id: UniqueIdentifier): string => {
     const _result = String(id).split("-");
     return _result[_result.length - 1];
+}
+
+export const getPrefixFromId = (id: UniqueIdentifier): string => {
+    const type = String(id).split("-")[0];
+    return PREFIX_ITEM_ID_KEYS.includes(type) ? type : "";
 }
 
 // ---------------------Предметы----------------------
@@ -168,7 +171,7 @@ const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSel
 
     return (
         {
-            id: module.id,
+            id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "tracks"),
             name: module.name,
             tracks: module.modules
                 .filter(module => module.semesterIds.some(id => id === semester.id))

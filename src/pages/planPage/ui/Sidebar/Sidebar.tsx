@@ -57,7 +57,7 @@ const Sidebar = () => {
     }
 
     return (
-        <Scrollbars style={{height: "calc(100vh - 62px)", width: "300px"}}>
+        <Scrollbars style={{height: "calc(100vh - 64px)", width: "330px"}}>
             <div className={"bg-white/[0.8] backdrop-blur p-5 min-h-full w-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
                 <div className={"flex flex-col"}>
                     <span className={"text-[12px] text-stone-400"}>{index}</span>

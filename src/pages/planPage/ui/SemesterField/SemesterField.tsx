@@ -14,8 +14,6 @@ import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
-import {useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
-import {useParams} from "react-router-dom";
 import {useCreateSubject} from "@/pages/planPage/hooks/useCreateSubject.ts";
 
 export interface SemesterFieldProps extends Semester {
@@ -91,7 +89,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
     return (
         <div ref={setNodeRef}
              onClick={(event) => onAddSubject(event)}
-             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "border-blue-400" : "border-transparent"} border-2 border-dashed`}>
+             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "brightness-95" : ""}`}>
             <div className={"absolute top-5 h-full w-full"}>
                 <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
                     <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
@@ -181,12 +179,14 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                                             )
                                         }
                                     </div>
-                                    {
-                                        trackSelection.length ?
-                                            trackSelection.map(selection =>
-                                                <TrackSelectionField {...selection} key={selection.id}/>
-                                            ) : null
-                                    }
+                                    <div className={"flex gap-x-2"}>
+                                        {
+                                            trackSelection.length ?
+                                                trackSelection.map(selection =>
+                                                    <TrackSelectionField {...selection} key={selection.id}/>
+                                                ) : null
+                                        }
+                                    </div>
                                 </Panel>
                             </PanelGroup>
                         </SortableContext>

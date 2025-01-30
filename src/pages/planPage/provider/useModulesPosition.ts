@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {
     ModuleSemesters,
     ModuleSemestersInfo,
@@ -23,11 +23,11 @@ export const useModulesPosition = () => {
     useEffect(() => {
         if (curriculumData && modulesData) {
             setModulesSemesters(parseModulesPositions(curriculumData.semesters, modulesData))
-
+            setTracksSelectionSemesters(parseTrackSelectionPositions(curriculumData.semesters, modulesData))
         }
     },[curriculumData, modulesData])
 
-    const getModulePosition = (id: UniqueIdentifier): ModuleSemestersInfo => {
+    const getModulePosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
         const module = modulesSemesters.find(module => getIdFromPrefix(id) === module.id);
         if (!module || module.semesters.length === 1) return {position: "single", countSemesters: 1}
         const index = module.semesters.findIndex(module => module === id);
@@ -35,18 +35,21 @@ export const useModulesPosition = () => {
             position: index === 0 ? "first" : index === module?.semesters.length - 1 ? "last" : "middle",
             countSemesters: module.semesters.length
         }
-    }
+    }, [modulesSemesters])
 
-    const getTrackSelectionPosition = (id: UniqueIdentifier): TrackSelectionSemestersInfo => {
-        const track = tracksSelectionSemesters.find(track => getIdFromPrefix(id) === track.id);
-        if (!track || track.semesters.length === 1) return {position: "single", countSemesters: 1, color: "green"}
-        const index = track.semesters.findIndex(module => module === id);
+    const getTrackSelectionPosition = useCallback((id: UniqueIdentifier): TrackSelectionSemestersInfo => {
+
+        const trackSelection = tracksSelectionSemesters.find(track => getIdFromPrefix(id) === track.id);
+        if (!trackSelection || trackSelection.semesters.length === 1)
+            return {position: "single", countSemesters: 1, color: "green"}
+        const index = trackSelection.semesters.findIndex(module => module === id);
+        console.log(id, trackSelection.semesters)
         return {
-            position: index === 0 ? "first" : index === track?.semesters.length - 1 ? "last" : "middle",
-            countSemesters: track.semesters.length,
+            position: index === 0 ? "first" : index === trackSelection?.semesters.length - 1 ? "last" : "middle",
+            countSemesters: trackSelection.semesters.length,
             color: "green"
         }
-    }
+    }, [tracksSelectionSemesters])
 
     return {
         modulesSemesters,
@@ -75,34 +78,30 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
         })
     })
 
-    console.log(modules)
-
     return [...modules];
 }
 
-// let tracksSelections: TrackSelectionSemesters[] = [];
+const parseTrackSelectionPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): TrackSelectionSemesters[] => {
 
-// const parseTrackSelectionPositions = () => {
-//
-//     if (data) {
-//         data.modules.filter(modules => modules.modules.length).map(trackSelection => {
-//             console.log(trackSelection)
-//             const startSemester = data.semesters.find(semester => semester.id === trackSelection.semesterIds[0]);
-//             const intersectionTracksSelection = modules.filter(_module => {
-//                 return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + trackSelection.semesterIds.length - 1);
-//             })
-//
-//             tracksSelections.push({
-//                 id: String(trackSelection.id),
-//                 tracks: [],
-//                 name: trackSelection.name,
-//                 startSemesterNumber: startSemester?.number || 0,
-//                 columnIndex: intersectionTracksSelection.slice(-1)[0]?.columnIndex + 1 || 0,
-//                 semesters: trackSelection.semesterIds.map(id => getPrefixId(`${getPrefixId(id, "semesters")}-${trackSelection.id}`, "modules"))
-//             })
-//         })
-//     }
-//
-//
-//     setTracksSelectionSemesters([...tracksSelections]);
-// }
+    let tracksSelections: TrackSelectionSemesters[] = [];
+
+    modulesData.filter(modules => modules.modules.length).map(trackSelection => {
+        const startSemester = semestersData.find(semester => semester.id === trackSelection.semesterIds[0]);
+        const intersectionTracksSelection = tracksSelections.filter(_module => {
+            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + trackSelection.semesterIds.length - 1);
+        })
+
+        tracksSelections.push({
+            id: String(trackSelection.id),
+            tracks: [],
+            name: trackSelection.name,
+            startSemesterNumber: startSemester?.number || 0,
+            columnIndex: intersectionTracksSelection.slice(-1)[0]?.columnIndex + 1 || 0,
+            semesters: trackSelection.semesterIds.map(id => setPrefixToId(`${setPrefixToId(id, "semesters")}-${trackSelection.id}`, "tracks"))
+        })
+    })
+
+    console.log(tracksSelections)
+
+    return [...tracksSelections]
+}

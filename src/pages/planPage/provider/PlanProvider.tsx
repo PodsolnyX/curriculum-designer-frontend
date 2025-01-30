@@ -5,13 +5,13 @@ import {
     CursorMode,
     DisplaySettings,
     ModuleSemesters,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemesters, TrackSelectionSemestersInfo
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {AtomDto, AttestationDto} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
-import {parseAtomToSubject, parseCurriculum} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {getPrefixFromId, parseAtomToSubject, parseCurriculum} from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useModulesPosition} from "@/pages/planPage/provider/useModulesPosition.ts";
 
@@ -91,11 +91,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setOverItemId(null);
     }
 
-    const getItemTypeById = (id: UniqueIdentifier): string => {
-        const type = String(id).split("-")[0];
-        return PREFIX_ITEM_ID_KEYS.includes(type) ? type : "";
-    }
-
     const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
 
         let parentIds: (UniqueIdentifier)[] = [];
@@ -164,7 +159,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         let activeSubject;
 
         const removeSubjectFromParents = (item: any, currentDeep: number) => {
-            const type = getItemTypeById(parentsIdsActive[currentDeep]);
+            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
             if (!type)
                 item.subjects = item.subjects.filter(item => {
                     if (item.id !== parentsIdsActive[currentDeep]) return true
@@ -180,7 +175,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         }
 
         const addSubjectToNewParents = (item: any, currentDeep: number) => {
-            const type = getItemTypeById(parentsIdsOver[currentDeep]);
+            const type = getPrefixFromId(parentsIdsOver[currentDeep]);
 
             if (!type && currentDeep === parentsIdsOver.length) {
                 item.subjects = [...item.subjects, activeSubject]
