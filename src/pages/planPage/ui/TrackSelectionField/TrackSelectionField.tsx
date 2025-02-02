@@ -3,6 +3,7 @@ import TrackField from "@/pages/planPage/ui/TrackField/TrackField.tsx";
 import React from "react";
 import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 
 interface TrackSelectionProps extends TrackSelection {
     columnIndex: number;
@@ -13,7 +14,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
     const { id, name, tracks, columnIndex } = props;
     const { getTrackSemesterPosition } = usePlan();
 
-    const {position} = getTrackSemesterPosition(id);
+    const {position, semesterNumber} = getTrackSemesterPosition(id);
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg h-max`,
@@ -32,7 +33,13 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                         </span>
                     </div> : null
             }
-            <div className={"flex gap-3 h-full"}>
+            <div className={"flex relative gap-3 h-full"}>
+                <div className={`w-full absolute left-0 z-10 py-2 px-3 ${position === "first" ? "top-9" : "top-0"}`}>
+                    <div className={"p-2 px-3 bg-white rounded-lg shadow-md text-blue-500 items-center flex justify-between"}>
+                        {`Семестр ${semesterNumber}`}
+                        <CreditsSelector credits={0}/>
+                    </div>
+                </div>
                 {
                     tracks.map(track =>
                         <TrackField key={track.id} {...track} position={position}/>

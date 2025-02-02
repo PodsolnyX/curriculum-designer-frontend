@@ -12,7 +12,7 @@ interface TrackFieldProps extends Track {
 
 const TrackField = ({subjects, name, id, color, position = "single"}: TrackFieldProps) => {
 
-    const { overItemId, displaySettings } = usePlan();
+    const { overItemId } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
@@ -20,14 +20,14 @@ const TrackField = ({subjects, name, id, color, position = "single"}: TrackField
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg`,
-        "first": `h-max mt-auto relative pb-3 mt-20 border-2 rounded-t-lg after:content-[''] after:w-full after:h-[2px] after:bg-[${color}] after:absolute after:bottom-[-2px] after:left-0`,
-        "middle": `${displaySettings.academicHours ? "pt-20" : "pt-3"} py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-[${color}] after:absolute after:bottom-[-2px] after:left-0`,
-        "last": `${displaySettings.academicHours ? "pt-20" : "pt-3"} h-max py-3 pt-20 border-x-2 border-b-2 rounded-b-lg mb-5`
+        "first": `h-max mt-auto border-2 rounded-t-lg`,
+        "middle": `border-x-2 border-b-2`,
+        "last": `h-max border-x-2 border-b-2 rounded-b-lg mb-5`
     }
 
     return (
         <div
-            className={`${styles[position]} flex w-[230px] flex-col border-dotted px-3 ${overItemId === id ? "border-blue-300" : ""}`}
+            className={`${styles[position]} flex w-[230px] flex-col border-dotted pb-2 px-3 ${overItemId === id ? "border-blue-300" : ""}`}
             ref={setNodeRef}
             style={{backgroundColor: `${color}20`, borderColor: color}}
         >
@@ -39,7 +39,7 @@ const TrackField = ({subjects, name, id, color, position = "single"}: TrackField
                         </span>
                     </div> : null
             }
-            <div className={"grid grid-cols-1 gap-3 items-center h-full"}>
+            <div className={"grid grid-cols-1 gap-3 items-center h-full pt-14"}>
                 <SortableContext items={subjects} id={id}>
                     {
                         subjects.length ?

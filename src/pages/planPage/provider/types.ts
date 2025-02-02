@@ -45,6 +45,7 @@ export interface ModuleSemestersInfo {
 
 export interface TrackSelectionSemestersInfo {
     position: ModuleSemestersPosition,
+    semesterNumber: number,
     color: string,
     countSemesters: number
 }

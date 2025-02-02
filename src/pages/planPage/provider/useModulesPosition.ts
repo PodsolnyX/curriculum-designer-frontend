@@ -41,11 +41,11 @@ export const useModulesPosition = () => {
 
         const trackSelection = tracksSelectionSemesters.find(track => getIdFromPrefix(id) === track.id);
         if (!trackSelection || trackSelection.semesters.length === 1)
-            return {position: "single", countSemesters: 1, color: "green"}
+            return {position: "single", countSemesters: 1, color: "green", semesterNumber: 1}
         const index = trackSelection.semesters.findIndex(module => module === id);
-        console.log(id, trackSelection.semesters)
         return {
             position: index === 0 ? "first" : index === trackSelection?.semesters.length - 1 ? "last" : "middle",
+            semesterNumber: index + 1,
             countSemesters: trackSelection.semesters.length,
             color: "green"
         }

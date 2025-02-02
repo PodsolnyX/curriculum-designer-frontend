@@ -311,7 +311,7 @@ const PlanContext = createContext<PlanContextValue>({
         return {position: "single", countSemesters: 0}
     },
     getTrackSemesterPosition: (_id: UniqueIdentifier) => {
-        return {position: "single", countSemesters: 0, color: "#000000"}
+        return {position: "single", countSemesters: 0, color: "#000000", semesterNumber: 0}
     },
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {
     },
