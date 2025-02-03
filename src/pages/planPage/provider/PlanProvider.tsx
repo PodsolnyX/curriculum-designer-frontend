@@ -9,7 +9,7 @@ import {
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
-import {AtomDto, AttestationDto, RefComponentSemesterDto} from "@/api/axios-client.ts";
+import {AcademicActivityDto, AtomDto, AttestationDto, RefComponentSemesterDto} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
     getIdFromPrefix,
@@ -39,6 +39,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         atomsData,
         modulesData,
         attestationTypesData,
+        academicActivityData,
         isLoading
     } = useCurriculumData();
 
@@ -205,8 +206,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         enableSettings()
 
-        console.log(["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null, parentsIdsOver[1], modulesData)
-
         editSubject({
             subjectId: event.active.id,
             data: {
@@ -229,6 +228,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         toolsOptions,
         selectedSubject: atomsData.find(atom => String(atom.id) === selectedSubjectId) || null,
         attestationTypes: attestationTypesData,
+        academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
         selectedCompetenceId,
         onSelectCompetence,
@@ -267,6 +267,7 @@ interface PlanContextValue {
     semestersInfo: RefComponentSemesterDto[];
     semesters: Semester[];
     attestationTypes: AttestationDto[];
+    academicActivity: AcademicActivityDto[];
     modulesSemesters: ModulePosition[];
     selectionsSemesters: ModulePosition[];
     tracksSelectionSemesters: ModulePosition[];
@@ -309,6 +310,7 @@ const PlanContext = createContext<PlanContextValue>({
         cursorMode: CursorMode.Move,
         selectedCreateEntityType: "subjects"
     },
+    academicActivity: [],
     semesters: [],
     modulesSemesters: [],
     selectionsSemesters: [],

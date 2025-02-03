@@ -4,6 +4,7 @@ import {useGetAtomsByCurriculumQuery} from "@/api/axios-client/AtomQuery.ts";
 import {useGetModulesByCurriculumQuery} from "@/api/axios-client/ModuleQuery.ts";
 import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
 import {useGetSemestersQuery} from "@/api/axios-client/SemestersQuery.ts";
+import {useGetAcademicActivitiesQuery} from "@/api/axios-client/AcademicActivityQuery.ts";
 
 export const useCurriculumData = () => {
 
@@ -14,6 +15,7 @@ export const useCurriculumData = () => {
     const {data: atomsData, isLoading: loadingAtoms} = useGetAtomsByCurriculumQuery({curriculumId: Number(id), hasNoParentModule: false});
     const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: false});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
+    const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
 
     return {
         curriculumId: Number(id),
@@ -21,7 +23,8 @@ export const useCurriculumData = () => {
         semestersData: semestersData || [],
         atomsData: atomsData || [],
         modulesData: modulesData || [],
-        attestationTypesData,
-        isLoading: loadingPlan || loadingAtoms || loadingModules || loadingAttestationTypes || loadingSemesters
+        attestationTypesData: attestationTypesData || [],
+        academicActivityData: academicActivityData || [],
+        isLoading: loadingPlan || loadingAtoms || loadingModules || loadingAttestationTypes || loadingSemesters || loadingAcademicActivity
     }
 }

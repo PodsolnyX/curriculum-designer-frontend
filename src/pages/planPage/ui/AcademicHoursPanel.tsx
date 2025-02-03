@@ -1,15 +1,19 @@
 import React from "react";
-import {HoursDistributionDto} from "@/api/axios-client.ts";
+import {AcademicActivityDto, HoursDistributionDto} from "@/api/axios-client.ts";
 import {Tooltip} from "antd";
+import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 
 interface AcademicHoursPanelProps {
     credits: number;
     academicHours: HoursDistributionDto[];
     size?: "small" | "large";
     layout?: "horizontal" | "vertical";
+    showAllActivities?: boolean;
 }
 
-const AcademicHoursPanel = ({credits, academicHours, size = "small", layout = "vertical"}: AcademicHoursPanelProps) => {
+const AcademicHoursPanel = ({credits, academicHours, size = "small", layout = "vertical", showAllActivities}: AcademicHoursPanelProps) => {
+
+    const {academicActivity} = usePlan();
 
     const sumAcademicHours = roundToTwo(academicHours.reduce((_sum, type) => _sum + type.value, 0));
 
@@ -21,15 +25,31 @@ const AcademicHoursPanel = ({credits, academicHours, size = "small", layout = "v
         <div className={layout === "vertical" ? "flex flex-col gap-1" : "flex items-center flex-row-reverse gap-1"}>
             <div className={layout === "vertical" ? "grid grid-cols-2 gap-1" : "flex gap-1"}>
                 {
-                    academicHours.map((type, index) =>
-                        <div key={type.academicActivity.id} className={`flex justify-between border border-solid border-stone-100 gap-1 rounded-md ${(index === academicHours.length - 1 && academicHours.length % 2 === 1) ? 'col-span-2' : ''}`}>
-                            <Tooltip title={type.academicActivity.name}>
-                                <div className={`bg-stone-100 pr-1 text-stone-600 ${textSize}`}>
-                                    {type.academicActivity.shortName}
-                                </div>
-                            </Tooltip>
-                            <div className={`${textSize} pr-1`}>{roundToTwo(type.value)}</div>
-                        </div>
+                    showAllActivities
+                    ? academicActivity.map((activity, index) =>
+                        {
+                            const academicHour = academicHours.find(hour => hour.academicActivity.id === activity.id);
+                            return (
+                                <AcademicActivityItem
+                                    key={activity.id}
+                                    academicActivity={activity}
+                                    value={academicHour?.value || 0}
+                                    index={index}
+                                    academicActivityLength={academicActivity.length}
+                                    textSize={textSize}
+                                />
+                            )
+                        }
+                    )
+                    : academicHours.map((type, index) =>
+                        <AcademicActivityItem
+                            key={type.academicActivity.id}
+                            academicActivity={type.academicActivity}
+                            value={type.value}
+                            index={index}
+                            academicActivityLength={academicHours.length}
+                            textSize={textSize}
+                        />
                     )
                 }
             </div>
@@ -41,6 +61,27 @@ const AcademicHoursPanel = ({credits, academicHours, size = "small", layout = "v
                     {`${sumAcademicHours}/${credits*36}`}
                 </div>
             </div>
+        </div>
+    )
+}
+
+interface AcademicActivityItemProps {
+    academicActivity: AcademicActivityDto;
+    value: number;
+    index: number;
+    academicActivityLength: number;
+    textSize?: string;
+}
+
+const AcademicActivityItem = ({academicActivity, value, academicActivityLength, index, textSize = "text-[12px]"}: AcademicActivityItemProps) => {
+    return (
+        <div className={`flex justify-between border border-solid border-stone-100 gap-1 rounded-md ${(index === academicActivityLength - 1 && academicActivityLength % 2 === 1) ? 'col-span-2' : ''}`}>
+            <Tooltip title={academicActivity.name}>
+                <div className={`bg-stone-100 pr-1 text-stone-600 ${textSize}`}>
+                    {academicActivity.shortName}
+                </div>
+            </Tooltip>
+            <div className={`${textSize} pr-1`}>{roundToTwo(value)}</div>
         </div>
     )
 }

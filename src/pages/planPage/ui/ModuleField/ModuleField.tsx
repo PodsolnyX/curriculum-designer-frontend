@@ -26,7 +26,7 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
     const {onCreate} = useCreateEntity();
 
     const styles: Record<ModuleSemestersPosition, string> = {
-        "single": `mt-16 border-2 rounded-lg h-max`,
+        "single": `my-3 border-2 rounded-lg h-max`,
         "first": `h-max mt-auto relative pb-3 mt-20 border-2 rounded-t-lg after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
         "middle": `py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
         "last": `h-max py-3 border-x-2 border-b-2 rounded-b-lg mb-5`
@@ -61,15 +61,12 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
                     </div> : null
             }
             <div className={"grid grid-cols-1 gap-3 items-center h-full"}>
-                {/*{*/}
-                {/*    onAdd ? <div className={"absolute w-full z-10 -ml-3 h-full border-sky-500 cursor-pointer border-dashed border-2"}></div>  : null*/}
-                {/*}*/}
+
                 <SortableContext items={subjects} id={id}>
                     {
                         subjects.length ?
                             subjects.map(subject => <SortableSubjectCard key={subject.id} {...subject}/>)
-                            : null
-                            // <span className={"text-stone-700 max-w-[250px] text-center my-auto p-2"}>Перенесите дисциплину внутрь</span>
+                            : <span className={"text-stone-700 max-w-[250px] text-center my-auto p-2"}>Перенесите дисциплину внутрь</span>
                     }
                 </SortableContext>
             </div>
