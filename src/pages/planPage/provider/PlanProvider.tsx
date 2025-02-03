@@ -209,7 +209,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         editSubject({
             subjectId: event.active.id,
             data: {
-                semesterIds: [Number(getIdFromPrefix(parentsIdsOver[0]))],
+                semesterIds: {} [Number(getIdFromPrefix(parentsIdsOver[0]))],
                 parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
             }
         })

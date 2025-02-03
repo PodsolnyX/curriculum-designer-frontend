@@ -327,7 +327,7 @@ export interface UpdateAtomDto  {
   isRequired?: boolean | null;
   order?: number | null;
   type?: AtomType | null;
-  semesterIds?: number[] | null;
+  semesterIds?: { [key: string]: number; } | null;
 }
 export function deserializeUpdateAtomDto(json: string): UpdateAtomDto {
   const data = JSON.parse(json) as UpdateAtomDto;
@@ -337,7 +337,6 @@ export function deserializeUpdateAtomDto(json: string): UpdateAtomDto {
 export function initUpdateAtomDto(_data: UpdateAtomDto) {
   if (_data) {
     _data.type = _data["type"];
-    _data.semesterIds = _data["semesterIds"];
   }
   return _data;
 }
