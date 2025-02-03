@@ -13,8 +13,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: Installing dependencies
-        run: docker ps
+      - name: Docker compose down
+        run: sudo docker compose down
 
-      - name: Run
-        run: docker ps vite --host
+      - name: Docker compose up with build
+        run: sudo docker compose up -d --build
+
+      - name: Cleanup docker
+        run: docker system prune -a -f
