@@ -17,4 +17,4 @@ jobs:
         run: docker ps
 
       - name: Run
-        run: docker ps run dev --host
+        run: docker ps vite --host
