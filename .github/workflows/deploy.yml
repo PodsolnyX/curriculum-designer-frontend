@@ -1,0 +1,23 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        
+      - name: NPM install
+        run: sudo apt update && sudo apt install npm -y
+
+      - name: Installing dependencies
+        run: npm install
+
+      - name: Run
+        run: npm run dev --host
