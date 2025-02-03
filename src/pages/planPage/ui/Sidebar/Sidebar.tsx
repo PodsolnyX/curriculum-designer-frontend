@@ -5,7 +5,6 @@ import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {AtomType} from "@/api/axios-client.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
-import {Scrollbars} from "react-custom-scrollbars";
 
 const Sidebar = () => {
 
@@ -57,8 +56,8 @@ const Sidebar = () => {
     }
 
     return (
-        <Scrollbars style={{height: "calc(100vh - 64px)", width: "330px"}}>
-            <div className={"bg-white/[0.8] backdrop-blur p-5 min-h-full w-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
+
+            <div style={{height: "calc(100vh - 64px)"}} className={"overflow-y-auto bg-white/[0.8] w-[330px] backdrop-blur p-5 min-h-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
                 <div className={"flex flex-col"}>
                     <span className={"text-[12px] text-stone-400"}>{index}</span>
                     <div className={"text-black text-[18px]"}>
@@ -130,7 +129,6 @@ const Sidebar = () => {
                     }
                 </div>
             </div>
-        </Scrollbars>
 
     )
 }

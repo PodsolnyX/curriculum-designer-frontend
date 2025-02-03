@@ -24,7 +24,6 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
-    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^18.3.1",
     "react-intersection-observer": "^9.15.0",
     "react-resizable-panels": "^2.1.7",
