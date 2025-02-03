@@ -14,6 +14,7 @@ import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react
 import {useCreateSubject} from "@/pages/planPage/hooks/useCreateSubject.ts";
 import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
+import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 
 export interface SemesterFieldProps extends Semester {
     subjectsContainerWidth: number;
@@ -51,7 +52,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
         id
     });
 
-    const createSubject = useCreateSubject(id);
+    const {onCreate} = useCreateEntity()
 
     useEffect(() => {
         if (subjectsPanelRef.current)
@@ -72,7 +73,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
     const onAddSubject = (event: React.MouseEvent<HTMLDivElement>) => {
         if (addSubjectCard) {
             event.stopPropagation()
-            createSubject()
+            onCreate(id)
         }
     }
 
@@ -80,8 +81,9 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
 
     return (
         <div ref={setNodeRef}
+             onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}
              onClick={(event) => onAddSubject(event)}
-             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}  ${overItemId === id ? "brightness-95" : ""}`}>
+             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === id || addSubjectCard) ? "brightness-95" : ""}`}>
             <div className={"absolute top-5 h-full w-full"}>
                 <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
                     <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
@@ -126,11 +128,10 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
             {
                 (subjects.length || selections.length || modules.length || trackSelection.length) ?
                     <div className={`flex flex-1 items-start gap-3 px-5 relative`}
-                         onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester}
                     >
-                        {
-                            addSubjectCard ? <div className={"absolute w-full -ml-5 h-full border-sky-500 cursor-pointer border-dashed border-2"}></div>  : null
-                        }
+                        {/*{*/}
+                        {/*    addSubjectCard ? <div className={"absolute w-full -ml-5 h-full border-sky-500 cursor-pointer border-dashed border-2"}></div>  : null*/}
+                        {/*}*/}
                         <SortableContext items={[...subjects, ...selections, ...trackSelection, ...modules]} id={id}>
                             <PanelGroup direction="horizontal" autoSaveId="widthSubjects" className={"w-[200vw]"}>
                                 <Panel
@@ -192,13 +193,8 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
                             </PanelGroup>
                         </SortableContext>
                     </div> :
-                    <div className={"w-screen h-full flex flex-1 items-center justify-center text-stone-400 py-16"}
-                         onMouseEnter={onHoverSemester}
-                         onMouseLeave={onLeaveSemester}
-                    >
-                        {
-                            addSubjectCard ? <NewItemCard/> : <span>Семестр пуст</span>
-                        }
+                    <div className={"w-screen h-full flex flex-1 items-center justify-center text-stone-400 py-16"}>
+                       <span>Семестр пуст</span>
                     </div>
             }
         </div>

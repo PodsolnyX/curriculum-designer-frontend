@@ -96,10 +96,11 @@ const getSemesterModules = (semester: SemesterDto, modules: ModuleDto[]): Module
     const isSemesterModule = (module: ModuleDto) => {
         return (
             !module.selection &&
+            (module.parentSemesterId === semester.id ||
             module.atoms
                 .some(atom => atom.semesters
                     .some(_semester => _semester.semester.id === semester.id)
-                )
+                ))
         )
     }
 

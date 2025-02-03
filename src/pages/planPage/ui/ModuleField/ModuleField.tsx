@@ -5,7 +5,7 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
-import {useCreateSubject} from "@/pages/planPage/hooks/useCreateSubject.ts";
+import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 
 interface ModuleFieldProps extends Module {
     columnIndex: number;
@@ -23,7 +23,7 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
 
     const {position} = getModuleSemesterPosition(id);
 
-    const createSubject = useCreateSubject(semesterId);
+    const {onCreate} = useCreateEntity();
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `mt-16 border-2 rounded-lg h-max`,
@@ -44,7 +44,7 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
     const onAddSubject = (event: React.MouseEvent<HTMLDivElement>) => {
         if (onAdd) {
             event.stopPropagation()
-            createSubject(id)
+            onCreate(semesterId, id)
         }
     }
 

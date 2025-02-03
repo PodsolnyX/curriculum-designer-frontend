@@ -11,9 +11,15 @@ import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.t
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {AtomDto, AttestationDto, RefComponentSemesterDto} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
-import {getPrefixFromId, parseAtomToSubject, parseCurriculum} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {
+    getIdFromPrefix,
+    getPrefixFromId,
+    parseAtomToSubject,
+    parseCurriculum
+} from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useModulesPosition} from "@/pages/planPage/provider/useModulesPosition.ts";
+import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
@@ -24,6 +30,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [selectedSubjectId, setSelectedSubjectId] = useState<UniqueIdentifier | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
     const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
+
+    const editSubject = useEditSubjectWithParams();
 
     const {
         curriculumData,
@@ -196,6 +204,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         resetAllActiveIds()
 
         enableSettings()
+
+        console.log(["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null, parentsIdsOver[1], modulesData)
+
+        editSubject({
+            subjectId: event.active.id,
+            data: {
+                semesterIds: [Number(getIdFromPrefix(parentsIdsOver[0]))],
+                parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
+            }
+        })
     }
 
     const value: PlanContextValue = {
