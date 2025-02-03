@@ -4,12 +4,12 @@ import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {
     CursorMode,
     DisplaySettings,
-    ModuleSemesters,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemesters, TrackSelectionSemestersInfo
+    ModulePosition,
+    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
-import {AtomDto, AttestationDto} from "@/api/axios-client.ts";
+import {AtomDto, AttestationDto, RefComponentSemesterDto} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {getPrefixFromId, parseAtomToSubject, parseCurriculum} from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
@@ -27,6 +27,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {
         curriculumData,
+        semestersData,
         atomsData,
         modulesData,
         attestationTypesData,
@@ -35,6 +36,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {
         modulesSemesters,
+        selectionsSemesters,
         tracksSelectionSemesters,
         getModulePosition,
         getTrackSelectionPosition
@@ -202,6 +204,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         overItemId,
         semesters,
         modulesSemesters,
+        selectionsSemesters,
+        semestersInfo: semestersData || [],
         tracksSelectionSemesters,
         displaySettings,
         toolsOptions,
@@ -242,10 +246,12 @@ interface PlanContextValue {
     overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
     toolsOptions: ToolsOptions;
+    semestersInfo: RefComponentSemesterDto[];
     semesters: Semester[];
     attestationTypes: AttestationDto[];
-    modulesSemesters: ModuleSemesters[];
-    tracksSelectionSemesters: TrackSelectionSemesters[];
+    modulesSemesters: ModulePosition[];
+    selectionsSemesters: ModulePosition[];
+    tracksSelectionSemesters: ModulePosition[];
     selectedSubject: AtomDto | null;
     loadingPlan: boolean;
     selectedCompetenceId: UniqueIdentifier | null;
@@ -279,6 +285,7 @@ const PlanContext = createContext<PlanContextValue>({
     activeItemId: null,
     activeSubject: null,
     overItemId: null,
+    semestersInfo: [],
     displaySettings: PreDisplaySettings[0].settings,
     toolsOptions: {
         cursorMode: CursorMode.Move,
@@ -286,6 +293,7 @@ const PlanContext = createContext<PlanContextValue>({
     },
     semesters: [],
     modulesSemesters: [],
+    selectionsSemesters: [],
     tracksSelectionSemesters: [],
     selectedSubject: null,
     attestationTypes: [],
@@ -311,7 +319,7 @@ const PlanContext = createContext<PlanContextValue>({
         return {position: "single", countSemesters: 0}
     },
     getTrackSemesterPosition: (_id: UniqueIdentifier) => {
-        return {position: "single", countSemesters: 0, color: "#000000", semesterNumber: 0}
+        return {position: "single", countSemesters: 0, semesterNumber: 0}
     },
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {
     },

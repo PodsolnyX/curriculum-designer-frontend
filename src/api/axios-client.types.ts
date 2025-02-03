@@ -1,4 +1,155 @@
 //-----Types.File-----
+export interface RefComponentSemesterDto  {
+  semester: SemesterDto;
+  credit: number;
+  attestations: AttestationDto[];
+  academicActivityHours: HoursDistributionDto[];
+}
+export function deserializeRefComponentSemesterDto(json: string): RefComponentSemesterDto {
+  const data = JSON.parse(json) as RefComponentSemesterDto;
+  initRefComponentSemesterDto(data);
+  return data;
+}
+export function initRefComponentSemesterDto(_data: RefComponentSemesterDto) {
+  if (_data) {
+    _data.semester = _data["semester"] && initSemesterDto(_data["semester"]);
+    if (Array.isArray(_data["attestations"])) {
+      _data.attestations = _data["attestations"].map(item => 
+        initAttestationDto(item)
+      );
+    }
+    if (Array.isArray(_data["academicActivityHours"])) {
+      _data.academicActivityHours = _data["academicActivityHours"].map(item => 
+        initHoursDistributionDto(item)
+      );
+    }
+  }
+  return _data;
+}
+export function serializeRefComponentSemesterDto(_data: RefComponentSemesterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeRefComponentSemesterDto(_data as RefComponentSemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeRefComponentSemesterDto(_data: RefComponentSemesterDto): RefComponentSemesterDto {
+  const data: Record<string, any> = { ..._data };
+  data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
+  if (Array.isArray(_data.attestations)) {
+    data["attestations"] = _data.attestations.map(item => 
+        prepareSerializeAttestationDto(item)
+    );
+  }
+  if (Array.isArray(_data.academicActivityHours)) {
+    data["academicActivityHours"] = _data.academicActivityHours.map(item => 
+        prepareSerializeHoursDistributionDto(item)
+    );
+  }
+  return data as RefComponentSemesterDto;
+}
+export interface SemesterDto  {
+  id: number;
+  curriculumId: number;
+  number: number;
+  startDate: Date;
+  endDate: Date;
+}
+export function deserializeSemesterDto(json: string): SemesterDto {
+  const data = JSON.parse(json) as SemesterDto;
+  initSemesterDto(data);
+  return data;
+}
+export function initSemesterDto(_data: SemesterDto) {
+  if (_data) {
+    _data.startDate = _data["startDate"] ? parseDateOnly(_data["startDate"].toString()) : <any>null;
+    _data.endDate = _data["endDate"] ? parseDateOnly(_data["endDate"].toString()) : <any>null;
+  }
+  return _data;
+}
+export function serializeSemesterDto(_data: SemesterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeSemesterDto(_data as SemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeSemesterDto(_data: SemesterDto): SemesterDto {
+  const data: Record<string, any> = { ..._data };
+  data["startDate"] = _data.startDate && formatDate(_data.startDate);
+  data["endDate"] = _data.endDate && formatDate(_data.endDate);
+  return data as SemesterDto;
+}
+export interface AttestationDto  {
+  id: number;
+  name: string;
+  shortName: string;
+}
+export function deserializeAttestationDto(json: string): AttestationDto {
+  const data = JSON.parse(json) as AttestationDto;
+  initAttestationDto(data);
+  return data;
+}
+export function initAttestationDto(_data: AttestationDto) {
+    return _data;
+}
+export function serializeAttestationDto(_data: AttestationDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeAttestationDto(_data as AttestationDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeAttestationDto(_data: AttestationDto): AttestationDto {
+  const data: Record<string, any> = { ..._data };
+  return data as AttestationDto;
+}
+export interface HoursDistributionDto  {
+  academicActivity: AcademicActivityDto;
+  value: number;
+}
+export function deserializeHoursDistributionDto(json: string): HoursDistributionDto {
+  const data = JSON.parse(json) as HoursDistributionDto;
+  initHoursDistributionDto(data);
+  return data;
+}
+export function initHoursDistributionDto(_data: HoursDistributionDto) {
+  if (_data) {
+    _data.academicActivity = _data["academicActivity"] && initAcademicActivityDto(_data["academicActivity"]);
+  }
+  return _data;
+}
+export function serializeHoursDistributionDto(_data: HoursDistributionDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeHoursDistributionDto(_data as HoursDistributionDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeHoursDistributionDto(_data: HoursDistributionDto): HoursDistributionDto {
+  const data: Record<string, any> = { ..._data };
+  data["academicActivity"] = _data.academicActivity && prepareSerializeAcademicActivityDto(_data.academicActivity);
+  return data as HoursDistributionDto;
+}
+export interface AcademicActivityDto  {
+  id: number;
+  name: string;
+  shortName: string;
+}
+export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
+  const data = JSON.parse(json) as AcademicActivityDto;
+  initAcademicActivityDto(data);
+  return data;
+}
+export function initAcademicActivityDto(_data: AcademicActivityDto) {
+    return _data;
+}
+export function serializeAcademicActivityDto(_data: AcademicActivityDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeAcademicActivityDto(_data as AcademicActivityDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto): AcademicActivityDto {
+  const data: Record<string, any> = { ..._data };
+  return data as AcademicActivityDto;
+}
 export interface CreateCurriculumDto  {
   name: string;
   semesterCount: number;
@@ -58,37 +209,6 @@ export function prepareSerializeCurriculumDto(_data: CurriculumDto): CurriculumD
   }
   data["settings"] = _data.settings && prepareSerializeCurriculumSettingsDto(_data.settings);
   return data as CurriculumDto;
-}
-export interface SemesterDto  {
-  id: number;
-  curriculumId: number;
-  number: number;
-  startDate: Date;
-  endDate: Date;
-}
-export function deserializeSemesterDto(json: string): SemesterDto {
-  const data = JSON.parse(json) as SemesterDto;
-  initSemesterDto(data);
-  return data;
-}
-export function initSemesterDto(_data: SemesterDto) {
-  if (_data) {
-    _data.startDate = _data["startDate"] ? parseDateOnly(_data["startDate"].toString()) : <any>null;
-    _data.endDate = _data["endDate"] ? parseDateOnly(_data["endDate"].toString()) : <any>null;
-  }
-  return _data;
-}
-export function serializeSemesterDto(_data: SemesterDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeSemesterDto(_data as SemesterDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeSemesterDto(_data: SemesterDto): SemesterDto {
-  const data: Record<string, any> = { ..._data };
-  data["startDate"] = _data.startDate && formatDate(_data.startDate);
-  data["endDate"] = _data.endDate && formatDate(_data.endDate);
-  return data as SemesterDto;
 }
 export interface CurriculumSettingsDto  {
   competenceDistributionType: CompetenceDistributionType;
@@ -292,126 +412,6 @@ export function prepareSerializeAtomDto(_data: AtomDto): AtomDto {
   }
   return data as AtomDto;
 }
-export interface RefComponentSemesterDto  {
-  semester: SemesterDto;
-  credit: number;
-  attestations: AttestationDto[];
-  academicActivityHours: HoursDistributionDto[];
-}
-export function deserializeRefComponentSemesterDto(json: string): RefComponentSemesterDto {
-  const data = JSON.parse(json) as RefComponentSemesterDto;
-  initRefComponentSemesterDto(data);
-  return data;
-}
-export function initRefComponentSemesterDto(_data: RefComponentSemesterDto) {
-  if (_data) {
-    _data.semester = _data["semester"] && initSemesterDto(_data["semester"]);
-    if (Array.isArray(_data["attestations"])) {
-      _data.attestations = _data["attestations"].map(item => 
-        initAttestationDto(item)
-      );
-    }
-    if (Array.isArray(_data["academicActivityHours"])) {
-      _data.academicActivityHours = _data["academicActivityHours"].map(item => 
-        initHoursDistributionDto(item)
-      );
-    }
-  }
-  return _data;
-}
-export function serializeRefComponentSemesterDto(_data: RefComponentSemesterDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeRefComponentSemesterDto(_data as RefComponentSemesterDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeRefComponentSemesterDto(_data: RefComponentSemesterDto): RefComponentSemesterDto {
-  const data: Record<string, any> = { ..._data };
-  data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
-  if (Array.isArray(_data.attestations)) {
-    data["attestations"] = _data.attestations.map(item => 
-        prepareSerializeAttestationDto(item)
-    );
-  }
-  if (Array.isArray(_data.academicActivityHours)) {
-    data["academicActivityHours"] = _data.academicActivityHours.map(item => 
-        prepareSerializeHoursDistributionDto(item)
-    );
-  }
-  return data as RefComponentSemesterDto;
-}
-export interface AttestationDto  {
-  id: number;
-  name: string;
-  shortName: string;
-}
-export function deserializeAttestationDto(json: string): AttestationDto {
-  const data = JSON.parse(json) as AttestationDto;
-  initAttestationDto(data);
-  return data;
-}
-export function initAttestationDto(_data: AttestationDto) {
-    return _data;
-}
-export function serializeAttestationDto(_data: AttestationDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeAttestationDto(_data as AttestationDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeAttestationDto(_data: AttestationDto): AttestationDto {
-  const data: Record<string, any> = { ..._data };
-  return data as AttestationDto;
-}
-export interface HoursDistributionDto  {
-  academicActivity: AcademicActivityDto;
-  value: number;
-}
-export function deserializeHoursDistributionDto(json: string): HoursDistributionDto {
-  const data = JSON.parse(json) as HoursDistributionDto;
-  initHoursDistributionDto(data);
-  return data;
-}
-export function initHoursDistributionDto(_data: HoursDistributionDto) {
-  if (_data) {
-    _data.academicActivity = _data["academicActivity"] && initAcademicActivityDto(_data["academicActivity"]);
-  }
-  return _data;
-}
-export function serializeHoursDistributionDto(_data: HoursDistributionDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeHoursDistributionDto(_data as HoursDistributionDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeHoursDistributionDto(_data: HoursDistributionDto): HoursDistributionDto {
-  const data: Record<string, any> = { ..._data };
-  data["academicActivity"] = _data.academicActivity && prepareSerializeAcademicActivityDto(_data.academicActivity);
-  return data as HoursDistributionDto;
-}
-export interface AcademicActivityDto  {
-  id: number;
-  name: string;
-  shortName: string;
-}
-export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
-  const data = JSON.parse(json) as AcademicActivityDto;
-  initAcademicActivityDto(data);
-  return data;
-}
-export function initAcademicActivityDto(_data: AcademicActivityDto) {
-    return _data;
-}
-export function serializeAcademicActivityDto(_data: AcademicActivityDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeAcademicActivityDto(_data as AcademicActivityDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto): AcademicActivityDto {
-  const data: Record<string, any> = { ..._data };
-  return data as AcademicActivityDto;
-}
 export interface CompetenceDto  {
   id: number;
   index: string;
@@ -536,7 +536,7 @@ export interface ModuleDto  {
   atoms: AtomDto[];
   modules: ModuleDto[];
   selection?: SelectionDto | null;
-  semesterIds: number[];
+  semesters: RefComponentSemesterDto[];
 }
 export function deserializeModuleDto(json: string): ModuleDto {
   const data = JSON.parse(json) as ModuleDto;
@@ -556,7 +556,11 @@ export function initModuleDto(_data: ModuleDto) {
       );
     }
     _data.selection = _data["selection"] && initSelectionDto(_data["selection"]);
-    _data.semesterIds = _data["semesterIds"];
+    if (Array.isArray(_data["semesters"])) {
+      _data.semesters = _data["semesters"].map(item => 
+        initRefComponentSemesterDto(item)
+      );
+    }
   }
   return _data;
 }
@@ -579,6 +583,11 @@ export function prepareSerializeModuleDto(_data: ModuleDto): ModuleDto {
     );
   }
   data["selection"] = _data.selection && prepareSerializeSelectionDto(_data.selection);
+  if (Array.isArray(_data.semesters)) {
+    data["semesters"] = _data.semesters.map(item => 
+        prepareSerializeRefComponentSemesterDto(item)
+    );
+  }
   return data as ModuleDto;
 }
 export interface SelectionDto  {

@@ -14,6 +14,12 @@ export * from './axios-client.types';
 import type { AxiosError } from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
+export * as SemestersClient from './axios-client/SemestersClient';
+
+export * as SemestersQuery from './axios-client/SemestersQuery';
+
+
+
 export * as ImportClient from './axios-client/ImportClient';
 
 export * as ImportQuery from './axios-client/ImportQuery';
@@ -159,6 +165,9 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 
 export function initPersister() {
   
+  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefComponentSemesterDto(data));
+
+
 
 
   addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));

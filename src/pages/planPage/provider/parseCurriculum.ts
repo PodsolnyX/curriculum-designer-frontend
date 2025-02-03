@@ -156,7 +156,7 @@ const getSemesterTrackSelections = (semester: SemesterDto, modules: ModuleDto[])
 
     const isSemesterTrackSelection = (module: ModuleDto) => {
         return (
-            module.modules.length && module.modules.some(module => module.semesterIds.some(id => id === semester.id))
+            module.modules.length && module.modules.some(module => module.semesters.some(_semester => _semester.semester.id === semester.id))
         )
     }
 
@@ -176,7 +176,7 @@ const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSel
             id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "tracks"),
             name: module.name,
             tracks: module.modules
-                .filter(module => module.semesterIds.some(id => id === semester.id))
+                .filter(module => module.semesters.some(_semester => _semester.semester.id === semester.id))
                 .map((module, index) => { return { ...parseModule(module, semester), color: index < 5 ? colors[index] : colors[0], credits: 0 } })
         }
     )

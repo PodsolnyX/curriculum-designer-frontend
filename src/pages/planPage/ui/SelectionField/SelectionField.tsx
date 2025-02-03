@@ -16,9 +16,9 @@ const SelectionField = memo(({subjects, name, credits, id}: SelectionFieldProps)
     });
 
     return (
-        <div className={`flex flex-col border-2 border-dashed h-max px-2 rounded-lg ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`} ref={setNodeRef}>
+        <div className={`my-3 flex flex-col w-max border-2 border-dashed h-max px-2 rounded-lg ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`} ref={setNodeRef}>
             <div className={"flex justify-between py-2 gap-1"}>
-                <span className={"text-blue-400 font-bold overflow-hidden text-nowrap text-ellipsis"}>
+                <span className={`text-blue-400 font-bold overflow-hidden text-nowrap text-ellipsis`} style={{maxWidth: 160 * subjects.length}}>
                     {name}
                 </span>
                 <Tag color={"blue"} className={"m-0"} bordered={false}>{`${credits} ЗЕТ`}</Tag>

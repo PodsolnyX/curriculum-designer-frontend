@@ -75,6 +75,7 @@ const PlanPageWrapped = () => {
                         <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
                             <div className={`flex flex-col w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                 {
+                                    !loadingPlan &&
                                     semesters.map(semester =>
                                         <SemesterField {...semester} key={semester.id}
                                                         subjectsContainerWidth={subjectsContainerWidth}

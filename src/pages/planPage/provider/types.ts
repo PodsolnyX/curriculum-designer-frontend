@@ -19,18 +19,9 @@ export interface PreDisplaySetting {
     settings: DisplaySettings
 }
 
-export interface ModuleSemesters {
+export interface ModulePosition {
     id: string;
     name: string;
-    columnIndex: number;
-    startSemesterNumber: number;
-    semesters: UniqueIdentifier[];
-}
-
-export interface TrackSelectionSemesters {
-    id: string;
-    name: string;
-    tracks: UniqueIdentifier[];
     columnIndex: number;
     startSemesterNumber: number;
     semesters: UniqueIdentifier[];
@@ -46,7 +37,6 @@ export interface ModuleSemestersInfo {
 export interface TrackSelectionSemestersInfo {
     position: ModuleSemestersPosition,
     semesterNumber: number,
-    color: string,
     countSemesters: number
 }
 

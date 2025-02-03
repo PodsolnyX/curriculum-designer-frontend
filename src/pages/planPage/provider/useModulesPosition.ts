@@ -1,8 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {
-    ModuleSemesters,
+    ModulePosition,
     ModuleSemestersInfo,
-    TrackSelectionSemesters,
     TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
@@ -12,8 +11,9 @@ import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts"
 
 export const useModulesPosition = () => {
 
-    const [modulesSemesters, setModulesSemesters] = useState<ModuleSemesters[]>([]);
-    const [tracksSelectionSemesters, setTracksSelectionSemesters] = useState<TrackSelectionSemesters[]>([]);
+    const [modulesSemesters, setModulesSemesters] = useState<ModulePosition[]>([]);
+    const [selectionsSemesters, setSelectionsSemesters] = useState<ModulePosition[]>([]);
+    const [tracksSelectionSemesters, setTracksSelectionSemesters] = useState<ModulePosition[]>([]);
 
     const {
         curriculumData,
@@ -22,8 +22,10 @@ export const useModulesPosition = () => {
 
     useEffect(() => {
         if (curriculumData && modulesData) {
-            setModulesSemesters(parseModulesPositions(curriculumData.semesters, modulesData))
-            setTracksSelectionSemesters(parseTrackSelectionPositions(curriculumData.semesters, modulesData))
+            const positions = parseModulesPositions(curriculumData.semesters, modulesData);
+            setModulesSemesters(positions.modules)
+            setSelectionsSemesters(positions.selections)
+            setTracksSelectionSemesters(positions.tracksSelections)
         }
     },[curriculumData, modulesData])
 
@@ -41,32 +43,33 @@ export const useModulesPosition = () => {
 
         const trackSelection = tracksSelectionSemesters.find(track => getIdFromPrefix(id) === track.id);
         if (!trackSelection || trackSelection.semesters.length === 1)
-            return {position: "single", countSemesters: 1, color: "green", semesterNumber: 1}
+            return {position: "single", countSemesters: 1, semesterNumber: 1}
         const index = trackSelection.semesters.findIndex(module => module === id);
         return {
             position: index === 0 ? "first" : index === trackSelection?.semesters.length - 1 ? "last" : "middle",
             semesterNumber: index + 1,
-            countSemesters: trackSelection.semesters.length,
-            color: "green"
+            countSemesters: trackSelection.semesters.length
         }
     }, [tracksSelectionSemesters])
 
     return {
         modulesSemesters,
+        selectionsSemesters,
         tracksSelectionSemesters,
         getModulePosition,
         getTrackSelectionPosition
     }
 }
 
-const parseModulesPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): ModuleSemesters[] => {
-    let modules: ModuleSemesters[] = [];
+const parseModulesPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): {modules: ModulePosition[], selections: ModulePosition[], tracksSelections: ModulePosition[]} => {
+    let modules: ModulePosition[] = [];
+    let selections: ModulePosition[] = [];
+    let tracksSelections: ModulePosition[] = [];
 
-    modulesData.filter(modules => modules.semesterIds.length && !modules.selection).map(module => {
-        const startSemester = semestersData.find(semester => semester.id === module.semesterIds[0]);
+    modulesData.filter(modules => modules.semesters.length && !modules.selection).map(module => {
+        const startSemester = semestersData.find(semester => semester.id === module.semesters[0].semester.id);
         const intersectionModules = modules.filter(_module => {
-            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + module.semesterIds.length - 1);
-
+            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + module.semesters.length - 1);
         })
 
         modules.push({
@@ -74,34 +77,39 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
             name: module.name,
             startSemesterNumber: startSemester?.number || 0,
             columnIndex: intersectionModules.slice(-1)[0]?.columnIndex + 1 || 0,
-            semesters: module.semesterIds.map(id => setPrefixToId(`${setPrefixToId(id, "semesters")}-${module.id}`, "modules"))
+            semesters: module.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${module.id}`, "modules"))
         })
     })
 
-    return [...modules];
-}
+    modulesData.filter(modules => modules.semesters.length && modules.selection).map(selection => {
+        const startSemester = semestersData.find(semester => semester.id === selection.semesters[0].semester.id);
+        const intersectionSelections = selections.filter(_selection => {
+            return Math.max(_selection.startSemesterNumber, startSemester.number) <= Math.min(_selection.startSemesterNumber + _selection.semesters.length - 1, startSemester.number + selection.semesters.length - 1);
+        })
 
-const parseTrackSelectionPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): TrackSelectionSemesters[] => {
-
-    let tracksSelections: TrackSelectionSemesters[] = [];
+        modules.push({
+            id: String(selection.id),
+            name: selection.selection?.name || selection.name,
+            startSemesterNumber: startSemester?.number || 0,
+            columnIndex: intersectionSelections.slice(-1)[0]?.columnIndex + 1 || 0,
+            semesters: selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
+        })
+    })
 
     modulesData.filter(modules => modules.modules.length).map(trackSelection => {
-        const startSemester = semestersData.find(semester => semester.id === trackSelection.semesterIds[0]);
+        const startSemester = semestersData.find(semester => semester.id === trackSelection.semesters[0].semester.id);
         const intersectionTracksSelection = tracksSelections.filter(_module => {
-            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + trackSelection.semesterIds.length - 1);
+            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + trackSelection.semesters.length - 1);
         })
 
         tracksSelections.push({
             id: String(trackSelection.id),
-            tracks: [],
             name: trackSelection.name,
             startSemesterNumber: startSemester?.number || 0,
             columnIndex: intersectionTracksSelection.slice(-1)[0]?.columnIndex + 1 || 0,
-            semesters: trackSelection.semesterIds.map(id => setPrefixToId(`${setPrefixToId(id, "semesters")}-${trackSelection.id}`, "tracks"))
+            semesters: trackSelection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${trackSelection.id}`, "tracks"))
         })
     })
 
-    console.log(tracksSelections)
-
-    return [...tracksSelections]
+    return {modules: [...modules], selections: [...selections], tracksSelections: [...tracksSelections]}
 }

@@ -3,30 +3,47 @@ import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {Tag} from "antd";
-import React, {memo, useEffect, useMemo, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
 import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
 import NewItemCard from "@/pages/planPage/ui/NewItemCard/NewItemCard.tsx";
-import {AtomType} from "@/api/axios-client.ts";
-import {Subject} from "@/pages/planPage/types/Subject.ts";
-import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
 import {useCreateSubject} from "@/pages/planPage/hooks/useCreateSubject.ts";
+import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
+import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 
 export interface SemesterFieldProps extends Semester {
     subjectsContainerWidth: number;
     setSubjectsContainerWidth(width: number): void;
 }
 
-export const SemesterField = memo(function ({number, subjects, modules, trackSelection, id, selections, subjectsContainerWidth, setSubjectsContainerWidth}: SemesterFieldProps) {
+export const SemesterField = memo(function (props: SemesterFieldProps) {
 
-    const { overItemId, toolsOptions, modulesSemesters, tracksSelectionSemesters } = usePlan();
+    const {
+        number,
+        subjects,
+        modules,
+        trackSelection,
+        id,
+        selections,
+        subjectsContainerWidth,
+        setSubjectsContainerWidth
+    } = props;
+
+    const {
+        overItemId,
+        toolsOptions,
+        displaySettings,
+        semestersInfo,
+        modulesSemesters,
+        tracksSelectionSemesters,
+        selectionsSemesters
+    } = usePlan();
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
-    const [newSubject, setNewSubject] = useState<Subject | null>(null);
 
     const subjectsPanelRef = useRef<ImperativePanelHandle | null>(null);
 
@@ -41,27 +58,7 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
             subjectsPanelRef.current?.resize(subjectsContainerWidth)
     }, [subjectsContainerWidth])
 
-    const {displaySettings} = usePlan();
-
-    const sumCredits: number = useMemo(() => {
-        return subjects.reduce((sum, sub) => sum + (sub.type !== AtomType.Elective ? sub.credits : 0), 0)
-    }, [subjects])
-
-    const sumElectiveCredits: number = useMemo(() => {
-        return subjects.reduce((sum, sub) => sum + (sub.type === AtomType.Elective ? sub.credits : 0), 0)
-    }, [subjects])
-
-    const sumExams: number = useMemo(() => {
-        return subjects.reduce((sum, sub) => sum + (!(sub.attestation) || sub.attestation[0]?.shortName === "Эк" ? 1 : 0), 0)
-    }, [subjects])
-
-    const getSumAcademicTypeHours = (key: number): number => {
-        return subjects.reduce((sum, sub) => sum + (sub.academicHours ? (sub.academicHours.find(type => type.academicActivity.id === key)?.value || 0) : 0), 0)
-    }
-
-    const sumAcademicHours: number = useMemo(() => {
-        return subjects.reduce((sum, sub) => sum + (sub.academicHours ? sub.academicHours.reduce((_sum, type) => _sum + type.value, 0) : 0), 0)
-    }, [subjects])
+    const info = semestersInfo?.find(semester => semester.semester.id === Number(getIdFromPrefix(id)));
 
     const onHoverSemester = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (toolsOptions.cursorMode === CursorMode.Create)
@@ -76,15 +73,10 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
         if (addSubjectCard) {
             event.stopPropagation()
             createSubject()
-            // setNewSubject({
-            //     id: 1,
-            //     name: "Новый предмет",
-            //     credits: 0,
-            //     isRequired: false,
-            //     type: AtomType.Subject,
-            // })
         }
     }
+
+    const examsCount: number = info?.attestations.reduce((sum, attestation) => sum + (attestation.shortName === "Эк" ? 1 : 0), 0);
 
     return (
         <div ref={setNodeRef}
@@ -97,34 +89,36 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                         <div className={"flex gap-1"}>
                             {
                                 displaySettings.credits &&
-                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${sumCredits} / 30 ЗЕТ`}</Tag>
+                                <Tag
+                                    color={info?.credit > 30 ? "red" : info?.credit < 30 ? "default" : "green"}
+                                    className={"m-0"}
+                                    bordered={false}
+                                >{`${info?.credit} / 30 ЗЕТ`}</Tag>
                             }
                             {
                                 displaySettings.attestation &&
-                                <Tag color={"default"} className={"m-0"} bordered={false}>{`${sumExams} / 3 Эк`}</Tag>
+                                <Tag
+                                    color={examsCount >= 3 ? "green" : "default"}
+                                    className={"m-0"}
+                                    bordered={false}
+                                >{`${examsCount} / 3 Эк`}</Tag>
                             }
-                            {
-                                (displaySettings.credits && sumElectiveCredits) ?
-                                    <Tag color={"purple"} className={"m-0"} bordered={false}>{`${sumElectiveCredits} ЗЕТ`}</Tag>
-                                    : null
-                            }
+                            {/*{*/}
+                            {/*    (displaySettings.credits && sumElectiveCredits) ?*/}
+                            {/*        <Tag color={"purple"} className={"m-0"} bordered={false}>{`${sumElectiveCredits} ЗЕТ`}</Tag>*/}
+                            {/*        : null*/}
+                            {/*}*/}
                         </div>
                     </div>
                     {
                         displaySettings.academicHours &&
-                        <div className={"flex gap-2 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
-                            <div className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>
-                                <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{"Всего"}</div>
-                                <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${sumAcademicHours}/${36*30}`}</div>
-                            </div>
-                            {/*{*/}
-                            {/*    attestationTypes.map(type =>*/}
-                            {/*        <div key={type.id} className={"flex justify-between border-2 border-solid border-stone-100 rounded-md"}>*/}
-                            {/*            <div className={"bg-stone-100 pr-1 text-stone-600 text-[12px]"}>{type.shortName}</div>*/}
-                            {/*            <div className={"text-[12px] px-1 min-w-[30px] text-end"}>{`${getSumAcademicTypeHours(type.id)}`}</div>*/}
-                            {/*        </div>*/}
-                            {/*    )*/}
-                            {/*}*/}
+                        <div className={"rounded-lg px-3 py-2 bg-white shadow-md"}>
+                            <AcademicHoursPanel
+                                credits={info?.credit || 0}
+                                academicHours={info?.academicActivityHours || []}
+                                layout={"horizontal"}
+                                size={"large"}
+                            />
                         </div>
                     }
                 </div>
@@ -156,14 +150,6 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                                                 />
                                             ))
                                         }
-                                        {
-                                            newSubject && <SubjectCard {...newSubject}/>
-                                        }
-                                        {
-                                            selections.map(selection =>
-                                                <SelectionField key={selection.id} {...selection}/>
-                                            )
-                                        }
                                     </div>
                                 </Panel>
                                 <PanelResizeHandle className={"w-[1px] bg-stone-300"}/>
@@ -175,6 +161,17 @@ export const SemesterField = memo(function ({number, subjects, modules, trackSel
                                                     key={module.id}
                                                     {...module}
                                                     columnIndex={modulesSemesters.find(item =>item.semesters.includes(module.id))?.columnIndex + 1 || 1}
+                                                />
+                                            )
+                                        }
+                                    </div>
+                                    <div className={`grid pr-5 gap-x-2 h-full`} style={{gridTemplateColumns: `repeat(${selectionsSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>
+                                        {
+                                            selections.map(selection =>
+                                                <SelectionField
+                                                    key={selection.id}
+                                                    {...selection}
+                                                    columnIndex={selectionsSemesters.find(item =>item.semesters.includes(selection.id))?.columnIndex + 1 || 1}
                                                 />
                                             )
                                         }
