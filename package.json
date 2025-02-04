@@ -31,6 +31,8 @@
     "react-zoom-pan-pinch": "^3.6.1"
   },
   "devDependencies": {
+    "@import-meta-env/cli": "^0.6.8",
+    "@import-meta-env/unplugin": "^0.5.1",
     "@eslint/js": "^9.13.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
