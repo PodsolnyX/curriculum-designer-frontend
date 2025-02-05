@@ -165,7 +165,7 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 
 export function initPersister() {
   
-  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefComponentSemesterDto(data));
+  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
 
 
 

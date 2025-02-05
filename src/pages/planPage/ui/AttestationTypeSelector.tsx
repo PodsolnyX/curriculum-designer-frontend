@@ -25,6 +25,13 @@ const AttestationTypeSelector = ({attestation, subjectId, semesterId, type = "ta
         )
     }
 
+    const onChangeSelect = (attestationIds: number[]) => {
+        editAttestation(
+            semesterId || "",
+            attestationIds
+        )
+    }
+
     const Selector = () => {
         return (
             <ul>
@@ -66,6 +73,7 @@ const AttestationTypeSelector = ({attestation, subjectId, semesterId, type = "ta
             mode={"multiple"}
             size={"small"}
             value={attestation.map(att => att.id)}
+            onChange={(value) => onChangeSelect(value)}
         />
     )
 }

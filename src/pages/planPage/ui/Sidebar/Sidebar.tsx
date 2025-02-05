@@ -1,5 +1,5 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {Badge, Checkbox, InputNumber, Segmented, Select} from "antd";
+import {Badge, Checkbox, InputNumber, Segmented, Select, Typography} from "antd";
 import React, {useEffect, useState} from "react";
 import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
@@ -7,6 +7,7 @@ import {AtomType} from "@/api/axios-client.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import {setPrefixToId} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 const Sidebar = () => {
 
@@ -19,6 +20,17 @@ const Sidebar = () => {
             setSelectedSemesterNumber(1)
         }
     }, [selectedSubject])
+
+    const {editInfo} = useEditSubject(selectedSubject?.id || "");
+
+    const [newName, setNewName] = useState(selectedSubject?.name || "");
+
+    const onNameChange = (value: string) => {
+        setNewName(value);
+        if (name !== value) {
+            editInfo({name: value})
+        }
+    }
 
     const atomSemester = selectedSubject?.semesters
         ? selectedSubject.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)
@@ -64,12 +76,15 @@ const Sidebar = () => {
             <div style={{height: "calc(100vh - 64px)"}} className={"overflow-y-auto bg-white/[0.8] w-[330px] backdrop-blur p-5 min-h-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
                 <div className={"flex flex-col"}>
                     <span className={"text-[12px] text-stone-400"}>{index}</span>
-                    <div className={"text-black text-[18px]"}>
-                        {name}
-                    </div>
+                    <Typography.Text
+                        editable={{icon: null, triggerType: ["text"], onChange: onNameChange}}
+                        className={"text-black text-[18px] cursor-text"}
+                    >
+                        {newName}
+                    </Typography.Text>
                 </div>
                 <div className={"flex gap-3"}>
-                    <Checkbox checked={isRequired}/>
+                    <Checkbox checked={isRequired} onClick={() => editInfo({isRequired: !isRequired})}/>
                     <span className={"font-bold text-[14px]"}>Обязательность</span>
                 </div>
                 <div className={"flex-col flex gap-1"}>
@@ -81,6 +96,7 @@ const Sidebar = () => {
                         }})}
                         size={"small"}
                         value={type}
+                        onChange={(value) => editInfo({type: value as AtomType})}
                     />
                 </div>
                 <div className={"flex-col flex gap-1"}>

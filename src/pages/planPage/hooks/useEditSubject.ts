@@ -8,7 +8,10 @@ import {useQueryClient} from "@tanstack/react-query";
 import {App} from "antd";
 import {getSemestersQueryKey} from "@/api/axios-client/SemestersQuery.ts";
 import {getModulesByCurriculumQueryKey} from "@/api/axios-client/ModuleQuery.ts";
-import {useSetAtomCompetenceIndicatorsMutation} from "@/api/axios-client/AtomCompetenceQuery.ts";
+import {
+    useSetAtomCompetenceIndicatorsMutation,
+    useSetAtomCompetencesMutation
+} from "@/api/axios-client/AtomCompetenceQuery.ts";
 import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts";
 
 //Формат id: "semester-17"
@@ -35,6 +38,14 @@ export const useEditSubject = (subjectId: string | number) => {
         }
     });
 
+    const { mutate: editCompetenceMutate } = useSetAtomCompetencesMutation(Number(subjectId), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно обновлен")
+        }
+    });
+
     const { mutate: editAttestationMutate } = useSetAttestationMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
@@ -45,6 +56,10 @@ export const useEditSubject = (subjectId: string | number) => {
 
     const editIndicator = (indicatorIds: number[]) => {
         editIndicatorMutate({competenceIndicatorIds: indicatorIds})
+    }
+
+    const editCompetence = (competenceIds: number[]) => {
+        editCompetenceMutate({competenceIds: competenceIds})
     }
 
     //Формат id: "semester-17"
@@ -60,7 +75,8 @@ export const useEditSubject = (subjectId: string | number) => {
     return {
         editInfo: (data: UpdateAtomDto) => editInfo(data),
         editIndicator,
-        editAttestation
+        editAttestation,
+        editCompetence
     }
 }
 

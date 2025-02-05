@@ -1,51 +1,34 @@
 //-----Types.File-----
-export interface RefComponentSemesterDto  {
+export interface RefModuleSemesterDto  {
   semester: SemesterDto;
-  credit: number;
-  attestations: AttestationDto[];
-  academicActivityHours: HoursDistributionDto[];
+  nonElective: ComponentSemesterDto;
+  elective: ComponentSemesterDto;
 }
-export function deserializeRefComponentSemesterDto(json: string): RefComponentSemesterDto {
-  const data = JSON.parse(json) as RefComponentSemesterDto;
-  initRefComponentSemesterDto(data);
+export function deserializeRefModuleSemesterDto(json: string): RefModuleSemesterDto {
+  const data = JSON.parse(json) as RefModuleSemesterDto;
+  initRefModuleSemesterDto(data);
   return data;
 }
-export function initRefComponentSemesterDto(_data: RefComponentSemesterDto) {
+export function initRefModuleSemesterDto(_data: RefModuleSemesterDto) {
   if (_data) {
     _data.semester = _data["semester"] && initSemesterDto(_data["semester"]);
-    if (Array.isArray(_data["attestations"])) {
-      _data.attestations = _data["attestations"].map(item => 
-        initAttestationDto(item)
-      );
-    }
-    if (Array.isArray(_data["academicActivityHours"])) {
-      _data.academicActivityHours = _data["academicActivityHours"].map(item => 
-        initHoursDistributionDto(item)
-      );
-    }
+    _data.nonElective = _data["nonElective"] && initComponentSemesterDto(_data["nonElective"]);
+    _data.elective = _data["elective"] && initComponentSemesterDto(_data["elective"]);
   }
   return _data;
 }
-export function serializeRefComponentSemesterDto(_data: RefComponentSemesterDto | undefined) {
+export function serializeRefModuleSemesterDto(_data: RefModuleSemesterDto | undefined) {
   if (_data) {
-    _data = prepareSerializeRefComponentSemesterDto(_data as RefComponentSemesterDto);
+    _data = prepareSerializeRefModuleSemesterDto(_data as RefModuleSemesterDto);
   }
   return JSON.stringify(_data);
 }
-export function prepareSerializeRefComponentSemesterDto(_data: RefComponentSemesterDto): RefComponentSemesterDto {
+export function prepareSerializeRefModuleSemesterDto(_data: RefModuleSemesterDto): RefModuleSemesterDto {
   const data: Record<string, any> = { ..._data };
   data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
-  if (Array.isArray(_data.attestations)) {
-    data["attestations"] = _data.attestations.map(item => 
-        prepareSerializeAttestationDto(item)
-    );
-  }
-  if (Array.isArray(_data.academicActivityHours)) {
-    data["academicActivityHours"] = _data.academicActivityHours.map(item => 
-        prepareSerializeHoursDistributionDto(item)
-    );
-  }
-  return data as RefComponentSemesterDto;
+  data["nonElective"] = _data.nonElective && prepareSerializeComponentSemesterDto(_data.nonElective);
+  data["elective"] = _data.elective && prepareSerializeComponentSemesterDto(_data.elective);
+  return data as RefModuleSemesterDto;
 }
 export interface SemesterDto  {
   id: number;
@@ -77,6 +60,51 @@ export function prepareSerializeSemesterDto(_data: SemesterDto): SemesterDto {
   data["startDate"] = _data.startDate && formatDate(_data.startDate);
   data["endDate"] = _data.endDate && formatDate(_data.endDate);
   return data as SemesterDto;
+}
+export interface ComponentSemesterDto  {
+  credit: number;
+  attestations: AttestationDto[];
+  academicActivityHours: HoursDistributionDto[];
+}
+export function deserializeComponentSemesterDto(json: string): ComponentSemesterDto {
+  const data = JSON.parse(json) as ComponentSemesterDto;
+  initComponentSemesterDto(data);
+  return data;
+}
+export function initComponentSemesterDto(_data: ComponentSemesterDto) {
+  if (_data) {
+    if (Array.isArray(_data["attestations"])) {
+      _data.attestations = _data["attestations"].map(item => 
+        initAttestationDto(item)
+      );
+    }
+    if (Array.isArray(_data["academicActivityHours"])) {
+      _data.academicActivityHours = _data["academicActivityHours"].map(item => 
+        initHoursDistributionDto(item)
+      );
+    }
+  }
+  return _data;
+}
+export function serializeComponentSemesterDto(_data: ComponentSemesterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeComponentSemesterDto(_data as ComponentSemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeComponentSemesterDto(_data: ComponentSemesterDto): ComponentSemesterDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.attestations)) {
+    data["attestations"] = _data.attestations.map(item => 
+        prepareSerializeAttestationDto(item)
+    );
+  }
+  if (Array.isArray(_data.academicActivityHours)) {
+    data["academicActivityHours"] = _data.academicActivityHours.map(item => 
+        prepareSerializeHoursDistributionDto(item)
+    );
+  }
+  return data as ComponentSemesterDto;
 }
 export interface AttestationDto  {
   id: number;
@@ -356,7 +384,7 @@ export interface AtomDto  {
   name: string;
   isRequired: boolean;
   type: AtomType;
-  semesters: RefComponentSemesterDto[];
+  semesters: RefAtomSemesterDto[];
   competences: CompetenceDto[];
   competenceIndicators: CompetenceIndicatorDto[];
 }
@@ -370,7 +398,7 @@ export function initAtomDto(_data: AtomDto) {
     _data.type = _data["type"];
     if (Array.isArray(_data["semesters"])) {
       _data.semesters = _data["semesters"].map(item => 
-        initRefComponentSemesterDto(item)
+        initRefAtomSemesterDto(item)
       );
     }
     if (Array.isArray(_data["competences"])) {
@@ -396,7 +424,7 @@ export function prepareSerializeAtomDto(_data: AtomDto): AtomDto {
   const data: Record<string, any> = { ..._data };
   if (Array.isArray(_data.semesters)) {
     data["semesters"] = _data.semesters.map(item => 
-        prepareSerializeRefComponentSemesterDto(item)
+        prepareSerializeRefAtomSemesterDto(item)
     );
   }
   if (Array.isArray(_data.competences)) {
@@ -410,6 +438,32 @@ export function prepareSerializeAtomDto(_data: AtomDto): AtomDto {
     );
   }
   return data as AtomDto;
+}
+export interface RefAtomSemesterDto extends ComponentSemesterDto  {
+  semester: SemesterDto;
+}
+export function deserializeRefAtomSemesterDto(json: string): RefAtomSemesterDto {
+  const data = JSON.parse(json) as RefAtomSemesterDto;
+  initRefAtomSemesterDto(data);
+  return data;
+}
+export function initRefAtomSemesterDto(_data: RefAtomSemesterDto) {
+  initComponentSemesterDto(_data);
+  if (_data) {
+    _data.semester = _data["semester"] && initSemesterDto(_data["semester"]);
+  }
+  return _data;
+}
+export function serializeRefAtomSemesterDto(_data: RefAtomSemesterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeRefAtomSemesterDto(_data as RefAtomSemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeRefAtomSemesterDto(_data: RefAtomSemesterDto): RefAtomSemesterDto {
+  const data = prepareSerializeComponentSemesterDto(_data as RefAtomSemesterDto) as Record<string, any>;
+  data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
+  return data as RefAtomSemesterDto;
 }
 export interface CompetenceDto  {
   id: number;
@@ -535,7 +589,7 @@ export interface ModuleDto  {
   atoms: AtomDto[];
   modules: ModuleDto[];
   selection?: SelectionDto | null;
-  semesters: RefComponentSemesterDto[];
+  semesters: RefModuleSemesterDto[];
 }
 export function deserializeModuleDto(json: string): ModuleDto {
   const data = JSON.parse(json) as ModuleDto;
@@ -557,7 +611,7 @@ export function initModuleDto(_data: ModuleDto) {
     _data.selection = _data["selection"] && initSelectionDto(_data["selection"]);
     if (Array.isArray(_data["semesters"])) {
       _data.semesters = _data["semesters"].map(item => 
-        initRefComponentSemesterDto(item)
+        initRefModuleSemesterDto(item)
       );
     }
   }
@@ -584,7 +638,7 @@ export function prepareSerializeModuleDto(_data: ModuleDto): ModuleDto {
   data["selection"] = _data.selection && prepareSerializeSelectionDto(_data.selection);
   if (Array.isArray(_data.semesters)) {
     data["semesters"] = _data.semesters.map(item => 
-        prepareSerializeRefComponentSemesterDto(item)
+        prepareSerializeRefModuleSemesterDto(item)
     );
   }
   return data as ModuleDto;

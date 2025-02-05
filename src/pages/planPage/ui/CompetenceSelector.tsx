@@ -1,7 +1,7 @@
 import {Checkbox, Input, Popover, Segmented, Tag, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {DownOutlined, InfoCircleOutlined} from "@ant-design/icons";
-import {CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
+import {CompetenceDistributionType, CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
 import {useParams} from "react-router-dom";
@@ -16,11 +16,15 @@ interface CompetenceSelectorProps {
 
 const CompetenceSelector = ({competencies, size = "small", subjectId}: CompetenceSelectorProps) => {
 
-    const { selectedCompetenceId, onSelectCompetence } = usePlan();
-    const {editIndicator} = useEditSubject(subjectId || "");
+    const { selectedCompetenceId, onSelectCompetence, settings } = usePlan();
+    const {editIndicator, editCompetence} = useEditSubject(subjectId || "");
+
+    const {competenceDistributionType} = settings;
 
     const onRemoveIndicator = (id: number) => {
+        competenceDistributionType === CompetenceDistributionType.CompetenceIndicator ?
         editIndicator(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
+            : editCompetence(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
     }
 
     return (
@@ -33,7 +37,7 @@ const CompetenceSelector = ({competencies, size = "small", subjectId}: Competenc
                             className={`m-0 group/item flex gap-1 cursor-pointer`}
                             bordered={size !== "small"}
                             key={competence.id}
-                            onClick={() => onSelectCompetence(competence.id)}
+                            onClick={() => onSelectCompetence(competence.id !== selectedCompetenceId ? competence.id : null)}
                         >
                             <Tooltip title={competence.description}>
                                 <span className={`${size === "small" ? "text-[12px]" : "text-[14px]"}`}>
@@ -52,7 +56,7 @@ const CompetenceSelector = ({competencies, size = "small", subjectId}: Competenc
                         </Tag>
                     ) : <span className={`${size === "small" ? "text-[10px]" : "text-[12px]"} text-stone-400`}>Нет компетенций</span>
             }
-            <Popover content={AddCompetencePopover({subjectId, competencies})} trigger={"click"} placement={"bottom"}>
+            <Popover content={AddCompetencePopover({subjectId, competencies, competenceDistributionType})} trigger={"click"} placement={"bottom"}>
                 <Tag color={"default"} className={"m-0 group-hover:opacity-100 opacity-0 cursor-pointer px-5 text-center text-stone-400 hover:text-black"} bordered={size !== "small"}>+</Tag>
             </Popover>
         </div>
@@ -62,9 +66,10 @@ const CompetenceSelector = ({competencies, size = "small", subjectId}: Competenc
 interface AddCompetencePopoverProps {
     subjectId?: string | number;
     competencies: {id: number, index: string, description: string}[];
+    competenceDistributionType: CompetenceDistributionType;
 }
 
-const AddCompetencePopover = ({subjectId, competencies}: AddCompetencePopoverProps) => {
+const AddCompetencePopover = ({subjectId, competencies, competenceDistributionType}: AddCompetencePopoverProps) => {
 
     const {id} = useParams<{ id: string }>();
     const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
@@ -100,7 +105,7 @@ const AddCompetencePopover = ({subjectId, competencies}: AddCompetencePopoverPro
             <div className={"flex flex-col max-h-[300px] overflow-y-auto scrollbar"}>
                 {
                     selectedCompetence.length ? selectedCompetence.map(competence =>
-                        <CompetenceItem key={competence.id} {...competence} subjectId={subjectId} competencies={competencies}/>
+                        <CompetenceItem competenceDistributionType={competenceDistributionType} key={competence.id} {...competence} subjectId={subjectId} competencies={competencies}/>
                     ) : <span className={"text-stone-400 text-sm pt-2"}>Компетенций не найдено</span>
                 }
             </div>
@@ -111,19 +116,40 @@ const AddCompetencePopover = ({subjectId, competencies}: AddCompetencePopoverPro
 interface CompetenceItemProps extends CompetenceDto {
     subjectId?: string | number;
     competencies: {id: number, index: string, description: string}[];
+    competenceDistributionType: CompetenceDistributionType;
 }
 
-const CompetenceItem = ({name, index, indicators, subjectId, competencies}: CompetenceItemProps) => {
+const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, competenceDistributionType}: CompetenceItemProps) => {
 
     const [showIndicators, setShowIndicators] = useState(false);
 
-    const {editIndicator} = useEditSubject(subjectId || "");
+    const {editIndicator, editCompetence} = useEditSubject(subjectId || "");
 
     const onSelectIndicator = (id: number, remove?: boolean) => {
         editIndicator(
             remove
                 ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
                 : [...competencies.map(competence => competence.id), id]
+        )
+    }
+
+    const onSelectCompetence = (id: number, remove?: boolean) => {
+        editCompetence(
+            remove
+                ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
+                : [...competencies.map(competence => competence.id), id]
+        )
+    }
+
+    const onSelectAllIndicators = (remove?: boolean) => {
+        editIndicator(
+            remove
+                ? competencies
+                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence.id))
+                    .map(competence => competence.id)
+                : competencies
+                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence.id))
+                    .map(competence => competence.id)
         )
     }
 
@@ -137,18 +163,23 @@ const CompetenceItem = ({name, index, indicators, subjectId, competencies}: Comp
                 <div className={"flex gap-1 items-center"}>
                     <Checkbox
                         indeterminate={countSelectedIndicators > 0 && countSelectedIndicators < indicators.length}
-                        checked={countSelectedIndicators === indicators.length}
-                        disabled={true}
+                        checked={(countSelectedIndicators === indicators.length && indicators.length > 0) || !!competencies.find(competence => competence.id === id)}
+                        disabled={competenceDistributionType === CompetenceDistributionType.CompetenceIndicator}
+                        onChange={() => onSelectCompetence(id, !!competencies.find(competence => competence.id === id))}
                     />
                     <span className={"text-[12px] text-black"}>
-                            {index}
-                        </span>
+                        {index}
+                    </span>
                 </div>
                 <div className={"flex gap-1 items-center"}>
                     <Tooltip title={name} placement={"right"}>
                         <InfoCircleOutlined className={"w-[12px] text-stone-400"} />
                     </Tooltip>
-                    <DownOutlined className={"w-[10px] text-stone-400"} rotate={showIndicators ? 180 : 0} onClick={() => setShowIndicators(!showIndicators)}/>
+                    {
+                        indicators.length ?
+                            <DownOutlined className={"w-[10px] text-stone-400"} rotate={showIndicators ? 180 : 0} onClick={() => setShowIndicators(!showIndicators)}/>
+                            : null
+                    }
                 </div>
             </div>
             {
@@ -159,12 +190,13 @@ const CompetenceItem = ({name, index, indicators, subjectId, competencies}: Comp
                                 <div key={indicator.id} className={"ps-2 flex justify-between items-center gap-1"}>
                                     <div className={"flex gap-1 items-center"}>
                                         <Checkbox
+                                            disabled={competenceDistributionType === CompetenceDistributionType.Competence}
                                             checked={!!competencies.find(competence => competence.id === indicator.id)}
                                             onChange={() => onSelectIndicator(indicator.id, !!competencies.find(competence => competence.id === indicator.id))}
                                         />
                                         <span className={"text-[12px] text-black"}>
-                                                {indicator.index}
-                                            </span>
+                                            {indicator.index}
+                                        </span>
                                     </div>
                                     <Tooltip title={indicator.name} placement={"right"}>
                                         <InfoCircleOutlined className={"w-[12px] text-stone-400"} type={"secondary"}/>
