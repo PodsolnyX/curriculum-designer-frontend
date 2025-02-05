@@ -5,10 +5,12 @@ import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {AtomType} from "@/api/axios-client.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
+import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
+import {setPrefixToId} from "@/pages/planPage/provider/parseCurriculum.ts";
 
 const Sidebar = () => {
 
-    const {selectedSubject, attestationTypes} = usePlan();
+    const {selectedSubject} = usePlan();
 
     const [selectedSemesterNumber, setSelectedSemesterNumber] = useState<number>(1);
 
@@ -18,7 +20,9 @@ const Sidebar = () => {
         }
     }, [selectedSubject])
 
-    const atomSemester = selectedSubject?.semesters ? selectedSubject.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1) : null;
+    const atomSemester = selectedSubject?.semesters
+        ? selectedSubject.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)
+        : null;
 
     if (!selectedSubject || !atomSemester) return null;
 
@@ -102,7 +106,12 @@ const Sidebar = () => {
                 </div>
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Промежуточная аттестация</span>
-                    <Select options={attestationTypes.map(type => {return{value: type.id, label: type.name}})} mode={"multiple"} size={"small"} value={atomSemester.attestations.map(att => att.id)}/>
+                    <AttestationTypeSelector
+                        attestation={atomSemester.attestations}
+                        subjectId={id}
+                        semesterId={setPrefixToId(atomSemester.semester.id, "semesters")}
+                        type={"selector"}
+                    />
                 </div>
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Академические часы</span>

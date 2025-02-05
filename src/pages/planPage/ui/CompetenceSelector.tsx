@@ -17,13 +17,10 @@ interface CompetenceSelectorProps {
 const CompetenceSelector = ({competencies, size = "small", subjectId}: CompetenceSelectorProps) => {
 
     const { selectedCompetenceId, onSelectCompetence } = usePlan();
-    const editSubject = useEditSubject(subjectId || "");
+    const {editIndicator} = useEditSubject(subjectId || "");
 
     const onRemoveIndicator = (id: number) => {
-        editSubject({
-            competenceIndicatorIds: competencies
-                .filter(competence => competence.id !== id).map(competence => competence.id)
-        })
+        editIndicator(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
     }
 
     return (
@@ -120,14 +117,14 @@ const CompetenceItem = ({name, index, indicators, subjectId, competencies}: Comp
 
     const [showIndicators, setShowIndicators] = useState(false);
 
-    const editSubject = useEditSubject(subjectId || "");
+    const {editIndicator} = useEditSubject(subjectId || "");
 
     const onSelectIndicator = (id: number, remove?: boolean) => {
-        editSubject({
-            competenceIndicatorIds: remove
+        editIndicator(
+            remove
                 ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
                 : [...competencies.map(competence => competence.id), id]
-        })
+        )
     }
 
     const countSelectedIndicators = indicators

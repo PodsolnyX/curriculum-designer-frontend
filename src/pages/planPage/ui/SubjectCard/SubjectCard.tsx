@@ -45,6 +45,7 @@ export const SubjectCardMemo =
             competencies = [],
             attestation = [],
             notes = [],
+            semesterId = "",
             ...rest
         } = props;
 
@@ -57,12 +58,12 @@ export const SubjectCardMemo =
         const refScroll = useRef<HTMLDivElement | null>(null);
         const [newName, setNewName] = useState(props.name);
 
-        const editSubject = useEditSubject(id);
+        const {editInfo} = useEditSubject(id);
 
         const onNameChange = (value: string) => {
             setNewName(value);
             if (name !== value) {
-                editSubject({name: value})
+                editInfo({name: value})
             }
         }
 
@@ -87,7 +88,7 @@ export const SubjectCardMemo =
                             <span
                                 onClick={(event) => {
                                     event.stopPropagation()
-                                    editSubject({isRequired: !isRequired})
+                                    editInfo({isRequired: !isRequired})
                                 }}
                                 className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
                             >*</span>
@@ -121,7 +122,12 @@ export const SubjectCardMemo =
                             displaySettings.credits && <CreditsSelector credits={credits}/>
                         }
                         {
-                            displaySettings.attestation && <AttestationTypeSelector attestation={attestation}/>
+                            displaySettings.attestation &&
+                            <AttestationTypeSelector
+                                attestation={attestation}
+                                subjectId={id}
+                                semesterId={semesterId}
+                            />
                         }
                         {
                             displaySettings.department &&
@@ -146,7 +152,8 @@ export const SubjectCardMemo =
                         <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
                     }
                     {
-                        displaySettings.competencies && <CompetenceSelector subjectId={id} competencies={competencies}/>
+                        displaySettings.competencies &&
+                        <CompetenceSelector subjectId={id} competencies={competencies}/>
                     }
                 </div>
             </li>

@@ -16,6 +16,7 @@ export interface Subject {
     academicHours?: HoursDistributionDto[];
     competencies?: {id: number, index: string, description: string}[];
     notes?: SubjectComment[];
+    semesterId?: string;
 }
 
 export interface SubjectComment {
