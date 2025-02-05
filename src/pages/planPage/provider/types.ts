@@ -1,5 +1,6 @@
 import {UniqueIdentifier} from "@dnd-kit/core";
 
+export type PrefixItemId = "subjects" | "selections" | "semesters" | "modules" | "tracks";
 export const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules", "tracks"] as const;
 
 export interface DisplaySettings {

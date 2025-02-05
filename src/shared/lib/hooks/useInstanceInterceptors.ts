@@ -1,20 +1,17 @@
 import {useAuth} from "@/app/providers/AuthProvider.tsx";
-import {useMutation} from "@tanstack/react-query";
-import {userService} from "@/shared/lib/services/user/userService.ts";
-import {getAccessToken, getRefreshToken} from "@/shared/lib/helpers/localStorage.ts";
 import {AxiosError, AxiosResponse} from "axios";
 import {instance} from "@/shared/lib/api/api.ts";
 
 export const useInstanceInterceptors = () => {
 
-    const { signOut } = useAuth();
+    const {  } = useAuth();
 
-    const {mutate: refreshToken } = useMutation({
-        mutationFn: () => userService.refreshToken(getRefreshToken()),
-        onError: () => {
-            signOut();
-        }
-    })
+    // const {mutate: refreshToken } = useMutation({
+    //     mutationFn: () => userService.refreshToken(getRefreshToken()),
+    //     onError: () => {
+    //         signOut();
+    //     }
+    // })
 
     const onResponse = (response: AxiosResponse): AxiosResponse => {
         return response;
@@ -28,8 +25,8 @@ export const useInstanceInterceptors = () => {
 
     const onUnauthorizedError = (error: AxiosError) => {
         if (error.response?.status === 401) {
-            if (getAccessToken() && getRefreshToken()) refreshToken()
-            else signOut();
+            // if (getAccessToken() && getRefreshToken()) refreshToken()
+            // else signOut();
         }
     }
 

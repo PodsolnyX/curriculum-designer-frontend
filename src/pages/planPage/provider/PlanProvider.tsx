@@ -167,12 +167,12 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const updateSemesters = JSON.parse(JSON.stringify(semesters));
 
-        let activeSubject;
+        let activeSubject: any;
 
         const removeSubjectFromParents = (item: any, currentDeep: number) => {
             const type = getPrefixFromId(parentsIdsActive[currentDeep]);
             if (!type)
-                item.subjects = item.subjects.filter(item => {
+                item.subjects = item.subjects.filter((item: any) => {
                     if (item.id !== parentsIdsActive[currentDeep]) return true
                     else {
                         activeSubject = item;
@@ -180,7 +180,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     }
                 })
             else {
-                const subItem = item[type].find(_item => _item.id === parentsIdsActive[currentDeep])
+                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep])
                 removeSubjectFromParents(subItem, currentDeep + 1);
             }
         }
@@ -191,9 +191,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             if (!type && currentDeep === parentsIdsOver.length) {
                 item.subjects = [...item.subjects, activeSubject]
             } else if (!type) {
-                item.subjects.splice(item.subjects.findIndex(_item => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
+                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
             } else {
-                const subItem = item[type].find(_item => _item.id === parentsIdsOver[currentDeep])
+                const subItem = item[type].find((_item: any) => _item.id === parentsIdsOver[currentDeep])
                 addSubjectToNewParents(subItem, currentDeep + 1);
             }
         }
@@ -209,7 +209,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         editSubject({
             subjectId: event.active.id,
             data: {
-                semesterIds: {} [Number(getIdFromPrefix(parentsIdsOver[0]))],
+                semesterIds: {
+                    [`${Number(getIdFromPrefix(parentsIdsActive[0]))}`]: Number(getIdFromPrefix(parentsIdsOver[0]))
+                },
                 parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
             }
         })

@@ -27,7 +27,7 @@ export const useModulesPosition = () => {
             setSelectionsSemesters(positions.selections)
             setTracksSelectionSemesters(positions.tracksSelections)
         }
-    },[curriculumData, modulesData])
+    }, [curriculumData, modulesData])
 
     const getModulePosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
         const module = modulesSemesters.find(module => getIdFromPrefix(id) === module.id);
@@ -61,28 +61,43 @@ export const useModulesPosition = () => {
     }
 }
 
-const parseModulesPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): {modules: ModulePosition[], selections: ModulePosition[], tracksSelections: ModulePosition[]} => {
+const parseModulesPositions = (semestersData: SemesterDto[], modulesData: ModuleDto[]): {
+    modules: ModulePosition[],
+    selections: ModulePosition[],
+    tracksSelections: ModulePosition[]
+} => {
     let modules: ModulePosition[] = [];
     let selections: ModulePosition[] = [];
     let tracksSelections: ModulePosition[] = [];
 
-    modulesData.filter(modules => modules.semesters.length && !modules.selection).map(module => {
-        const startSemester = semestersData.find(semester => semester.id === module.semesters[0].semester.id);
-        const intersectionModules = modules.filter(_module => {
-            return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + module.semesters.length - 1);
-        })
+    modulesData
+        .filter(module => (module.semesters.length || module.parentSemesterId) && !module.selection)
+        .map(module => {
+            let firstSemesterId = module.semesters.length ? module.semesters[0].semester.id : module.parentSemesterId;
+            const startSemester = semestersData.find(semester => semester.id === firstSemesterId);
+            if (!startSemester) return;
 
-        modules.push({
-            id: String(module.id),
-            name: module.name,
-            startSemesterNumber: startSemester?.number || 0,
-            columnIndex: intersectionModules.slice(-1)[0]?.columnIndex + 1 || 0,
-            semesters: module.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${module.id}`, "modules"))
+            const intersectionModules = modules.filter(_module => {
+                return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + (module.semesters.length > 0 ? module.semesters.length - 1 : 0));
+            })
+
+            console.log(module, intersectionModules)
+
+            modules.push({
+                id: String(module.id),
+                name: module.name,
+                startSemesterNumber: startSemester.number || 0,
+                columnIndex: intersectionModules.slice(-1)[0]?.columnIndex + 1 || 0,
+                semesters: module.semesters.length
+                    ? module.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${module.id}`, "modules"))
+                    : [setPrefixToId(`${setPrefixToId(startSemester.id, "semesters")}-${module.id}`, "modules")]
+            })
         })
-    })
 
     modulesData.filter(modules => modules.semesters.length && modules.selection).map(selection => {
         const startSemester = semestersData.find(semester => semester.id === selection.semesters[0].semester.id);
+        if (!startSemester) return;
+
         const intersectionSelections = selections.filter(_selection => {
             return Math.max(_selection.startSemesterNumber, startSemester.number) <= Math.min(_selection.startSemesterNumber + _selection.semesters.length - 1, startSemester.number + selection.semesters.length - 1);
         })
@@ -98,6 +113,8 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
 
     modulesData.filter(modules => modules.modules.length).map(trackSelection => {
         const startSemester = semestersData.find(semester => semester.id === trackSelection.semesters[0].semester.id);
+        if (!startSemester) return;
+
         const intersectionTracksSelection = tracksSelections.filter(_module => {
             return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + trackSelection.semesters.length - 1);
         })

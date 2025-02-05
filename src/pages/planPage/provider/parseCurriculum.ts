@@ -2,7 +2,7 @@ import {AtomDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
 import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
-import {PREFIX_ITEM_ID_KEYS} from "@/pages/planPage/provider/types.ts";
+import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/provider/types.ts";
 
 // ---------------------Учебный план----------------------
 
@@ -35,7 +35,7 @@ export const getIdFromPrefix = (id: UniqueIdentifier): string => {
 }
 
 export const getPrefixFromId = (id: UniqueIdentifier): string => {
-    const type = String(id).split("-")[0];
+    const type: PrefixItemId = String(id).split("-")[0] as PrefixItemId;
     return PREFIX_ITEM_ID_KEYS.includes(type) ? type : "";
 }
 
@@ -54,6 +54,8 @@ const getSemesterSubjects = (semesterId: number, atoms: AtomDto[]): Subject[] =>
 
 export const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject => {
     const atomSemester = atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id);
+
+    if (!atomSemester) throw new Error("Предмет не найден")
 
     let competencies: { id: number, index: string, description: string }[] = [];
 
