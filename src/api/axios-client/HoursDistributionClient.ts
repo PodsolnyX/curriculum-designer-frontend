@@ -13,7 +13,7 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function createUpdate(curriculumId: number, academicActivityId: number, createHoursDistribution: Types.CreateUpdateHoursDistributionDto, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
+export function createUpdateHoursDistribution(curriculumId: number, academicActivityId: number, createHoursDistribution: Types.CreateUpdateHoursDistributionDto, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -34,13 +34,13 @@ export function createUpdate(curriculumId: number, academicActivityId: number, c
     const content_ = Types.serializeCreateUpdateHoursDistributionDto(createHoursDistribution);
 
     let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateUpdate,
+        ..._requestConfigCreateUpdateHoursDistribution,
         ...config,
         data: content_,
         method: "POST",
         url: url_,
         headers: {
-            ..._requestConfigCreateUpdate?.headers,
+            ..._requestConfigCreateUpdateHoursDistribution?.headers,
             "Content-Type": "application/json",
         }
     };
@@ -52,11 +52,11 @@ export function createUpdate(curriculumId: number, academicActivityId: number, c
             throw _error;
         }
     }).then((_response: AxiosResponse) => {
-        return processCreateUpdate(_response);
+        return processCreateUpdateHoursDistribution(_response);
     });
 }
 
-function processCreateUpdate(response: AxiosResponse): Promise<void> {
+function processCreateUpdateHoursDistribution(response: AxiosResponse): Promise<void> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -77,7 +77,7 @@ function processCreateUpdate(response: AxiosResponse): Promise<void> {
     return Promise.resolve<void>(null as any);
 }
 
-export function delete_(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
+export function deleteHoursDistribution(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -96,12 +96,12 @@ export function delete_(curriculumId: number, academicActivityId: number, semest
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
-        ..._requestConfigDelete,
+        ..._requestConfigDeleteHoursDistribution,
         ...config,
         method: "DELETE",
         url: url_,
         headers: {
-            ..._requestConfigDelete?.headers,
+            ..._requestConfigDeleteHoursDistribution?.headers,
         }
     };
 
@@ -112,11 +112,11 @@ export function delete_(curriculumId: number, academicActivityId: number, semest
             throw _error;
         }
     }).then((_response: AxiosResponse) => {
-        return processDelete(_response);
+        return processDeleteHoursDistribution(_response);
     });
 }
 
-function processDelete(response: AxiosResponse): Promise<void> {
+function processDeleteHoursDistribution(response: AxiosResponse): Promise<void> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -136,24 +136,24 @@ function processDelete(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
-let _requestConfigCreateUpdate: Partial<AxiosRequestConfig> | null;
-export function getCreateUpdateRequestConfig() {
-  return _requestConfigCreateUpdate;
+let _requestConfigCreateUpdateHoursDistribution: Partial<AxiosRequestConfig> | null;
+export function getCreateUpdateHoursDistributionRequestConfig() {
+  return _requestConfigCreateUpdateHoursDistribution;
 }
-export function setCreateUpdateRequestConfig(value: Partial<AxiosRequestConfig>) {
-  _requestConfigCreateUpdate = value;
+export function setCreateUpdateHoursDistributionRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigCreateUpdateHoursDistribution = value;
 }
-export function patchCreateUpdateRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateUpdate = patch(_requestConfigCreateUpdate ?? {});
+export function patchCreateUpdateHoursDistributionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigCreateUpdateHoursDistribution = patch(_requestConfigCreateUpdateHoursDistribution ?? {});
 }
 
-let _requestConfigDelete: Partial<AxiosRequestConfig> | null;
-export function getDeleteRequestConfig() {
-  return _requestConfigDelete;
+let _requestConfigDeleteHoursDistribution: Partial<AxiosRequestConfig> | null;
+export function getDeleteHoursDistributionRequestConfig() {
+  return _requestConfigDeleteHoursDistribution;
 }
-export function setDeleteRequestConfig(value: Partial<AxiosRequestConfig>) {
-  _requestConfigDelete = value;
+export function setDeleteHoursDistributionRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigDeleteHoursDistribution = value;
 }
-export function patchDeleteRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigDelete = patch(_requestConfigDelete ?? {});
+export function patchDeleteHoursDistributionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigDeleteHoursDistribution = patch(_requestConfigDeleteHoursDistribution ?? {});
 }

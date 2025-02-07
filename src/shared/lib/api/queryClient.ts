@@ -3,8 +3,6 @@ import axios from "axios";
 import {setAxiosFactory} from "@/api/axios-client.ts";
 import {instance} from "@/shared/lib/api/api.ts";
 
-
-
 setAxiosFactory(() => instance);
 
 export const queryClient = new QueryClient({

@@ -18,6 +18,10 @@ import * as Client from './ModuleClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
+export type GetModuleModuleQueryParameters = {
+  moduleId: number ;
+}
+
 export type UpdateModuleModuleQueryParameters = {
   moduleId: number ;
 }
@@ -58,6 +62,86 @@ export function useCreateModuleMutation<TContext>(options?: Omit<UseMutationOpti
   });
 }
   
+export function getModuleUrl(moduleId: number): string {
+  let url_ = getBaseUrl() + "/module/{moduleId}";
+if (moduleId === undefined || moduleId === null)
+  throw new Error("The parameter 'moduleId' must be defined.");
+url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+let getModuleDefaultOptions: Omit<UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>, 'queryFn'>> = {
+};
+export function getGetModuleDefaultOptions() {
+  return getModuleDefaultOptions;
+};
+export function setGetModuleDefaultOptions(options: typeof getModuleDefaultOptions) {
+  getModuleDefaultOptions = options;
+}
+
+export function getModuleQueryKey(moduleId: number): QueryKey;
+export function getModuleQueryKey(...params: any[]): QueryKey {
+  if (params.length === 1 && isParameterObject(params[0])) {
+    const { moduleId,  } = params[0] as GetModuleModuleQueryParameters;
+
+    return trimArrayEnd([
+        'ModuleClient',
+        'getModule',
+        moduleId as any,
+      ]);
+  } else {
+    return trimArrayEnd([
+        'ModuleClient',
+        'getModule',
+        ...params
+      ]);
+  }
+}
+export function __getModule(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+  return Client.getModule(
+      context.queryKey[2] as number,axiosConfig    );
+}
+
+export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(dto: GetModuleModuleQueryParameters, options?: Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+
+export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(moduleId: number, options?: Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.ModuleDto, TError, TSelectData> | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+  let moduleId: any = undefined;
+  
+  if (params.length > 0) {
+    if (isParameterObject(params[0])) {
+      ({ moduleId,  } = params[0] as GetModuleModuleQueryParameters);
+      options = params[1];
+      axiosConfig = params[2];
+    } else {
+      [moduleId, options, axiosConfig] = params;
+    }
+  }
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useQuery<Types.ModuleDto, TError, TSelectData>({
+    queryFn: axiosConfig ? (context) => __getModule(context, axiosConfig) : __getModule,
+    queryKey: getModuleQueryKey(moduleId),
+    ...getModuleDefaultOptions as unknown as Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>,
+    ...options,
+  });
+}
+
+export function setGetModuleData(queryClient: QueryClient, updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto, moduleId: number) {
+  queryClient.setQueryData(getModuleQueryKey(moduleId),
+    updater
+  );
+}
+
+export function setGetModuleDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto) {
+  queryClient.setQueryData(queryKey, updater);
+}
+    
 export function updateModuleUrl(moduleId: number): string {
   let url_ = getBaseUrl() + "/module/{moduleId}";
 if (moduleId === undefined || moduleId === null)

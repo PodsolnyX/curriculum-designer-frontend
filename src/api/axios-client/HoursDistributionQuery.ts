@@ -18,21 +18,21 @@ import * as Client from './HoursDistributionClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-export type CreateUpdateHoursDistributionQueryParameters = {
+export type CreateUpdateHoursDistributionHoursDistributionQueryParameters = {
   curriculumId: number ;
   academicActivityId: number ;
   semesterId?: number | undefined ;
   atomId?: number | undefined ;
 }
 
-export type DeleteHoursDistributionQueryParameters = {
+export type DeleteHoursDistributionHoursDistributionQueryParameters = {
   curriculumId: number ;
   academicActivityId: number ;
   semesterId?: number | undefined ;
   atomId?: number | undefined ;
 }
 
-export function createUpdateUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
+export function createUpdateHoursDistributionUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
   let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
@@ -52,10 +52,10 @@ else if (atomId !== undefined)
   return url_;
 }
 
-export function createUpdateMutationKey(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): MutationKey {
+export function createUpdateHoursDistributionMutationKey(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): MutationKey {
   return trimArrayEnd([
       'HoursDistributionClient',
-      'createUpdate',
+      'createUpdateHoursDistribution',
       curriculumId as any,
       academicActivityId as any,
       semesterId as any,
@@ -63,37 +63,37 @@ export function createUpdateMutationKey(curriculumId: number, academicActivityId
     ]);
 }
 
-export function useCreateUpdateMutation<TContext>(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, Types.CreateUpdateHoursDistributionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.CreateUpdateHoursDistributionDto, TContext> {
-  const key = createUpdateMutationKey(curriculumId, academicActivityId, semesterId, atomId);
+export function useCreateUpdateHoursDistributionMutation<TContext>(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, Types.CreateUpdateHoursDistributionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.CreateUpdateHoursDistributionDto, TContext> {
+  const key = createUpdateHoursDistributionMutationKey(curriculumId, academicActivityId, semesterId, atomId);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
   return useMutation({
     ...options,
-    mutationFn: (createHoursDistribution: Types.CreateUpdateHoursDistributionDto) => Client.createUpdate(curriculumId, academicActivityId, createHoursDistribution, semesterId, atomId),
+    mutationFn: (createHoursDistribution: Types.CreateUpdateHoursDistributionDto) => Client.createUpdateHoursDistribution(curriculumId, academicActivityId, createHoursDistribution, semesterId, atomId),
     mutationKey: key,
   });
 }
   
-type CreateUpdate__MutationParameters = CreateUpdateHoursDistributionQueryParameters & {
+type CreateUpdateHoursDistribution__MutationParameters = CreateUpdateHoursDistributionHoursDistributionQueryParameters & {
   createHoursDistribution: Types.CreateUpdateHoursDistributionDto;
 }
 
-export function useCreateUpdateMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, CreateUpdate__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateUpdateHoursDistributionQueryParameters}): UseMutationResult<void, unknown, CreateUpdate__MutationParameters, TContext> {
-  const key = createUpdateMutationKey(options?.parameters?.curriculumId!, options?.parameters?.academicActivityId!, options?.parameters?.semesterId!, options?.parameters?.atomId!);
+export function useCreateUpdateHoursDistributionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, CreateUpdateHoursDistribution__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateUpdateHoursDistributionHoursDistributionQueryParameters}): UseMutationResult<void, unknown, CreateUpdateHoursDistribution__MutationParameters, TContext> {
+  const key = createUpdateHoursDistributionMutationKey(options?.parameters?.curriculumId!, options?.parameters?.academicActivityId!, options?.parameters?.semesterId!, options?.parameters?.atomId!);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
 return useMutation({
   ...options, 
-  mutationFn: (data: CreateUpdate__MutationParameters) => Client.createUpdate(data.curriculumId ?? options?.parameters?.curriculumId!, data.academicActivityId ?? options?.parameters?.academicActivityId!, data.createHoursDistribution, data.semesterId ?? options?.parameters?.semesterId!, data.atomId ?? options?.parameters?.atomId!),
+  mutationFn: (data: CreateUpdateHoursDistribution__MutationParameters) => Client.createUpdateHoursDistribution(data.curriculumId ?? options?.parameters?.curriculumId!, data.academicActivityId ?? options?.parameters?.academicActivityId!, data.createHoursDistribution, data.semesterId ?? options?.parameters?.semesterId!, data.atomId ?? options?.parameters?.atomId!),
   mutationKey: key,
 });
 }
   
-export function deleteUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
+export function deleteHoursDistributionUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
   let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
@@ -113,10 +113,10 @@ else if (atomId !== undefined)
   return url_;
 }
 
-export function deleteMutationKey(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): MutationKey {
+export function deleteHoursDistributionMutationKey(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): MutationKey {
   return trimArrayEnd([
       'HoursDistributionClient',
-      'delete',
+      'deleteHoursDistribution',
       curriculumId as any,
       academicActivityId as any,
       semesterId as any,
@@ -124,30 +124,30 @@ export function deleteMutationKey(curriculumId: number, academicActivityId: numb
     ]);
 }
 
-export function useDeleteMutation<TContext>(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
-  const key = deleteMutationKey(curriculumId, academicActivityId, semesterId, atomId);
+export function useDeleteHoursDistributionMutation<TContext>(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+  const key = deleteHoursDistributionMutationKey(curriculumId, academicActivityId, semesterId, atomId);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
   return useMutation({
     ...options,
-    mutationFn: () => Client.delete_(curriculumId, academicActivityId, semesterId, atomId),
+    mutationFn: () => Client.deleteHoursDistribution(curriculumId, academicActivityId, semesterId, atomId),
     mutationKey: key,
   });
 }
   
-type Delete__MutationParameters = DeleteHoursDistributionQueryParameters
+type DeleteHoursDistribution__MutationParameters = DeleteHoursDistributionHoursDistributionQueryParameters
 
-export function useDeleteMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, Delete__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteHoursDistributionQueryParameters}): UseMutationResult<void, unknown, Delete__MutationParameters, TContext> {
-  const key = deleteMutationKey(options?.parameters?.curriculumId!, options?.parameters?.academicActivityId!, options?.parameters?.semesterId!, options?.parameters?.atomId!);
+export function useDeleteHoursDistributionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteHoursDistribution__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteHoursDistributionHoursDistributionQueryParameters}): UseMutationResult<void, unknown, DeleteHoursDistribution__MutationParameters, TContext> {
+  const key = deleteHoursDistributionMutationKey(options?.parameters?.curriculumId!, options?.parameters?.academicActivityId!, options?.parameters?.semesterId!, options?.parameters?.atomId!);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
 return useMutation({
   ...options, 
-  mutationFn: (data: Delete__MutationParameters) => Client.delete_(data.curriculumId ?? options?.parameters?.curriculumId!, data.academicActivityId ?? options?.parameters?.academicActivityId!, data.semesterId ?? options?.parameters?.semesterId!, data.atomId ?? options?.parameters?.atomId!),
+  mutationFn: (data: DeleteHoursDistribution__MutationParameters) => Client.deleteHoursDistribution(data.curriculumId ?? options?.parameters?.curriculumId!, data.academicActivityId ?? options?.parameters?.academicActivityId!, data.semesterId ?? options?.parameters?.semesterId!, data.atomId ?? options?.parameters?.atomId!),
   mutationKey: key,
 });
 }

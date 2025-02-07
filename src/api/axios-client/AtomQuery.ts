@@ -31,6 +31,11 @@ export type GetAtomsByCurriculumAtomQueryParameters = {
   hasNoParentModule?: boolean | undefined ;
 }
 
+export type SetAtomCreditAtomQueryParameters = {
+  atomId: number ;
+  semesterId: number ;
+}
+
 export function createAtomUrl(): string {
   let url_ = getBaseUrl() + "/atom";
   url_ = url_.replace(/[?&]$/, "");
@@ -150,7 +155,7 @@ return useMutation({
 }
   
 export function getAtomsByCurriculumUrl(curriculumId: number, hasNoParentModule?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/atom/curriculum/{curriculumId}?";
+  let url_ = getBaseUrl() + "/atom/by-curriculum/{curriculumId}?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -244,4 +249,55 @@ export function setGetAtomsByCurriculumData(queryClient: QueryClient, updater: (
  */
 export function setGetAtomsByCurriculumDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AtomDto[] | undefined) => Types.AtomDto[]) {
   queryClient.setQueryData(queryKey, updater);
+}
+    
+export function setAtomCreditUrl(atomId: number, semesterId: number): string {
+  let url_ = getBaseUrl() + "/atom/{atomId}/credit/{semesterId}";
+if (atomId === undefined || atomId === null)
+  throw new Error("The parameter 'atomId' must be defined.");
+url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
+if (semesterId === undefined || semesterId === null)
+  throw new Error("The parameter 'semesterId' must be defined.");
+url_ = url_.replace("{semesterId}", encodeURIComponent("" + semesterId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function setAtomCreditMutationKey(atomId: number, semesterId: number): MutationKey {
+  return trimArrayEnd([
+      'AtomClient',
+      'setAtomCredit',
+      atomId as any,
+      semesterId as any,
+    ]);
+}
+
+export function useSetAtomCreditMutation<TContext>(atomId: number, semesterId: number, options?: Omit<UseMutationOptions<void, unknown, Types.SetAtomCreditDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetAtomCreditDto, TContext> {
+  const key = setAtomCreditMutationKey(atomId, semesterId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (setAtomCreditDto: Types.SetAtomCreditDto) => Client.setAtomCredit(atomId, semesterId, setAtomCreditDto),
+    mutationKey: key,
+  });
+}
+  
+type SetAtomCredit__MutationParameters = SetAtomCreditAtomQueryParameters & {
+  setAtomCreditDto: Types.SetAtomCreditDto;
+}
+
+export function useSetAtomCreditMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, SetAtomCredit__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: SetAtomCreditAtomQueryParameters}): UseMutationResult<void, unknown, SetAtomCredit__MutationParameters, TContext> {
+  const key = setAtomCreditMutationKey(options?.parameters?.atomId!, options?.parameters?.semesterId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: SetAtomCredit__MutationParameters) => Client.setAtomCredit(data.atomId ?? options?.parameters?.atomId!, data.semesterId ?? options?.parameters?.semesterId!, data.setAtomCreditDto),
+  mutationKey: key,
+});
 }

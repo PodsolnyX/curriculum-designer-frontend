@@ -178,6 +178,56 @@ export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto):
   const data: Record<string, any> = { ..._data };
   return data as AcademicActivityDto;
 }
+export interface SelectionDto  {
+  name: string;
+  creditPerSemester: number[];
+}
+export function deserializeSelectionDto(json: string): SelectionDto {
+  const data = JSON.parse(json) as SelectionDto;
+  initSelectionDto(data);
+  return data;
+}
+export function initSelectionDto(_data: SelectionDto) {
+  if (_data) {
+    _data.creditPerSemester = _data["creditPerSemester"];
+  }
+  return _data;
+}
+export function serializeSelectionDto(_data: SelectionDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeSelectionDto(_data as SelectionDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeSelectionDto(_data: SelectionDto): SelectionDto {
+  const data: Record<string, any> = { ..._data };
+  return data as SelectionDto;
+}
+export interface CreateUpdateSelectionDto  {
+  name?: string | null;
+  creditPerSemester?: number[] | null;
+}
+export function deserializeCreateUpdateSelectionDto(json: string): CreateUpdateSelectionDto {
+  const data = JSON.parse(json) as CreateUpdateSelectionDto;
+  initCreateUpdateSelectionDto(data);
+  return data;
+}
+export function initCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto) {
+  if (_data) {
+    _data.creditPerSemester = _data["creditPerSemester"];
+  }
+  return _data;
+}
+export function serializeCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCreateUpdateSelectionDto(_data as CreateUpdateSelectionDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto): CreateUpdateSelectionDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreateUpdateSelectionDto;
+}
 export interface CreateCurriculumDto  {
   name: string;
   semesterCount: number;
@@ -336,30 +386,6 @@ export function serializeCreateModuleDto(_data: CreateModuleDto | undefined) {
 export function prepareSerializeCreateModuleDto(_data: CreateModuleDto): CreateModuleDto {
   const data: Record<string, any> = { ..._data };
   return data as CreateModuleDto;
-}
-export interface UpdateModuleDto  {
-  parentModuleId?: number | null;
-  parentSemesterId?: number | null;
-  order?: number | null;
-  name?: string | null;
-}
-export function deserializeUpdateModuleDto(json: string): UpdateModuleDto {
-  const data = JSON.parse(json) as UpdateModuleDto;
-  initUpdateModuleDto(data);
-  return data;
-}
-export function initUpdateModuleDto(_data: UpdateModuleDto) {
-    return _data;
-}
-export function serializeUpdateModuleDto(_data: UpdateModuleDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeUpdateModuleDto(_data as UpdateModuleDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeUpdateModuleDto(_data: UpdateModuleDto): UpdateModuleDto {
-  const data: Record<string, any> = { ..._data };
-  return data as UpdateModuleDto;
 }
 /** Represents a module tree. Iterating over this object will yield all modules from the leafs to the root. */
 export interface ModuleDto  {
@@ -584,30 +610,29 @@ export function prepareSerializeCompetenceIndicatorDto(_data: CompetenceIndicato
   const data: Record<string, any> = { ..._data };
   return data as CompetenceIndicatorDto;
 }
-export interface SelectionDto  {
-  name: string;
-  creditPerSemester: number[];
+export interface UpdateModuleDto  {
+  parentModuleId?: number | null;
+  parentSemesterId?: number | null;
+  order?: number | null;
+  name?: string | null;
 }
-export function deserializeSelectionDto(json: string): SelectionDto {
-  const data = JSON.parse(json) as SelectionDto;
-  initSelectionDto(data);
+export function deserializeUpdateModuleDto(json: string): UpdateModuleDto {
+  const data = JSON.parse(json) as UpdateModuleDto;
+  initUpdateModuleDto(data);
   return data;
 }
-export function initSelectionDto(_data: SelectionDto) {
-  if (_data) {
-    _data.creditPerSemester = _data["creditPerSemester"];
-  }
-  return _data;
+export function initUpdateModuleDto(_data: UpdateModuleDto) {
+    return _data;
 }
-export function serializeSelectionDto(_data: SelectionDto | undefined) {
+export function serializeUpdateModuleDto(_data: UpdateModuleDto | undefined) {
   if (_data) {
-    _data = prepareSerializeSelectionDto(_data as SelectionDto);
+    _data = prepareSerializeUpdateModuleDto(_data as UpdateModuleDto);
   }
   return JSON.stringify(_data);
 }
-export function prepareSerializeSelectionDto(_data: SelectionDto): SelectionDto {
+export function prepareSerializeUpdateModuleDto(_data: UpdateModuleDto): UpdateModuleDto {
   const data: Record<string, any> = { ..._data };
-  return data as SelectionDto;
+  return data as UpdateModuleDto;
 }
 export interface CreateAtomDto  {
   curriculumId: number;
@@ -668,6 +693,27 @@ export function serializeUpdateAtomDto(_data: UpdateAtomDto | undefined) {
 export function prepareSerializeUpdateAtomDto(_data: UpdateAtomDto): UpdateAtomDto {
   const data: Record<string, any> = { ..._data };
   return data as UpdateAtomDto;
+}
+export interface SetAtomCreditDto  {
+  credit: number;
+}
+export function deserializeSetAtomCreditDto(json: string): SetAtomCreditDto {
+  const data = JSON.parse(json) as SetAtomCreditDto;
+  initSetAtomCreditDto(data);
+  return data;
+}
+export function initSetAtomCreditDto(_data: SetAtomCreditDto) {
+    return _data;
+}
+export function serializeSetAtomCreditDto(_data: SetAtomCreditDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeSetAtomCreditDto(_data as SetAtomCreditDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAtomCreditDto {
+  const data: Record<string, any> = { ..._data };
+  return data as SetAtomCreditDto;
 }
 export interface SetAtomCompetencesDto  {
   competenceIds: number[];

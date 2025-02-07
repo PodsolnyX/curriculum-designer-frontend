@@ -176,7 +176,7 @@ function processDeleteAtom(response: AxiosResponse): Promise<void> {
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
 export function getAtomsByCurriculum(curriculumId: number, hasNoParentModule?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto[]> {
-    let url_ = getBaseUrl() + "/atom/curriculum/{curriculumId}?";
+    let url_ = getBaseUrl() + "/atom/by-curriculum/{curriculumId}?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -235,6 +235,62 @@ function processGetAtomsByCurriculum(response: AxiosResponse): Promise<Types.Ato
     }
     return Promise.resolve<Types.AtomDto[]>(null as any);
 }
+
+export function setAtomCredit(atomId: number, semesterId: number, setAtomCreditDto: Types.SetAtomCreditDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/atom/{atomId}/credit/{semesterId}";
+    if (atomId === undefined || atomId === null)
+      throw new Error("The parameter 'atomId' must be defined.");
+    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
+    if (semesterId === undefined || semesterId === null)
+      throw new Error("The parameter 'semesterId' must be defined.");
+    url_ = url_.replace("{semesterId}", encodeURIComponent("" + semesterId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeSetAtomCreditDto(setAtomCreditDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigSetAtomCredit,
+        ...config,
+        data: content_,
+        method: "POST",
+        url: url_,
+        headers: {
+            ..._requestConfigSetAtomCredit?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processSetAtomCredit(_response);
+    });
+}
+
+function processSetAtomCredit(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
 let _requestConfigCreateAtom: Partial<AxiosRequestConfig> | null;
 export function getCreateAtomRequestConfig() {
   return _requestConfigCreateAtom;
@@ -277,4 +333,15 @@ export function setGetAtomsByCurriculumRequestConfig(value: Partial<AxiosRequest
 }
 export function patchGetAtomsByCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigGetAtomsByCurriculum = patch(_requestConfigGetAtomsByCurriculum ?? {});
+}
+
+let _requestConfigSetAtomCredit: Partial<AxiosRequestConfig> | null;
+export function getSetAtomCreditRequestConfig() {
+  return _requestConfigSetAtomCredit;
+}
+export function setSetAtomCreditRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigSetAtomCredit = value;
+}
+export function patchSetAtomCreditRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigSetAtomCredit = patch(_requestConfigSetAtomCredit ?? {});
 }
