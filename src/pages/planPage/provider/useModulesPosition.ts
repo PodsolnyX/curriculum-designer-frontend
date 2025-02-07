@@ -81,8 +81,6 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
                 return Math.max(_module.startSemesterNumber, startSemester.number) <= Math.min(_module.startSemesterNumber + _module.semesters.length - 1, startSemester.number + (module.semesters.length > 0 ? module.semesters.length - 1 : 0));
             })
 
-            console.log(module, intersectionModules)
-
             modules.push({
                 id: String(module.id),
                 name: module.name,
@@ -95,7 +93,8 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
         })
 
     modulesData.filter(modules => modules.semesters.length && modules.selection).map(selection => {
-        const startSemester = semestersData.find(semester => semester.id === selection.semesters[0].semester.id);
+        let firstSemesterId = selection.semesters.length ? selection.semesters[0].semester.id : selection.parentSemesterId;
+        const startSemester = semestersData.find(semester => semester.id === firstSemesterId);
         if (!startSemester) return;
 
         const intersectionSelections = selections.filter(_selection => {
@@ -112,7 +111,8 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
     })
 
     modulesData.filter(modules => modules.modules.length).map(trackSelection => {
-        const startSemester = semestersData.find(semester => semester.id === trackSelection.semesters[0].semester.id);
+        let firstSemesterId = trackSelection.semesters.length ? trackSelection.semesters[0].semester.id : trackSelection.parentSemesterId;
+        const startSemester = semestersData.find(semester => semester.id === firstSemesterId);
         if (!startSemester) return;
 
         const intersectionTracksSelection = tracksSelections.filter(_module => {

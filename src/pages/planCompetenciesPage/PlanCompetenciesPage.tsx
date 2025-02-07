@@ -111,7 +111,7 @@ const PlanCompetenciesPage = () => {
                      }
                      else return item;
                 })]);
-                console.log(active.data.current?.sortable.containerId.split("-")[1])
+
                 updateIndicator({
                     competenceId: String(active.data.current?.sortable.containerId.split("-")[1]),
                     indicatorId: Number(active.id),

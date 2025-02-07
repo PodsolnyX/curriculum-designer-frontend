@@ -11,7 +11,7 @@ interface TrackSelectionProps extends TrackSelection {
 
 const TrackSelectionField = (props: TrackSelectionProps) => {
 
-    const { id, name, tracks, columnIndex } = props;
+    const { id, name, tracks, columnIndex, credits } = props;
     const { getTrackSemesterPosition } = usePlan();
 
     const {position, semesterNumber} = getTrackSemesterPosition(id);
@@ -37,7 +37,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                 <div className={`w-full absolute left-0 z-10 py-2 px-3 ${position === "first" ? "top-9" : "top-0"}`}>
                     <div className={"p-2 px-3 bg-white rounded-lg shadow-md text-blue-500 items-center flex justify-between"}>
                         {`Семестр ${semesterNumber}`}
-                        <CreditsSelector credits={0}/>
+                        <CreditsSelector credits={credits}/>
                     </div>
                 </div>
                 {

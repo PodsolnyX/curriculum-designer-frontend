@@ -132,7 +132,10 @@ const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[]): Sel
 
     const isSemesterSelection = (module: ModuleDto) => {
         return (
-            module.selection && !module.parentModuleId && module.atoms.some(atom => atom.semesters.some(_semester => _semester.semester.id === semester.id))
+            module.selection &&
+            !module.parentModuleId &&
+            module.atoms.some(atom => atom.semesters
+                .some(_semester => _semester.semester.id === semester.id))
         )
     }
 
@@ -179,9 +182,13 @@ const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSel
         {
             id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "tracks"),
             name: module.name,
+            credits: module.semesters.find(_semester => _semester.semester.id === semester.id)?.nonElective.credit || 0,
             tracks: module.modules
                 .filter(module => module.semesters.some(_semester => _semester.semester.id === semester.id))
-                .map((module, index) => { return { ...parseModule(module, semester), color: index < 5 ? colors[index] : colors[0], credits: 0 } })
+                .map((module, index) => { return {
+                    ...parseModule(module, semester),
+                    color: index < 5 ? colors[index] : colors[0]
+                }})
         }
     )
 }

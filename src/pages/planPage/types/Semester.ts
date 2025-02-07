@@ -27,12 +27,12 @@ export interface TrackSelection {
     id: string;
     name: string;
     tracks: Track[];
+    credits: number;
 }
 
 export interface Track {
     id: string;
     name: string;
-    credits: number;
     color?: string;
     subjects: Subject[];
 }

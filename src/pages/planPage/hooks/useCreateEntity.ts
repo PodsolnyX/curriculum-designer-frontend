@@ -5,6 +5,9 @@ import {App} from "antd";
 import {getModulesByCurriculumQueryKey, useCreateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {getAtomsByCurriculumQueryKey, useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
 import {AtomType} from "@/api/axios-client.types.ts";
+import {
+    useUpdateSelectionMutationWithParameters
+} from "@/api/axios-client/SelectionQuery.ts";
 
 export const useCreateEntity = () => {
     const {toolsOptions} = usePlan();
@@ -21,10 +24,12 @@ export const useCreateEntity = () => {
         }
     });
 
-    const {mutate: createModule} = useCreateModuleMutation({
+    const {mutateAsync: createModule} = useCreateModuleMutation();
+
+    const {mutate: updateSelection} = useUpdateSelectionMutationWithParameters({
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
-            message.success("Модуль успешно создан")
+            message.success("Выбор успешно создан")
         }
     });
 
@@ -47,7 +52,22 @@ export const useCreateEntity = () => {
                 curriculumId: Number(curriculumId),
                 parentModuleId: parentId ? Number(parentId.split("-")[3]) : null,
                 parentSemesterId: Number(semesterId.split("-")[1]),
+            }).then(() => {
+                queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+                message.success("Модуль успешно создан")
             })
+        else if (toolsOptions.selectedCreateEntityType === "selections")
+            createModule({
+                name: "Новый выбор",
+                curriculumId: Number(curriculumId),
+                parentModuleId: parentId ? Number(parentId.split("-")[3]) : null,
+                parentSemesterId: Number(semesterId.split("-")[1]),
+            }).then((newModuleId) => updateSelection({
+                moduleId: newModuleId,
+                createUpdateSelectionDto: {
+                    creditPerSemester: [0]
+                }
+            }))
     }
 
     return {onCreate}

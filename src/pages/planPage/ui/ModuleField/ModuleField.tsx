@@ -6,6 +6,10 @@ import {SortableContext} from "@dnd-kit/sortable";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
+import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
+import {App, Typography} from "antd";
+import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 interface ModuleFieldProps extends Module {
     columnIndex: number;
@@ -14,8 +18,16 @@ interface ModuleFieldProps extends Module {
 const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleFieldProps) => {
 
     const { overItemId, getModuleSemesterPosition, toolsOptions } = usePlan();
-
+    const {message} = App.useApp();
     const [onAdd, setOnAdd] = useState(false);
+
+    const [newName, setNewName] = useState(name);
+
+    const {mutate: editModule} = useUpdateModuleMutation(Number(getIdFromPrefix(id)), {
+        onSuccess: () => {
+            message.success("Модуль успешно обновлен")
+        }
+    });
 
     const { setNodeRef } = useDroppable({
         id
@@ -48,6 +60,13 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
         }
     }
 
+    const onNameChange = (value: string) => {
+        setNewName(value);
+        if (name !== value) {
+            editModule({name: value})
+        }
+    }
+
     return (
         <div
             onMouseEnter={onHover} onMouseLeave={onLeave} onClick={(event) => onAddSubject(event)}
@@ -55,9 +74,12 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
             {
                 (position === "first" || position === "single") ?
                     <div className={"flex justify-center py-2"}>
-                        <span className={"text-black font-bold text-center overflow-hidden text-nowrap text-ellipsis"}>
-                            {name}
-                        </span>
+                        <Typography.Text
+                            editable={{icon: null, triggerType: ["text"], onChange: onNameChange}}
+                            className={"text-black font-bold text-center overflow-hidden text-nowrap text-ellipsis cursor-text"}
+                        >
+                            {newName}
+                        </Typography.Text>
                     </div> : null
             }
             <div className={"grid grid-cols-1 gap-3 items-center h-full"}>
