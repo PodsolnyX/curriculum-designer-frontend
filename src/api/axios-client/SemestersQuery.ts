@@ -31,7 +31,7 @@ url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
   return url_;
 }
 
-let getSemestersDefaultOptions: Omit<UseQueryOptions<Types.RefComponentSemesterDto[], unknown, Types.RefComponentSemesterDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.RefComponentSemesterDto[], unknown, Types.RefComponentSemesterDto[]>, 'queryFn'>> = {
+let getSemestersDefaultOptions: Omit<UseQueryOptions<Types.RefModuleSemesterDto[], unknown, Types.RefModuleSemesterDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.RefModuleSemesterDto[], unknown, Types.RefModuleSemesterDto[]>, 'queryFn'>> = {
 };
 export function getGetSemestersDefaultOptions() {
   return getSemestersDefaultOptions;
@@ -63,11 +63,11 @@ export function __getSemesters(context: QueryFunctionContext, axiosConfig?: Axio
       context.queryKey[2] as number,axiosConfig    );
 }
 
-export function useGetSemestersQuery<TSelectData = Types.RefComponentSemesterDto[], TError = unknown>(dto: GetSemestersSemestersQueryParameters, options?: Omit<UseQueryOptions<Types.RefComponentSemesterDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetSemestersQuery<TSelectData = Types.RefModuleSemesterDto[], TError = unknown>(dto: GetSemestersSemestersQueryParameters, options?: Omit<UseQueryOptions<Types.RefModuleSemesterDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
 
-export function useGetSemestersQuery<TSelectData = Types.RefComponentSemesterDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.RefComponentSemesterDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetSemestersQuery<TSelectData = Types.RefComponentSemesterDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.RefComponentSemesterDto[], TError, TSelectData> | undefined = undefined;
+export function useGetSemestersQuery<TSelectData = Types.RefModuleSemesterDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.RefModuleSemesterDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetSemestersQuery<TSelectData = Types.RefModuleSemesterDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.RefModuleSemesterDto[], TError, TSelectData> | undefined = undefined;
   let axiosConfig: AxiosRequestConfig |undefined = undefined;
   let curriculumId: any = undefined;
   
@@ -84,20 +84,20 @@ export function useGetSemestersQuery<TSelectData = Types.RefComponentSemesterDto
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
 
-  return useQuery<Types.RefComponentSemesterDto[], TError, TSelectData>({
+  return useQuery<Types.RefModuleSemesterDto[], TError, TSelectData>({
     queryFn: axiosConfig ? (context) => __getSemesters(context, axiosConfig) : __getSemesters,
     queryKey: getSemestersQueryKey(curriculumId),
-    ...getSemestersDefaultOptions as unknown as Omit<UseQueryOptions<Types.RefComponentSemesterDto[], TError, TSelectData>, 'queryKey'>,
+    ...getSemestersDefaultOptions as unknown as Omit<UseQueryOptions<Types.RefModuleSemesterDto[], TError, TSelectData>, 'queryKey'>,
     ...options,
   });
 }
 
-export function setGetSemestersData(queryClient: QueryClient, updater: (data: Types.RefComponentSemesterDto[] | undefined) => Types.RefComponentSemesterDto[], curriculumId: number) {
+export function setGetSemestersData(queryClient: QueryClient, updater: (data: Types.RefModuleSemesterDto[] | undefined) => Types.RefModuleSemesterDto[], curriculumId: number) {
   queryClient.setQueryData(getSemestersQueryKey(curriculumId),
     updater
   );
 }
 
-export function setGetSemestersDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.RefComponentSemesterDto[] | undefined) => Types.RefComponentSemesterDto[]) {
+export function setGetSemestersDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.RefModuleSemesterDto[] | undefined) => Types.RefModuleSemesterDto[]) {
   queryClient.setQueryData(queryKey, updater);
 }

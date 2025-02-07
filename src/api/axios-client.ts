@@ -32,15 +32,15 @@ export * as CurriculumQuery from './axios-client/CurriculumQuery';
 
 
 
-export * as AtomClient from './axios-client/AtomClient';
-
-export * as AtomQuery from './axios-client/AtomQuery';
-
-
-
 export * as ModuleClient from './axios-client/ModuleClient';
 
 export * as ModuleQuery from './axios-client/ModuleQuery';
+
+
+
+export * as AtomClient from './axios-client/AtomClient';
+
+export * as AtomQuery from './axios-client/AtomQuery';
 
 
 
@@ -165,7 +165,7 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 
 export function initPersister() {
   
-  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefComponentSemesterDto(data));
+  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
 
 
 
@@ -174,10 +174,10 @@ export function initPersister() {
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
 
 
-  addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) => Types.initAtomDto(data));
-
-
   addResultTypeFactory('ModuleClient___getModulesByCurriculum', (data: any) => Types.initModuleDto(data));
+
+
+  addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) => Types.initAtomDto(data));
 
 
 

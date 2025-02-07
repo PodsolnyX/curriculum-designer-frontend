@@ -8,6 +8,11 @@ import {useQueryClient} from "@tanstack/react-query";
 import {App} from "antd";
 import {getSemestersQueryKey} from "@/api/axios-client/SemestersQuery.ts";
 import {getModulesByCurriculumQueryKey} from "@/api/axios-client/ModuleQuery.ts";
+import {
+    useSetAtomCompetenceIndicatorsMutation,
+    useSetAtomCompetencesMutation
+} from "@/api/axios-client/AtomCompetenceQuery.ts";
+import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts";
 
 //Формат id: "semester-17"
 export const useEditSubject = (subjectId: string | number) => {
@@ -15,7 +20,8 @@ export const useEditSubject = (subjectId: string | number) => {
     const {message} = App.useApp();
     const queryClient = useQueryClient();
     const {id: curriculumId} = useParams<{ id: string }>();
-    const { mutate } = useUpdateAtomMutation(Number(subjectId), {
+
+    const { mutate: editInfo } = useUpdateAtomMutation(Number(subjectId), {
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
             queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
@@ -24,8 +30,54 @@ export const useEditSubject = (subjectId: string | number) => {
         }
     });
 
+    const { mutate: editIndicatorMutate } = useSetAtomCompetenceIndicatorsMutation(Number(subjectId), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно обновлен")
+        }
+    });
 
-    return (data: UpdateAtomDto) => mutate(data)
+    const { mutate: editCompetenceMutate } = useSetAtomCompetencesMutation(Number(subjectId), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно обновлен")
+        }
+    });
+
+    const { mutate: editAttestationMutate } = useSetAttestationMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно обновлен")
+        }
+    });
+
+    const editIndicator = (indicatorIds: number[]) => {
+        editIndicatorMutate({competenceIndicatorIds: indicatorIds})
+    }
+
+    const editCompetence = (competenceIds: number[]) => {
+        editCompetenceMutate({competenceIds: competenceIds})
+    }
+
+    //Формат id: "semester-17"
+
+    const editAttestation = (semesterId: string, attestationIds: number[]) => {
+        editAttestationMutate({
+            semesterId: Number(semesterId.split("-")[1]),
+            attestationIds,
+            atomId: Number(subjectId)
+        })
+    }
+
+    return {
+        editInfo: (data: UpdateAtomDto) => editInfo(data),
+        editIndicator,
+        editAttestation,
+        editCompetence
+    }
 }
 
 type EditSubjectWithParams__MutationParameters = {

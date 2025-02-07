@@ -5,11 +5,20 @@ import {
     CursorMode,
     DisplaySettings,
     ModulePosition,
-    ModuleSemestersInfo, PREFIX_ITEM_ID_KEYS, ToolsOptions, TrackSelectionSemestersInfo
+    ModuleSemestersInfo,
+    PREFIX_ITEM_ID_KEYS,
+    ToolsOptions,
+    TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
-import {AcademicActivityDto, AtomDto, AttestationDto, RefComponentSemesterDto} from "@/api/axios-client.ts";
+import {
+    AcademicActivityDto,
+    AtomDto,
+    AttestationDto,
+    CompetenceDistributionType,
+    CurriculumSettingsDto, RefModuleSemesterDto,
+} from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
     getIdFromPrefix,
@@ -233,6 +242,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
         selectedCompetenceId,
+        settings: curriculumData?.settings || {competenceDistributionType: CompetenceDistributionType.Competence},
         onSelectCompetence,
         onSelectSubject,
         setToolsOptions,
@@ -266,7 +276,7 @@ interface PlanContextValue {
     overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
     toolsOptions: ToolsOptions;
-    semestersInfo: RefComponentSemesterDto[];
+    semestersInfo: RefModuleSemesterDto[];
     semesters: Semester[];
     attestationTypes: AttestationDto[];
     academicActivity: AcademicActivityDto[];
@@ -276,6 +286,7 @@ interface PlanContextValue {
     selectedSubject: AtomDto | null;
     loadingPlan: boolean;
     selectedCompetenceId: UniqueIdentifier | null;
+    settings: CurriculumSettingsDto;
 
     onSelectCompetence(id: number | null): void;
 
@@ -321,6 +332,9 @@ const PlanContext = createContext<PlanContextValue>({
     attestationTypes: [],
     loadingPlan: true,
     selectedCompetenceId: null,
+    settings: {
+        competenceDistributionType: CompetenceDistributionType.Competence,
+    },
 
     onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: number | null, semesterOrder?: number) => {

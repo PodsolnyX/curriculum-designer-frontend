@@ -13,7 +13,7 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getSemesters(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.RefComponentSemesterDto[]> {
+export function getSemesters(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.RefModuleSemesterDto[]> {
     let url_ = getBaseUrl() + "/semester/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -42,7 +42,7 @@ export function getSemesters(curriculumId: number, config?: AxiosRequestConfig |
     });
 }
 
-function processGetSemesters(response: AxiosResponse): Promise<Types.RefComponentSemesterDto[]> {
+function processGetSemesters(response: AxiosResponse): Promise<Types.RefModuleSemesterDto[]> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -58,16 +58,16 @@ function processGetSemesters(response: AxiosResponse): Promise<Types.RefComponen
         let resultData200  = _responseText;
         if (Array.isArray(resultData200)) {
               result200 = resultData200.map(item => 
-                Types.initRefComponentSemesterDto(item)
+                Types.initRefModuleSemesterDto(item)
               );
             }
-        return Promise.resolve<Types.RefComponentSemesterDto[]>(result200);
+        return Promise.resolve<Types.RefModuleSemesterDto[]>(result200);
 
     } else if (status !== 200 && status !== 204) {
         const _responseText = response.data;
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
-    return Promise.resolve<Types.RefComponentSemesterDto[]>(null as any);
+    return Promise.resolve<Types.RefModuleSemesterDto[]>(null as any);
 }
 let _requestConfigGetSemesters: Partial<AxiosRequestConfig> | null;
 export function getGetSemestersRequestConfig() {

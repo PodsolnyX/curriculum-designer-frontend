@@ -86,6 +86,7 @@ export const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject =
         attestation: atomSemester.attestations,
         competencies: competencies,
         academicHours: atomSemester.academicActivityHours,
+        semesterId: setPrefixToId(semesterId, "semesters"),
         semesterOrder: atom.semesters.length > 1 ? atom.semesters.findIndex(atomSemester => semesterId === atomSemester.semester.id) + 1 : undefined,
     }
 }

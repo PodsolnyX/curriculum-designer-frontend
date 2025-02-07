@@ -165,14 +165,11 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
 
     const {
         semester,
-        academicActivityHours,
-        attestations,
-        credit,
+        nonElective,
+        elective
     } = info;
 
-    const electiveCredits = 0;
-
-    const examsCount: number = attestations.reduce((sum, attestation) => sum + (attestation.shortName === "Эк" ? 1 : 0), 0);
+    const examsCount: number = nonElective.attestations.reduce((sum, attestation) => sum + (attestation.shortName === "Эк" ? 1 : 0), 0);
 
     return (
         <div className={"absolute top-5 h-full w-full"}>
@@ -182,7 +179,7 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
                     <div className={"flex gap-1"}>
                         {
                             displaySettings.credits &&
-                            <Tag color={credit > 30 ? "red" : credit < 30 ? "default" : "green"} className={"m-0"} bordered={false}>{`${credit} / 30 ЗЕТ`}</Tag>
+                            <Tag color={nonElective.credit > 30 ? "red" : nonElective.credit < 30 ? "default" : "green"} className={"m-0"} bordered={false}>{`${nonElective.credit} / 30 ЗЕТ`}</Tag>
                         }
                         {
                             displaySettings.attestation &&
@@ -193,8 +190,8 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
                             >{`${examsCount} / 3 Эк`}</Tag>
                         }
                         {
-                            (displaySettings.credits && electiveCredits) ?
-                                <Tag color={"purple"} className={"m-0"} bordered={false}>{`${electiveCredits} ЗЕТ`}</Tag>
+                            (displaySettings.credits && elective.credit) ?
+                                <Tag color={"purple"} className={"m-0"} bordered={false}>{`${elective.credit} ЗЕТ`}</Tag>
                                 : null
                         }
                     </div>
@@ -203,8 +200,8 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
                     displaySettings.academicHours &&
                     <div className={"rounded-lg px-3 py-2 bg-white shadow-md"}>
                         <AcademicHoursPanel
-                            credits={credit}
-                            academicHours={academicActivityHours}
+                            credits={nonElective.credit}
+                            academicHours={nonElective.academicActivityHours}
                             layout={"horizontal"}
                             size={"large"}
                             showAllActivities={true}
