@@ -31,11 +31,13 @@ import IndicatorItem from "@/pages/planCompetenciesPage/IndicatorItem.tsx";
 import AddCompetenceButton from "@/pages/planCompetenciesPage/AddCompetenceButton.tsx";
 import {SortableOverlay} from "@/pages/planCompetenciesPage/SortableOverlay.tsx";
 import {useQueryClient} from "@tanstack/react-query";
+import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 
 const PlanCompetenciesPage = () => {
 
     const {id} = useParams<{ id: string }>();
     const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
+    const {data: curriculumData} = useGetCurriculumQuery({id: Number(id)});
     const queryClient = useQueryClient();
 
     const [selectedType, setSelectedType] = useState<string>(CompetenceTypeName[CompetenceType.Universal].name);
@@ -76,7 +78,7 @@ const PlanCompetenciesPage = () => {
     const headerExtra = () => {
         return (
             <div className={"flex flex-col"}>
-                <Typography className={"text-sm text-stone-400"}>{""}</Typography>
+                <Typography className={"text-sm text-stone-400"}>{curriculumData?.name || ""}</Typography>
                 <Typography className={"text-2xl"}>{"Компетенции"}</Typography>
             </div>
         )

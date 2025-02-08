@@ -1,9 +1,15 @@
-import {getRoutePlan, getRoutePlanCompetencies, getRoutePlanTitle} from "@/shared/const/router.ts";
+import {
+    getRoutePlan,
+    getRoutePlanCompetencies,
+    getRoutePlanSettings,
+    getRoutePlanTitle
+} from "@/shared/const/router.ts";
 import {PlanPageLayoutMenuItem} from "@/widgets/PlanPageLayout/PlanPageLayout.tsx";
 import DocumentIcon from "@/shared/assets/icons/document.svg?react";
 import BoardIcon from "@/shared/assets/icons/board.svg?react";
 import HatIcon from "@/shared/assets/icons/hat.svg?react";
 import HallIcon from "@/shared/assets/icons/hall.svg?react";
+import SettingsIcon from "@/shared/assets/icons/settings.svg?react";
 
 export const getPlanMenuItems = (id: number | string): PlanPageLayoutMenuItem[] => [
     {
@@ -29,5 +35,11 @@ export const getPlanMenuItems = (id: number | string): PlanPageLayoutMenuItem[] 
         name: "Кафедры",
         icon: HallIcon,
         path: getRoutePlanTitle(id)
+    },
+    {
+        value: "settings",
+        name: "Настройки",
+        icon: SettingsIcon,
+        path: getRoutePlanSettings(id)
     }
 ];

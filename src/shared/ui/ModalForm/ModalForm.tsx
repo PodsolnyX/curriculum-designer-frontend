@@ -18,12 +18,15 @@ interface ModalFormFieldsProps<T> {
     buttonLabel?: string,
     initialValues?: any,
     isOpen?: boolean,
+    loadingContent?: React.ReactNode,
+
     onSubmit?(data: T): void,
     onClose?(): void
 }
 
 export interface ModalProps {
     isOpen?: boolean,
+
     onClose?(): void
 }
 
@@ -37,11 +40,12 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
         fields,
         loading,
         buttonLabel,
-        onSubmit,
         initialValues,
         isOpen,
-        onClose,
-        title
+        title,
+        loadingContent,
+        onSubmit,
+        onClose
     } = props;
 
     const [form] = Form.useForm<T>();
@@ -57,37 +61,43 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
         <Modal
             open={isOpen}
             onCancel={onClose}
-            title={title}
+            title={(loading && loadingContent ) ? "" : title}
             footer={null}
+            maskClosable={!loading}
+            closeIcon={loading ? null : undefined}
         >
-            <Form
-                form={form}
-                onFinish={onFinish}
-                initialValues={{...initialValues}}
-                layout={"vertical"}
-                autoComplete={"on"}
-                className={"w-full"}
-            >
-                {
-                    fields.map(field =>
-                        <Form.Item<T>
-                            name={field.name}
-                            label={field.label}
-                            rules={field.isRequired ? [{ required: true, message: 'Обязательное поле' }] : []}
-                            key={field.name as string}
-                            valuePropName={field.inputComponent === "switch" ? "checked" : undefined}
-                        >
-                            {
-                                field.customInput
-                                ? field.customInput
-                                : field.inputComponent
-                                && getFormInput(field.options)[field.inputComponent]
-                            }
-                        </Form.Item>
-                    )
-                }
-                <Button htmlType={"submit"} type={"primary"} disabled={loading}>{buttonLabel}</Button>
-            </Form>
+            {
+                (loadingContent && loading) ?
+                    loadingContent :
+                    <Form
+                        form={form}
+                        onFinish={onFinish}
+                        initialValues={{...initialValues}}
+                        layout={"vertical"}
+                        autoComplete={"on"}
+                        className={"w-full"}
+                    >
+                        {
+                            fields.map(field =>
+                                <Form.Item<T>
+                                    name={field.name}
+                                    label={field.label}
+                                    rules={field.isRequired ? [{required: true, message: 'Обязательное поле'}] : []}
+                                    key={field.name as string}
+                                    valuePropName={field.inputComponent === "switch" ? "checked" : undefined}
+                                >
+                                    {
+                                        field.customInput
+                                            ? field.customInput
+                                            : field.inputComponent
+                                            && getFormInput(field.options)[field.inputComponent]
+                                    }
+                                </Form.Item>
+                            )
+                        }
+                        <Button htmlType={"submit"} type={"primary"} disabled={loading}>{buttonLabel}</Button>
+                    </Form>
+            }
         </Modal>
 
     )
@@ -95,9 +105,9 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
 
 function getFormInput(options?: OptionType[]): Record<ModalFormInput, ReactNode> {
     return {
-        "input": <Input className={"w-full"} />,
-        "inputNumber": <InputNumber className={"w-full"} />,
-        "datePicker": <DatePicker className={"w-full"} />,
+        "input": <Input className={"w-full"}/>,
+        "inputNumber": <InputNumber className={"w-full"}/>,
+        "datePicker": <DatePicker className={"w-full"}/>,
         "switch": <Switch/>,
         "select": <Select options={options}/>,
         "file": <Input type={"file"} className={"w-full"}/>

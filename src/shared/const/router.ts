@@ -4,6 +4,7 @@ export enum AppRoutes {
     PLAN = 'plan',
     TITLE = 'title',
     COMPETENCIES = 'competencies',
+    SETTINGS = 'settings',
     NOT_FOUND = 'not_found'
 }
 
@@ -14,6 +15,8 @@ export const getRouteLogin = () => '/login';
 export const getRoutePlan = (id: string | number) => `/curriculum/${id}/plan`;
 
 export const getRoutePlanTitle = (id: string | number) => `/curriculum/${id}/title`;
+
+export const getRoutePlanSettings = (id: string | number) => `/curriculum/${id}/settings`;
 
 export const getRoutePlanCompetencies = (id: string | number) => `/curriculum/${id}/competencies`;
 
