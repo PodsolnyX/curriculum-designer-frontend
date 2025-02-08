@@ -74,7 +74,7 @@ const Sidebar = () => {
 
     return (
 
-            <div style={{height: "calc(100vh - 64px)"}} className={"overflow-y-auto bg-white/[0.8] w-[330px] backdrop-blur p-5 min-h-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
+            <div style={{height: "calc(100vh - 64px)"}} className={"overflow-y-auto bg-white/[0.8] max-w-[330px] w-full backdrop-blur p-5 min-h-full border-l border-l-stone-200 border-solid flex flex-col gap-3"}>
                 <div className={"flex flex-col"}>
                     <span className={"text-[12px] text-stone-400"}>{index}</span>
                     <Typography.Text

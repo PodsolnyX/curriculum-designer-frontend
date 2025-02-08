@@ -4,7 +4,8 @@ import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
 import React, {memo, useRef} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {useInView} from "react-intersection-observer";
+import {useControls} from "react-zoom-pan-pinch";
+import {createPortal} from "react-dom";
 
 interface SortableSubjectCard extends SubjectCardProps {}
 
@@ -40,7 +41,6 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
                 active={isDragging}
                 style={{
                     transition,
-                    // transform: isSorting ? undefined : CSS.Translate.toString(transform),
                     transform: isSorting ? undefined : CSS.Transform.toString(transform),
                 }}
                 insertPosition={getPosition()}
@@ -57,33 +57,34 @@ interface SubjectCardOutViewProps extends React.PropsWithChildren {
     semesterOrder?: number;
 }
 
-const SubjectCardOutView = ({enable, semesterOrder, children}: SubjectCardOutViewProps) => {
+const SubjectCardOutView = ({enable, semesterOrder = 1, children}: SubjectCardOutViewProps) => {
 
     const Wrapper = ({children}: React.PropsWithChildren) => {
 
         const refScroll = useRef<HTMLDivElement | null>(null);
+        const {zoomToElement} = useControls()
 
         const scrollToTarget = () => {
-            if (refScroll?.current && refScroll?.current?.scrollIntoView) {
-                refScroll?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (refScroll?.current !== null)
+                zoomToElement(refScroll.current as HTMLElement)
         };
-
-        const [positionLeft, positionY] = [refScroll?.current?.getBoundingClientRect().left + 60, refScroll?.current?.getBoundingClientRect().y < 0 ? -1 : 1]
 
         return (
             <div ref={refScroll}>
                 <div>
                     { children }
                 </div>
-                <div
-                    onClick={scrollToTarget}
-                    style={{
-                        left: positionLeft,
-                    }}
-                    className={`w-16 h-16 cursor-pointer fixed ${positionY === -1 ? "top-[80px]" : "bottom-5"} bg-sky-500/[.5] shadow-md z-50 rounded-full flex justify-center text-xl items-center text-white font-bold`}>
-                    {(semesterOrder) || (positionY === -1 ? "↑" : "↓")}
-                </div>
+                {
+                    createPortal(
+                        <div
+                            onClick={scrollToTarget}
+                            style={{right: 340, bottom: 12 + ((semesterOrder - 1) * 32)}}
+                            className={`h-[32px] w-[32px] cursor-pointer fixed bg-white/[.8] backdrop-blur hover:text-blue-500 transition z-50 flex justify-center items-center font-bold`}>
+                            {(semesterOrder)}
+                        </div>,
+                        document.body,
+                    )
+                }
             </div>
         )
     }

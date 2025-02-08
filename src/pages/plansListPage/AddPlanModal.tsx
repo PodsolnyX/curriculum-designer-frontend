@@ -95,7 +95,7 @@ export const AddPlanModal = (props: ModalProps) => {
                 <div className={"flex flex-col gap-12 items-center justify-center py-32"}>
                     <Spin size={"large"}/>
                     <Typography.Text className={"text-2xl"}>
-                        {loadingCreate ? "Создание плана" : "Импорт плана"}
+                        {loadingCreate ? "Создание плана..." : "Импорт плана..."}
                     </Typography.Text>
                 </div>
             }
