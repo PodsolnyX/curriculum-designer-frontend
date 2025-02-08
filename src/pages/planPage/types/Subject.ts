@@ -11,7 +11,7 @@ export interface Subject {
     index?: string;
     credits: number;
     attestation?: AttestationDto[];
-    department?: number;
+    department?: {id: number, name: string};
     semesterOrder?: number;
     academicHours?: HoursDistributionDto[];
     competencies?: {id: number, index: string, description: string}[];

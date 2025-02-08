@@ -44,7 +44,7 @@ const Sidebar = () => {
         name = "",
         isRequired = false,
         index = "Без индекса",
-        department = "-",
+        department,
         type = AtomType.Subject,
         competences,
         competenceIndicators,
@@ -102,7 +102,7 @@ const Sidebar = () => {
                 </div>
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Кафедра</span>
-                    <InputNumber size={"small"} className={"w-full"} min={0} value={department}/>
+                    <InputNumber size={"small"} className={"w-full"} min={0} value={department?.id}/>
                 </div>
                 <div className={"flex-col flex gap-1 border-b border-stone-300 border-solid pb-3"}>
                     <span className={"font-bold text-[14px]"}>Компетенции</span>

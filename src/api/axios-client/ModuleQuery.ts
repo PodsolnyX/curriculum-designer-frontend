@@ -18,6 +18,7 @@ import * as Client from './ModuleClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
+
 export type GetModuleModuleQueryParameters = {
   moduleId: number ;
 }
@@ -58,6 +59,32 @@ export function useCreateModuleMutation<TContext>(options?: Omit<UseMutationOpti
   return useMutation({
     ...options,
     mutationFn: (createModuleDto: Types.CreateModuleDto) => Client.createModule(createModuleDto),
+    mutationKey: key,
+  });
+}
+  
+export function createModuleWithSelectionUrl(): string {
+  let url_ = getBaseUrl() + "/module/with-selection";
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function createModuleWithSelectionMutationKey(): MutationKey {
+  return trimArrayEnd([
+      'ModuleClient',
+      'createModuleWithSelection',
+    ]);
+}
+
+export function useCreateModuleWithSelectionMutation<TContext>(options?: Omit<UseMutationOptions<number, unknown, Types.CreateModuleWithSelectionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<number, unknown, Types.CreateModuleWithSelectionDto, TContext> {
+  const key = createModuleWithSelectionMutationKey();
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto) => Client.createModuleWithSelection(createModuleWithSelectionDto),
     mutationKey: key,
   });
 }

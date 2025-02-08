@@ -63,8 +63,6 @@ const SubjectCardOutView = ({enable, semesterOrder, children}: SubjectCardOutVie
 
         const refScroll = useRef<HTMLDivElement | null>(null);
 
-        const { ref: refInView, inView } = useInView({threshold: 0.2});
-
         const scrollToTarget = () => {
             if (refScroll?.current && refScroll?.current?.scrollIntoView) {
                 refScroll?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -75,19 +73,17 @@ const SubjectCardOutView = ({enable, semesterOrder, children}: SubjectCardOutVie
 
         return (
             <div ref={refScroll}>
-                <div ref={refInView}>
+                <div>
                     { children }
                 </div>
-                { !inView &&
-                    <div
-                        onClick={scrollToTarget}
-                        style={{
-                            left: positionLeft,
-                        }}
-                        className={`w-16 h-16 cursor-pointer fixed ${positionY === -1 ? "top-[80px]" : "bottom-5"} bg-sky-500/[.5] shadow-md z-50 rounded-full flex justify-center text-xl items-center text-white font-bold`}>
-                        {(semesterOrder) || (positionY === -1 ? "↑" : "↓")}
-                    </div>
-                }
+                <div
+                    onClick={scrollToTarget}
+                    style={{
+                        left: positionLeft,
+                    }}
+                    className={`w-16 h-16 cursor-pointer fixed ${positionY === -1 ? "top-[80px]" : "bottom-5"} bg-sky-500/[.5] shadow-md z-50 rounded-full flex justify-center text-xl items-center text-white font-bold`}>
+                    {(semesterOrder) || (positionY === -1 ? "↑" : "↓")}
+                </div>
             </div>
         )
     }

@@ -20,12 +20,6 @@ export * as SemestersQuery from './axios-client/SemestersQuery';
 
 
 
-export * as SelectionClient from './axios-client/SelectionClient';
-
-export * as SelectionQuery from './axios-client/SelectionQuery';
-
-
-
 export * as ImportClient from './axios-client/ImportClient';
 
 export * as ImportQuery from './axios-client/ImportQuery';
@@ -35,6 +29,12 @@ export * as ImportQuery from './axios-client/ImportQuery';
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
+
+
+
+export * as SelectionClient from './axios-client/SelectionClient';
+
+export * as SelectionQuery from './axios-client/SelectionQuery';
 
 
 
@@ -176,10 +176,10 @@ export function initPersister() {
 
 
 
-
-
   addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
+
+
 
 
   addResultTypeFactory('ModuleClient___getModule', (data: any) => Types.initModuleDto(data));

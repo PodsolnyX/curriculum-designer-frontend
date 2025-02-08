@@ -36,7 +36,7 @@ export const SubjectCardMemo =
             parentModuleId,
             name = "",
             index = "Без индекса",
-            department = "-",
+            department,
             semesterOrder,
             isRequired = false,
             type = AtomType.Subject,
@@ -131,7 +131,9 @@ export const SubjectCardMemo =
                         }
                         {
                             displaySettings.department &&
-                            <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department}</Tag>
+                            <Tooltip title={department?.name}>
+                                <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department?.id || '-'}</Tag>
+                            </Tooltip>
                         }
                         {
                             displaySettings.notesNumber &&

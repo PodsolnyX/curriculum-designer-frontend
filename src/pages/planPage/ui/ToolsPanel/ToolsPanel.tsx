@@ -71,7 +71,7 @@ const ToolsPanel = () => {
         setToolsOptions
     } = usePlan();
 
-    const { zoomIn, zoomOut } = useControls();
+    const { zoomIn, zoomOut, zoomToElement } = useControls();
     const { props} = useTransformContext();
 
     const [currentScale, setCurrentScale] = useState(props.initialScale);
