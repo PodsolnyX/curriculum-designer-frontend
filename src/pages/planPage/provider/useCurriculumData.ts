@@ -16,15 +16,15 @@ export const useCurriculumData = () => {
     const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: false});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
     const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
-    console.log(modulesData)
+
     return {
         curriculumId: Number(id),
         curriculumData,
-        semestersData: semestersData || [],
-        atomsData: atomsData || [],
-        modulesData: modulesData || [],
-        attestationTypesData: attestationTypesData || [],
-        academicActivityData: academicActivityData || [],
+        semestersData: semestersData,
+        atomsData: atomsData,
+        modulesData: modulesData,
+        attestationTypesData: attestationTypesData,
+        academicActivityData: academicActivityData,
         isLoading: loadingPlan || loadingAtoms || loadingModules || loadingAttestationTypes || loadingSemesters || loadingAcademicActivity
     }
 }

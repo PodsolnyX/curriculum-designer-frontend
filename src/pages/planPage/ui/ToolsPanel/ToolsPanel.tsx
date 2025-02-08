@@ -78,7 +78,6 @@ const ToolsPanel = () => {
 
     useTransformEffect(({ state }) => {
         setCurrentScale(state.scale);
-
         return () => {}
     });
 

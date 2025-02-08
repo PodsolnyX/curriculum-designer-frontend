@@ -180,7 +180,7 @@ export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto):
 }
 export interface SelectionDto  {
   name: string;
-  creditPerSemester: number[];
+  semesters: CreditPerSemesterDto[];
 }
 export function deserializeSelectionDto(json: string): SelectionDto {
   const data = JSON.parse(json) as SelectionDto;
@@ -189,7 +189,11 @@ export function deserializeSelectionDto(json: string): SelectionDto {
 }
 export function initSelectionDto(_data: SelectionDto) {
   if (_data) {
-    _data.creditPerSemester = _data["creditPerSemester"];
+    if (Array.isArray(_data["semesters"])) {
+      _data.semesters = _data["semesters"].map(item => 
+        initCreditPerSemesterDto(item)
+      );
+    }
   }
   return _data;
 }
@@ -201,11 +205,38 @@ export function serializeSelectionDto(_data: SelectionDto | undefined) {
 }
 export function prepareSerializeSelectionDto(_data: SelectionDto): SelectionDto {
   const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.semesters)) {
+    data["semesters"] = _data.semesters.map(item => 
+        prepareSerializeCreditPerSemesterDto(item)
+    );
+  }
   return data as SelectionDto;
+}
+export interface CreditPerSemesterDto  {
+  semesterId: number;
+  credit: number;
+}
+export function deserializeCreditPerSemesterDto(json: string): CreditPerSemesterDto {
+  const data = JSON.parse(json) as CreditPerSemesterDto;
+  initCreditPerSemesterDto(data);
+  return data;
+}
+export function initCreditPerSemesterDto(_data: CreditPerSemesterDto) {
+    return _data;
+}
+export function serializeCreditPerSemesterDto(_data: CreditPerSemesterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCreditPerSemesterDto(_data as CreditPerSemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreditPerSemesterDto(_data: CreditPerSemesterDto): CreditPerSemesterDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreditPerSemesterDto;
 }
 export interface CreateUpdateSelectionDto  {
   name?: string | null;
-  creditPerSemester?: number[] | null;
+  semesters?: CreditPerSemesterDto[] | null;
 }
 export function deserializeCreateUpdateSelectionDto(json: string): CreateUpdateSelectionDto {
   const data = JSON.parse(json) as CreateUpdateSelectionDto;
@@ -214,7 +245,11 @@ export function deserializeCreateUpdateSelectionDto(json: string): CreateUpdateS
 }
 export function initCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto) {
   if (_data) {
-    _data.creditPerSemester = _data["creditPerSemester"];
+    if (Array.isArray(_data["semesters"])) {
+      _data.semesters = _data["semesters"].map(item => 
+        initCreditPerSemesterDto(item)
+      );
+    }
   }
   return _data;
 }
@@ -226,6 +261,11 @@ export function serializeCreateUpdateSelectionDto(_data: CreateUpdateSelectionDt
 }
 export function prepareSerializeCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto): CreateUpdateSelectionDto {
   const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.semesters)) {
+    data["semesters"] = _data.semesters.map(item => 
+        prepareSerializeCreditPerSemesterDto(item)
+    );
+  }
   return data as CreateUpdateSelectionDto;
 }
 export interface CreateCurriculumDto  {

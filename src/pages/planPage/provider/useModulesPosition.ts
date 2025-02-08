@@ -21,7 +21,7 @@ export const useModulesPosition = () => {
     } = useCurriculumData();
 
     useEffect(() => {
-        if (curriculumData && modulesData) {
+        if (curriculumData?.semesters && modulesData) {
             const positions = parseModulesPositions(curriculumData.semesters, modulesData);
             setModulesSemesters(positions.modules)
             setSelectionsSemesters(positions.selections)
@@ -38,6 +38,16 @@ export const useModulesPosition = () => {
             countSemesters: module.semesters.length
         }
     }, [modulesSemesters])
+
+    const getSelectionPosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
+        const selection = selectionsSemesters.find(module => getIdFromPrefix(id) === module.id);
+        if (!selection || selection.semesters.length === 1) return {position: "single", countSemesters: 1}
+        const index = selection.semesters.findIndex(module => module === id);
+        return {
+            position: index === 0 ? "first" : index === selection?.semesters.length - 1 ? "last" : "middle",
+            countSemesters: selection.semesters.length
+        }
+    }, [selectionsSemesters])
 
     const getTrackSelectionPosition = useCallback((id: UniqueIdentifier): TrackSelectionSemestersInfo => {
 
@@ -57,6 +67,7 @@ export const useModulesPosition = () => {
         selectionsSemesters,
         tracksSelectionSemesters,
         getModulePosition,
+        getSelectionPosition,
         getTrackSelectionPosition
     }
 }
@@ -92,23 +103,28 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
             })
         })
 
-    modulesData.filter(modules => modules.semesters.length && modules.selection).map(selection => {
-        let firstSemesterId = selection.semesters.length ? selection.semesters[0].semester.id : selection.parentSemesterId;
-        const startSemester = semestersData.find(semester => semester.id === firstSemesterId);
-        if (!startSemester) return;
+    modulesData
+        .filter(modules => (modules.semesters.length || modules.parentSemesterId) && !modules.modules.length && modules.selection)
+        .map(selection => {
+            let firstSemesterId = selection.semesters.length ? selection.semesters[0].semester.id : selection.parentSemesterId;
+            const startSemester = semestersData.find(semester => semester.id === firstSemesterId);
+            if (!startSemester) return;
 
-        const intersectionSelections = selections.filter(_selection => {
-            return Math.max(_selection.startSemesterNumber, startSemester.number) <= Math.min(_selection.startSemesterNumber + _selection.semesters.length - 1, startSemester.number + selection.semesters.length - 1);
-        })
+            const intersectionSelections = selections.filter(_selection => {
+                return Math.max(_selection.startSemesterNumber, startSemester.number) <= Math.min(_selection.startSemesterNumber + _selection.semesters.length - 1, startSemester.number + (selection.semesters.length > 0 ? selection.semesters.length - 1 : 0));
+            })
 
-        modules.push({
-            id: String(selection.id),
-            name: selection.selection?.name || selection.name,
-            startSemesterNumber: startSemester?.number || 0,
-            columnIndex: intersectionSelections.slice(-1)[0]?.columnIndex + 1 || 0,
-            semesters: selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
+            selections.push({
+                id: String(selection.id),
+                name: selection.selection?.name || selection.name,
+                startSemesterNumber: startSemester?.number || 0,
+                columnIndex: intersectionSelections.slice(-1)[0]?.columnIndex + 1 || 0,
+                semesters: selection.semesters.length
+                    ? selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
+                    : [setPrefixToId(`${setPrefixToId(startSemester.id, "semesters")}-${selection.id}`, "selections")]
+                // semesters: selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
+            })
         })
-    })
 
     modulesData.filter(modules => modules.modules.length).map(trackSelection => {
         let firstSemesterId = trackSelection.semesters.length ? trackSelection.semesters[0].semester.id : trackSelection.parentSemesterId;

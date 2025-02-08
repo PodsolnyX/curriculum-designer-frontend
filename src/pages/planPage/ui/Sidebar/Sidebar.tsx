@@ -18,6 +18,7 @@ const Sidebar = () => {
     useEffect(() => {
         if (selectedSubject) {
             setSelectedSemesterNumber(1)
+            setNewName(selectedSubject?.name || "")
         }
     }, [selectedSubject])
 

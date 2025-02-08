@@ -57,6 +57,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         selectionsSemesters,
         tracksSelectionSemesters,
         getModulePosition,
+        getSelectionPosition,
         getTrackSelectionPosition
     } = useModulesPosition();
 
@@ -74,7 +75,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     } = useDisplaySettings();
 
     useEffect(() => {
-        if (curriculumData && modulesData && atomsData) {
+        if (curriculumData?.semesters.length && modulesData && atomsData) {
             setSemesters(parseCurriculum(curriculumData.semesters, atomsData, modulesData))
         }
     }, [curriculumData, modulesData, atomsData])
@@ -237,7 +238,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         tracksSelectionSemesters,
         displaySettings,
         toolsOptions,
-        selectedSubject: atomsData.find(atom => String(atom.id) === selectedSubjectId) || null,
+        selectedSubject: atomsData?.find(atom => String(atom.id) === selectedSubjectId) || null,
         attestationTypes: attestationTypesData,
         academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
@@ -252,6 +253,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragEnd,
         handleDragCancel,
         getModuleSemesterPosition: getModulePosition,
+        getSelectionPosition: getSelectionPosition,
         getTrackSemesterPosition: getTrackSelectionPosition,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
@@ -306,6 +308,8 @@ interface PlanContextValue {
 
     getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
 
+    getSelectionPosition(id: UniqueIdentifier): ModuleSemestersInfo;
+
     getTrackSemesterPosition(id: UniqueIdentifier): TrackSelectionSemestersInfo;
 
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
@@ -352,6 +356,9 @@ const PlanContext = createContext<PlanContextValue>({
     handleDragCancel: (_event: DragCancelEvent) => {
     },
     getModuleSemesterPosition: (_id: UniqueIdentifier) => {
+        return {position: "single", countSemesters: 0}
+    },
+    getSelectionPosition: (_id: UniqueIdentifier) => {
         return {position: "single", countSemesters: 0}
     },
     getTrackSemesterPosition: (_id: UniqueIdentifier) => {

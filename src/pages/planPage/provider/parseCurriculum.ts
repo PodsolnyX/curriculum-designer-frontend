@@ -132,6 +132,7 @@ const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[]): Sel
 
     const isSemesterSelection = (module: ModuleDto) => {
         return (
+            !module.modules.length &&
             module.selection &&
             !module.parentModuleId &&
             module.atoms.some(atom => atom.semesters
@@ -148,9 +149,9 @@ const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[]): Sel
 
 const parseSelection = (module: ModuleDto, semester: SemesterDto): Selection => {
     return {
-        id: setPrefixToId(module.id, "selections"),
+        id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "selections"),
         name: module.name,
-        credits: module.selection?.creditPerSemester[0] || 0,
+        credits: module.selection?.semesters[0].credit || 0,
         subjects: module.atoms
             .filter(atom => atom.semesters.some(atomSemester => semester.id === atomSemester.semester.id))
             .map(atom => parseAtomToSubject(atom, semester.id))

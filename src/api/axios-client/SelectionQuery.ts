@@ -18,7 +18,7 @@ import * as Client from './SelectionClient'
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-export type UpdateSelectionSelectionQueryParameters = {
+export type CreateUpdateSelectionSelectionQueryParameters = {
   moduleId: number ;
 }
 
@@ -26,7 +26,7 @@ export type DeleteSelectionSelectionQueryParameters = {
   moduleId: number ;
 }
 
-export function updateSelectionUrl(moduleId: number): string {
+export function createUpdateSelectionUrl(moduleId: number): string {
   let url_ = getBaseUrl() + "/module/{moduleId}/selection";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
@@ -35,10 +35,10 @@ url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
   return url_;
 }
 
-export function updateSelectionMutationKey(moduleId: number): MutationKey {
+export function createUpdateSelectionMutationKey(moduleId: number): MutationKey {
   return trimArrayEnd([
       'SelectionClient',
-      'updateSelection',
+      'createUpdateSelection',
       moduleId as any,
     ]);
 }
@@ -46,35 +46,35 @@ export function updateSelectionMutationKey(moduleId: number): MutationKey {
 /**
  * Creates new or updates existing selection for a module.
  */
-export function useUpdateSelectionMutation<TContext>(moduleId: number, options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext> {
-  const key = updateSelectionMutationKey(moduleId);
+export function useCreateUpdateSelectionMutation<TContext>(moduleId: number, options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext> {
+  const key = createUpdateSelectionMutationKey(moduleId);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
   return useMutation({
     ...options,
-    mutationFn: (createUpdateSelectionDto: Types.CreateUpdateSelectionDto) => Client.updateSelection(moduleId, createUpdateSelectionDto),
+    mutationFn: (createUpdateSelectionDto: Types.CreateUpdateSelectionDto) => Client.createUpdateSelection(moduleId, createUpdateSelectionDto),
     mutationKey: key,
   });
 }
   
-type UpdateSelection__MutationParameters = UpdateSelectionSelectionQueryParameters & {
+type CreateUpdateSelection__MutationParameters = CreateUpdateSelectionSelectionQueryParameters & {
   createUpdateSelectionDto: Types.CreateUpdateSelectionDto;
 }
 
 /**
  * Creates new or updates existing selection for a module.
  */
-export function useUpdateSelectionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, UpdateSelection__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateSelectionSelectionQueryParameters}): UseMutationResult<Types.SelectionDto, unknown, UpdateSelection__MutationParameters, TContext> {
-  const key = updateSelectionMutationKey(options?.parameters?.moduleId!);
+export function useCreateUpdateSelectionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, CreateUpdateSelection__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateUpdateSelectionSelectionQueryParameters}): UseMutationResult<Types.SelectionDto, unknown, CreateUpdateSelection__MutationParameters, TContext> {
+  const key = createUpdateSelectionMutationKey(options?.parameters?.moduleId!);
   
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
   
 return useMutation({
   ...options, 
-  mutationFn: (data: UpdateSelection__MutationParameters) => Client.updateSelection(data.moduleId ?? options?.parameters?.moduleId!, data.createUpdateSelectionDto),
+  mutationFn: (data: CreateUpdateSelection__MutationParameters) => Client.createUpdateSelection(data.moduleId ?? options?.parameters?.moduleId!, data.createUpdateSelectionDto),
   mutationKey: key,
 });
 }

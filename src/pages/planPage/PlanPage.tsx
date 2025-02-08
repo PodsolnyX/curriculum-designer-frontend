@@ -58,7 +58,7 @@ const PlanPageWrapped = () => {
                     allowLeftClickPan: toolsOptions.cursorMode === CursorMode.Hand,
                 }}
             >
-                <PlanHeader/>
+                { !loadingPlan && <PlanHeader/>}
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleDragStart}

@@ -70,7 +70,10 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
     return (
         <div
             onMouseEnter={onHover} onMouseLeave={onLeave} onClick={(event) => onAddSubject(event)}
-            className={`${styles[position]} flex w-[230px] flex-col relative border-dashed px-3 ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "border-blue-300" : "border-stone-500"}`} ref={setNodeRef} style={{gridColumn: columnIndex}}>
+            className={`${styles[position]} flex w-[230px] flex-col relative border-dashed px-3 ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "border-blue-300" : "border-stone-500"}`}
+            ref={setNodeRef}
+            style={{gridColumn: columnIndex}}
+        >
             {
                 (position === "first" || position === "single") ?
                     <div className={"flex justify-center py-2"}>

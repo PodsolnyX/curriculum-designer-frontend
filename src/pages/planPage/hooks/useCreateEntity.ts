@@ -5,9 +5,7 @@ import {App} from "antd";
 import {getModulesByCurriculumQueryKey, useCreateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {getAtomsByCurriculumQueryKey, useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
 import {AtomType} from "@/api/axios-client.types.ts";
-import {
-    useUpdateSelectionMutationWithParameters
-} from "@/api/axios-client/SelectionQuery.ts";
+import {useCreateUpdateSelectionMutationWithParameters} from "@/api/axios-client/SelectionQuery.ts";
 
 export const useCreateEntity = () => {
     const {toolsOptions} = usePlan();
@@ -26,7 +24,7 @@ export const useCreateEntity = () => {
 
     const {mutateAsync: createModule} = useCreateModuleMutation();
 
-    const {mutate: updateSelection} = useUpdateSelectionMutationWithParameters({
+    const {mutate: updateSelection} = useCreateUpdateSelectionMutationWithParameters({
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
             message.success("Выбор успешно создан")
@@ -65,7 +63,12 @@ export const useCreateEntity = () => {
             }).then((newModuleId) => updateSelection({
                 moduleId: newModuleId,
                 createUpdateSelectionDto: {
-                    creditPerSemester: [0]
+                    semesters: [
+                        {
+                            semesterId: Number(semesterId.split("-")[1]),
+                            credit: 0
+                        }
+                    ]
                 }
             }))
     }

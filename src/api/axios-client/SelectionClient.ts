@@ -16,7 +16,7 @@ import { getAxios, getBaseUrl } from './helpers';
 /**
  * Creates new or updates existing selection for a module.
  */
-export function updateSelection(moduleId: number, createUpdateSelectionDto: Types.CreateUpdateSelectionDto, config?: AxiosRequestConfig | undefined): Promise<Types.SelectionDto> {
+export function createUpdateSelection(moduleId: number, createUpdateSelectionDto: Types.CreateUpdateSelectionDto, config?: AxiosRequestConfig | undefined): Promise<Types.SelectionDto> {
     let url_ = getBaseUrl() + "/module/{moduleId}/selection";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
@@ -26,13 +26,13 @@ export function updateSelection(moduleId: number, createUpdateSelectionDto: Type
     const content_ = Types.serializeCreateUpdateSelectionDto(createUpdateSelectionDto);
 
     let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateSelection,
+        ..._requestConfigCreateUpdateSelection,
         ...config,
         data: content_,
         method: "PATCH",
         url: url_,
         headers: {
-            ..._requestConfigUpdateSelection?.headers,
+            ..._requestConfigCreateUpdateSelection?.headers,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
@@ -45,11 +45,11 @@ export function updateSelection(moduleId: number, createUpdateSelectionDto: Type
             throw _error;
         }
     }).then((_response: AxiosResponse) => {
-        return processUpdateSelection(_response);
+        return processCreateUpdateSelection(_response);
     });
 }
 
-function processUpdateSelection(response: AxiosResponse): Promise<Types.SelectionDto> {
+function processCreateUpdateSelection(response: AxiosResponse): Promise<Types.SelectionDto> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -124,15 +124,15 @@ function processDeleteSelection(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
-let _requestConfigUpdateSelection: Partial<AxiosRequestConfig> | null;
-export function getUpdateSelectionRequestConfig() {
-  return _requestConfigUpdateSelection;
+let _requestConfigCreateUpdateSelection: Partial<AxiosRequestConfig> | null;
+export function getCreateUpdateSelectionRequestConfig() {
+  return _requestConfigCreateUpdateSelection;
 }
-export function setUpdateSelectionRequestConfig(value: Partial<AxiosRequestConfig>) {
-  _requestConfigUpdateSelection = value;
+export function setCreateUpdateSelectionRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigCreateUpdateSelection = value;
 }
-export function patchUpdateSelectionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigUpdateSelection = patch(_requestConfigUpdateSelection ?? {});
+export function patchCreateUpdateSelectionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigCreateUpdateSelection = patch(_requestConfigCreateUpdateSelection ?? {});
 }
 
 let _requestConfigDeleteSelection: Partial<AxiosRequestConfig> | null;
