@@ -13,7 +13,7 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto[]> {
+export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<{ [key: string]: Types.CompetenceDto; }> {
     let url_ = getBaseUrl() + "/competence/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -42,7 +42,7 @@ export function getCompetences(curriculumId: number, config?: AxiosRequestConfig
     });
 }
 
-function processGetCompetences(response: AxiosResponse): Promise<Types.CompetenceDto[]> {
+function processGetCompetences(response: AxiosResponse): Promise<{ [key: string]: Types.CompetenceDto; }> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -56,18 +56,18 @@ function processGetCompetences(response: AxiosResponse): Promise<Types.Competenc
         const _responseText = response.data;
         let result200: any = null;
         let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initCompetenceDto(item)
-              );
+        if (resultData200) {
+            for (let key in resultData200) {
+                    (<any>result200)![key] = resultData200[key] ? Types.deserializeCompetenceDto(resultData200[key]) : null;
             }
-        return Promise.resolve<Types.CompetenceDto[]>(result200);
+        }
+        return Promise.resolve<{ [key: string]: Types.CompetenceDto; }>(result200);
 
     } else if (status !== 200 && status !== 204) {
         const _responseText = response.data;
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
-    return Promise.resolve<Types.CompetenceDto[]>(null as any);
+    return Promise.resolve<{ [key: string]: Types.CompetenceDto; }>(null as any);
 }
 
 export function createCompetence(curriculumId: number, createCompetenceDto: Types.CreateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
@@ -125,6 +125,63 @@ function processCreateCompetence(response: AxiosResponse): Promise<Types.Compete
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
     return Promise.resolve<Types.CompetenceDto>(null as any);
+}
+
+export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<{ [key: string]: Types.CompetenceIndicatorDto; }> {
+    let url_ = getBaseUrl() + "/competence/{curriculumId}/indicator";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetCompetenceIndicators,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetCompetenceIndicators?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetCompetenceIndicators(_response);
+    });
+}
+
+function processGetCompetenceIndicators(response: AxiosResponse): Promise<{ [key: string]: Types.CompetenceIndicatorDto; }> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        if (resultData200) {
+            for (let key in resultData200) {
+                    (<any>result200)![key] = resultData200[key] ? Types.deserializeCompetenceIndicatorDto(resultData200[key]) : null;
+            }
+        }
+        return Promise.resolve<{ [key: string]: Types.CompetenceIndicatorDto; }>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<{ [key: string]: Types.CompetenceIndicatorDto; }>(null as any);
 }
 
 export function updateCompetence(competenceId: number, updateCompetenceDto: Types.UpdateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
@@ -413,6 +470,17 @@ export function setCreateCompetenceRequestConfig(value: Partial<AxiosRequestConf
 }
 export function patchCreateCompetenceRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigCreateCompetence = patch(_requestConfigCreateCompetence ?? {});
+}
+
+let _requestConfigGetCompetenceIndicators: Partial<AxiosRequestConfig> | null;
+export function getGetCompetenceIndicatorsRequestConfig() {
+  return _requestConfigGetCompetenceIndicators;
+}
+export function setGetCompetenceIndicatorsRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetCompetenceIndicators = value;
+}
+export function patchGetCompetenceIndicatorsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetCompetenceIndicators = patch(_requestConfigGetCompetenceIndicators ?? {});
 }
 
 let _requestConfigUpdateCompetence: Partial<AxiosRequestConfig> | null;

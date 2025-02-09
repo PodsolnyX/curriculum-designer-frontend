@@ -12,7 +12,7 @@ interface SortableSubjectCard extends SubjectCardProps {}
 
 const SortableSubjectCard = memo((props: SortableSubjectCard) => {
 
-    const { id } = props;
+    const { id, semesterOrder } = props;
 
     const {
         attributes,
@@ -31,7 +31,7 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         else return undefined;
     }
 
-    const dndProps = toolsOptions.cursorMode === CursorMode.Replace ? {...props, ...attributes, ...listeners} : {};
+    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace && !semesterOrder) ? {...props, ...attributes, ...listeners} : {};
 
     return (
         <SubjectCardOutView

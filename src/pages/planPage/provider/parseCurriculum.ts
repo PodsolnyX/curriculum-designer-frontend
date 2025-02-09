@@ -59,20 +59,20 @@ export const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject =
 
     let competencies: { id: number, index: string, description: string }[] = [];
 
-    if (atom.competences.length) {
-        competencies = atom.competences.map(competence => {
+    if (atom.competenceIds.length) {
+        competencies = atom.competenceIds.map(competence => {
             return {
-                id: competence.id || 0,
-                index: competence.index || "",
-                description: competence.name
+                id: competence || 0,
+                index: String(competence) || "",
+                description: String(competence)
             }
         })
-    } else if (atom.competenceIndicators.length) {
-        competencies = atom.competenceIndicators.map(competence => {
+    } else if (atom.competenceIndicatorIds.length) {
+        competencies = atom.competenceIndicatorIds.map(competence => {
             return {
-                id: competence.id,
-                index: competence.index,
-                description: competence.name
+                id: competence || 0,
+                index: String(competence) || "",
+                description: String(competence)
             }
         })
     }

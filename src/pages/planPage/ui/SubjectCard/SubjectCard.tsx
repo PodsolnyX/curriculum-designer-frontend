@@ -79,11 +79,12 @@ export const SubjectCardMemo =
                     insertPosition === Position.Before && cls.insertBefore,
                     insertPosition === Position.After && cls.insertAfter
                 )}
+                {...rest}
                 ref={ref}
-                onClick={() => onSelectSubject(props.id)}
+                onClick={() => !isReplaceMode && onSelectSubject(props.id)}
             >
                 <div
-                    {...rest}
+
                     ref={refScroll}
                     className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
                     {
@@ -116,7 +117,7 @@ export const SubjectCardMemo =
                         </div>
                         <Typography.Text
                             editable={{icon: null, triggerType: ["text"], onChange: onNameChange}}
-                            className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text"}
+                            className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text hover:underline"}
                         >
                             {newName}
                         </Typography.Text>

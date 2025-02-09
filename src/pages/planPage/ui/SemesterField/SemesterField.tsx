@@ -2,7 +2,6 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Semester} from "@/pages/planPage/types/Semester.ts";
-import {Tag} from "antd";
 import React, {memo, useEffect, useRef, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import SelectionField from "@/pages/planPage/ui/SelectionField/SelectionField.tsx";
@@ -10,8 +9,6 @@ import ModuleField from "@/pages/planPage/ui/ModuleField/ModuleField.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
-import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
-import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import SemesterHeader from "@/pages/planPage/ui/SemesterField/SemesterHeader.tsx";
 
@@ -74,7 +71,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
 
     return (
         <div ref={setNodeRef} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester} onClick={(event) => onAddSubject(event)}
-             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === id || addSubjectCard) ? "brightness-95" : ""}`}>
+             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === id || addSubjectCard) ? "bg-stone-50" : ""}`}>
             <SemesterHeader semesterId={id}/>
             {
                 (subjects.length || selections.length || modules.length || trackSelection.length) ?

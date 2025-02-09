@@ -20,7 +20,7 @@ import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
 import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
 import {TransformComponent, TransformWrapper, useTransformContext} from "react-zoom-pan-pinch";
-import {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 
@@ -71,7 +71,7 @@ const PlanPageWrapped = () => {
                         return rectIntersection(args);
                     }}
                 >
-                    <div className={"flex"}>
+                    <div className={"flex relative"}>
                         <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
                             <div className={`flex flex-col w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                 {
@@ -95,59 +95,69 @@ const PlanPageWrapped = () => {
     )
 }
 
-const Overlay = () => {
-
-    const { activeItemId } = usePlan();
-
-    const DraggableCard = () => {
-
-        const [coords, setCoords] = useState({x: 0, y: 0});
-        const {transformState} = useTransformContext();
-
-        useEffect(() => {
-            const handleWindowMouseMove = event => {
-                setCoords({
-                    x: event.clientX,
-                    y: event.clientY,
-                });
-            };
-
-            window.addEventListener('mousemove', handleWindowMouseMove);
-
-            return () => {
-                window.removeEventListener(
-                    'mousemove',
-                    handleWindowMouseMove,
-                );
-            };
-        }, []);
-
-        return (
-            <SubjectCard
-                id={activeItemId || ""}
-                style={{
-                    position: "absolute",
-                    left: (coords.x),
-                    top: (coords.y),
-                }}
-            />
-        )
-    }
-
+const DraggableCard = React.memo(({ activeItemId, scale }) => {
     return (
-        createPortal(
-            <DragOverlay dropAnimation={dropAnimation}>
-                { activeItemId ? <DraggableCard/> : null }
-            </DragOverlay>,
-            document.body,
-        )
+        <SubjectCard
+            id={activeItemId}
+            style={{ transform: `scale(${scale})` }}
+        />
+    );
+});
+
+const Overlay = () => {
+    const { activeItemId } = usePlan();
+    const { transformState } = useTransformContext();
+    const scale = transformState.scale;
+    const [coords, setCoords] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        let animationFrameId = null;
+
+        const handleMouseMove = (event) => {
+            if (event.clientX !== 0 && event.clientY !== 0) {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                animationFrameId = requestAnimationFrame(() => {
+                    setCoords({ x: event.clientX, y: event.clientY });
+                });
+            }
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        };
+    }, []);
+
+    const overlayStyle: React.CSSProperties = useMemo(
+        () => ({
+            position: "fixed",
+            transform: "translate(-70%, -70%)",
+            left: coords.x,
+            top: coords.y,
+        }),
+        [coords]
+    );
+
+    return createPortal(
+        <DragOverlay dropAnimation={dropAnimation} style={overlayStyle}>
+            {activeItemId ? <DraggableCard activeItemId={activeItemId} scale={scale} /> : null}
+        </DragOverlay>,
+        document.body
     );
 };
 
 const dropAnimation: DropAnimation = {
     keyframes({transform}) {
         return [
-            {transform: CSS.Transform.toString(transform.initial)},
+            {
+                transform: CSS.Transform.toString(transform.initial)
+            },
             {
                 transform: CSS.Transform.toString({
                     scaleX: 1,
@@ -164,13 +174,6 @@ const dropAnimation: DropAnimation = {
         },
     }),
 } as DropAnimation;
-
-function removeTimestamps(text) {
-    // Regular expression to match time formats like 20:54, 0:15, 1:03:24, etc.
-    const timeRegex = /\b(?:\d{1,2}:){1,2}\d{2}\b/g;
-    // Replace all matches with an empty string
-    return text.replace(timeRegex, '').trim();
-}
 
 const PlanPage = () => {
     return (

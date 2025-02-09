@@ -525,8 +525,8 @@ export interface AtomDto  {
   isRequired: boolean;
   type: AtomType;
   semesters: RefAtomSemesterDto[];
-  competences: CompetenceDto[];
-  competenceIndicators: CompetenceIndicatorDto[];
+  competenceIds: number[];
+  competenceIndicatorIds: number[];
   department?: DepartmentDto | null;
 }
 export function deserializeAtomDto(json: string): AtomDto {
@@ -542,16 +542,8 @@ export function initAtomDto(_data: AtomDto) {
         initRefAtomSemesterDto(item)
       );
     }
-    if (Array.isArray(_data["competences"])) {
-      _data.competences = _data["competences"].map(item => 
-        initCompetenceDto(item)
-      );
-    }
-    if (Array.isArray(_data["competenceIndicators"])) {
-      _data.competenceIndicators = _data["competenceIndicators"].map(item => 
-        initCompetenceIndicatorDto(item)
-      );
-    }
+    _data.competenceIds = _data["competenceIds"];
+    _data.competenceIndicatorIds = _data["competenceIndicatorIds"];
     _data.department = _data["department"] && initDepartmentDto(_data["department"]);
   }
   return _data;
@@ -567,16 +559,6 @@ export function prepareSerializeAtomDto(_data: AtomDto): AtomDto {
   if (Array.isArray(_data.semesters)) {
     data["semesters"] = _data.semesters.map(item => 
         prepareSerializeRefAtomSemesterDto(item)
-    );
-  }
-  if (Array.isArray(_data.competences)) {
-    data["competences"] = _data.competences.map(item => 
-        prepareSerializeCompetenceDto(item)
-    );
-  }
-  if (Array.isArray(_data.competenceIndicators)) {
-    data["competenceIndicators"] = _data.competenceIndicators.map(item => 
-        prepareSerializeCompetenceIndicatorDto(item)
     );
   }
   data["department"] = _data.department && prepareSerializeDepartmentDto(_data.department);
@@ -613,73 +595,6 @@ export function prepareSerializeRefAtomSemesterDto(_data: RefAtomSemesterDto): R
   const data = prepareSerializeComponentSemesterDto(_data as RefAtomSemesterDto) as Record<string, any>;
   data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
   return data as RefAtomSemesterDto;
-}
-export interface CompetenceDto  {
-  id: number;
-  index: string;
-  name: string;
-  type: CompetenceType;
-  indicators: CompetenceIndicatorDto[];
-}
-export function deserializeCompetenceDto(json: string): CompetenceDto {
-  const data = JSON.parse(json) as CompetenceDto;
-  initCompetenceDto(data);
-  return data;
-}
-export function initCompetenceDto(_data: CompetenceDto) {
-  if (_data) {
-    _data.type = _data["type"];
-    if (Array.isArray(_data["indicators"])) {
-      _data.indicators = _data["indicators"].map(item => 
-        initCompetenceIndicatorDto(item)
-      );
-    }
-  }
-  return _data;
-}
-export function serializeCompetenceDto(_data: CompetenceDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeCompetenceDto(_data as CompetenceDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeCompetenceDto(_data: CompetenceDto): CompetenceDto {
-  const data: Record<string, any> = { ..._data };
-  if (Array.isArray(_data.indicators)) {
-    data["indicators"] = _data.indicators.map(item => 
-        prepareSerializeCompetenceIndicatorDto(item)
-    );
-  }
-  return data as CompetenceDto;
-}
-export enum CompetenceType {
-    Basic = "Basic",
-    Universal = "Universal",
-    GeneralProfessional = "GeneralProfessional",
-    Professional = "Professional",
-}
-export interface CompetenceIndicatorDto  {
-  id: number;
-  index: string;
-  name: string;
-}
-export function deserializeCompetenceIndicatorDto(json: string): CompetenceIndicatorDto {
-  const data = JSON.parse(json) as CompetenceIndicatorDto;
-  initCompetenceIndicatorDto(data);
-  return data;
-}
-export function initCompetenceIndicatorDto(_data: CompetenceIndicatorDto) {
-    return _data;
-}
-export function serializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeCompetenceIndicatorDto(_data as CompetenceIndicatorDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto): CompetenceIndicatorDto {
-  const data: Record<string, any> = { ..._data };
-  return data as CompetenceIndicatorDto;
 }
 export interface DepartmentDto  {
   id: number;
@@ -855,6 +770,73 @@ export function serializeSetAtomCompetenceIndicatorsDto(_data: SetAtomCompetence
 export function prepareSerializeSetAtomCompetenceIndicatorsDto(_data: SetAtomCompetenceIndicatorsDto): SetAtomCompetenceIndicatorsDto {
   const data: Record<string, any> = { ..._data };
   return data as SetAtomCompetenceIndicatorsDto;
+}
+export interface CompetenceDto  {
+  id: number;
+  index: string;
+  name: string;
+  type: CompetenceType;
+  indicators: CompetenceIndicatorDto[];
+}
+export function deserializeCompetenceDto(json: string): CompetenceDto {
+  const data = JSON.parse(json) as CompetenceDto;
+  initCompetenceDto(data);
+  return data;
+}
+export function initCompetenceDto(_data: CompetenceDto) {
+  if (_data) {
+    _data.type = _data["type"];
+    if (Array.isArray(_data["indicators"])) {
+      _data.indicators = _data["indicators"].map(item => 
+        initCompetenceIndicatorDto(item)
+      );
+    }
+  }
+  return _data;
+}
+export function serializeCompetenceDto(_data: CompetenceDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCompetenceDto(_data as CompetenceDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCompetenceDto(_data: CompetenceDto): CompetenceDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.indicators)) {
+    data["indicators"] = _data.indicators.map(item => 
+        prepareSerializeCompetenceIndicatorDto(item)
+    );
+  }
+  return data as CompetenceDto;
+}
+export enum CompetenceType {
+    Basic = "Basic",
+    Universal = "Universal",
+    GeneralProfessional = "GeneralProfessional",
+    Professional = "Professional",
+}
+export interface CompetenceIndicatorDto  {
+  id: number;
+  index: string;
+  name: string;
+}
+export function deserializeCompetenceIndicatorDto(json: string): CompetenceIndicatorDto {
+  const data = JSON.parse(json) as CompetenceIndicatorDto;
+  initCompetenceIndicatorDto(data);
+  return data;
+}
+export function initCompetenceIndicatorDto(_data: CompetenceIndicatorDto) {
+    return _data;
+}
+export function serializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCompetenceIndicatorDto(_data as CompetenceIndicatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto): CompetenceIndicatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CompetenceIndicatorDto;
 }
 export interface CreateCompetenceDto  {
   name: string;

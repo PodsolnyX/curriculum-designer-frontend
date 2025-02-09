@@ -1,5 +1,4 @@
 .subjectCardWrapper {
-  position: relative;
   list-style: none;
   width: 200px;
   height: max-content;
@@ -10,9 +9,6 @@
     .subjectCard {
       cursor: grab;
       transform: rotate(-2deg);
-      position: relative;
-      z-index: 10;
-      //animation: rotation 0.2s;
       box-shadow: 4px 6px 4px 0 rgba(0, 0, 0, 0.2);
 
       * {
@@ -90,18 +86,17 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  //height: 100%;
   cursor: pointer;
   background-color: white;
   background-size: cover;
   border-radius: 8px;
-  padding: 10px;
+  padding: 10px 10px 10px 5px;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
   outline: none;
   appearance: none;
   border: none;
   touch-action: none;
-  border-left: 4px solid;
+  border-left: 8px solid;
   transition: scale .2s, box-shadow .2s;
 
   &:focus-visible:not(.active &) {

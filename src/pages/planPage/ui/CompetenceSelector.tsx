@@ -80,7 +80,7 @@ const AddCompetencePopover = ({subjectId, competencies, competenceDistributionTy
 
     useEffect(() => {
         if (data) {
-            setSelectedCompetence(data
+            setSelectedCompetence(Object.values(data)
                 .filter(competence => CompetenceTypeName[competence.type].shortName === selectedType)
                 .filter(competence => competence.name.toLowerCase().indexOf(search.toLowerCase()) !== -1)
             )

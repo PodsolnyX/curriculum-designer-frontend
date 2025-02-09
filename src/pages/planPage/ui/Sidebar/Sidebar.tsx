@@ -46,28 +46,28 @@ const Sidebar = () => {
         index = "Без индекса",
         department,
         type = AtomType.Subject,
-        competences,
-        competenceIndicators,
+        competenceIds,
+        competenceIndicatorIds,
         notes = []
     } = selectedSubject;
 
     let _competencies: {id: number, index: string, description: string}[] = [];
 
-    if (competences.length) {
-        _competencies = competences.map(competence => {
+    if (competenceIds.length) {
+        _competencies = competenceIds.map(competence => {
             return {
-                id: competence.id || 0,
-                index: competence.index || "",
-                description: competence.name
+                id: competence || 0,
+                index: "",
+                description: ""
             }
         })
     }
-    else if (competenceIndicators.length) {
-        _competencies = competenceIndicators.map(competence => {
+    else if (competenceIndicatorIds.length) {
+        _competencies = competenceIndicatorIds.map(competence => {
             return {
-                id: competence.id,
-                index: competence.index,
-                description: competence.name
+                id: competence,
+                index: "",
+                description: ""
             }
         })
     }
