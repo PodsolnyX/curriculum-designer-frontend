@@ -19,10 +19,11 @@ import {PlanProvider, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx"
 import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
 import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
-import {TransformComponent, TransformWrapper, useTransformContext} from "react-zoom-pan-pinch";
+import {TransformComponent, useTransformContext} from "react-zoom-pan-pinch";
 import React, {useEffect, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -48,17 +49,8 @@ const PlanPageWrapped = () => {
     return (
         <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={loadingPlan}/>
-            <TransformWrapper
-                minScale={.3}
-                maxScale={1.5}
-                initialScale={1}
-                limitToBounds={true}
-                disablePadding={true}
-                panning={{
-                    allowLeftClickPan: toolsOptions.cursorMode === CursorMode.Hand,
-                }}
-            >
-                { !loadingPlan && <PlanHeader/>}
+            <ScaleWrapper>
+                {!loadingPlan && <PlanHeader/> }
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleDragStart}
@@ -78,7 +70,7 @@ const PlanPageWrapped = () => {
                                     !loadingPlan &&
                                     semesters.map(semester =>
                                         <SemesterField {...semester} key={semester.id}
-                                                        subjectsContainerWidth={subjectsContainerWidth}
+                                                       subjectsContainerWidth={subjectsContainerWidth}
                                                        setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
                                         />
                                     )
@@ -89,8 +81,7 @@ const PlanPageWrapped = () => {
                         <Sidebar/>
                     </div>
                 </DndContext>
-            </TransformWrapper>
-
+            </ScaleWrapper>
         </div>
     )
 }

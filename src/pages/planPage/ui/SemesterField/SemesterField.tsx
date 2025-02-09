@@ -71,7 +71,10 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
 
     return (
         <div ref={setNodeRef} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester} onClick={(event) => onAddSubject(event)}
-             className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === id || addSubjectCard) ? "bg-stone-50" : ""}`}>
+             className={`
+             flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"} 
+             ${(overItemId === id || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0" 
+                 : ""}`}>
             <SemesterHeader semesterId={id}/>
             {
                 (subjects.length || selections.length || modules.length || trackSelection.length) ?
