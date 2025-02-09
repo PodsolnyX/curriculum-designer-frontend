@@ -1,6 +1,6 @@
 import {Link, useParams} from "react-router-dom";
 import {getRoutePlanCompetencies, getRoutePlanTitle} from "@/shared/const/router.ts";
-import {Popover, Typography} from "antd";
+import {Typography} from "antd";
 import DisplaySettingsPopover from "@/pages/planPage/ui/DisplaySettingsPopover.tsx";
 import ToolsPanel from "@/pages/planPage/ui/ToolsPanel/ToolsPanel.tsx";
 import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
@@ -21,16 +21,11 @@ const PlanHeader = () => {
                     <Link to={getRoutePlanTitle(id || "")}>Титул</Link>
                     <Link to={getRoutePlanCompetencies(id || "")}>Компетенции</Link>
                     <Link to={getRoutePlanTitle(id || "")}>Кафедры</Link>
-                    <Popover
-                        content={DisplaySettingsPopover}
-                        title={"Настройки отображения"}
-                        trigger={"click"}
-                        placement={"bottomLeft"}
-                    >
-                    <span className={"cursor-pointer"}>
-                        Вид
-                    </span>
-                    </Popover>
+                    <DisplaySettingsPopover>
+                        <span className={"cursor-pointer"}>
+                            Вид
+                        </span>
+                    </DisplaySettingsPopover>
                 </div>
             </div>
             <div className={"flex gap-5"}>

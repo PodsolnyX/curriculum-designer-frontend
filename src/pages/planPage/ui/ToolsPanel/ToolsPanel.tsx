@@ -7,6 +7,7 @@ import CursorIcon from "@/shared/assets/icons/cursor.svg?react";
 import HandIcon from "@/shared/assets/icons/hand.svg?react";
 import MinusIcon from "@/shared/assets/icons/minus-lens.svg?react";
 import PlusIcon from "@/shared/assets/icons/plus-lens.svg?react";
+import MoveIcon from "@/shared/assets/icons/move.svg?react";
 import cls from "./ToolsPanel.module.scss"
 import classNames from "classnames";
 import React, {useState} from "react";
@@ -33,6 +34,12 @@ const CursorItems: ToolsItem[] = [
         value: CursorMode.Hand,
         name: "Рука",
         icon: HandIcon,
+        iconStyle: "stroke"
+    },
+    {
+        value: CursorMode.Replace,
+        name: "Перемещение",
+        icon: MoveIcon,
         iconStyle: "stroke"
     }
 ]
@@ -71,7 +78,7 @@ const ToolsPanel = () => {
         setToolsOptions
     } = usePlan();
 
-    const { zoomIn, zoomOut, zoomToElement } = useControls();
+    const { zoomIn, zoomOut } = useControls();
     const { props} = useTransformContext();
 
     const [currentScale, setCurrentScale] = useState(props.initialScale);

@@ -5,6 +5,40 @@
   height: max-content;
   margin-bottom: 0.5rem;
 
+  &.replaceMode {
+
+    .subjectCard {
+      cursor: grab;
+      transform: rotate(-2deg);
+      position: relative;
+      z-index: 10;
+      //animation: rotation 0.2s;
+      box-shadow: 4px 6px 4px 0 rgba(0, 0, 0, 0.2);
+
+      * {
+        pointer-events: none;
+      }
+
+      &:hover {
+        animation: shake 0.4s infinite;
+      }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0) rotate(-3deg); }
+      20% { transform: translateX(-5px) rotate(-3deg); }
+      40% { transform: translateX(5px) rotate(-3deg); }
+      60% { transform: translateX(-5px) rotate(-3deg); }
+      80% { transform: translateX(5px) rotate(-3deg); }
+      100% { transform: translateX(0) rotate(-3deg); }
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: translateX(-5px) rotate(-3deg); }
+    }
+  }
+
   &.active {
     .subjectCard {
       opacity: 0.2;

@@ -24,6 +24,7 @@ export interface SubjectCardProps extends Subject {
     clone?: boolean;
     credits?: number;
     insertPosition?: Position;
+    isReplaceMode?: boolean;
 }
 
 export const SubjectCardMemo =
@@ -46,6 +47,7 @@ export const SubjectCardMemo =
             attestation = [],
             notes = [],
             semesterId = "",
+            isReplaceMode,
             ...rest
         } = props;
 
@@ -73,6 +75,7 @@ export const SubjectCardMemo =
                     cls.subjectCardWrapper,
                     active && cls.active,
                     clone && cls.clone,
+                    isReplaceMode && cls.replaceMode,
                     insertPosition === Position.Before && cls.insertBefore,
                     insertPosition === Position.After && cls.insertAfter
                 )}
@@ -80,6 +83,7 @@ export const SubjectCardMemo =
                 onClick={() => onSelectSubject(props.id)}
             >
                 <div
+                    {...rest}
                     ref={refScroll}
                     className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
                     {
@@ -94,7 +98,7 @@ export const SubjectCardMemo =
                             >*</span>
                         </Tooltip>
                     }
-                    <div  className={cls.dragLine} {...rest}/>
+                    {/*<div className={cls.dragLine} {...rest}/>*/}
                     <div className={"flex flex-col flex-1"} onClick={(event) => event.stopPropagation()}>
                         <div className={"flex gap-1 items-center"}>
                             {

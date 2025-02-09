@@ -80,6 +80,13 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         }
     }, [curriculumData, modulesData, atomsData])
 
+    useEffect(() => {
+        if (toolsOptions.cursorMode === CursorMode.Replace)
+            disableSettings()
+        else
+            enableSettings()
+    }, [toolsOptions])
+
     // Выбор предмета
 
     const onSelectSubject = (id: UniqueIdentifier | null, semesterOrder?: number) => {
@@ -149,8 +156,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const {active} = event;
         const {id} = active;
 
-        disableSettings()
-
         setActiveItemId(id);
     }
 
@@ -163,12 +168,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }
 
     const handleDragCancel = (event: DragCancelEvent) => {
-        enableSettings()
+
     }
 
     const handleDragEnd = (event: DragEndEvent) => {
         if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) {
-            enableSettings()
             return;
         }
 
@@ -213,8 +217,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
         resetAllActiveIds()
-
-        enableSettings()
 
         editSubject({
             subjectId: event.active.id,

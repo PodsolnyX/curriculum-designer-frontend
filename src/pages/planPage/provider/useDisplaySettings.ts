@@ -1,13 +1,13 @@
 import {useState} from "react";
 import {DisplaySettings} from "@/pages/planPage/provider/types.ts";
-import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
+import {PreDisplaySettings, ReplacePreDisplaySetting} from "@/pages/planPage/provider/preDisplaySettings.ts";
 
 export function useDisplaySettings() {
 
     const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(PreDisplaySettings[1].settings)
 
     const disableSettings = () => {
-        setDisplaySettings(PreDisplaySettings[0].settings)
+        setDisplaySettings(ReplacePreDisplaySetting.settings)
     }
 
     const enableSettings = () => {

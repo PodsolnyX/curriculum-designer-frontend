@@ -46,6 +46,7 @@ export type ItemType = typeof PREFIX_ITEM_ID_KEYS[number];
 export enum CursorMode {
     Move = "move",
     Hand = "hand",
+    Replace = "replace",
     Create = "create"
 }
 

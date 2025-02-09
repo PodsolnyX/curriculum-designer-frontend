@@ -1,49 +1,61 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {Checkbox, Tag, Typography} from "antd";
+import {Checkbox, Popover, Select} from "antd";
 import React from "react";
 import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
+import {CursorMode} from "@/pages/planPage/provider/types.ts";
 
-const DisplaySettingsPopover = () => {
+const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
 
-    const {onChangeDisplaySetting, onSelectPreDisplaySetting, displaySettings} = usePlan();
+    const {
+        onChangeDisplaySetting,
+        onSelectPreDisplaySetting,
+        displaySettings,
+        toolsOptions
+    } = usePlan();
 
-    const isSelectedPreSetting = (key: string): boolean => {
+    const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(displaySettings))?.key || "";
+
+    const disabledEditSettings = toolsOptions.cursorMode === CursorMode.Replace;
+
+    const Content = () => {
         return (
-            JSON.stringify(PreDisplaySettings.find(setting => setting.key === key).settings) === JSON.stringify(displaySettings)
+            <div className={"flex flex-col gap-3"}>
+                <Select
+                    placeholder={"Пред-настройка"}
+                    className={"w-full"}
+                    disabled={disabledEditSettings}
+                    size={"small"}
+                    value={selectedPreSetting}
+                    options={PreDisplaySettings.map(setting => ({value: setting.key, label: setting.name}))}
+                    onChange={(value) => onSelectPreDisplaySetting(value)}
+                />
+                <div className={"grid grid-cols-1 gap-1 mb-2"}>
+                    {
+                        DisplaySettingsList.map(setting =>
+                            <Checkbox
+                                key={setting.key}
+                                checked={displaySettings[setting.key]}
+                                onChange={() => onChangeDisplaySetting(setting.key)}
+                                disabled={disabledEditSettings}
+                            >
+                                {setting.name}
+                            </Checkbox>
+                        )
+                    }
+                </div>
+            </div>
         )
     }
 
     return (
-        <div className={"flex flex-col gap-1"}>
-            <div className={"grid grid-cols-2 gap-1 mb-2"}>
-                {
-                    DisplaySettingsList.map(setting =>
-                        <Checkbox
-                            key={setting.key}
-                            checked={displaySettings[setting.key]}
-                            onChange={() => onChangeDisplaySetting(setting.key)}
-                        >
-                            {setting.name}
-                        </Checkbox>
-                    )
-                }
-            </div>
-            <Typography.Text>Преднастройки:</Typography.Text>
-            <div className={"flex flex-wrap gap-1"}>
-                {
-                    PreDisplaySettings.map(setting =>
-                        <Tag
-                            key={setting.key}
-                            color={isSelectedPreSetting(setting.key) ? "blue" : "default"}
-                            className={"m-0 bg-transparent cursor-pointer"}
-                            onClick={() => onSelectPreDisplaySetting(setting.key)}
-                        >
-                            {setting.name}
-                        </Tag>
-                    )
-                }
-            </div>
-        </div>
+        <Popover
+            content={Content()}
+            title={""}
+            trigger={"click"}
+            placement={"bottomLeft"}
+        >
+            {children}
+        </Popover>
     )
 }
 

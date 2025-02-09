@@ -33,20 +33,14 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
                 <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                     <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {semester.number}</span>
                     <div className={"flex gap-1"}>
+                        <Tag color={nonElective.credit > 30 ? "red" : nonElective.credit < 30 ? "default" : "green"} className={"m-0"} bordered={false}>{`${nonElective.credit} / 30 ЗЕТ`}</Tag>
+                        <Tag
+                            color={examsCount >= 3 ? "green" : "default"}
+                            className={"m-0"}
+                            bordered={false}
+                        >{`${examsCount} / 3 Эк`}</Tag>
                         {
-                            displaySettings.credits &&
-                            <Tag color={nonElective.credit > 30 ? "red" : nonElective.credit < 30 ? "default" : "green"} className={"m-0"} bordered={false}>{`${nonElective.credit} / 30 ЗЕТ`}</Tag>
-                        }
-                        {
-                            displaySettings.attestation &&
-                            <Tag
-                                color={examsCount >= 3 ? "green" : "default"}
-                                className={"m-0"}
-                                bordered={false}
-                            >{`${examsCount} / 3 Эк`}</Tag>
-                        }
-                        {
-                            (displaySettings.credits && elective.credit) ?
+                            (elective.credit) ?
                                 <Tag color={"purple"} className={"m-0"} bordered={false}>{`${elective.credit} ЗЕТ`}</Tag>
                                 : null
                         }

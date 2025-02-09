@@ -11,6 +11,21 @@ export const DisplaySettingsList: {key: keyof DisplaySettings, name: string}[] =
     { key: "competencies", name: "Компетенции" }
 ];
 
+export const ReplacePreDisplaySetting: PreDisplaySetting =  {
+    key: "replace",
+    name: "Перемещение",
+    settings: {
+        index: false,
+        credits: true,
+        attestation: true,
+        required: false,
+        department: false,
+        notesNumber: false,
+        academicHours: false,
+        competencies: false
+    }
+};
+
 export const PreDisplaySettings: PreDisplaySetting[] = [
     {
         key: "disableAll",
@@ -42,7 +57,7 @@ export const PreDisplaySettings: PreDisplaySetting[] = [
     },
     {
         key: "all",
-        name: "Кабина пилота",
+        name: "Отобразить всё",
         settings: {
             index: true,
             credits: true,

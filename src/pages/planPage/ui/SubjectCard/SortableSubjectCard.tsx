@@ -6,6 +6,7 @@ import React, {memo, useRef} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useControls} from "react-zoom-pan-pinch";
 import {createPortal} from "react-dom";
+import {CursorMode} from "@/pages/planPage/provider/types.ts";
 
 interface SortableSubjectCard extends SubjectCardProps {}
 
@@ -24,11 +25,13 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const { selectedSubject } = usePlan();
+    const { selectedSubject, toolsOptions } = usePlan();
     const getPosition = (): Position | undefined => {
         if (over?.id === id) return Position.Before
         else return undefined;
     }
+
+    const dndProps = toolsOptions.cursorMode === CursorMode.Replace ? {...props, ...attributes, ...listeners} : {};
 
     return (
         <SubjectCardOutView
@@ -38,6 +41,7 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
             <SubjectCard
                 ref={setNodeRef}
                 id={id}
+                isReplaceMode={toolsOptions.cursorMode === CursorMode.Replace}
                 active={isDragging}
                 style={{
                     transition,
@@ -45,8 +49,7 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
                 }}
                 insertPosition={getPosition()}
                 {...props}
-                {...attributes}
-                {...listeners}
+                {...dndProps}
             />
         </SubjectCardOutView>
     );
