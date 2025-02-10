@@ -68,6 +68,12 @@ export * as AttestationQuery from './axios-client/AttestationQuery';
 
 
 
+export * as AtomInSemesterClient from './axios-client/AtomInSemesterClient';
+
+export * as AtomInSemesterQuery from './axios-client/AtomInSemesterQuery';
+
+
+
 export * as AcademicActivityClient from './axios-client/AcademicActivityClient';
 
 export * as AcademicActivityQuery from './axios-client/AcademicActivityQuery';
@@ -194,6 +200,8 @@ export function initPersister() {
 
 
   addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));
+
+
 
 
   addResultTypeFactory('AcademicActivityClient___getAcademicActivities', (data: any) => Types.initAcademicActivityDto(data));

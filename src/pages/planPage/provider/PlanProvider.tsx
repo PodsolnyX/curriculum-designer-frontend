@@ -77,6 +77,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     useEffect(() => {
         if (curriculumData?.semesters.length && modulesData && atomsData) {
             setSemesters(parseCurriculum(curriculumData.semesters, atomsData, modulesData))
+            console.log(semesters)
         }
     }, [curriculumData, modulesData, atomsData])
 

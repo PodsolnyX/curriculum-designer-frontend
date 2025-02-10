@@ -702,27 +702,6 @@ export function prepareSerializeUpdateAtomDto(_data: UpdateAtomDto): UpdateAtomD
   const data: Record<string, any> = { ..._data };
   return data as UpdateAtomDto;
 }
-export interface SetAtomCreditDto  {
-  credit: number;
-}
-export function deserializeSetAtomCreditDto(json: string): SetAtomCreditDto {
-  const data = JSON.parse(json) as SetAtomCreditDto;
-  initSetAtomCreditDto(data);
-  return data;
-}
-export function initSetAtomCreditDto(_data: SetAtomCreditDto) {
-    return _data;
-}
-export function serializeSetAtomCreditDto(_data: SetAtomCreditDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeSetAtomCreditDto(_data as SetAtomCreditDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAtomCreditDto {
-  const data: Record<string, any> = { ..._data };
-  return data as SetAtomCreditDto;
-}
 export interface SetAtomCompetencesDto  {
   competenceIds: number[];
 }
@@ -957,6 +936,27 @@ export function serializeSetAttestationDto(_data: SetAttestationDto | undefined)
 export function prepareSerializeSetAttestationDto(_data: SetAttestationDto): SetAttestationDto {
   const data: Record<string, any> = { ..._data };
   return data as SetAttestationDto;
+}
+export interface SetAtomCreditDto  {
+  credit: number;
+}
+export function deserializeSetAtomCreditDto(json: string): SetAtomCreditDto {
+  const data = JSON.parse(json) as SetAtomCreditDto;
+  initSetAtomCreditDto(data);
+  return data;
+}
+export function initSetAtomCreditDto(_data: SetAtomCreditDto) {
+    return _data;
+}
+export function serializeSetAtomCreditDto(_data: SetAtomCreditDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeSetAtomCreditDto(_data as SetAtomCreditDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAtomCreditDto {
+  const data: Record<string, any> = { ..._data };
+  return data as SetAtomCreditDto;
 }
 export interface CreateAcademicActivityDto  {
   name: string;

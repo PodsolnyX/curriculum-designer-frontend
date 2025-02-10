@@ -13,6 +13,10 @@ import {
     useSetAtomCompetencesMutation
 } from "@/api/axios-client/AtomCompetenceQuery.ts";
 import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts";
+import {
+    useCreateAtomInSemesterMutation,
+    useCreateAtomInSemesterMutationWithParameters
+} from "@/api/axios-client/AtomInSemesterQuery.ts";
 
 //Формат id: "semester-17"
 export const useEditSubject = (subjectId: string | number) => {
@@ -22,6 +26,15 @@ export const useEditSubject = (subjectId: string | number) => {
     const {id: curriculumId} = useParams<{ id: string }>();
 
     const { mutate: editInfo } = useUpdateAtomMutation(Number(subjectId), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно обновлен")
+        }
+    });
+
+    const { mutate: expandSubject } = useCreateAtomInSemesterMutationWithParameters( {
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
             queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
@@ -84,6 +97,7 @@ export const useEditSubject = (subjectId: string | number) => {
     return {
         editInfo: (data: UpdateAtomDto) => editInfo(data),
         editIndicator,
+        expandSubject,
         deleteSubject,
         editAttestation,
         editCompetence

@@ -94,6 +94,12 @@ const ModuleField = memo(({subjects, name, id, columnIndex, semesterId}: ModuleF
                     }
                 </SortableContext>
             </div>
+            {
+                overItemId === id &&
+                <div className={"w-16 h-16 bg-red-700"}>
+                    Добавить в след семестр
+                </div>
+            }
         </div>
     )
 })

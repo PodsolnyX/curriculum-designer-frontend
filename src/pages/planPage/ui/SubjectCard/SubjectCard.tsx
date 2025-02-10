@@ -72,7 +72,7 @@ export const SubjectCardMemo =
         const refScroll = useRef<HTMLDivElement | null>(null);
         const [newName, setNewName] = useState(props.name);
 
-        const {editInfo, deleteSubject} = useEditSubject(id);
+        const {editInfo, expandSubject, deleteSubject} = useEditSubject(id);
 
         const onNameChange = (value: string) => {
             setNewName(value);
@@ -82,11 +82,9 @@ export const SubjectCardMemo =
         }
         
         const onExtendSemester = (key: "prev" | "next") => {
-            editInfo({
-                semestersIds: {
-                    [Number(getIdFromPrefix(id))]: Number(getIdFromPrefix(id)),
-                    [neighboringSemesters.next]: neighboringSemesters.next,
-                }
+            expandSubject({
+                atomId: Number(getIdFromPrefix(id)),
+                semesterId: key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0,
             })
         }
 
