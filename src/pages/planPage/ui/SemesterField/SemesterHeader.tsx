@@ -29,7 +29,7 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
 
     return (
         <div className={"absolute top-5 h-full w-full"}>
-            <div className={`sticky top-7 bottom-4 left-4 z-10 w-max flex gap-2`}>
+            <div className={`sticky top-7 bottom-4 left-8 z-10 w-max flex gap-2`}>
                 <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
                     <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {semester.number}</span>
                     <div className={"flex gap-1"}>

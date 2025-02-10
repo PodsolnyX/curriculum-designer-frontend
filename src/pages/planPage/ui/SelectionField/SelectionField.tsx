@@ -41,13 +41,13 @@ const SelectionField = memo(({subjects, name, credits, id, columnIndex}: Selecti
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `h-max my-auto border-2 rounded-lg`,
         "first": `h-max mt-auto relative pb-3 border-2 rounded-t-lg after:content-[''] after:w-full after:h-[2px] after:bg-blue-300 after:absolute after:bottom-[-2px] after:left-0`,
-        "middle": `py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-blue-300 after:absolute after:bottom-[-2px] after:left-0`,
+        "middle": `h-full py-3 relative border-x-2 border-b-2 after:content-[''] after:w-full after:h-[2px] after:bg-blue-300 after:absolute after:bottom-[-2px] after:left-0`,
         "last": `h-max py-3 border-x-2 border-b-2 rounded-b-lg mb-5`
     }
 
     return (
         <div
-            className={`${styles[position]} flex flex-col w-max border-dashed h-max px-2 ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`}
+            className={`${styles[position]} flex flex-col w-max border-dashed px-2 ${overItemId === id ? "border-blue-300 bg-blue-400/[0.1]" : "border-blue-200 bg-blue-400/[0.05]"}`}
             ref={setNodeRef}
             style={{gridColumn: columnIndex}}
         >

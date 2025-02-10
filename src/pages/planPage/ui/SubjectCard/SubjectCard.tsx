@@ -1,18 +1,28 @@
 import React, {forwardRef, memo, useRef, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
-import {Tag, Tooltip, Typography} from "antd";
+import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
-import Icon from "@ant-design/icons";
+import OptionIcon from "@/shared/assets/icons/more.svg?react";
+import Icon, {
+    CaretRightOutlined,
+    DeleteOutlined,
+    DownOutlined,
+    PlusOutlined,
+    TagOutlined,
+    UpOutlined
+} from "@ant-design/icons";
 import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/planPage/ui/CommentsPopover.tsx";
-import {AtomType,} from "@/api/axios-client.ts";
+import {AtomType} from "@/api/axios-client.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
+import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
+import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
 
 export enum Position {
     Before = -1,
@@ -47,6 +57,8 @@ export const SubjectCardMemo =
             attestation = [],
             notes = [],
             semesterId = "",
+            semestersIds= [],
+            neighboringSemesters,
             isReplaceMode,
             ...rest
         } = props;
@@ -60,13 +72,22 @@ export const SubjectCardMemo =
         const refScroll = useRef<HTMLDivElement | null>(null);
         const [newName, setNewName] = useState(props.name);
 
-        const {editInfo} = useEditSubject(id);
+        const {editInfo, deleteSubject} = useEditSubject(id);
 
         const onNameChange = (value: string) => {
             setNewName(value);
             if (name !== value) {
                 editInfo({name: value})
             }
+        }
+        
+        const onExtendSemester = (key: "prev" | "next") => {
+            editInfo({
+                semestersIds: {
+                    [Number(getIdFromPrefix(id))]: Number(getIdFromPrefix(id)),
+                    [neighboringSemesters.next]: neighboringSemesters.next,
+                }
+            })
         }
 
         return (
@@ -99,7 +120,6 @@ export const SubjectCardMemo =
                             >*</span>
                         </Tooltip>
                     }
-                    {/*<div className={cls.dragLine} {...rest}/>*/}
                     <div className={"flex flex-col flex-1"} onClick={(event) => event.stopPropagation()}>
                         <div className={"flex gap-1 items-center"}>
                             {
@@ -122,7 +142,7 @@ export const SubjectCardMemo =
                             {newName}
                         </Typography.Text>
                     </div>
-                    <div className={"flex gap-1"}>
+                    <div className={"flex gap-1 flex-wrap"}>
                         {
                             displaySettings.credits && <CreditsSelector credits={credits}/>
                         }
@@ -153,6 +173,99 @@ export const SubjectCardMemo =
                                 </div>
                             </CommentsPopover>
                         }
+                        <div onClick={(event) => event.stopPropagation()}>
+                            <Popover
+                                trigger={"click"}
+                                placement={"bottom"}
+                                overlayInnerStyle={{padding: 0}}
+                                content={
+                                    <List
+                                        size="small"
+                                        itemLayout={"vertical"}
+                                        dataSource={[
+                                            {
+                                                key: 'replace',
+                                                label: 'Изменить тип',
+                                                icon: <TagOutlined />,
+                                                children:
+                                                    <List
+                                                        size={"small"}
+                                                        itemLayout={"vertical"}
+                                                        dataSource={Object.values(AtomType).map(type => {return {
+                                                            key: type,
+                                                            label: <span className={"flex gap-2"}><Badge color={AtomTypeFullName[type].color}/>{AtomTypeFullName[type].name}</span>
+                                                        }})}
+                                                        renderItem={(item) =>
+                                                            <li className={"w-full"}>
+                                                                <Button
+                                                                    type={"text"}
+                                                                    className={"w-full justify-start"}
+                                                                    disabled={item.key === type}
+                                                                    onClick={() => editInfo({type: item.key as AtomType})}
+                                                                >{item.label}</Button>
+                                                            </li>
+                                                        }
+                                                    />,
+                                                onClick: () => {}
+                                            },
+                                            {
+                                                key: 'addSemester',
+                                                label: 'Продлить на семестр',
+                                                icon: <PlusOutlined />,
+                                                children:
+                                                    <List
+                                                        size={"small"}
+                                                        itemLayout={"vertical"}
+                                                        dataSource={[{key: "prev", icon: <UpOutlined/>, label: "Раньше"},{key: "next", icon: <DownOutlined/>, label: "Позже"}]}
+                                                        renderItem={(item) =>
+                                                            <li className={"w-full"}>
+                                                                <Button
+                                                                    type={"text"}
+                                                                    icon={item.icon}
+                                                                    className={"w-full justify-start"}
+                                                                    onClick={() => onExtendSemester(item.key)}
+                                                                    disabled={item.key === "prev" && (!neighboringSemesters.prev || semestersIds.includes(neighboringSemesters.prev)) || item.key === "next" && (!neighboringSemesters.next || semestersIds.includes(neighboringSemesters.next))}
+                                                                >{item.label}</Button>
+                                                            </li>
+                                                        }
+                                                    />,
+                                            },
+                                            { key: 'delete', label: 'Удалить', danger: true, icon: <DeleteOutlined/>, onClick: () => deleteSubject() }
+                                        ]}
+                                        renderItem={(item) =>
+                                            <li className={"w-full"}>
+                                                {
+                                                    item.children ?
+                                                        <Popover content={item.children} placement={"right"} overlayInnerStyle={{padding: 0}}>
+                                                            <Button
+                                                                type={"text"}
+                                                                onClick={item.onClick}
+                                                                icon={item.icon}
+                                                                danger={item.danger}
+                                                                className={"w-full justify-start"}
+                                                            >{item.label}<CaretRightOutlined className={"ml-auto"}/></Button>
+                                                        </Popover> :
+                                                        <Button
+                                                            type={"text"}
+                                                            onClick={item.onClick}
+                                                            icon={item.icon}
+                                                            danger={item.danger}
+                                                            className={"w-full justify-start"}
+                                                        >{item.label}</Button>
+                                                }
+                                            </li>}
+
+                                    />
+                                }
+                            >
+                                <div
+                                    className={classNames(cls.optionsIcon)}
+                                    onClick={(event) => event.stopPropagation()}
+                                >
+                                    <Icon component={OptionIcon}/>
+                                </div>
+                            </Popover>
+                        </div>
                     </div>
                     {
                         displaySettings.academicHours &&

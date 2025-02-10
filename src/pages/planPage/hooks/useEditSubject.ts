@@ -1,7 +1,7 @@
 import {UpdateAtomDto} from "@/api/axios-client.types.ts";
 import {useParams} from "react-router-dom";
 import {
-    getAtomsByCurriculumQueryKey,
+    getAtomsByCurriculumQueryKey, useDeleteAtomMutation,
     useUpdateAtomMutation, useUpdateAtomMutationWithParameters
 } from "@/api/axios-client/AtomQuery.ts";
 import {useQueryClient} from "@tanstack/react-query";
@@ -27,6 +27,15 @@ export const useEditSubject = (subjectId: string | number) => {
             queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
             queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
             message.success("Предмет успешно обновлен")
+        }
+    });
+
+    const { mutate: deleteSubject } = useDeleteAtomMutation(Number(subjectId), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Предмет успешно удалён")
         }
     });
 
@@ -75,6 +84,7 @@ export const useEditSubject = (subjectId: string | number) => {
     return {
         editInfo: (data: UpdateAtomDto) => editInfo(data),
         editIndicator,
+        deleteSubject,
         editAttestation,
         editCompetence
     }

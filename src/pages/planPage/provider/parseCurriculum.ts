@@ -9,11 +9,18 @@ import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/provider/types
 export const parseCurriculum = (semesters: SemesterDto[], atoms: AtomDto[], modules: ModuleDto[]): Semester[] => {
 
     return ([
-        ...semesters.map(semester => {
+        ...semesters.map((semester, index) => {
             return {
                 id: setPrefixToId(semester.id, "semesters"),
                 number: semester.number,
-                subjects: getSemesterSubjects(semester.id, atoms),
+                subjects: getSemesterSubjects(
+                    semester.id,
+                    atoms,
+                    [
+                        index > 0 ? (semesters[index - 1]?.id || 0) : null,
+                        index < semesters.length - 1 ? (semesters[index + 1]?.id || 0) : null
+                    ]
+                ),
                 modules: getSemesterModules(semester, modules),
                 selections: getSemesterSelections(semester, modules),
                 trackSelection: getSemesterTrackSelections(semester, modules)
@@ -41,18 +48,18 @@ export const getPrefixFromId = (id: UniqueIdentifier): string => {
 
 // ---------------------Предметы----------------------
 
-const getSemesterSubjects = (semesterId: number, atoms: AtomDto[]): Subject[] => {
+const getSemesterSubjects = (semesterId: number, atoms: AtomDto[], neighboringSemesters?: Array<number | null>): Subject[] => {
 
     const isSemesterAtom = (atom: AtomDto) => {
         return (!atom?.parentModuleId) && (!!atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id))
     }
 
     return (
-        atoms.filter(atom => isSemesterAtom(atom)).map(atom => parseAtomToSubject(atom, semesterId))
+        atoms.filter(atom => isSemesterAtom(atom)).map(atom => parseAtomToSubject(atom, semesterId, neighboringSemesters))
     )
 }
 
-export const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject => {
+export const parseAtomToSubject = (atom: AtomDto, semesterId: number, neighboringSemesters?: Array<number | null>): Subject => {
     const atomSemester = atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id);
 
     if (!atomSemester) throw new Error("Предмет не найден")
@@ -88,7 +95,12 @@ export const parseAtomToSubject = (atom: AtomDto, semesterId: number): Subject =
         department: atom?.department,
         academicHours: atomSemester.academicActivityHours,
         semesterId: setPrefixToId(semesterId, "semesters"),
+        semestersIds: atom.semesters.map(atomSemester => atomSemester.semester.id),
         semesterOrder: atom.semesters.length > 1 ? atom.semesters.findIndex(atomSemester => semesterId === atomSemester.semester.id) + 1 : undefined,
+        neighboringSemesters: {
+            prev: neighboringSemesters?.[0],
+            next: neighboringSemesters?.[1]
+        }
     }
 }
 

@@ -112,7 +112,7 @@
       opacity: 1;
     }
 
-    .dragLine:before {
+    .optionsIcon {
       opacity: 1;
     }
   }
@@ -141,6 +141,23 @@
       bottom: auto;
       left: 4px;
       transition: .3s;
+    }
+  }
+
+  .optionsIcon {
+    opacity: 0;
+    transition: .3s;
+
+    &:hover {
+      * {
+        fill: #3b3b3b;
+        color: #3b3b3b;
+      }
+    }
+
+    * {
+      fill: #b6b6b6;
+      stroke: none;
     }
   }
 
