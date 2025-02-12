@@ -11,7 +11,7 @@ import {
     TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
-import {Subject} from "@/pages/planPage/types/Subject.ts";
+import {Subject, SubjectUpdateParams} from "@/pages/planPage/types/Subject.ts";
 import {
     AcademicActivityDto,
     AtomDto,
@@ -77,7 +77,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     useEffect(() => {
         if (curriculumData?.semesters.length && modulesData && atomsData) {
             setSemesters(parseCurriculum(curriculumData.semesters, atomsData, modulesData))
-            console.log(semesters)
         }
     }, [curriculumData, modulesData, atomsData])
 
@@ -87,6 +86,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         else
             enableSettings()
     }, [toolsOptions])
+
+    console.log(semesters)
 
     // Выбор предмета
 
@@ -120,6 +121,34 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setOverItemId(null);
     }
 
+    const updateSubject = (id: UniqueIdentifier, params: SubjectUpdateParams) => {
+        const parentsIdsActive = getParentsIdsByChildId(id);
+        console.log(parentsIdsActive);
+
+        const updateSemesters = JSON.parse(JSON.stringify(semesters));
+
+        const findSubjectAndUpdate = (item: any, currentDeep: number) => {
+            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
+
+            if (!type && currentDeep === parentsIdsActive.length) {
+                item.subjects = item.subjects.map(subject => subject.id !== id ? subject : {...subject, ...params})
+            }
+            else if (!type) {
+                item.subjects = item.subjects.map(subject => subject.id !== id ? subject : {...subject, ...params})
+                console.log(item.subjects)
+            }
+            else {
+                console.log(4444, type, item, currentDeep)
+                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep])
+                findSubjectAndUpdate(subItem, currentDeep + 1);
+            }
+        }
+
+        findSubjectAndUpdate({semesters: updateSemesters}, 0)
+        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
+
+    }
+
     const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
 
         let parentIds: (UniqueIdentifier)[] = [];
@@ -149,7 +178,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         };
 
         findParentIdActiveItem({semesters})
-
         return parentIds;
     }
 
@@ -219,15 +247,15 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
         resetAllActiveIds()
 
-        editSubject({
-            subjectId: event.active.id,
-            data: {
-                semesterIds: {
-                    [`${Number(getIdFromPrefix(parentsIdsActive[0]))}`]: Number(getIdFromPrefix(parentsIdsOver[0]))
-                },
-                parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
-            }
-        })
+        // editSubject({
+        //     subjectId: event.active.id,
+        //     data: {
+        //         semesterIds: {
+        //             [`${Number(getIdFromPrefix(parentsIdsActive[0]))}`]: Number(getIdFromPrefix(parentsIdsOver[0]))
+        //         },
+        //         parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
+        //     }
+        // })
     }
 
     const value: PlanContextValue = {
@@ -255,6 +283,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragOver,
         handleDragEnd,
         handleDragCancel,
+        updateSubject,
         getModuleSemesterPosition: getModulePosition,
         getSelectionPosition: getSelectionPosition,
         getTrackSemesterPosition: getTrackSelectionPosition,
@@ -318,6 +347,8 @@ interface PlanContextValue {
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
 
     onSelectPreDisplaySetting(key: string): void;
+
+    updateSubject(id: UniqueIdentifier, params: SubjectUpdateParams): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
@@ -370,7 +401,8 @@ const PlanContext = createContext<PlanContextValue>({
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {
     },
     onSelectPreDisplaySetting: (_key: string) => {
-    }
+    },
+    updateSubject: (_id: UniqueIdentifier, _params: SubjectUpdateParams) => {}
 })
 
 // Добавление префиксов для контейнеров

@@ -24,6 +24,14 @@ export interface Subject {
     }
 }
 
+export interface SubjectUpdateParams {
+    name?: string,
+    type?: AtomType,
+    isRequired?: boolean,
+    credits?: number;
+    attestation?: AttestationDto[];
+}
+
 export interface SubjectComment {
     id: string;
     author: string;

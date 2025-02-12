@@ -66,6 +66,7 @@ export const SubjectCardMemo =
         const {
             displaySettings,
             selectedSubject,
+            updateSubject,
             onSelectSubject
         } = usePlan();
 
@@ -77,7 +78,7 @@ export const SubjectCardMemo =
         const onNameChange = (value: string) => {
             setNewName(value);
             if (name !== value) {
-                editInfo({name: value})
+                updateSubject(id,{name: value})
             }
         }
         
