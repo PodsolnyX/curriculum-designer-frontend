@@ -52,7 +52,7 @@ const AttestationTypeSelector = ({attestation, type = "tag", onChange}: Attestat
         <Popover content={Selector} trigger={"click"} placement={"bottom"}>
             <Tag
                 color={"default"}
-                className={"m-0 hover:cursor-text"}
+                className={"m-0 hover:cursor-text hover:opacity-50"}
                 bordered={false}
                 onClick={(event) => event.stopPropagation()}
             >

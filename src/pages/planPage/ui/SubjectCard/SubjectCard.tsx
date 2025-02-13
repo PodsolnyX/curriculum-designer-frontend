@@ -271,7 +271,13 @@ export const SubjectCardMemo =
                     </div>
                     {
                         displaySettings.academicHours &&
-                        <AcademicHoursPanel credits={credits} academicHours={academicHours}/>
+                        <AcademicHoursPanel
+                            credits={credits}
+                            academicHours={academicHours}
+                            onChange={(activityId, value) => updateSubject(id, "academicHours", {id: activityId, value})}
+                            onAdd={(activityId) => updateSubject(id, "academicHours", activityId)}
+                            onRemove={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: -1})}
+                        />
                     }
                     {
                         displaySettings.competencies &&

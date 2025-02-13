@@ -16,6 +16,10 @@ import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts"
 import {
     useCreateAtomInSemesterMutationWithParameters, useSetAtomCreditMutationWithParameters
 } from "@/api/axios-client/AtomInSemesterQuery.ts";
+import {
+    useCreateUpdateHoursDistributionMutationWithParameters,
+    useDeleteHoursDistributionMutationWithParameters
+} from "@/api/axios-client/HoursDistributionQuery.ts";
 
 //Формат id: "semester-17"
 export const useEditSubject = (subjectId: string | number) => {
@@ -135,10 +139,25 @@ export const useEditSubjectWithParams = () => {
         }
     });
 
+    const { mutate: editAcademicHours } = useCreateUpdateHoursDistributionMutationWithParameters({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            message.success("Часы сохранены")
+        }
+    });
+
+    const { mutate: deleteAcademicHours } = useDeleteHoursDistributionMutationWithParameters({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            message.success("Активность удалена")
+        }
+    });
 
     return {
         editInfo: (data: EditSubjectWithParams__MutationParameters) => editInfoMutate({updateAtomDto: data.data, atomId: Number(data.subjectId)}),
         setCredits,
-        editAttestation
+        editAttestation,
+        editAcademicHours,
+        deleteAcademicHours
     }
 }

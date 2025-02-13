@@ -34,7 +34,6 @@ export const useCurriculumData = () => {
             loadingModules ||
             loadingAttestationTypes ||
             loadingSemesters ||
-            loadingAcademicActivity ||
-            loadingCompetences,
+            loadingAcademicActivity
     }
 }

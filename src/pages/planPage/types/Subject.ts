@@ -30,6 +30,7 @@ export interface SubjectUpdateParams {
     isRequired?: boolean,
     credits?: number;
     attestation?: number[];
+    academicHours?: {id: number, value: number} | number; // id of academic activity or id of new activity. If value is -1 then activity will be deleted
 }
 
 export const commonSubjectParamKeys = Object.keys({
