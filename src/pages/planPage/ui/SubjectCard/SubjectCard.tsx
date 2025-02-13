@@ -273,6 +273,7 @@ export const SubjectCardMemo =
                         displaySettings.academicHours &&
                         <AcademicHoursPanel
                             credits={credits}
+                            isEditMode={true}
                             academicHours={academicHours}
                             onChange={(activityId, value) => updateSubject(id, "academicHours", {id: activityId, value})}
                             onAdd={(activityId) => updateSubject(id, "academicHours", activityId)}

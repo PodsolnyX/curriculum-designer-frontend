@@ -1,5 +1,5 @@
 import {Link, useParams} from "react-router-dom";
-import {getRoutePlanCompetencies, getRoutePlanTitle} from "@/shared/const/router.ts";
+import {getRoutePlanCompetencies, getRoutePlanSettings, getRoutePlanTitle} from "@/shared/const/router.ts";
 import {Typography} from "antd";
 import DisplaySettingsPopover from "@/pages/planPage/ui/DisplaySettingsPopover.tsx";
 import ToolsPanel from "@/pages/planPage/ui/ToolsPanel/ToolsPanel.tsx";
@@ -21,6 +21,7 @@ const PlanHeader = () => {
                     <Link to={getRoutePlanTitle(id || "")}>Титул</Link>
                     <Link to={getRoutePlanCompetencies(id || "")}>Компетенции</Link>
                     <Link to={getRoutePlanTitle(id || "")}>Кафедры</Link>
+                    <Link to={getRoutePlanSettings(id || "")}>Настройки</Link>
                     <DisplaySettingsPopover>
                         <span className={"cursor-pointer"}>
                             Вид

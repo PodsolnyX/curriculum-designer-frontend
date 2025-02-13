@@ -12,6 +12,7 @@ interface AcademicHoursPanelProps {
     academicHours: HoursDistributionDto[];
     size?: "small" | "large";
     layout?: "horizontal" | "vertical";
+    isEditMode?: boolean;
     showAllActivities?: boolean;
     onChange?(activityId: number, value: number): void;
     onAdd?(activityId: number): void;
@@ -26,6 +27,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
         size = "small",
         layout = "vertical",
         showAllActivities,
+        isEditMode = false,
         onChange,
         onAdd,
         onRemove
@@ -53,6 +55,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                                         academicActivity={activity}
                                         value={academicHour?.value || 0}
                                         index={index}
+                                        isEditMode={isEditMode}
                                         academicActivityLength={academicActivity.length}
                                         textSize={textSize}
                                         onChange={(value) => onChange && onChange(activity.id, value)}
@@ -67,6 +70,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                                 academicActivity={type.academicActivity}
                                 value={type.value}
                                 index={index}
+                                isEditMode={isEditMode}
                                 academicActivityLength={academicHours.length}
                                 textSize={textSize}
                                 onChange={(value) => onChange && onChange(type.academicActivity.id, value)}
@@ -76,7 +80,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                 }
             </div>
             {
-                academicHours.length !== academicActivity.length &&
+                (isEditMode && academicHours.length !== academicActivity.length) &&
                 <Popover
                     trigger={"click"}
                     placement={"right"}
@@ -140,6 +144,7 @@ interface AcademicActivityItemProps {
     index: number;
     academicActivityLength: number;
     textSize?: string;
+    isEditMode?: boolean;
     onChange?(value: number): void;
     onRemove?(): void;
 }
@@ -151,6 +156,7 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
         value,
         academicActivityLength,
         index,
+        isEditMode = false,
         textSize = "text-[12px]",
         onChange,
         onRemove
@@ -166,7 +172,7 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
 
     return (
         <div
-            onClick={() => setIsEdit(true)}
+            onClick={() => setIsEdit(isEditMode)}
             className={`relative flex justify-between items-center border border-solid group hover:border-blue-400 ${isEdit ? "border-blue-400" : "border-stone-100"} gap-1 rounded-md ${(index === academicActivityLength - 1 && academicActivityLength % 2 === 1) ? 'col-span-2' : ''}`}
         >
             <Tooltip title={academicActivity.name}>
@@ -190,14 +196,17 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
                     }}
                 />
             }
-            <Button
-                icon={<CloseOutlined/>}
-                size={"small"}
-                shape={"circle"}
-                color={"default"}
-                className={"absolute right-[-25px] opacity-0 group-hover:opacity-100 text-stone-400 z-20"}
-                onClick={() => onRemove && onRemove()}
-            />
+            {
+                isEditMode &&
+                <Button
+                    icon={<CloseOutlined/>}
+                    size={"small"}
+                    shape={"circle"}
+                    color={"default"}
+                    className={"absolute right-[-25px] opacity-0 group-hover:opacity-100 text-stone-400 z-20"}
+                    onClick={() => onRemove && onRemove()}
+                />
+            }
         </div>
     )
 }

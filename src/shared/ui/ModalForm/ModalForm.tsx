@@ -1,9 +1,8 @@
 import {Button, DatePicker, Form, FormProps, Input, InputNumber, Modal, Select, Switch} from "antd";
 import React, {ReactNode, useEffect} from "react";
-import {NamePath} from "rc-field-form/lib/interface";
 
 export interface ModalFormField<T> {
-    name: NamePath<T>,
+    name: keyof T,
     label: string,
     isRequired?: boolean,
     inputComponent?: ModalFormInput,
@@ -30,7 +29,7 @@ export interface ModalProps {
     onClose?(): void
 }
 
-type ModalFormInput = "input" | "inputNumber" | "datePicker" | "switch" | "select" | "file";
+type ModalFormInput = "input" | "inputNumber" | "datePicker" | "switch" | "select" | "file" | "textArea";
 
 type OptionType = { value: string, label: string }
 
@@ -110,6 +109,7 @@ function getFormInput(options?: OptionType[]): Record<ModalFormInput, ReactNode>
         "datePicker": <DatePicker className={"w-full"}/>,
         "switch": <Switch/>,
         "select": <Select options={options}/>,
-        "file": <Input type={"file"} className={"w-full"}/>
+        "file": <Input type={"file"} className={"w-full"}/>,
+        "textArea": <Input.TextArea className={"w-full"} autoSize={{minRows: 3, maxRows: 6}}/>
     }
 }
