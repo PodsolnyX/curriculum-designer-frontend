@@ -14,8 +14,7 @@ import {
 } from "@/api/axios-client/AtomCompetenceQuery.ts";
 import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts";
 import {
-    useCreateAtomInSemesterMutation,
-    useCreateAtomInSemesterMutationWithParameters
+    useCreateAtomInSemesterMutationWithParameters, useSetAtomCreditMutationWithParameters
 } from "@/api/axios-client/AtomInSemesterQuery.ts";
 
 //Формат id: "semester-17"
@@ -114,15 +113,32 @@ export const useEditSubjectWithParams = () => {
     const {message} = App.useApp();
     const queryClient = useQueryClient();
     const {id: curriculumId} = useParams<{ id: string }>();
-    const { mutate } = useUpdateAtomMutationWithParameters({
+
+    const { mutate: editInfoMutate } = useUpdateAtomMutationWithParameters({
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: getAtomsByCurriculumQueryKey(Number(curriculumId))});
-            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
-            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            // queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
             message.success("Предмет успешно обновлен")
         }
     });
 
+    const { mutate: setCredits } = useSetAtomCreditMutationWithParameters({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            message.success("ЗЕТ предмета сохранены")
+        }
+    });
 
-    return (data: EditSubjectWithParams__MutationParameters) => mutate({updateAtomDto: data.data, atomId: Number(data.subjectId)})
+    const { mutate: editAttestation } = useSetAttestationMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
+            message.success("Аттестация сохранена")
+        }
+    });
+
+
+    return {
+        editInfo: (data: EditSubjectWithParams__MutationParameters) => editInfoMutate({updateAtomDto: data.data, atomId: Number(data.subjectId)}),
+        setCredits,
+        editAttestation
+    }
 }

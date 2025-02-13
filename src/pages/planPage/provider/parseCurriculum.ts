@@ -1,4 +1,4 @@
-import {AtomDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
+import {AtomDto, CompetenceDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
 import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
@@ -6,7 +6,21 @@ import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/provider/types
 
 // ---------------------Учебный план----------------------
 
-export const parseCurriculum = (semesters: SemesterDto[], atoms: AtomDto[], modules: ModuleDto[]): Semester[] => {
+interface ParseCurriculumParams {
+    semesters: SemesterDto[];
+    atoms: AtomDto[];
+    modules: ModuleDto[];
+    competences: Dictionary<CompetenceDto>;
+}
+
+export const parseCurriculum = (params: ParseCurriculumParams): Semester[] => {
+
+    const {
+        semesters,
+        atoms,
+        modules,
+        competences
+    } = params;
 
     return ([
         ...semesters.map((semester, index) => {
@@ -16,14 +30,15 @@ export const parseCurriculum = (semesters: SemesterDto[], atoms: AtomDto[], modu
                 subjects: getSemesterSubjects(
                     semester.id,
                     atoms,
+                    competences,
                     [
                         index > 0 ? (semesters[index - 1]?.id || 0) : null,
                         index < semesters.length - 1 ? (semesters[index + 1]?.id || 0) : null
                     ]
                 ),
-                modules: getSemesterModules(semester, modules),
-                selections: getSemesterSelections(semester, modules),
-                trackSelection: getSemesterTrackSelections(semester, modules)
+                modules: getSemesterModules(semester, modules, competences),
+                selections: getSemesterSelections(semester, modules, competences),
+                trackSelection: getSemesterTrackSelections(semester, modules, competences)
             }
         })
     ])
@@ -48,18 +63,18 @@ export const getPrefixFromId = (id: UniqueIdentifier): string => {
 
 // ---------------------Предметы----------------------
 
-const getSemesterSubjects = (semesterId: number, atoms: AtomDto[], neighboringSemesters?: Array<number | null>): Subject[] => {
+const getSemesterSubjects = (semesterId: number, atoms: AtomDto[], competences: Dictionary<CompetenceDto>, neighboringSemesters?: Array<number | null>): Subject[] => {
 
     const isSemesterAtom = (atom: AtomDto) => {
         return (!atom?.parentModuleId) && (!!atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id))
     }
 
     return (
-        atoms.filter(atom => isSemesterAtom(atom)).map(atom => parseAtomToSubject(atom, semesterId, neighboringSemesters))
+        atoms.filter(atom => isSemesterAtom(atom)).map(atom => parseAtomToSubject(atom, semesterId, competences, neighboringSemesters))
     )
 }
 
-export const parseAtomToSubject = (atom: AtomDto, semesterId: number, neighboringSemesters?: Array<number | null>): Subject => {
+export const parseAtomToSubject = (atom: AtomDto, semesterId: number, competences: Dictionary<CompetenceDto>, neighboringSemesters?: Array<number | null>): Subject => {
     const atomSemester = atom.semesters.find(atomSemester => semesterId === atomSemester.semester.id);
 
     if (!atomSemester) throw new Error("Предмет не найден")
@@ -107,7 +122,7 @@ export const parseAtomToSubject = (atom: AtomDto, semesterId: number, neighborin
 
 // ---------------------Модули----------------------
 
-const getSemesterModules = (semester: SemesterDto, modules: ModuleDto[]): Module[] => {
+const getSemesterModules = (semester: SemesterDto, modules: ModuleDto[], competences: Dictionary<CompetenceDto>): Module[] => {
 
     const isSemesterModule = (module: ModuleDto) => {
         return (
@@ -123,11 +138,11 @@ const getSemesterModules = (semester: SemesterDto, modules: ModuleDto[]): Module
     return (
         modules
             .filter(module => isSemesterModule(module))
-            .map(module => parseModule(module, semester))
+            .map(module => parseModule(module, semester, competences))
     )
 }
 
-const parseModule = (module: ModuleDto, semester: SemesterDto): Module => {
+const parseModule = (module: ModuleDto, semester: SemesterDto, competences: Dictionary<CompetenceDto>): Module => {
 
     return {
         id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "modules"),
@@ -135,13 +150,13 @@ const parseModule = (module: ModuleDto, semester: SemesterDto): Module => {
         semesterId: setPrefixToId(semester.id, "semesters"),
         subjects: module.atoms
             .filter(atom => atom.semesters.some(atomSemester => semester.id === atomSemester.semester.id))
-            .map(atom => parseAtomToSubject(atom, semester.id))
+            .map(atom => parseAtomToSubject(atom, semester.id, competences))
     }
 }
 
 // ---------------------Выборы----------------------
 
-const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[]): Selection[] => {
+const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[], competences: Dictionary<CompetenceDto>): Selection[] => {
 
     const isSemesterSelection = (module: ModuleDto) => {
         return (
@@ -156,24 +171,24 @@ const getSemesterSelections = (semester: SemesterDto, modules: ModuleDto[]): Sel
     return (
         modules
             .filter(module => isSemesterSelection(module))
-            .map(module => parseSelection(module, semester))
+            .map(module => parseSelection(module, semester, competences))
     )
 }
 
-const parseSelection = (module: ModuleDto, semester: SemesterDto): Selection => {
+const parseSelection = (module: ModuleDto, semester: SemesterDto, competences: Dictionary<CompetenceDto>): Selection => {
     return {
         id: setPrefixToId(`${setPrefixToId(semester.id, "semesters")}-${module.id}`, "selections"),
         name: module.name,
         credits: module.selection?.semesters[0].credit || 0,
         subjects: module.atoms
             .filter(atom => atom.semesters.some(atomSemester => semester.id === atomSemester.semester.id))
-            .map(atom => parseAtomToSubject(atom, semester.id))
+            .map(atom => parseAtomToSubject(atom, semester.id, competences))
     }
 }
 
 // ---------------------Треки----------------------
 
-const getSemesterTrackSelections = (semester: SemesterDto, modules: ModuleDto[]): TrackSelection[] => {
+const getSemesterTrackSelections = (semester: SemesterDto, modules: ModuleDto[], competences: Dictionary<CompetenceDto>): TrackSelection[] => {
 
     const isSemesterTrackSelection = (module: ModuleDto) => {
         return (
@@ -184,11 +199,11 @@ const getSemesterTrackSelections = (semester: SemesterDto, modules: ModuleDto[])
     return (
         modules
             .filter(module => isSemesterTrackSelection(module))
-            .map(module => parseTrackSelection(module, semester))
+            .map(module => parseTrackSelection(module, semester, competences))
     )
 }
 
-const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSelection => {
+const parseTrackSelection = (module: ModuleDto, semester: SemesterDto, competences: Dictionary<CompetenceDto>): TrackSelection => {
 
     const colors = ["#25b600", "#8019f1", "#e80319", "#f56b0a"];
 
@@ -200,7 +215,7 @@ const parseTrackSelection = (module: ModuleDto, semester: SemesterDto): TrackSel
             tracks: module.modules
                 .filter(module => module.semesters.some(_semester => _semester.semester.id === semester.id))
                 .map((module, index) => { return {
-                    ...parseModule(module, semester),
+                    ...parseModule(module, semester, competences),
                     color: index < 5 ? colors[index] : colors[0]
                 }})
         }

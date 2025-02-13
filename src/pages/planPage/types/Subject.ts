@@ -1,5 +1,5 @@
 import {
-    AtomType, AttestationDto, HoursDistributionDto,
+    AtomType, AttestationDto, HoursDistributionDto, UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
 
@@ -29,8 +29,17 @@ export interface SubjectUpdateParams {
     type?: AtomType,
     isRequired?: boolean,
     credits?: number;
-    attestation?: AttestationDto[];
+    attestation?: number[];
 }
+
+export const commonSubjectParamKeys = Object.keys({
+    parentModuleId: null,
+    name: null,
+    isRequired: null,
+    order: null,
+    type: null,
+    semesterIds: null
+}) as Array<keyof UpdateAtomDto>;
 
 export interface SubjectComment {
     id: string;

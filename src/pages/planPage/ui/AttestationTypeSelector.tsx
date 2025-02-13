@@ -2,23 +2,19 @@ import {Checkbox, Popover, Select, Tag} from "antd";
 import React from "react";
 import {AttestationDto} from "@/api/axios-client.types.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 interface AttestationTypeSelectorProps {
-    subjectId: string | number;
-    semesterId?: string;
     attestation: AttestationDto[];
+    onChange?: (attestationIds: number[]) => void;
     type?: "tag" | "selector";
 }
 
-const AttestationTypeSelector = ({attestation, subjectId, semesterId, type = "tag"}: AttestationTypeSelectorProps) => {
+const AttestationTypeSelector = ({attestation, type = "tag", onChange}: AttestationTypeSelectorProps) => {
 
     const {attestationTypes} = usePlan()
-    const {editAttestation} = useEditSubject(subjectId);
 
-    const onChange = (attestationId: number) => {
-        editAttestation(
-            semesterId || "",
+    const onChangeCheckbox = (attestationId: number) => {
+        onChange && onChange(
             attestation.find(_att => _att.id === attestationId) ?
                 attestation.filter(attestation => attestation.id !== attestationId).map(_att => _att.id) :
                 [...attestation.map(_att => _att.id), attestationId]
@@ -26,10 +22,7 @@ const AttestationTypeSelector = ({attestation, subjectId, semesterId, type = "ta
     }
 
     const onChangeSelect = (attestationIds: number[]) => {
-        editAttestation(
-            semesterId || "",
-            attestationIds
-        )
+        onChange && onChange(attestationIds)
     }
 
     const Selector = () => {
@@ -39,7 +32,7 @@ const AttestationTypeSelector = ({attestation, subjectId, semesterId, type = "ta
                     attestationTypes?.map(type =>
                         <li key={type.id} className={"flex gap-1 items-center"}>
                             <Checkbox
-                                onChange={() => onChange(type.id)}
+                                onChange={() => onChangeCheckbox(type.id)}
                                 value={type.id}
                                 checked={attestation?.some(attestation => attestation.id === type.id)}
                             >

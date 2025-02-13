@@ -11,13 +11,13 @@ import {
     TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
-import {Subject, SubjectUpdateParams} from "@/pages/planPage/types/Subject.ts";
+import {commonSubjectParamKeys, Subject, SubjectUpdateParams} from "@/pages/planPage/types/Subject.ts";
 import {
     AcademicActivityDto,
     AtomDto,
     AttestationDto,
     CompetenceDistributionType,
-    CurriculumSettingsDto, RefModuleSemesterDto,
+    CurriculumSettingsDto, RefModuleSemesterDto, UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
@@ -40,7 +40,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
     const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
-    const editSubject = useEditSubjectWithParams();
+    const {editInfo, setCredits, editAttestation} = useEditSubjectWithParams();
 
     const {
         curriculumData,
@@ -49,6 +49,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         modulesData,
         attestationTypesData,
         academicActivityData,
+        competencesData,
         isLoading
     } = useCurriculumData();
 
@@ -76,7 +77,12 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         if (curriculumData?.semesters.length && modulesData && atomsData) {
-            setSemesters(parseCurriculum(curriculumData.semesters, atomsData, modulesData))
+            setSemesters(parseCurriculum({
+                semesters: curriculumData.semesters,
+                atoms: atomsData,
+                modules: modulesData,
+                competences: competencesData
+            }))
         }
     }, [curriculumData, modulesData, atomsData])
 
@@ -87,7 +93,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             enableSettings()
     }, [toolsOptions])
 
-    console.log(semesters)
 
     // Выбор предмета
 
@@ -107,47 +112,14 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const semester = atom.semesters[0];
 
-        setActiveSubject(parseAtomToSubject(atom, semester.semester.id))
+        setActiveSubject(parseAtomToSubject(atom, semester.semester.id, competencesData))
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
         setSelectedCompetenceId(id);
     }
 
-    // Обработка DnD
-
-    function resetAllActiveIds() {
-        setActiveItemId(null);
-        setOverItemId(null);
-    }
-
-    const updateSubject = (id: UniqueIdentifier, params: SubjectUpdateParams) => {
-        const parentsIdsActive = getParentsIdsByChildId(id);
-        console.log(parentsIdsActive);
-
-        const updateSemesters = JSON.parse(JSON.stringify(semesters));
-
-        const findSubjectAndUpdate = (item: any, currentDeep: number) => {
-            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
-
-            if (!type && currentDeep === parentsIdsActive.length) {
-                item.subjects = item.subjects.map(subject => subject.id !== id ? subject : {...subject, ...params})
-            }
-            else if (!type) {
-                item.subjects = item.subjects.map(subject => subject.id !== id ? subject : {...subject, ...params})
-                console.log(item.subjects)
-            }
-            else {
-                console.log(4444, type, item, currentDeep)
-                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep])
-                findSubjectAndUpdate(subItem, currentDeep + 1);
-            }
-        }
-
-        findSubjectAndUpdate({semesters: updateSemesters}, 0)
-        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
-
-    }
+    // Возвращает список id родителей по id текущего элемента
 
     const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
 
@@ -179,6 +151,50 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         findParentIdActiveItem({semesters})
         return parentIds;
+    }
+
+    // Обновляет состояние предмета в локальном состоянии плана
+
+    function updateSubject(id: UniqueIdentifier, paramKey: keyof SubjectUpdateParams, param: SubjectUpdateParams[typeof paramKey]) {
+        const parentsIdsActive = getParentsIdsByChildId(id);
+        const updateSemesters = JSON.parse(JSON.stringify(semesters));
+
+        const paramForLocalState = paramKey === "attestation"
+            ? (param as number[]).map(item => attestationTypesData?.find(type => type.id === item))
+            : param;
+
+        const findSubjectAndUpdate = (item: any, currentDeep: number) => {
+            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
+            if (!type) {
+                item.subjects = item.subjects.map(subject => subject.id !== id ? subject : {...subject, [paramKey]: paramForLocalState})
+            }
+            else {
+                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep])
+                findSubjectAndUpdate(subItem, currentDeep + 1);
+            }
+        }
+
+        findSubjectAndUpdate({semesters: updateSemesters}, 0)
+        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
+
+        const requestIds = {
+            atomId: Number(id),
+            semesterId: Number(getIdFromPrefix(parentsIdsActive[0]))
+        };
+
+        if (commonSubjectParamKeys.includes(paramKey as keyof UpdateAtomDto))
+            editInfo({subjectId: requestIds.atomId, data: {[paramKey as keyof UpdateAtomDto]: param}})
+        else if (paramKey === "credits")
+            setCredits({...requestIds, dto: {credit: param as number}})
+        else if (paramKey === "attestation")
+            editAttestation({...requestIds, attestationIds: param as number[]})
+    }
+
+    // Обработка DnD
+
+    function resetAllActiveIds() {
+        setActiveItemId(null);
+        setOverItemId(null);
     }
 
     function handleDragStart(event: DragStartEvent) {
@@ -348,7 +364,7 @@ interface PlanContextValue {
 
     onSelectPreDisplaySetting(key: string): void;
 
-    updateSubject(id: UniqueIdentifier, params: SubjectUpdateParams): void;
+    updateSubject<T extends keyof SubjectUpdateParams>(id: UniqueIdentifier, paramKey: T, param: SubjectUpdateParams[T]): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
@@ -402,7 +418,7 @@ const PlanContext = createContext<PlanContextValue>({
     },
     onSelectPreDisplaySetting: (_key: string) => {
     },
-    updateSubject: (_id: UniqueIdentifier, _params: SubjectUpdateParams) => {}
+    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: SubjectUpdateParams) => {}
 })
 
 // Добавление префиксов для контейнеров

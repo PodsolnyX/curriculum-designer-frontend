@@ -3,11 +3,17 @@ import {InputNumber, Tag} from "antd";
 
 interface CreditsSelectorProps {
     credits: number;
+    onChange?: (value: number) => void;
 }
 
-const CreditsSelector = ({credits}: CreditsSelectorProps) => {
+const CreditsSelector = ({credits, onChange}: CreditsSelectorProps) => {
 
     const [isEdit, setIsEdit] = useState(false);
+
+    const onChangeCredits = (value: number) => {
+        (onChange && credits !== value) && onChange(value);
+        setIsEdit(false)
+    }
 
     return (
         <span onClick={(event) => event.stopPropagation()}>
@@ -19,7 +25,10 @@ const CreditsSelector = ({credits}: CreditsSelectorProps) => {
                         max={30}
                         className={"w-[50px]"}
                         value={credits}
-                        onBlur={(value) => setIsEdit(false)}
+                        onBlur={(event) => onChangeCredits(Number(event.target.value))}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") onChangeCredits(Number(event.currentTarget.value))
+                        }}
                         autoFocus={true}
                     />
                     : <Tag

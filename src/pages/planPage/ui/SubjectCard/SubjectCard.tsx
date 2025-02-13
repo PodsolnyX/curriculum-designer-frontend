@@ -73,14 +73,7 @@ export const SubjectCardMemo =
         const refScroll = useRef<HTMLDivElement | null>(null);
         const [newName, setNewName] = useState(props.name);
 
-        const {editInfo, expandSubject, deleteSubject} = useEditSubject(id);
-
-        const onNameChange = (value: string) => {
-            setNewName(value);
-            if (name !== value) {
-                updateSubject(id,{name: value})
-            }
-        }
+        const {expandSubject, deleteSubject} = useEditSubject(id);
         
         const onExtendSemester = (key: "prev" | "next") => {
             expandSubject({
@@ -113,7 +106,7 @@ export const SubjectCardMemo =
                             <span
                                 onClick={(event) => {
                                     event.stopPropagation()
-                                    editInfo({isRequired: !isRequired})
+                                    updateSubject(id, "isRequired", !isRequired)
                                 }}
                                 className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
                             >*</span>
@@ -135,22 +128,32 @@ export const SubjectCardMemo =
                             }
                         </div>
                         <Typography.Text
-                            editable={{icon: null, triggerType: ["text"], onChange: onNameChange}}
+                            editable={{
+                                icon: null,
+                                triggerType: ["text"],
+                                onChange: (value) => {
+                                    setNewName(value);
+                                    (name !== value) && updateSubject(id, "name", value)
+                                }
+                            }}
                             className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text hover:underline"}
                         >
                             {newName}
                         </Typography.Text>
                     </div>
-                    <div className={"flex gap-1 flex-wrap"}>
+                    <div className={"flex gap-1 flex-wrap"} onClick={(event) => event.stopPropagation()}>
                         {
-                            displaySettings.credits && <CreditsSelector credits={credits}/>
+                            displaySettings.credits &&
+                            <CreditsSelector
+                                credits={credits}
+                                onChange={(value) => updateSubject(id, "credits", value)}
+                            />
                         }
                         {
                             displaySettings.attestation &&
                             <AttestationTypeSelector
                                 attestation={attestation}
-                                subjectId={id}
-                                semesterId={semesterId}
+                                onChange={(value) => updateSubject(id, "attestation", value)}
                             />
                         }
                         {
@@ -200,7 +203,7 @@ export const SubjectCardMemo =
                                                                     type={"text"}
                                                                     className={"w-full justify-start"}
                                                                     disabled={item.key === type}
-                                                                    onClick={() => editInfo({type: item.key as AtomType})}
+                                                                    onClick={() => updateSubject(id, "type", item.key as AtomType)}
                                                                 >{item.label}</Button>
                                                             </li>
                                                         }

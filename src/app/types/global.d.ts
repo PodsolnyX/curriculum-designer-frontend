@@ -27,5 +27,5 @@ type OptionalRecord<K extends keyof any, T> = {
 };
 
 type Dictionary<T> = {
-    [Key: string]: T;
+    [Key: string | number]: T;
 }
