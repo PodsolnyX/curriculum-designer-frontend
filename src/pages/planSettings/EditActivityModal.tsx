@@ -40,7 +40,7 @@ export const EditActivityModal = (props: EditActivityModalProps) => {
         },
         {
             name: "name",
-            label: "Имя плана",
+            label: "Название",
             isRequired: true,
             inputComponent: "textArea"
         }

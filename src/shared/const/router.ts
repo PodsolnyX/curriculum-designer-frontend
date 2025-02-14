@@ -2,6 +2,7 @@ export enum AppRoutes {
     MAIN = 'main',
     LOGIN = 'login',
     PLAN = 'plan',
+    PLAN_TABLE = 'table',
     TITLE = 'title',
     COMPETENCIES = 'competencies',
     SETTINGS = 'settings',
@@ -13,6 +14,8 @@ export const getRouteMain = () => '/';
 export const getRouteLogin = () => '/login';
 
 export const getRoutePlan = (id: string | number) => `/curriculum/${id}/plan`;
+
+export const getRoutePlanTable = (id: string | number) => `/curriculum/${id}/plan-table`;
 
 export const getRoutePlanTitle = (id: string | number) => `/curriculum/${id}/title`;
 

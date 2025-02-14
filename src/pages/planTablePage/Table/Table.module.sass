@@ -1,0 +1,91 @@
+
+.tableContainer
+  display: flex
+  flex-direction: column
+  padding-bottom: 20px
+  padding-top: 60px
+
+.table
+  border-collapse: collapse
+  width: 100%
+  border-bottom: 1px solid var(--color-stroke-secondary)
+  position: relative
+
+  thead
+    position: sticky
+    top: 60px
+    box-shadow: 0 4px 4px 0 rgba(121, 121, 121, 0.1)
+    z-index: 10
+
+  th
+    color: #525252
+    background: rgba(255, 255, 255, 1)
+    border-right: 1px solid lightgrey
+    font-size: 14px
+    font-weight: normal
+    padding: 4px 8px
+    text-align: left
+    vertical-align: middle
+
+    &:first-child
+      position: sticky
+      left: 0
+
+    &:last-child
+      border-right: none
+
+    .textLeft
+      text-align: left
+
+    .textCenter
+      text-align: center
+
+    .textRight
+      text-align: right
+
+  tr
+    border-top: 1px solid lightgrey
+    border-bottom: 1px solid lightgrey
+    color: var(--color-text-secondary)
+    font-size: 12px
+    font-weight: normal
+    transition: 0s
+
+    &:hover
+      border-color: #06a688
+
+    &:hover
+      td
+        color: black
+
+    &:first-child
+      border-top: none
+
+    &:last-child
+      border-bottom: none
+
+  td
+    overflow: hidden
+    background: #f6f6f6
+    padding: 4px 8px 4px 0
+    text-align: left
+    font-size: 12px
+    border-right: 1px solid lightgrey
+    transition: 0s
+
+    &:first-child
+      position: sticky
+      left: 0
+      background: white
+
+    &:last-child
+      border-right: 0
+
+    .textLeft
+      text-align: left
+
+    .textCenter
+      text-align: center
+
+    .textRight
+      text-align: right

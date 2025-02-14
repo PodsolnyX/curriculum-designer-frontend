@@ -37,7 +37,7 @@ export const AddActivityModal = (props: ModalProps) => {
         },
         {
             name: "name",
-            label: "Имя плана",
+            label: "Название",
             isRequired: true,
             inputComponent: "textArea"
         }

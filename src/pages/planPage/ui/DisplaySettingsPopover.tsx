@@ -1,8 +1,10 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {Checkbox, Popover, Select} from "antd";
+import {Button, Checkbox, Popover, Select} from "antd";
 import React from "react";
 import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {Link, useParams} from "react-router-dom";
+import {getRoutePlanTable} from "@/shared/const/router.ts";
 
 const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
 
@@ -13,8 +15,9 @@ const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
         toolsOptions
     } = usePlan();
 
-    const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(displaySettings))?.key || "";
+    const {id} = useParams<{id: string}>();
 
+    const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(displaySettings))?.key || "";
     const disabledEditSettings = toolsOptions.cursorMode === CursorMode.Replace;
 
     const Content = () => {
@@ -43,6 +46,9 @@ const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
                         )
                     }
                 </div>
+                <Link to={getRoutePlanTable(id || 0)} className={"w-full"}>
+                    <Button type={"primary"} className={"w-full"}>Табличный вид</Button>
+                </Link>
             </div>
         )
     }

@@ -58,7 +58,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         academicActivityData,
         competencesData,
         isLoading
-    } = useCurriculumData();
+    } = useCurriculumData({});
 
     const {
         modulesSemesters,

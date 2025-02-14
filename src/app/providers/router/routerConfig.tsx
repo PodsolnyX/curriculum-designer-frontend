@@ -1,7 +1,7 @@
 import {
     AppRoutes,
     getRouteLogin,
-    getRouteMain, getRoutePlan, getRoutePlanCompetencies, getRoutePlanSettings, getRoutePlanTitle
+    getRouteMain, getRoutePlan, getRoutePlanCompetencies, getRoutePlanSettings, getRoutePlanTable, getRoutePlanTitle
 } from "@/shared/const/router";
 import {AppRoutesProps} from "@/app/providers/router/AppRouter.tsx";
 import PlanPage from "@/pages/planPage/PlanPage.tsx";
@@ -9,6 +9,7 @@ import PlansListPage from "@/pages/plansListPage/PlansaListPage.tsx";
 import PlanTitlePage from "@/pages/planTitlePage/PlanTitlePage.tsx";
 import PlanCompetenciesPage from "@/pages/planCompetenciesPage/PlanCompetenciesPage.tsx";
 import PlanSettingsPage from "@/pages/planSettings/PlanSettingsPage.tsx";
+import PlanTablePage from "@/pages/planTablePage/PlanTablePage.tsx";
 
 export const routeConfig = (): Record<AppRoutes, AppRoutesProps> => {
     return ({
@@ -23,6 +24,10 @@ export const routeConfig = (): Record<AppRoutes, AppRoutesProps> => {
         [AppRoutes.PLAN]: {
             path: getRoutePlan(":id"),
             element: <PlanPage/>
+        },
+        [AppRoutes.PLAN_TABLE]: {
+            path: getRoutePlanTable(":id"),
+            element: <PlanTablePage/>
         },
         [AppRoutes.TITLE]: {
             path: getRoutePlanTitle(":id"),

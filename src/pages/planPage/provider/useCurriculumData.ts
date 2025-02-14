@@ -7,13 +7,21 @@ import {useGetSemestersQuery} from "@/api/axios-client/SemestersQuery.ts";
 import {useGetAcademicActivitiesQuery} from "@/api/axios-client/AcademicActivityQuery.ts";
 import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
 
-export const useCurriculumData = () => {
+interface useCurriculumDataParams {
+    atomsHasNoParentModule?: boolean;
+}
+
+export const useCurriculumData = (params: useCurriculumDataParams) => {
+
+    const {
+        atomsHasNoParentModule = false
+    } = params;
 
     const {id} = useParams<{ id: string | number }>();
 
     const {data: curriculumData, isLoading: loadingPlan} = useGetCurriculumQuery({id: Number(id)});
     const {data: semestersData, isLoading: loadingSemesters} = useGetSemestersQuery({curriculumId: Number(id)});
-    const {data: atomsData, isLoading: loadingAtoms} = useGetAtomsByCurriculumQuery({curriculumId: Number(id), hasNoParentModule: false});
+    const {data: atomsData, isLoading: loadingAtoms} = useGetAtomsByCurriculumQuery({curriculumId: Number(id), hasNoParentModule: atomsHasNoParentModule});
     const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: false});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
     const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});

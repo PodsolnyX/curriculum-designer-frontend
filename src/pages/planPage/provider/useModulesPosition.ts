@@ -18,7 +18,7 @@ export const useModulesPosition = () => {
     const {
         curriculumData,
         modulesData,
-    } = useCurriculumData();
+    } = useCurriculumData({});
 
     useEffect(() => {
         if (curriculumData?.semesters && modulesData) {
