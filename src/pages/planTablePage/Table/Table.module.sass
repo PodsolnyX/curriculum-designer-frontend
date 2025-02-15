@@ -9,6 +9,7 @@
   width: 100%
   border-bottom: 1px solid var(--color-stroke-secondary)
   position: relative
+  background-color: #fafafa
 
   thead
     position: sticky
@@ -22,28 +23,19 @@
     border-right: 1px solid lightgrey
     font-size: 14px
     font-weight: normal
-    padding: 4px 8px
-    text-align: left
+    padding: 3px
     vertical-align: middle
+    word-break: break-all
 
     &:hover
       border-color: #3FBAC2
 
-    &:nth-child(3)
+    &:nth-child(4)
       position: sticky
       left: 0
 
     &:last-child
       border-right: none
-
-    .textLeft
-      text-align: left
-
-    .textCenter
-      text-align: center
-
-    .textRight
-      text-align: right
 
   tr
     border-top: 1px solid lightgrey
@@ -51,7 +43,6 @@
     color: var(--color-text-secondary)
     font-size: 12px !important
     font-weight: normal
-    transition: 0s
 
     &:hover
       border-color: #3FBAC2
@@ -68,32 +59,41 @@
 
   td
     overflow: hidden
-    background: #f6f6f6
-    padding: 4px 8px 4px 0
-    text-align: left
+    padding: 3px
     font-size: 12px !important
     border-right: 1px solid lightgrey
-    transition: 0s
 
     &:hover
       border-color: #3FBAC2
 
-    &:nth-child(3)
+    &:nth-child(4)
       position: sticky
       left: 0
       background: white
+      text-align: start
 
     &:last-child
       border-right: 0
 
-    .textLeft
-      text-align: left
 
-    .textCenter
-      text-align: center
-
-    .textRight
-      text-align: right
 
 .highlighted
   border-color: #3FBAC2 !important
+
+.moduleRow
+  background-color: #efefef !important
+
+  td
+    &:nth-child(4)
+      background: #f1f1f1
+      font-weight: bold
+
+
+.textLeft
+  text-align: left
+
+.textCenter
+  text-align: center
+
+.textRight
+  text-align: right
