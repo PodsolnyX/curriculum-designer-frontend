@@ -750,6 +750,32 @@ export function prepareSerializeSetAtomCompetenceIndicatorsDto(_data: SetAtomCom
   const data: Record<string, any> = { ..._data };
   return data as SetAtomCompetenceIndicatorsDto;
 }
+export interface CompetenceResponse  {
+  data?: { [key: string]: CompetenceDto; };
+}
+export function deserializeCompetenceResponse(json: string): CompetenceResponse {
+  const data = JSON.parse(json) as CompetenceResponse;
+  initCompetenceResponse(data);
+  return data;
+}
+export function initCompetenceResponse(_data: CompetenceResponse) {
+    return _data;
+}
+export function serializeCompetenceResponse(_data: CompetenceResponse | undefined) {
+  if (_data) {
+    _data = prepareSerializeCompetenceResponse(_data as CompetenceResponse);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCompetenceResponse(_data: CompetenceResponse): CompetenceResponse {
+  const data: Record<string, any> = { ..._data };
+  if (_data.data) {
+    for (let key in _data.data) {
+            (<any>data["data"])[key] = _data.data[key] && prepareSerializeCompetenceDto(_data.data[key]);
+    }
+}
+  return data as CompetenceResponse;
+}
 export interface CompetenceDto  {
   id: number;
   index: string;
@@ -816,6 +842,32 @@ export function serializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto | 
 export function prepareSerializeCompetenceIndicatorDto(_data: CompetenceIndicatorDto): CompetenceIndicatorDto {
   const data: Record<string, any> = { ..._data };
   return data as CompetenceIndicatorDto;
+}
+export interface CompetenceIndicatorsResponse  {
+  data?: { [key: string]: CompetenceIndicatorDto; };
+}
+export function deserializeCompetenceIndicatorsResponse(json: string): CompetenceIndicatorsResponse {
+  const data = JSON.parse(json) as CompetenceIndicatorsResponse;
+  initCompetenceIndicatorsResponse(data);
+  return data;
+}
+export function initCompetenceIndicatorsResponse(_data: CompetenceIndicatorsResponse) {
+    return _data;
+}
+export function serializeCompetenceIndicatorsResponse(_data: CompetenceIndicatorsResponse | undefined) {
+  if (_data) {
+    _data = prepareSerializeCompetenceIndicatorsResponse(_data as CompetenceIndicatorsResponse);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCompetenceIndicatorsResponse(_data: CompetenceIndicatorsResponse): CompetenceIndicatorsResponse {
+  const data: Record<string, any> = { ..._data };
+  if (_data.data) {
+    for (let key in _data.data) {
+            (<any>data["data"])[key] = _data.data[key] && prepareSerializeCompetenceIndicatorDto(_data.data[key]);
+    }
+}
+  return data as CompetenceIndicatorsResponse;
 }
 export interface CreateCompetenceDto  {
   name: string;

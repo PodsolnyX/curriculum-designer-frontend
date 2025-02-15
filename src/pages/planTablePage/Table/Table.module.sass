@@ -2,7 +2,6 @@
 .tableContainer
   display: flex
   flex-direction: column
-  padding-bottom: 20px
   padding-top: 60px
 
 .table
@@ -27,7 +26,10 @@
     text-align: left
     vertical-align: middle
 
-    &:first-child
+    &:hover
+      border-color: #3FBAC2
+
+    &:nth-child(3)
       position: sticky
       left: 0
 
@@ -47,12 +49,12 @@
     border-top: 1px solid lightgrey
     border-bottom: 1px solid lightgrey
     color: var(--color-text-secondary)
-    font-size: 12px
+    font-size: 12px !important
     font-weight: normal
     transition: 0s
 
     &:hover
-      border-color: #06a688
+      border-color: #3FBAC2
 
     &:hover
       td
@@ -69,11 +71,14 @@
     background: #f6f6f6
     padding: 4px 8px 4px 0
     text-align: left
-    font-size: 12px
+    font-size: 12px !important
     border-right: 1px solid lightgrey
     transition: 0s
 
-    &:first-child
+    &:hover
+      border-color: #3FBAC2
+
+    &:nth-child(3)
       position: sticky
       left: 0
       background: white
@@ -89,3 +94,6 @@
 
     .textRight
       text-align: right
+
+.highlighted
+  border-color: #3FBAC2 !important
