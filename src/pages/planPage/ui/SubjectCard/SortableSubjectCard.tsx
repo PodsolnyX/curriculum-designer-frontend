@@ -31,7 +31,7 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         else return undefined;
     }
 
-    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace && !semesterOrder) ? {...props, ...attributes, ...listeners} : {};
+    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace) ? {...props, ...attributes, ...listeners} : {};
 
     return (
         <SubjectCardOutView

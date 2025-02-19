@@ -197,8 +197,8 @@ export function initPersister() {
 
 
 
-  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceResponse(data));
-  addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorsResponse(data));
+  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceDto(data));
+  addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorDto(data));
 
 
   addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));
