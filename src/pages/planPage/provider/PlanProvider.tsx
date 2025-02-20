@@ -21,18 +21,24 @@ import {
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
-    getIdFromPrefix,
+    concatIds,
+    cutSemesterIdFromId,
+    getIdFromPrefix, getParentIdFromPrefix, getParentPrefixFromPrefix,
     getPrefixFromId,
     parseAtomToSubject,
-    parseCurriculum
+    parseCurriculum, regenerateId, setPrefixToId, splitIds
 } from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useModulesPosition} from "@/pages/planPage/provider/useModulesPosition.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
+import {App} from "antd";
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
+    const {message} = App.useApp();
+
     const [semesters, setSemesters] = useState<Semester[]>([]);
+    const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
@@ -83,6 +89,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     } = useDisplaySettings();
 
     useEffect(() => {
+        if (atomsData) setAtomsList(atomsData)
         if (curriculumData?.semesters.length && modulesData && atomsData) {
             setSemesters(parseCurriculum({
                 semesters: curriculumData.semesters,
@@ -167,7 +174,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         paramKey: keyof SubjectUpdateParams,
         param: SubjectUpdateParams[typeof paramKey]
     ) {
-        const parentsIdsActive = getParentsIdsByChildId(id);
+        const parentsIdsActive = splitIds(id as string);
         const updateSemesters = structuredClone(semesters);
 
         const getLocalParams = (subject: Subject) => {
@@ -198,7 +205,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const findSubjectAndUpdate = (item: any, currentDeep: number) => {
             const type = getPrefixFromId(parentsIdsActive[currentDeep]);
-            if (!type) {
+            if (type === "subjects") {
                 item.subjects = item.subjects.map((subject: Subject) =>
                     subject.id !== id ? subject : { ...subject, [paramKey]: getLocalParams(subject) }
                 );
@@ -212,7 +219,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setSemesters(structuredClone(updateSemesters));
 
         const requestIds = {
-            atomId: Number(id),
+            atomId: Number(getIdFromPrefix(id as string)),
             semesterId: Number(getIdFromPrefix(parentsIdsActive[0]))
         };
 
@@ -270,62 +277,140 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     }
 
+    function arraysToDict(keys: string[], values: number[]): Record<string, number> {
+        return keys.reduce((acc, key, index) => {
+            acc[key] = values[index];
+            return acc;
+        }, {} as Record<string, number>);
+    }
+
     const handleDragEnd = (event: DragEndEvent) => {
-        if (!event.active?.id || !event?.over?.id || event.active.id === event.over.id) {
+        if (!event.active?.id || !event.over?.id || event.active.id === event.over.id) {
             return;
         }
 
-        const parentsIdsActive = getParentsIdsByChildId(event.active.id);
-        const parentsIdsOver = getParentsIdsByChildId(event.over.id);
+        const activeId = event.active?.id as string;
+        const overId = event.over?.id as string;
 
-        const updateSemesters = JSON.parse(JSON.stringify(semesters));
-
+        const updateSemesters = structuredClone(semesters);
         let activeSubject: any;
 
-        const removeSubjectFromParents = (item: any, currentDeep: number) => {
-            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
-            if (!type)
+        const removeSubjectFromParents = (item: any, currentDeep: number, parentsIds: string[]) => {
+            const type = getPrefixFromId(parentsIds[currentDeep]);
+            if (type === "subjects")
                 item.subjects = item.subjects.filter((item: any) => {
-                    if (item.id !== parentsIdsActive[currentDeep]) return true
+                    if (item.id !== parentsIds[currentDeep]) return true
                     else {
                         activeSubject = item;
                         return false;
                     }
                 })
             else {
-                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep])
-                removeSubjectFromParents(subItem, currentDeep + 1);
+                const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep])
+                removeSubjectFromParents(subItem, currentDeep + 1, parentsIds);
             }
         }
 
-        const addSubjectToNewParents = (item: any, currentDeep: number) => {
-            const type = getPrefixFromId(parentsIdsOver[currentDeep]);
+        const addSubjectToNewParents = (item: any, currentDeep: number, parentsIds: string[]) => {
+            const type = getPrefixFromId(parentsIds[currentDeep]);
 
-            if (!type && currentDeep === parentsIdsOver.length) {
-                item.subjects = [...item.subjects, activeSubject]
-            } else if (!type) {
-                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIdsOver[currentDeep]), 0, activeSubject)
+            if (!type && currentDeep === parentsIds.length) {
+                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))}]
+            } else if (type === "subjects") {
+                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIds[currentDeep]), 0,
+                    {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))})
             } else {
-                const subItem = item[type].find((_item: any) => _item.id === parentsIdsOver[currentDeep])
-                addSubjectToNewParents(subItem, currentDeep + 1);
+                const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep]);
+                addSubjectToNewParents(subItem, currentDeep + 1, parentsIds);
             }
         }
 
-        removeSubjectFromParents({semesters: updateSemesters}, 0)
-        addSubjectToNewParents({semesters: updateSemesters}, 0)
+        const moveSubject = (activeId: string, overId: string) => {
+            removeSubjectFromParents({semesters: updateSemesters}, 0, splitIds(activeId))
+            addSubjectToNewParents({semesters: updateSemesters}, 0, splitIds(overId))
+        }
 
-        setSemesters(JSON.parse(JSON.stringify(updateSemesters)))
-        resetAllActiveIds()
+        const findSubjectsInAnotherEntities = () => {
+            const ids: string[] = [];
+            let indexOfActiveSubject = 0;
+            if (!atomsData) return ids;
 
-        // editSubject({
-        //     subjectId: event.active.id,
-        //     data: {
-        //         semesterIds: {
-        //             [`${Number(getIdFromPrefix(parentsIdsActive[0]))}`]: Number(getIdFromPrefix(parentsIdsOver[0]))
-        //         },
-        //         parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
-        //     }
-        // })
+            atomsList
+                .find(atom => String(atom.id) === getIdFromPrefix(activeId)).semesters
+                .forEach(semester => {
+                    const subjectId = concatIds(setPrefixToId(semester.semester.id, "semesters"), cutSemesterIdFromId(activeId));
+                    if (subjectId === activeId) indexOfActiveSubject = ids.length;
+                    ids.push(subjectId)
+                })
+
+            return [indexOfActiveSubject, ids];
+        }
+
+        const [indexOfActiveSubject, initialSubjectSemestersIds] = findSubjectsInAnotherEntities();
+
+        const moveSubjects = () => {
+            if (!initialSubjectSemestersIds.length) return;
+
+            const initialContainerId = getParentIdFromPrefix(activeId);
+            const targetContainerId = getParentIdFromPrefix(overId);
+
+            // Если перемещаем в семестры
+            if (getParentPrefixFromPrefix(overId) === "semesters" && semestersData) {
+                const indexTargetSemester =  semestersData.findIndex(semester => String(semester.semester.id) === targetContainerId);
+                const indexInitialSemester =  semestersData.findIndex(semester => String(semester.semester.id) === initialContainerId);
+                const newSubjectSemestersIndex = initialSubjectSemestersIds.map((_, index) => indexTargetSemester + index - indexOfActiveSubject)
+
+                //Если предметы не помещаются по верхнему или нижнему пределу
+                if (newSubjectSemestersIndex.includes(-1) || newSubjectSemestersIndex.includes(semestersData.length)) {
+                    message.error("Невозможно переместить предметы в этот семестр")
+                    return;
+                }
+
+                const idsNewSemesters = newSubjectSemestersIndex.map(index => setPrefixToId(semestersData[index].semester.id, "semesters"));
+
+                // Если сверху вниз перемещаем
+                if (indexInitialSemester < indexTargetSemester) {
+                    initialSubjectSemestersIds.slice().reverse().forEach((id, index) => {
+                        moveSubject(id, idsNewSemesters.slice().reverse()[index])
+                    })
+                }
+                // Если снизу вверх перемещаем
+                else if (indexInitialSemester > indexTargetSemester) {
+                    initialSubjectSemestersIds.forEach((id, index) =>
+                        moveSubject(id, idsNewSemesters[index]))
+                }
+
+                setAtomsList(atomsList.map(atom => atom.id === Number(getIdFromPrefix(activeId))
+                    ? {
+                    ...atom,
+                        semesters: atom.semesters.map((refSemester, index) => {
+                            return {
+                                ...refSemester,
+                                semester: {...refSemester.semester, id: semestersData[newSubjectSemestersIndex[index]].semester.id, number: semestersData[newSubjectSemestersIndex[index]].semester.number}
+                            }
+                        })
+                    }
+                    : atom
+                ))
+
+                // Сохраняем на сервере
+                editInfo({
+                    subjectId: Number(getIdFromPrefix(activeId)),
+                    data: {
+                        semesterIds: arraysToDict(
+                            initialSubjectSemestersIds.map(id => getIdFromPrefix(id.split("_")[0])),
+                            newSubjectSemestersIndex.map(index => semestersData[index].semester.id)
+                        ),
+                        parentModuleId: null
+                        // parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
+                    }
+                })
+            }
+        }
+
+        moveSubjects();
+        setSemesters(updateSemesters);
+        resetAllActiveIds();
     }
 
     const value: PlanContextValue = {
@@ -542,4 +627,27 @@ const PlanContext = createContext<PlanContextValue>({
 //     setTracksSemesters([...tracks]);
 //
 //     return _semesters;
+// }
+
+// Поиск предметов длящихся в других семестрах
+// const findSubjectsInAnotherEntities = (): string[] => {
+//     const ids: string[] = [];
+//
+//     const deepFindSearch = (item: any, currentDeep: number) => {
+//         if (!item) return;
+//         if (currentDeep === parentsIdsActive.length - 1) {
+//             const foundId = item.subjects.find(item =>
+//                 cutSemesterIdFromId(item.id as string) === cutSemesterIdFromId(activeId))?.id;
+//             if (foundId) ids.push(foundId as string);
+//         }
+//         else {
+//             console.log(getPrefixFromId(parentsIdsActive[currentDeep]))
+//             deepFindSearch(item[getPrefixFromId(parentsIdsActive[currentDeep])].find(_item =>
+//                 cutSemesterIdFromId(_item.id as string) === cutSemesterIdFromId(parentsIdsActive[currentDeep])), currentDeep + 1);
+//         }
+//     }
+//
+//     semesters.forEach(semester => deepFindSearch(semester, 1))
+//
+//     return ids;
 // }

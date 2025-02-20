@@ -61,7 +61,7 @@ url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
   return url_;
 }
 
-let getCompetencesDefaultOptions: Omit<UseQueryOptions<Types.CompetenceResponse, unknown, Types.CompetenceResponse>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceResponse, unknown, Types.CompetenceResponse>, 'queryFn'>> = {
+let getCompetencesDefaultOptions: Omit<UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>, 'queryFn'>> = {
 };
 export function getGetCompetencesDefaultOptions() {
   return getCompetencesDefaultOptions;
@@ -93,11 +93,11 @@ export function __getCompetences(context: QueryFunctionContext, axiosConfig?: Ax
       context.queryKey[2] as number,axiosConfig    );
 }
 
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceResponse, TError = unknown>(dto: GetCompetencesCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceResponse, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(dto: GetCompetencesCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
 
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceResponse, TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceResponse, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceResponse, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.CompetenceResponse, TError, TSelectData> | undefined = undefined;
+export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.CompetenceDto[], TError, TSelectData> | undefined = undefined;
   let axiosConfig: AxiosRequestConfig |undefined = undefined;
   let curriculumId: any = undefined;
   
@@ -114,21 +114,21 @@ export function useGetCompetencesQuery<TSelectData = Types.CompetenceResponse, T
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
 
-  return useQuery<Types.CompetenceResponse, TError, TSelectData>({
+  return useQuery<Types.CompetenceDto[], TError, TSelectData>({
     queryFn: axiosConfig ? (context) => __getCompetences(context, axiosConfig) : __getCompetences,
     queryKey: getCompetencesQueryKey(curriculumId),
-    ...getCompetencesDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceResponse, TError, TSelectData>, 'queryKey'>,
+    ...getCompetencesDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>,
     ...options,
   });
 }
 
-export function setGetCompetencesData(queryClient: QueryClient, updater: (data: Types.CompetenceResponse | undefined) => Types.CompetenceResponse, curriculumId: number) {
+export function setGetCompetencesData(queryClient: QueryClient, updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[], curriculumId: number) {
   queryClient.setQueryData(getCompetencesQueryKey(curriculumId),
     updater
   );
 }
 
-export function setGetCompetencesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceResponse | undefined) => Types.CompetenceResponse) {
+export function setGetCompetencesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[]) {
   queryClient.setQueryData(queryKey, updater);
 }
     
@@ -188,7 +188,7 @@ url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
   return url_;
 }
 
-let getCompetenceIndicatorsDefaultOptions: Omit<UseQueryOptions<Types.CompetenceIndicatorsResponse, unknown, Types.CompetenceIndicatorsResponse>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceIndicatorsResponse, unknown, Types.CompetenceIndicatorsResponse>, 'queryFn'>> = {
+let getCompetenceIndicatorsDefaultOptions: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], unknown, Types.CompetenceIndicatorDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceIndicatorDto[], unknown, Types.CompetenceIndicatorDto[]>, 'queryFn'>> = {
 };
 export function getGetCompetenceIndicatorsDefaultOptions() {
   return getCompetenceIndicatorsDefaultOptions;
@@ -220,11 +220,11 @@ export function __getCompetenceIndicators(context: QueryFunctionContext, axiosCo
       context.queryKey[2] as number,axiosConfig    );
 }
 
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorsResponse, TError = unknown>(dto: GetCompetenceIndicatorsCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorsResponse, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(dto: GetCompetenceIndicatorsCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
 
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorsResponse, TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorsResponse, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorsResponse, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.CompetenceIndicatorsResponse, TError, TSelectData> | undefined = undefined;
+export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData> | undefined = undefined;
   let axiosConfig: AxiosRequestConfig |undefined = undefined;
   let curriculumId: any = undefined;
   
@@ -241,21 +241,21 @@ export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIn
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
 
-  return useQuery<Types.CompetenceIndicatorsResponse, TError, TSelectData>({
+  return useQuery<Types.CompetenceIndicatorDto[], TError, TSelectData>({
     queryFn: axiosConfig ? (context) => __getCompetenceIndicators(context, axiosConfig) : __getCompetenceIndicators,
     queryKey: getCompetenceIndicatorsQueryKey(curriculumId),
-    ...getCompetenceIndicatorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceIndicatorsResponse, TError, TSelectData>, 'queryKey'>,
+    ...getCompetenceIndicatorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>,
     ...options,
   });
 }
 
-export function setGetCompetenceIndicatorsData(queryClient: QueryClient, updater: (data: Types.CompetenceIndicatorsResponse | undefined) => Types.CompetenceIndicatorsResponse, curriculumId: number) {
+export function setGetCompetenceIndicatorsData(queryClient: QueryClient, updater: (data: Types.CompetenceIndicatorDto[] | undefined) => Types.CompetenceIndicatorDto[], curriculumId: number) {
   queryClient.setQueryData(getCompetenceIndicatorsQueryKey(curriculumId),
     updater
   );
 }
 
-export function setGetCompetenceIndicatorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceIndicatorsResponse | undefined) => Types.CompetenceIndicatorsResponse) {
+export function setGetCompetenceIndicatorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceIndicatorDto[] | undefined) => Types.CompetenceIndicatorDto[]) {
   queryClient.setQueryData(queryKey, updater);
 }
     

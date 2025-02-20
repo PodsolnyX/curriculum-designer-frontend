@@ -13,7 +13,7 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceResponse> {
+export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto[]> {
     let url_ = getBaseUrl() + "/competence/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -42,7 +42,7 @@ export function getCompetences(curriculumId: number, config?: AxiosRequestConfig
     });
 }
 
-function processGetCompetences(response: AxiosResponse): Promise<Types.CompetenceResponse> {
+function processGetCompetences(response: AxiosResponse): Promise<Types.CompetenceDto[]> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -56,14 +56,18 @@ function processGetCompetences(response: AxiosResponse): Promise<Types.Competenc
         const _responseText = response.data;
         let result200: any = null;
         let resultData200  = _responseText;
-        result200 = Types.initCompetenceResponse(resultData200);
-        return Promise.resolve<Types.CompetenceResponse>(result200);
+        if (Array.isArray(resultData200)) {
+              result200 = resultData200.map(item => 
+                Types.initCompetenceDto(item)
+              );
+            }
+        return Promise.resolve<Types.CompetenceDto[]>(result200);
 
     } else if (status !== 200 && status !== 204) {
         const _responseText = response.data;
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
-    return Promise.resolve<Types.CompetenceResponse>(null as any);
+    return Promise.resolve<Types.CompetenceDto[]>(null as any);
 }
 
 export function createCompetence(curriculumId: number, createCompetenceDto: Types.CreateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
@@ -123,7 +127,7 @@ function processCreateCompetence(response: AxiosResponse): Promise<Types.Compete
     return Promise.resolve<Types.CompetenceDto>(null as any);
 }
 
-export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceIndicatorsResponse> {
+export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceIndicatorDto[]> {
     let url_ = getBaseUrl() + "/competence/{curriculumId}/indicator";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
@@ -152,7 +156,7 @@ export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequ
     });
 }
 
-function processGetCompetenceIndicators(response: AxiosResponse): Promise<Types.CompetenceIndicatorsResponse> {
+function processGetCompetenceIndicators(response: AxiosResponse): Promise<Types.CompetenceIndicatorDto[]> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -166,14 +170,18 @@ function processGetCompetenceIndicators(response: AxiosResponse): Promise<Types.
         const _responseText = response.data;
         let result200: any = null;
         let resultData200  = _responseText;
-        result200 = Types.initCompetenceIndicatorsResponse(resultData200);
-        return Promise.resolve<Types.CompetenceIndicatorsResponse>(result200);
+        if (Array.isArray(resultData200)) {
+              result200 = resultData200.map(item => 
+                Types.initCompetenceIndicatorDto(item)
+              );
+            }
+        return Promise.resolve<Types.CompetenceIndicatorDto[]>(result200);
 
     } else if (status !== 200 && status !== 204) {
         const _responseText = response.data;
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
-    return Promise.resolve<Types.CompetenceIndicatorsResponse>(null as any);
+    return Promise.resolve<Types.CompetenceIndicatorDto[]>(null as any);
 }
 
 export function updateCompetence(competenceId: number, updateCompetenceDto: Types.UpdateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {

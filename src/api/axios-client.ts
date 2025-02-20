@@ -26,6 +26,12 @@ export * as ImportQuery from './axios-client/ImportQuery';
 
 
 
+export * as DocumentGenerationClient from './axios-client/DocumentGenerationClient';
+
+export * as DocumentGenerationQuery from './axios-client/DocumentGenerationQuery';
+
+
+
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
@@ -182,6 +188,8 @@ export function initPersister() {
 
 
 
+
+
   addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
 
@@ -197,8 +205,8 @@ export function initPersister() {
 
 
 
-  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceResponse(data));
-  addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorsResponse(data));
+  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceDto(data));
+  addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorDto(data));
 
 
   addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));

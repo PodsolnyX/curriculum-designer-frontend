@@ -6,7 +6,7 @@ import {
 } from "@/pages/planPage/provider/types.ts";
 import {ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
-import {getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 
 export const useModulesPosition = () => {
@@ -30,7 +30,7 @@ export const useModulesPosition = () => {
     }, [curriculumData, modulesData])
 
     const getModulePosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
-        const module = modulesSemesters.find(module => getIdFromPrefix(id) === module.id);
+        const module = modulesSemesters.find(module => getIdFromPrefix(id as string) === module.id);
         if (!module || module.semesters.length === 1) return {position: "single", countSemesters: 1}
         const index = module.semesters.findIndex(module => module === id);
         return {
@@ -40,7 +40,7 @@ export const useModulesPosition = () => {
     }, [modulesSemesters])
 
     const getSelectionPosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
-        const selection = selectionsSemesters.find(module => getIdFromPrefix(id) === module.id);
+        const selection = selectionsSemesters.find(module => getIdFromPrefix(id as string) === module.id);
         if (!selection || selection.semesters.length === 1) return {position: "single", countSemesters: 1}
         const index = selection.semesters.findIndex(module => module === id);
         return {
@@ -51,7 +51,7 @@ export const useModulesPosition = () => {
 
     const getTrackSelectionPosition = useCallback((id: UniqueIdentifier): TrackSelectionSemestersInfo => {
 
-        const trackSelection = tracksSelectionSemesters.find(track => getIdFromPrefix(id) === track.id);
+        const trackSelection = tracksSelectionSemesters.find(track => getIdFromPrefix(id as string) === track.id);
         if (!trackSelection || trackSelection.semesters.length === 1)
             return {position: "single", countSemesters: 1, semesterNumber: 1}
         const index = trackSelection.semesters.findIndex(module => module === id);
@@ -98,8 +98,8 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
                 startSemesterNumber: startSemester.number || 0,
                 columnIndex: intersectionModules.slice(-1)[0]?.columnIndex + 1 || 0,
                 semesters: module.semesters.length
-                    ? module.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${module.id}`, "modules"))
-                    : [setPrefixToId(`${setPrefixToId(startSemester.id, "semesters")}-${module.id}`, "modules")]
+                    ? module.semesters.map(semester => concatIds(setPrefixToId(semester.semester.id, "semesters"), setPrefixToId(module.id, "modules")))
+                    : [concatIds(setPrefixToId(startSemester.id, "semesters"), setPrefixToId(module.id, "modules"))]
             })
         })
 
@@ -120,9 +120,8 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
                 startSemesterNumber: startSemester?.number || 0,
                 columnIndex: intersectionSelections.slice(-1)[0]?.columnIndex + 1 || 0,
                 semesters: selection.semesters.length
-                    ? selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
-                    : [setPrefixToId(`${setPrefixToId(startSemester.id, "semesters")}-${selection.id}`, "selections")]
-                // semesters: selection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${selection.id}`, "selections"))
+                    ? selection.semesters.map(semester => concatIds(setPrefixToId(semester.semester.id, "semesters"), setPrefixToId(selection.id, "selections")))
+                    : [concatIds(setPrefixToId(startSemester.id, "semesters"), setPrefixToId(selection.id, "selections"))]
             })
         })
 
@@ -140,7 +139,9 @@ const parseModulesPositions = (semestersData: SemesterDto[], modulesData: Module
             name: trackSelection.name,
             startSemesterNumber: startSemester?.number || 0,
             columnIndex: intersectionTracksSelection.slice(-1)[0]?.columnIndex + 1 || 0,
-            semesters: trackSelection.semesters.map(semester => setPrefixToId(`${setPrefixToId(semester.semester.id, "semesters")}-${trackSelection.id}`, "tracks"))
+            semesters: trackSelection.semesters.length
+                ? trackSelection.semesters.map(semester => concatIds(setPrefixToId(semester.semester.id, "semesters"), setPrefixToId(trackSelection.id, "tracks")))
+                : [concatIds(setPrefixToId(startSemester.id, "semesters"), setPrefixToId(trackSelection.id, "tracks"))]
         })
     })
 
