@@ -21,10 +21,10 @@ import {
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
-    concatIds,
+    concatIds, cutAtomIdFromId,
     cutSemesterIdFromId,
     getIdFromPrefix, getParentIdFromPrefix, getParentPrefixFromPrefix,
-    getPrefixFromId,
+    getPrefixFromId, getSemesterIdFromPrefix,
     parseAtomToSubject,
     parseCurriculum, regenerateId, setPrefixToId, splitIds
 } from "@/pages/planPage/provider/parseCurriculum.ts";
@@ -351,11 +351,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const moveSubjects = () => {
             if (!initialSubjectSemestersIds.length) return;
 
-            const initialContainerId = getParentIdFromPrefix(activeId);
-            const targetContainerId = getParentIdFromPrefix(overId);
+            const initialContainerId = getSemesterIdFromPrefix(activeId);
+            const targetContainerId = getSemesterIdFromPrefix(overId);
 
             // Если перемещаем в семестры
-            if (getParentPrefixFromPrefix(overId) === "semesters" && semestersData) {
+            if (semestersData) {
                 const indexTargetSemester =  semestersData.findIndex(semester => String(semester.semester.id) === targetContainerId);
                 const indexInitialSemester =  semestersData.findIndex(semester => String(semester.semester.id) === initialContainerId);
                 const newSubjectSemestersIndex = initialSubjectSemestersIds.map((_, index) => indexTargetSemester + index - indexOfActiveSubject)
@@ -366,19 +366,21 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     return;
                 }
 
-                const idsNewSemesters = newSubjectSemestersIndex.map(index => setPrefixToId(semestersData[index].semester.id, "semesters"));
+                const targetParentIdPart = cutSemesterIdFromId(cutAtomIdFromId(overId));
 
-                // Если сверху вниз перемещаем
-                if (indexInitialSemester < indexTargetSemester) {
-                    initialSubjectSemestersIds.slice().reverse().forEach((id, index) => {
-                        moveSubject(id, idsNewSemesters.slice().reverse()[index])
-                    })
-                }
-                // Если снизу вверх перемещаем
-                else if (indexInitialSemester > indexTargetSemester) {
-                    initialSubjectSemestersIds.forEach((id, index) =>
-                        moveSubject(id, idsNewSemesters[index]))
-                }
+                const idsNewSemesters = newSubjectSemestersIndex.map(index => {
+                    const _semesterId = setPrefixToId(semestersData[index].semester.id, "semesters");
+                    if (targetParentIdPart.length) return concatIds(_semesterId, targetParentIdPart);
+                    return _semesterId;
+                });
+
+                console.log(idsNewSemesters)
+
+                const shouldReverse = indexInitialSemester < indexTargetSemester;
+                const initialIds = shouldReverse ? [...initialSubjectSemestersIds].reverse() : initialSubjectSemestersIds;
+                const targetIds = shouldReverse ? [...idsNewSemesters].reverse() : idsNewSemesters;
+
+                initialIds.forEach((id, index) => moveSubject(id, targetIds[index]));
 
                 setAtomsList(atomsList.map(atom => atom.id === Number(getIdFromPrefix(activeId))
                     ? {
@@ -393,7 +395,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     : atom
                 ))
 
-                // Сохраняем на сервере
+                //Сохраняем на сервере
                 editInfo({
                     subjectId: Number(getIdFromPrefix(activeId)),
                     data: {
@@ -401,8 +403,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                             initialSubjectSemestersIds.map(id => getIdFromPrefix(id.split("_")[0])),
                             newSubjectSemestersIndex.map(index => semestersData[index].semester.id)
                         ),
-                        parentModuleId: null
-                        // parentModuleId: ["modules", "selections"].includes(getPrefixFromId(parentsIdsOver[1])) ? Number(getIdFromPrefix(parentsIdsOver[1])) : null
+                        parentModuleId: ["modules", "selections"].includes(getParentPrefixFromPrefix(overId)) ? Number(getParentIdFromPrefix(overId)) : null
                     }
                 })
             }

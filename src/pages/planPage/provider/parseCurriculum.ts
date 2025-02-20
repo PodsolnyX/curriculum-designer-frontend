@@ -83,6 +83,12 @@ export const getParentIdFromPrefix = (id: string): string => {
     return getIdFromPrefix(ids.at(-1));
 }
 
+export const getSemesterIdFromPrefix = (id: string): string => {
+    if (!id) return "";
+    const ids = id.split("_");
+    return getIdFromPrefix(ids[0]);
+}
+
 export const getPrefixFromId = (id: string): string => {
     if (!id) return "";
     const ids = id.split("_");
@@ -93,7 +99,7 @@ export const getPrefixFromId = (id: string): string => {
 export const getParentPrefixFromPrefix = (id: string): string => {
     if (!id) return "";
     const ids = id.split("_");
-    if (getPrefixFromId(ids.at(-1)) === "subjects") return getIdFromPrefix(ids.at(-2));
+    if (getPrefixFromId(ids.at(-1)) === "subjects") return getPrefixFromId(ids.at(-2));
     return getPrefixFromId(ids.at(-1));
 }
 
@@ -116,11 +122,15 @@ export const cutSemesterIdFromId = (id: string): string => {
     return id.split("_").slice(1).join("_");
 }
 
+export const cutAtomIdFromId = (id: string): string => {
+    const ids = id.split("_");
+    if (getPrefixFromId(ids.at(-1)) === "subjects") return ids.slice(-1).join("_");
+    return id;
+}
+
 export const regenerateId = (id: string, overId: string): string => {
     const parts = id.split("_");
     const overParts = overId.split("_");
-
-    console.log(id, parts, overId, overParts)
 
     if (getPrefixFromId(overParts.at(-1)) === "subjects") {
         return concatIds(overParts.slice(0, -1).join("_"), parts.at(-1));
