@@ -120,6 +120,8 @@ export const regenerateId = (id: string, overId: string): string => {
     const parts = id.split("_");
     const overParts = overId.split("_");
 
+    console.log(id, parts, overId, overParts)
+
     if (getPrefixFromId(overParts.at(-1)) === "subjects") {
         return concatIds(overParts.slice(0, -1).join("_"), parts.at(-1));
     }

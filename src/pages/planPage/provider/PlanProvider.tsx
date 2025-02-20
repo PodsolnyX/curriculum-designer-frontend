@@ -311,13 +311,14 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }
         }
 
-        const addSubjectToNewParents = (item: any, currentDeep: number, parentsIds) => {
+        const addSubjectToNewParents = (item: any, currentDeep: number, parentsIds: string[]) => {
             const type = getPrefixFromId(parentsIds[currentDeep]);
 
             if (!type && currentDeep === parentsIds.length) {
-                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, overId)}]
+                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))}]
             } else if (type === "subjects") {
-                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIds[currentDeep]), 0, {...activeSubject, id: regenerateId(activeSubject.id, overId)})
+                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIds[currentDeep]), 0,
+                    {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))})
             } else {
                 const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep]);
                 addSubjectToNewParents(subItem, currentDeep + 1, parentsIds);
@@ -371,14 +372,28 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
                 // Если сверху вниз перемещаем
                 if (indexInitialSemester < indexTargetSemester) {
-                    initialSubjectSemestersIds.slice().reverse().forEach((id, index) =>
-                        moveSubject(id, idsNewSemesters.slice().reverse()[index]))
+                    initialSubjectSemestersIds.slice().reverse().forEach((id, index) => {
+                        moveSubject(id, idsNewSemesters.slice().reverse()[index])
+                    })
                 }
                 // Если снизу вверх перемещаем
                 else if (indexInitialSemester > indexTargetSemester) {
                     initialSubjectSemestersIds.forEach((id, index) =>
                         moveSubject(id, idsNewSemesters[index]))
                 }
+
+                setAtomsList(atomsList.map(atom => atom.id === Number(getIdFromPrefix(activeId))
+                    ? {
+                    ...atom,
+                        semesters: atom.semesters.map((refSemester, index) => {
+                            return {
+                                ...refSemester,
+                                semester: {...refSemester.semester, id: semestersData[newSubjectSemestersIndex[index]].semester.id, number: semestersData[newSubjectSemestersIndex[index]].semester.number}
+                            }
+                        })
+                    }
+                    : atom
+                ))
 
                 // Сохраняем на сервере
                 editInfo({
@@ -399,9 +414,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setSemesters(updateSemesters);
         resetAllActiveIds();
     }
-
-
-    // console.log(semesters)
 
     const value: PlanContextValue = {
         activeItemId,

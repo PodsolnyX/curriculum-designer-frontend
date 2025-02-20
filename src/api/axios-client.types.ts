@@ -1040,6 +1040,12 @@ export interface FileParameter {
     data: any;
     fileName: string;
 }
+export interface FileResponse {
+    data: Blob;
+    status: number;
+    fileName?: string;
+    headers?: { [name: string]: any };
+}
 export class ApiException extends Error {
     message: string;
     status: number;

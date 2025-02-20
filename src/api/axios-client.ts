@@ -26,6 +26,12 @@ export * as ImportQuery from './axios-client/ImportQuery';
 
 
 
+export * as DocumentGenerationClient from './axios-client/DocumentGenerationClient';
+
+export * as DocumentGenerationQuery from './axios-client/DocumentGenerationQuery';
+
+
+
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
@@ -178,6 +184,8 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 export function initPersister() {
   
   addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
+
+
 
 
 
