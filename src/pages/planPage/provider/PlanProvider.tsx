@@ -350,9 +350,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const moveSubjects = () => {
             if (!initialSubjectSemestersIds.length) return;
-            if (initialSubjectSemestersIds.length === 1) {
-                moveSubject(activeId, overId)
-            }
+
             const initialContainerId = getParentIdFromPrefix(activeId);
             const targetContainerId = getParentIdFromPrefix(overId);
 
