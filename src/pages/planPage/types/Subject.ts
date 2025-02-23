@@ -14,7 +14,7 @@ export interface Subject {
     department?: {id: number, name: string};
     semesterOrder?: number;
     academicHours?: HoursDistributionDto[];
-    competencies?: {id: number, index: string, description: string}[];
+    competencies?: SubjectCompetence[];
     notes?: SubjectComment[];
     semesterId?: string;
     semestersIds?: number[];
@@ -22,6 +22,12 @@ export interface Subject {
         prev: number | null;
         next: number | null;
     }
+}
+
+export interface SubjectCompetence {
+    id: number;
+    index: string;
+    description: string;
 }
 
 export interface SubjectUpdateParams {

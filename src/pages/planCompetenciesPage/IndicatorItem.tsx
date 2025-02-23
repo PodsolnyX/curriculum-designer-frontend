@@ -83,7 +83,7 @@ const IndicatorItem = ({name, id, index, competenceId, curriculumId}: IndicatorI
                 </div>
             </div>
             <div className={"pr-10"}>
-                <Popover trigger={"click"} placement={"bottom"}
+                <Popover trigger={"click"} placement={"bottom"} overlayInnerStyle={{padding: 0}}
                          content={
                              <List
                                  size="small"

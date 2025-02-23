@@ -34,7 +34,7 @@ const CompetenceSelector = ({competencies, size = "small", subjectId}: Competenc
                     competencies.map(competence =>
                         <Tag
                             color={selectedCompetenceId === competence.id ? "purple" : "default"}
-                            className={`m-0 group/item flex gap-1 cursor-pointer`}
+                            className={`m-0 group/item flex gap-1 cursor-pointer hover:text-purple-800`}
                             bordered={size !== "small"}
                             key={competence.id}
                             onClick={() => onSelectCompetence(competence.id !== selectedCompetenceId ? competence.id : null)}

@@ -164,6 +164,7 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const [newValue, setNewValue] = useState(value || 0);
+    const [isHover, setIsHover] = useState(false);
 
     const onSaveValue = () => {
         setIsEdit(false);
@@ -172,6 +173,8 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
 
     return (
         <div
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
             onClick={() => setIsEdit(isEditMode)}
             className={`relative flex justify-between items-center border border-solid group hover:border-blue-400 ${isEdit ? "border-blue-400" : "border-stone-100"} gap-1 rounded-md ${(index === academicActivityLength - 1 && academicActivityLength % 2 === 1) ? 'col-span-2' : ''}`}
         >
@@ -197,15 +200,17 @@ const AcademicActivityItem = (props: AcademicActivityItemProps) => {
                 />
             }
             {
-                isEditMode &&
-                <Button
-                    icon={<CloseOutlined/>}
-                    size={"small"}
-                    shape={"circle"}
-                    color={"default"}
-                    className={"absolute right-[-25px] opacity-0 group-hover:opacity-100 text-stone-400 z-20"}
-                    onClick={() => onRemove && onRemove()}
-                />
+                (isEditMode && isHover) &&
+                <span className={"absolute right-[-2px] bottom-[-28px] p-0.5"}>
+                    <Button
+                        icon={<CloseOutlined/>}
+                        size={"small"}
+                        shape={"circle"}
+                        color={"default"}
+                        className={" text-stone-400 z-20"}
+                        onClick={() => onRemove && onRemove()}
+                    />
+                </span>
             }
         </div>
     )

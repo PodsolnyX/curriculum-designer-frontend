@@ -1,6 +1,6 @@
 import {AtomDto, CompetenceDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
 import {Module, Selection, Semester, TrackSelection} from "@/pages/planPage/types/Semester.ts";
-import {Subject} from "@/pages/planPage/types/Subject.ts";
+import {Subject, SubjectCompetence} from "@/pages/planPage/types/Subject.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
 import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/provider/types.ts";
 
@@ -10,12 +10,12 @@ interface ParseCurriculumParams {
     semesters: SemesterDto[];
     atoms: AtomDto[];
     modules: ModuleDto[];
-    competences: Dictionary<CompetenceDto>;
+    competences: Dictionary<SubjectCompetence>;
 }
 
 interface ParseEntityParams {
     parentId: string;
-    competences: Dictionary<CompetenceDto>;
+    competences: Dictionary<SubjectCompetence>;
 }
 
 interface ParseAtomParams extends ParseEntityParams {
@@ -154,30 +154,35 @@ const getSemesterSubjects = (atoms: AtomDto[], params: ParseAtomParams): Subject
     )
 }
 
-export const parseAtomToSubject = (atom: AtomDto, params: ParseAtomParams): Subject => {
-    const atomSemester = atom.semesters.find(atomSemester => params.semesterId === atomSemester.semester.id);
+export const parseAtomCompetences = (atom: AtomDto, competences: Dictionary<SubjectCompetence>): SubjectCompetence[] => {
 
-    if (!atomSemester) throw new Error("Предмет не найден")
-
-    let competencies: { id: number, index: string, description: string }[] = [];
+    let competencies: SubjectCompetence[] = [];
 
     if (atom.competenceIds.length) {
         competencies = atom.competenceIds.map(competence => {
             return {
                 id: competence || 0,
-                index: String(competence) || "",
-                description: String(competence)
+                index: competences[competence]?.index || "",
+                description: competences[competence]?.description || ""
             }
         })
     } else if (atom.competenceIndicatorIds.length) {
         competencies = atom.competenceIndicatorIds.map(competence => {
             return {
                 id: competence || 0,
-                index: String(competence) || "",
-                description: String(competence)
+                index: competences[competence]?.index || "",
+                description: competences[competence]?.description || ""
             }
         })
     }
+
+    return competencies;
+}
+
+export const parseAtomToSubject = (atom: AtomDto, params: ParseAtomParams): Subject => {
+    const atomSemester = atom.semesters.find(atomSemester => params.semesterId === atomSemester.semester.id);
+
+    if (!atomSemester) throw new Error("Предмет не найден")
 
     return {
         id: concatIds(params.parentId, setPrefixToId(atom.id, "subjects")),
@@ -186,7 +191,7 @@ export const parseAtomToSubject = (atom: AtomDto, params: ParseAtomParams): Subj
         isRequired: atom.isRequired,
         credits: atomSemester.credit,
         attestation: atomSemester.attestations,
-        competencies: competencies,
+        competencies: parseAtomCompetences(atom, params.competences),
         department: atom?.department,
         academicHours: atomSemester.academicActivityHours,
         semesterId: setPrefixToId(params.semesterId, "semesters"),

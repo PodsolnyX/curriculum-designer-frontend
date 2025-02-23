@@ -11,7 +11,12 @@ import {
     TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
-import {commonSubjectParamKeys, Subject, SubjectUpdateParams} from "@/pages/planPage/types/Subject.ts";
+import {
+    commonSubjectParamKeys,
+    Subject,
+    SubjectCompetence,
+    SubjectUpdateParams
+} from "@/pages/planPage/types/Subject.ts";
 import {
     AcademicActivityDto,
     AtomDto,
@@ -25,7 +30,6 @@ import {
     cutSemesterIdFromId,
     getIdFromPrefix, getParentIdFromPrefix, getParentPrefixFromPrefix,
     getPrefixFromId, getSemesterIdFromPrefix,
-    parseAtomToSubject,
     parseCurriculum, regenerateId, setPrefixToId, splitIds
 } from "@/pages/planPage/provider/parseCurriculum.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
@@ -40,10 +44,10 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const [semesters, setSemesters] = useState<Semester[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
     const [modulesList, setModulesList] = useState<ModuleDto[]>([]);
+    const [competences, setCompetences] = useState<Dictionary<SubjectCompetence>>({});
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
-    const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
-    const [selectedSubjectId, setSelectedSubjectId] = useState<UniqueIdentifier | null>(null);
+    const [selectedAtom, setSelectedAtom] = useState<{atom: AtomDto, semesterOrder: number, id: string} | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
     const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
@@ -64,6 +68,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         attestationTypesData,
         academicActivityData,
         competencesData,
+        competenceIndicatorsData,
         isLoading
     } = useCurriculumData({modulesPlainList: false});
 
@@ -91,17 +96,36 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     } = useDisplaySettings();
 
     useEffect(() => {
-        if (atomsData) setAtomsList(atomsData)
-        if (modulesData) setModulesList(modulesData)
-        if (curriculumData?.semesters.length && modulesData && atomsData) {
+        if (curriculumData?.semesters.length && modulesData && atomsData && Object.keys(competences).length) {
             setSemesters(parseCurriculum({
                 semesters: curriculumData.semesters,
                 atoms: atomsData,
                 modules: modulesData,
-                competences: competencesData
+                competences: competences
             }))
         }
-    }, [curriculumData, modulesData, atomsData])
+    }, [curriculumData, modulesData, atomsData, competencesData])
+
+    useEffect(() => {
+        if (atomsData) setAtomsList(atomsData)
+        if (modulesData) setModulesList(modulesData)
+    }, [modulesData, atomsData])
+
+    useEffect(() => {
+        if (curriculumData && (competencesData || competenceIndicatorsData)) {
+            let _competences: Dictionary<SubjectCompetence> = {};
+
+            if (competencesData && curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence)
+                competencesData.forEach(competence => {
+                    _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
+                })
+            else if (competenceIndicatorsData) competenceIndicatorsData.forEach(competence => {
+                _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
+            })
+
+            setCompetences(_competences)
+        }
+    }, [curriculumData, competencesData, competenceIndicatorsData])
 
     useEffect(() => {
         if (!curriculumData || !modulesList.length) return;
@@ -120,20 +144,15 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const onSelectSubject = (id: UniqueIdentifier | null, semesterOrder?: number) => {
 
-        if (String(selectedSubjectId) === String(id)) {
-            setSelectedSubjectId(null);
-            setActiveSubject(null);
+        if ((id === null) || (String(selectedAtom?.id) === String(id) && selectedAtom?.semesterOrder === semesterOrder)) {
+            setSelectedAtom(null);
             return;
         }
 
-        setSelectedSubjectId(id);
+        const atom = atomsList.find(atom => getIdFromPrefix(id as string) === String(atom.id));
+        if (!atom) return;
 
-        const atom = atomsData ? (atomsData.find(atom => String(atom.id) === String(id)) || null) : null;
-
-        if (atom === null || !competencesData) return;
-
-        const semester = atom.semesters[0];
-        setActiveSubject(parseAtomToSubject(atom, { semesterId: semester.semester.id, competences: competencesData, parentId: null} ))
+        setSelectedAtom({atom, semesterOrder: semesterOrder || 1, id: id as string})
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
@@ -466,20 +485,18 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         resetAllActiveIds();
     }
 
-    console.log(22, semesters)
-
     const value: PlanContextValue = {
         activeItemId,
-        activeSubject,
         overItemId,
         semesters,
         modulesSemesters,
         selectionsSemesters,
+        competences,
         semestersInfo: semestersData || [],
         tracksSelectionSemesters,
         displaySettings,
         toolsOptions,
-        selectedSubject: atomsData?.find(atom => String(atom.id) === selectedSubjectId) || null,
+        selectedSubject: selectedAtom,
         attestationTypes: attestationTypesData,
         academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
@@ -488,7 +505,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         onSelectCompetence,
         onSelectSubject,
         setToolsOptions,
-        setActiveSubject,
+        setActiveSubject: setSelectedAtom,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
@@ -516,18 +533,18 @@ export const usePlan = () => {
 
 interface PlanContextValue {
     activeItemId: UniqueIdentifier | null;
-    activeSubject: Subject | null;
     overItemId: UniqueIdentifier | null;
     displaySettings: DisplaySettings;
     toolsOptions: ToolsOptions;
     semestersInfo: RefModuleSemesterDto[];
     semesters: Semester[];
+    competences: Dictionary<SubjectCompetence>;
     attestationTypes: AttestationDto[];
     academicActivity: AcademicActivityDto[];
     modulesSemesters: ModulePosition[];
     selectionsSemesters: ModulePosition[];
     tracksSelectionSemesters: ModulePosition[];
-    selectedSubject: AtomDto | null;
+    selectedSubject: {atom: AtomDto, semesterOrder: number, id: string} | null;
     loadingPlan: boolean;
     selectedCompetenceId: UniqueIdentifier | null;
     settings: CurriculumSettingsDto;
@@ -563,9 +580,9 @@ interface PlanContextValue {
 
 const PlanContext = createContext<PlanContextValue>({
     activeItemId: null,
-    activeSubject: null,
     overItemId: null,
     semestersInfo: [],
+    competences: {},
     displaySettings: PreDisplaySettings[0].settings,
     toolsOptions: {
         cursorMode: CursorMode.Move,

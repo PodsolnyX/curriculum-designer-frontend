@@ -96,7 +96,7 @@ const CompetenceItem = ({name, index, indicators: _indicators, id, type}: Compet
                     </div>
                 </div>
                 <div className={"flex gap-1 items-center justify-end"} onClick={(event) => event.stopPropagation()}>
-                    <Popover trigger={"click"} placement={"bottom"}
+                    <Popover trigger={"click"} placement={"bottom"} overlayInnerStyle={{padding: 0}}
                              content={
                                  <List
                                      size="small"

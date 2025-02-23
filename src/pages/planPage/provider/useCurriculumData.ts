@@ -5,7 +5,8 @@ import {useGetModulesByCurriculumQuery} from "@/api/axios-client/ModuleQuery.ts"
 import {useSearchAttestationsQuery} from "@/api/axios-client/AttestationQuery.ts";
 import {useGetSemestersQuery} from "@/api/axios-client/SemestersQuery.ts";
 import {useGetAcademicActivitiesQuery} from "@/api/axios-client/AcademicActivityQuery.ts";
-import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
+import {useGetCompetenceIndicatorsQuery, useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
+import {CompetenceDistributionType} from "@/api/axios-client.types.ts";
 
 interface useCurriculumDataParams {
     atomsHasNoParentModule?: boolean;
@@ -27,7 +28,10 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
     const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: modulesPlainList});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
     const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
-    const {data: competencesData, isLoading: loadingCompetences} = useGetCompetencesQuery({curriculumId: Number(id)});
+    const {data: competencesData, isLoading: loadingCompetences} = useGetCompetencesQuery({curriculumId: Number(id)},
+        { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.Competence});
+    const {data: competenceIndicatorsData, isLoading: loadingCompetenceIndicators} = useGetCompetenceIndicatorsQuery({curriculumId: Number(id)},
+        { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.CompetenceIndicator});
 
     return {
         curriculumId: Number(id),
@@ -37,13 +41,16 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
         modulesData: modulesData,
         attestationTypesData: attestationTypesData,
         academicActivityData: academicActivityData,
-        competences: competencesData,
+        competencesData: competencesData,
+        competenceIndicatorsData: competenceIndicatorsData,
         isLoading:
             loadingPlan ||
             loadingAtoms ||
             loadingModules ||
             loadingAttestationTypes ||
             loadingSemesters ||
+            loadingCompetences ||
+            loadingCompetenceIndicators ||
             loadingAcademicActivity
     }
 }

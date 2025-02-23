@@ -7,6 +7,7 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useControls} from "react-zoom-pan-pinch";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
 
 interface SortableSubjectCard extends SubjectCardProps {}
 
@@ -35,7 +36,7 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
 
     return (
         <SubjectCardOutView
-            enable={String(selectedSubject?.id) === String(props.id)}
+            enable={String(selectedSubject?.atom.id) === String(getIdFromPrefix(props.id as string))}
             semesterOrder={props.semesterOrder}
         >
             <SubjectCard

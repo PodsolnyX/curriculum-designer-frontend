@@ -77,7 +77,7 @@ export const SubjectCardMemo =
         
         const onExtendSemester = (key: "prev" | "next") => {
             expandSubject({
-                atomId: Number(getIdFromPrefix(id)),
+                atomId: Number(getIdFromPrefix(id as string)),
                 semesterId: key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0,
             })
         }
@@ -94,12 +94,12 @@ export const SubjectCardMemo =
                 )}
                 {...rest}
                 ref={ref}
-                onClick={() => !isReplaceMode && onSelectSubject(props.id)}
+                onClick={() => !isReplaceMode && onSelectSubject(props.id as string, props.semesterOrder)}
             >
                 <div
 
                     ref={refScroll}
-                    className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.id) === String(props.id) && cls.selected)}>
+                    className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.atom.id) === String(getIdFromPrefix(props.id as string)) && cls.selected)}>
                     {
                         displaySettings.required &&
                         <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
