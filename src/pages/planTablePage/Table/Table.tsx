@@ -287,8 +287,6 @@ export const Table = () => {
         ];
     }, [atomsData, academicActivityData, attestationTypesData, modulesData]);
 
-    console.log(parseData)
-
     const table = useReactTable({
         data: parseData,
         columns: getColumns(),

@@ -129,6 +129,7 @@ export const cutAtomIdFromId = (id: string): string => {
 }
 
 export const regenerateId = (id: string, overId: string): string => {
+
     const parts = id.split("_");
     const overParts = overId.split("_");
 

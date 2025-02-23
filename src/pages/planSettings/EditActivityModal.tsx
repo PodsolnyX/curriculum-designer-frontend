@@ -46,8 +46,6 @@ export const EditActivityModal = (props: EditActivityModalProps) => {
         }
     ];
 
-    console.log(initialData)
-
     return (
         <ModalForm<FieldType>
             fields={formFields}

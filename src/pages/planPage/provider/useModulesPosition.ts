@@ -1,13 +1,12 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {
     ModulePosition,
     ModuleSemestersInfo,
     TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
-import {ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
+import {CurriculumDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
 import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/parseCurriculum.ts";
-import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 
 export const useModulesPosition = () => {
 
@@ -15,19 +14,14 @@ export const useModulesPosition = () => {
     const [selectionsSemesters, setSelectionsSemesters] = useState<ModulePosition[]>([]);
     const [tracksSelectionSemesters, setTracksSelectionSemesters] = useState<ModulePosition[]>([]);
 
-    const {
-        curriculumData,
-        modulesData,
-    } = useCurriculumData({});
-
-    useEffect(() => {
+    const parsePositions = (curriculumData: CurriculumDto, modulesData: ModuleDto[]) => {
         if (curriculumData?.semesters && modulesData) {
             const positions = parseModulesPositions(curriculumData.semesters, modulesData);
             setModulesSemesters(positions.modules)
             setSelectionsSemesters(positions.selections)
             setTracksSelectionSemesters(positions.tracksSelections)
         }
-    }, [curriculumData, modulesData])
+    };
 
     const getModulePosition = useCallback((id: UniqueIdentifier): ModuleSemestersInfo => {
         const module = modulesSemesters.find(module => getIdFromPrefix(id as string) === module.id);
@@ -63,6 +57,7 @@ export const useModulesPosition = () => {
     }, [tracksSelectionSemesters])
 
     return {
+        parsePositions,
         modulesSemesters,
         selectionsSemesters,
         tracksSelectionSemesters,

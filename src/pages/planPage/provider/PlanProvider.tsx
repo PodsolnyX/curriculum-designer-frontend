@@ -17,7 +17,7 @@ import {
     AtomDto,
     AttestationDto,
     CompetenceDistributionType,
-    CurriculumSettingsDto, RefModuleSemesterDto, UpdateAtomDto,
+    CurriculumSettingsDto, ModuleDto, RefModuleSemesterDto, UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
@@ -39,6 +39,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const [semesters, setSemesters] = useState<Semester[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
+    const [modulesList, setModulesList] = useState<ModuleDto[]>([]);
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [activeSubject, setActiveSubject] = useState<Subject | null>(null);
@@ -64,9 +65,10 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         academicActivityData,
         competencesData,
         isLoading
-    } = useCurriculumData({});
+    } = useCurriculumData({modulesPlainList: false});
 
     const {
+        parsePositions,
         modulesSemesters,
         selectionsSemesters,
         tracksSelectionSemesters,
@@ -90,6 +92,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     useEffect(() => {
         if (atomsData) setAtomsList(atomsData)
+        if (modulesData) setModulesList(modulesData)
         if (curriculumData?.semesters.length && modulesData && atomsData) {
             setSemesters(parseCurriculum({
                 semesters: curriculumData.semesters,
@@ -99,6 +102,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             }))
         }
     }, [curriculumData, modulesData, atomsData])
+
+    useEffect(() => {
+        if (!curriculumData || !modulesList.length) return;
+        parsePositions(curriculumData, modulesList)
+    }, [curriculumData, modulesList])
 
     useEffect(() => {
         if (toolsOptions.cursorMode === CursorMode.Replace)
@@ -122,11 +130,10 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const atom = atomsData ? (atomsData.find(atom => String(atom.id) === String(id)) || null) : null;
 
-        if (atom === null) return;
+        if (atom === null || !competencesData) return;
 
         const semester = atom.semesters[0];
-
-        setActiveSubject(parseAtomToSubject(atom, semester.semester.id, competencesData))
+        setActiveSubject(parseAtomToSubject(atom, { semesterId: semester.semester.id, competences: competencesData, parentId: null} ))
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
@@ -293,6 +300,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const overId = event.over?.id as string;
 
         const updateSemesters = structuredClone(semesters);
+        const updateModulesList = structuredClone(modulesList);
         let activeSubject: any;
 
         const removeSubjectFromParents = (item: any, currentDeep: number, parentsIds: string[]) => {
@@ -306,21 +314,62 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     }
                 })
             else {
+                if (!item[type]) console.log(item, parentsIds[currentDeep], parentsIds)
                 const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep])
                 removeSubjectFromParents(subItem, currentDeep + 1, parentsIds);
             }
+        }
+
+        const addSemesterModule = (item: any, currentDeep: number, parentsIds: string[]): any => {
+
+            if (!semestersData) return;
+
+            const newItem = { id: parentsIds[currentDeep], subjects: [], semesterId: parentsIds[0] };
+
+            item[getPrefixFromId(parentsIds[currentDeep])] = [
+                ...item[getPrefixFromId(parentsIds[currentDeep])], newItem
+            ]
+
+            const moduleInList = updateModulesList.find(module => module.id === Number(getIdFromPrefix(parentsIds[currentDeep])));
+            const newSemester: RefModuleSemesterDto = {
+                semester: {
+                    ...semestersData.find(semester =>
+                        semester.semester.id === Number(getIdFromPrefix(parentsIds[0]))
+                    ).semester
+                },
+                elective: {
+                    credit: 0,
+                    attestations: [],
+                    academicActivityHours: []
+                },
+                nonElective: {
+                    credit: 0,
+                    attestations: [],
+                    academicActivityHours: []
+                }
+            };
+
+            const insertIndex = moduleInList.semesters.findIndex(semester => semester.semester.number > newSemester.semester.number);
+
+            if (insertIndex === -1) moduleInList.semesters.push(newSemester);
+            else moduleInList.semesters.splice(insertIndex, 0, newSemester);
+
+            return newItem;
         }
 
         const addSubjectToNewParents = (item: any, currentDeep: number, parentsIds: string[]) => {
             const type = getPrefixFromId(parentsIds[currentDeep]);
 
             if (!type && currentDeep === parentsIds.length) {
-                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))}]
+                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.at(-1))}]
             } else if (type === "subjects") {
                 item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIds[currentDeep]), 0,
-                    {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.join("_"))})
+                    {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.at(-1))})
             } else {
-                const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep]);
+                let subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep]);
+                if (!subItem) {
+                    subItem = addSemesterModule(item, currentDeep, parentsIds);
+                }
                 addSubjectToNewParents(subItem, currentDeep + 1, parentsIds);
             }
         }
@@ -374,13 +423,15 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     return _semesterId;
                 });
 
-                console.log(idsNewSemesters)
-
                 const shouldReverse = indexInitialSemester < indexTargetSemester;
                 const initialIds = shouldReverse ? [...initialSubjectSemestersIds].reverse() : initialSubjectSemestersIds;
                 const targetIds = shouldReverse ? [...idsNewSemesters].reverse() : idsNewSemesters;
 
+                //Перемещаем предметы в новые места
+
                 initialIds.forEach((id, index) => moveSubject(id, targetIds[index]));
+
+                //Обновляем состояние списка предметов
 
                 setAtomsList(atomsList.map(atom => atom.id === Number(getIdFromPrefix(activeId))
                     ? {
@@ -411,8 +462,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         moveSubjects();
         setSemesters(updateSemesters);
+        setModulesList(updateModulesList);
         resetAllActiveIds();
     }
+
+    console.log(22, semesters)
 
     const value: PlanContextValue = {
         activeItemId,

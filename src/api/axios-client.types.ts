@@ -459,6 +459,7 @@ export function prepareSerializeCreateModuleWithSelectionDto(_data: CreateModule
 export interface ModuleDto  {
   id: number;
   parentModuleId?: number | null;
+  index?: string | null;
   curriculumId: number;
   parentSemesterId: number;
   name: string;
@@ -522,6 +523,7 @@ export function prepareSerializeModuleDto(_data: ModuleDto): ModuleDto {
 export interface AtomDto  {
   id: number;
   parentModuleId?: number | null;
+  index?: string | null;
   curriculumId: number;
   name: string;
   isRequired: boolean;
