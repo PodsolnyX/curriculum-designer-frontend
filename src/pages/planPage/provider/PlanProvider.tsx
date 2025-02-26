@@ -492,6 +492,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         modulesSemesters,
         selectionsSemesters,
         competences,
+        modulesList: modulesList || [],
         semestersInfo: semestersData || [],
         tracksSelectionSemesters,
         displaySettings,
@@ -548,6 +549,7 @@ interface PlanContextValue {
     loadingPlan: boolean;
     selectedCompetenceId: UniqueIdentifier | null;
     settings: CurriculumSettingsDto;
+    modulesList: ModuleDto[];
 
     onSelectCompetence(id: number | null): void;
 
@@ -600,6 +602,7 @@ const PlanContext = createContext<PlanContextValue>({
     settings: {
         competenceDistributionType: CompetenceDistributionType.Competence,
     },
+    modulesList: [],
 
     onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: number | null, semesterOrder?: number) => {

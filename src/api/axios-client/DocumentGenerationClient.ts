@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function generatePdf(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document";
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/pdf";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -70,6 +70,122 @@ function processGeneratePdf(response: AxiosResponse): Promise<Types.FileResponse
     }
     return Promise.resolve<Types.FileResponse>(null as any);
 }
+
+export function generateExcel(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGenerateExcel,
+        ...config,
+        responseType: "blob",
+        method: "POST",
+        url: url_,
+        headers: {
+            ..._requestConfigGenerateExcel?.headers,
+            "Accept": "application/octet-stream"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGenerateExcel(_response);
+    });
+}
+
+function processGenerateExcel(response: AxiosResponse): Promise<Types.FileResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200 || status === 206) {
+        const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+        let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+        let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+        if (fileName) {
+            fileName = decodeURIComponent(fileName);
+        } else {
+            fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+        }
+        return Promise.resolve({ fileName: fileName, status: status, data: new Blob([response.data], { type: response.headers["content-type"] }), headers: _headers });
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.FileResponse>(null as any);
+}
+
+export function generateTxt(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGenerateTxt,
+        ...config,
+        responseType: "blob",
+        method: "POST",
+        url: url_,
+        headers: {
+            ..._requestConfigGenerateTxt?.headers,
+            "Accept": "application/octet-stream"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGenerateTxt(_response);
+    });
+}
+
+function processGenerateTxt(response: AxiosResponse): Promise<Types.FileResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200 || status === 206) {
+        const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+        let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+        let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
+        if (fileName) {
+            fileName = decodeURIComponent(fileName);
+        } else {
+            fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+        }
+        return Promise.resolve({ fileName: fileName, status: status, data: new Blob([response.data], { type: response.headers["content-type"] }), headers: _headers });
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.FileResponse>(null as any);
+}
 let _requestConfigGeneratePdf: Partial<AxiosRequestConfig> | null;
 export function getGeneratePdfRequestConfig() {
   return _requestConfigGeneratePdf;
@@ -79,4 +195,26 @@ export function setGeneratePdfRequestConfig(value: Partial<AxiosRequestConfig>) 
 }
 export function patchGeneratePdfRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigGeneratePdf = patch(_requestConfigGeneratePdf ?? {});
+}
+
+let _requestConfigGenerateExcel: Partial<AxiosRequestConfig> | null;
+export function getGenerateExcelRequestConfig() {
+  return _requestConfigGenerateExcel;
+}
+export function setGenerateExcelRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGenerateExcel = value;
+}
+export function patchGenerateExcelRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGenerateExcel = patch(_requestConfigGenerateExcel ?? {});
+}
+
+let _requestConfigGenerateTxt: Partial<AxiosRequestConfig> | null;
+export function getGenerateTxtRequestConfig() {
+  return _requestConfigGenerateTxt;
+}
+export function setGenerateTxtRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGenerateTxt = value;
+}
+export function patchGenerateTxtRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGenerateTxt = patch(_requestConfigGenerateTxt ?? {});
 }

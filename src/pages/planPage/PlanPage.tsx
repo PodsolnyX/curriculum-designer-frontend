@@ -24,6 +24,8 @@ import React, {useEffect, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
+import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
+import {PositionsProvider} from "@/pages/planPage/provider/PositionsProvider.tsx";
 
 const PlanPageWrapped = () => {
 
@@ -31,6 +33,7 @@ const PlanPageWrapped = () => {
         semesters,
         loadingPlan,
         toolsOptions,
+        modulesList,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
@@ -64,20 +67,30 @@ const PlanPageWrapped = () => {
                     }}
                 >
                     <div className={"flex relative"}>
-                        <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
-                            <div className={`flex flex-col w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
-                                {
-                                    !loadingPlan &&
-                                    semesters.map(semester =>
-                                        <SemesterField {...semester} key={semester.id}
-                                                       subjectsContainerWidth={subjectsContainerWidth}
-                                                       setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
-                                        />
-                                    )
-                                }
-                            </div>
-                            <Overlay/>
-                        </TransformComponent>
+                        <PositionsProvider>
+                            <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
+                                <div className={`flex flex-col pb-10 w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
+                                    {
+                                        !loadingPlan &&
+                                        semesters.map(semester =>
+                                            <SemesterField {...semester} key={semester.id}
+                                                           subjectsContainerWidth={subjectsContainerWidth}
+                                                           setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
+                                            />
+                                        )
+                                    }
+                                </div>
+                                <div
+                                    className={"h-full absolute"}
+                                    style={{left: `${subjectsContainerWidth + 0.2}%`, width: `${100 - subjectsContainerWidth - 0.2}%`}}
+                                >
+                                    {
+                                        modulesList.map((module, index) => <ModuleArea {...module} key={module.id} columnIndex={index}/>)
+                                    }
+                                </div>
+                                <Overlay/>
+                            </TransformComponent>
+                        </PositionsProvider>
                         <Sidebar/>
                     </div>
                 </DndContext>
