@@ -86,7 +86,9 @@ const PlanPageWrapped = () => {
                                 >
                                     {
                                         !loadingPlan &&
-                                        modulesList.map((module, index) => <ModuleArea {...module} key={module.id} columnIndex={index}/>)
+                                        modulesList
+                                            .sort((a, b) => a.semesters[0].semester.number - b.semesters[0].semester.number)
+                                            .map((module, index) => <ModuleArea {...module} key={module.id} columnIndex={index}/>)
                                     }
                                 </div>
                                 <Overlay/>

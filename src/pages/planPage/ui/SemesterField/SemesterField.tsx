@@ -105,7 +105,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
                                         </div>
                                     </Panel>
                                     <PanelResizeHandle className={"w-[1px] bg-stone-300 z-10"}/>
-                                    <Panel order={2} className={"flex pl-5"} style={{width: "200vw"}}>
+                                    <Panel order={2} className={"flex pl-5"} style={{width: "100vw"}}>
                                         {/*<div className={`grid pr-5 gap-x-2 h-full`} style={{gridTemplateColumns: `repeat(${modulesSemesters.reduce((max, item) => Math.max(max, item.columnIndex), 0) + 1}, 1fr)`}}>*/}
                                         {/*    {*/}
                                         {/*        modules.map(module =>*/}

@@ -10,7 +10,9 @@ import React, {
 interface PositionsContextProps {
     heights: Record<string, Record<string, number>>;
     updateHeight: (rowId: string, containerId: string, height: number) => void;
+    updateHorizontalCoordinate: (rowId: string, containerId: string, width: number) => void;
     getMaxHeight: (rowId: string) => number;
+    getHorizontalCoordinate: (rowId: string, containerId: string) => number;
     getTopCoordinate: (rowId: string) => number;
 }
 
@@ -19,14 +21,17 @@ const PositionsContext = createContext<PositionsContextProps>({
     updateHeight: () => {},
     getMaxHeight: () => 0,
     getTopCoordinate: () => 0,
+    updateHorizontalCoordinate: () => {},
+    getHorizontalCoordinate: () => 0,
 });
 
 export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [heights, setHeights] = useState<Record<string, Record<string, number>>>({});
+    const [horizontalCoordinates, setHorizontalCoordinates] = useState<Record<string, Record<string, number>>>({});
 
     const updateHeight = useCallback((rowId: string, containerId: string, height: number) => {
 
-        const currentHeight = height[rowId]?.[containerId];
+        const currentHeight = heights[rowId]?.[containerId];
         if (currentHeight === height) return
 
         setHeights(prev => {
@@ -40,10 +45,56 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
         });
     }, []);
 
+    const updateHorizontalCoordinate = useCallback((rowId: string, containerId: string, width: number) => {
+        setHorizontalCoordinates(prev => {
+
+            return {
+                ...prev,
+                [rowId]: {
+                    ...(prev[rowId] || {}),
+                    [containerId]: width,
+                },
+            };
+        });
+    }, []);
+
     const getMaxHeight = useCallback((rowId: string) => {
         const rowHeights = heights[rowId] || {};
         return Object.values(rowHeights).reduce((max, h) => Math.max(max, h), 0);
     }, [heights]);
+
+    const getHorizontalCoordinate = useCallback((rowId: string, containerId: string) => {
+
+        const gap = 40;
+        let totalCoordinate = 20;
+        const currentCoordinates = horizontalCoordinates[rowId] || {};
+
+        const findModuleFirstEntry = (_containerId: string) => {
+
+            for (const rowId of Object.keys(horizontalCoordinates)) {
+                const rowData = horizontalCoordinates[rowId];
+                if (rowData && _containerId in rowData) {
+                    const idsList = Object.keys(rowData);
+                    if (idsList.indexOf(_containerId) === 0) {
+                        return rowData[_containerId] + gap;
+                    }
+                    else {
+                        return findModuleFirstEntry(idsList[idsList.indexOf(_containerId) - 1]) + rowData[_containerId] + gap;
+                    }
+                }
+            }
+        }
+
+        const coordinatesList = Object.entries(currentCoordinates);
+
+        if (coordinatesList.length && coordinatesList[0][0] !== containerId) {
+            totalCoordinate += findModuleFirstEntry(
+                coordinatesList[coordinatesList.findIndex(cord => cord[0] === containerId) - 1][0]
+            )
+        }
+
+        return totalCoordinate;
+    }, [horizontalCoordinates]);
 
     const getTopCoordinate = useCallback((rowId: string) => {
         let totalCoordinate = 0;
@@ -55,10 +106,20 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
         return totalCoordinate;
     }, [heights, getMaxHeight]);
 
-    console.log(heights)
+    const value: PositionsContextProps = {
+        heights,
+        updateHeight,
+        getMaxHeight,
+        getTopCoordinate,
+        updateHorizontalCoordinate,
+        getHorizontalCoordinate
+    };
+
+    console.log(0, horizontalCoordinates)
+    console.log(1, heights)
 
     return (
-        <PositionsContext.Provider value={{ heights, updateHeight, getMaxHeight, getTopCoordinate }}>
+        <PositionsContext.Provider value={value}>
             {children}
         </PositionsContext.Provider>
     );
@@ -70,12 +131,23 @@ interface ContainerProps {
     rowId: string;
     id: string;
     children: ReactNode;
-    rootClassName?: string
+    rootClassName?: string;
+    countHorizontalCoordinates?: boolean;
+    countHeights?: boolean;
 }
 
-export const Container: React.FC<ContainerProps> = ({ rowId, id, children, rootClassName  }) => {
-    const contentRef = useRef<HTMLDivElement>(null);
-    const { updateHeight, getMaxHeight } = usePositions();
+export const Container= (props: ContainerProps) => {
+    const {
+        rowId,
+        id,
+        children,
+        rootClassName,
+        countHorizontalCoordinates,
+        countHeights = true
+    } = props;
+
+    const contentRef = useRef<HTMLDivElement | null>(null);
+    const { updateHeight, getMaxHeight, updateHorizontalCoordinate } = usePositions();
     const maxHeight = getMaxHeight(rowId);
 
     useEffect(() => {
@@ -85,13 +157,14 @@ export const Container: React.FC<ContainerProps> = ({ rowId, id, children, rootC
         const resizeObserver = new ResizeObserver(([entry]) => {
             if (entry) {
                 const height = entry.contentRect.height;
-                updateHeight(rowId, id, height);
+                countHeights && updateHeight(rowId, id, height);
+                countHorizontalCoordinates && updateHorizontalCoordinate(rowId, id, entry.contentRect.width);
             }
         });
 
         resizeObserver.observe(element);
         return () => resizeObserver.disconnect();
-    }, [rowId, id, updateHeight]);
+    }, [rowId, id, updateHeight, updateHorizontalCoordinate]);
 
     return (
         <div style={{ height: maxHeight || 'auto'}} className={rootClassName}>

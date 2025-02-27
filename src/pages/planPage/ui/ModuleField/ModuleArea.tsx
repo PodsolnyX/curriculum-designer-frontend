@@ -24,21 +24,28 @@ const ModuleArea = (props: ModuleAreaProps) => {
         columnIndex
     } = props;
 
-    const {getTopCoordinate} = usePositions();
+    const {getTopCoordinate, getHorizontalCoordinate} = usePositions();
 
     const gridColumnsCount = useMemo(() => {
         const averageAtomsCount = atoms.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
-        if (averageAtomsCount < 2) return 1;
+        if (averageAtomsCount < 3) return 1;
         if (averageAtomsCount < 5) return 2;
         if (averageAtomsCount < 7) return 3;
         if (averageAtomsCount < 9) return 4;
         return 5;
     }, [atoms, semesters])
 
+    const x = getHorizontalCoordinate(
+        setPrefixToId(semesters[0]?.semester.id || "", "semesters"),
+       setPrefixToId(id, "modules")
+    );
+
     return (
-        <div className={`absolute`} style={{left: `${columnIndex * 2 * 250 + 20}px`, top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`}}>
+        <div className={`absolute`} style={{left: `${x}px`, top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`}}>
             {
-                semesters.map((semester, index) =>
+                semesters
+                    .sort((a, b) => a.semester.number - b.semester.number)
+                    .map((semester, index) =>
                     <ModuleField
                         key={semester.semester.id}
                         id={id}
@@ -66,6 +73,9 @@ interface ModuleFieldProps {
 const ModuleField = memo((props: ModuleFieldProps) => {
 
     const {id, atoms, name, position, semester, gridColumnsCount = 1} = props;
+
+    const rowId = setPrefixToId(semester.semester.id, "semesters");
+    const containerId = setPrefixToId(id, "modules");
 
     const { overItemId, toolsOptions } = usePlan();
     const {message} = App.useApp();
@@ -117,8 +127,9 @@ const ModuleField = memo((props: ModuleFieldProps) => {
 
     return (
         <Container
-            rowId={setPrefixToId(semester.semester.id, "semesters")}
-            id={concatIds(setPrefixToId(semester.semester.id, "semesters"),setPrefixToId(id, "modules"))}
+            countHorizontalCoordinates={true}
+            rowId={rowId}
+            id={containerId}
             rootClassName={`${styles[position]} flex w-full flex-col relative border-dashed px-2 ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "border-blue-300" : "border-stone-500"}`}
         >
             <div
