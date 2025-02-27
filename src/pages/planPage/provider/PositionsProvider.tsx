@@ -55,6 +55,8 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
         return totalCoordinate;
     }, [heights, getMaxHeight]);
 
+    console.log(heights)
+
     return (
         <PositionsContext.Provider value={{ heights, updateHeight, getMaxHeight, getTopCoordinate }}>
             {children}

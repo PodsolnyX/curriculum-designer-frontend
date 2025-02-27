@@ -85,6 +85,7 @@ const PlanPageWrapped = () => {
                                     style={{left: `${subjectsContainerWidth + 0.2}%`, width: `${100 - subjectsContainerWidth - 0.2}%`}}
                                 >
                                     {
+                                        !loadingPlan &&
                                         modulesList.map((module, index) => <ModuleArea {...module} key={module.id} columnIndex={index}/>)
                                     }
                                 </div>

@@ -1,5 +1,5 @@
 import {AtomDto, ModuleDto, RefModuleSemesterDto} from "@/api/axios-client.types.ts";
-import React, {memo, useState} from "react";
+import React, {memo, useMemo, useState} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {App, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
@@ -7,7 +7,6 @@ import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provid
 import {useDroppable} from "@dnd-kit/core";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
-import {SortableContext} from "@dnd-kit/sortable";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {Container, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 
@@ -27,13 +26,23 @@ const ModuleArea = (props: ModuleAreaProps) => {
 
     const {getTopCoordinate} = usePositions();
 
+    const gridColumnsCount = useMemo(() => {
+        const averageAtomsCount = atoms.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
+        if (averageAtomsCount < 2) return 1;
+        if (averageAtomsCount < 5) return 2;
+        if (averageAtomsCount < 7) return 3;
+        if (averageAtomsCount < 9) return 4;
+        return 5;
+    }, [atoms, semesters])
+
     return (
-        <div className={`absolute`} style={{left: `${columnIndex * 250 + 20}px`, top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`}}>
+        <div className={`absolute`} style={{left: `${columnIndex * 2 * 250 + 20}px`, top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`}}>
             {
                 semesters.map((semester, index) =>
                     <ModuleField
                         key={semester.semester.id}
                         id={id}
+                        gridColumnsCount={gridColumnsCount}
                         name={name}
                         semester={semester}
                         position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
@@ -51,11 +60,12 @@ interface ModuleFieldProps {
     atoms: AtomDto[];
     position: ModuleSemestersPosition;
     semester: RefModuleSemesterDto;
+    gridColumnsCount?: number;
 }
 
 const ModuleField = memo((props: ModuleFieldProps) => {
 
-    const {id, atoms, name, position, semester} = props;
+    const {id, atoms, name, position, semester, gridColumnsCount = 1} = props;
 
     const { overItemId, toolsOptions } = usePlan();
     const {message} = App.useApp();
@@ -120,13 +130,14 @@ const ModuleField = memo((props: ModuleFieldProps) => {
                         <div className={"flex justify-center py-2"}>
                             <Typography.Text
                                 editable={{icon: null, triggerType: ["text"]}}
-                                className={"text-black font-bold text-center overflow-hidden text-nowrap text-ellipsis cursor-text w-[200px]"}
+                                className={"text-black font-bold text-center overflow-hidden text-nowrap text-ellipsis cursor-text"}
+                                style={{width: `${gridColumnsCount * 180}px`}}
                             >
                                 {newName}
                             </Typography.Text>
                         </div> : null
                 }
-                <div className={"grid grid-cols-2 gap-2"}>
+                <div className={"grid gap-2 pb-2"} style={{gridTemplateColumns: `repeat(${gridColumnsCount}, 1fr)`}}>
                     {
                         atoms.filter(atom => atom.semesters.some(_semester => _semester.semester.id === semester.semester.id)).map(atom => <SortableSubjectCard
                             key={String(atom.id)}
