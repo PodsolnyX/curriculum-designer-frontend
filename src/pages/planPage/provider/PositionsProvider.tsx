@@ -4,7 +4,7 @@ import React, {
     useEffect,
     useRef,
     useState,
-    ReactNode, useCallback,
+    ReactNode, useCallback, CSSProperties, useMemo,
 } from 'react';
 
 interface PositionsContextProps {
@@ -87,7 +87,12 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
 
         const coordinatesList = Object.entries(currentCoordinates);
 
-        if (coordinatesList.length && coordinatesList[0][0] !== containerId) {
+        if (
+            coordinatesList.length &&
+            coordinatesList[0][0] &&
+            coordinatesList[0][0] !== containerId &&
+            coordinatesList[coordinatesList.findIndex(cord => cord[0] === containerId) - 1]
+        ) {
             totalCoordinate += findModuleFirstEntry(
                 coordinatesList[coordinatesList.findIndex(cord => cord[0] === containerId) - 1][0]
             )
@@ -115,8 +120,7 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
         getHorizontalCoordinate
     };
 
-    console.log(0, horizontalCoordinates)
-    console.log(1, heights)
+    console.log(heights)
 
     return (
         <PositionsContext.Provider value={value}>
@@ -131,9 +135,54 @@ interface ContainerProps {
     rowId: string;
     id: string;
     children: ReactNode;
-    rootClassName?: string;
+    rootClassName?: string | ((height: number) => string);
+    rootStyles?: CSSProperties | ((height: number) => CSSProperties);
     countHorizontalCoordinates?: boolean;
     countHeights?: boolean;
+    childrenClassName?: string;
+}
+
+interface usePositionContainerOptions {
+    rowId: string;
+    containerId: string;
+    countHorizontalCoordinates?: boolean;
+    countHeights?: boolean;
+}
+
+export function usePositionContainer(options: usePositionContainerOptions) {
+
+    const {
+        rowId,
+        containerId,
+        countHorizontalCoordinates,
+        countHeights
+    } = options;
+
+    const contentRef = useRef<HTMLDivElement | null>(null);
+    const { updateHeight, getMaxHeight, updateHorizontalCoordinate } = usePositions();
+    const maxHeight = getMaxHeight(rowId);
+
+    useEffect(() => {
+        const element = contentRef.current;
+        if (!element) return;
+
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            if (entry) {
+                const height = entry.contentRect.height;
+                console.log(rowId, containerId)
+                countHeights && updateHeight(rowId, containerId, height);
+                countHorizontalCoordinates && updateHorizontalCoordinate(rowId, containerId, entry.contentRect.width);
+            }
+        });
+
+        resizeObserver.observe(element);
+        return () => resizeObserver.disconnect();
+    }, [rowId, containerId, updateHeight, updateHorizontalCoordinate]);
+
+    return {
+        contentRef,
+        maxHeight
+    }
 }
 
 export const Container= (props: ContainerProps) => {
@@ -143,7 +192,9 @@ export const Container= (props: ContainerProps) => {
         children,
         rootClassName,
         countHorizontalCoordinates,
-        countHeights = true
+        rootStyles,
+        countHeights = true,
+        childrenClassName
     } = props;
 
     const contentRef = useRef<HTMLDivElement | null>(null);
@@ -166,9 +217,23 @@ export const Container= (props: ContainerProps) => {
         return () => resizeObserver.disconnect();
     }, [rowId, id, updateHeight, updateHorizontalCoordinate]);
 
+    const styles = useMemo(() => {
+        let defaultStyles: CSSProperties = {
+            height: maxHeight || 'auto'
+        }
+        if (typeof(rootStyles) === "function") defaultStyles = rootStyles(maxHeight)
+        else if (typeof(rootStyles) === "object") defaultStyles = rootStyles;
+        return defaultStyles;
+    }, [maxHeight, rootStyles])
+
     return (
-        <div style={{ height: maxHeight || 'auto'}} className={rootClassName}>
-            <div ref={contentRef}>{children}</div>
+        <div
+            style={styles}
+            className={typeof(rootClassName) === "string" ? rootClassName : rootClassName?.(maxHeight)}
+        >
+            <div ref={contentRef} className={childrenClassName}>
+                {children}
+            </div>
         </div>
     );
 };
