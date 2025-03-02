@@ -103,7 +103,12 @@ const Sidebar = () => {
             </div>
             <div className={"flex-col flex gap-1 border-b border-stone-300 border-solid pb-3"}>
                 <span className={"font-bold text-[14px]"}>Компетенции</span>
-                <CompetenceSelector competencies={competenceIds.length ? competenceIds : competenceIndicatorIds} size={"large"} subjectId={id}/>
+                <CompetenceSelector
+                    competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
+                    size={"large"}
+                    subjectId={id}
+                    onChange={(competenceIds) => updateSubject(targetSubjectSemesterId, "competenceIds", competenceIds)}
+                />
             </div>
             <div>
                 <span className={"font-bold text-[14px]"}>Семестры предмета</span>
@@ -120,7 +125,7 @@ const Sidebar = () => {
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Зачётных единиц</span>
                 <CreditsSelector credits={atomSemester.credit} type={"input"}
-                                 onChange={(value) => updateSubject(targetSubjectSemesterId, "credits", value)}
+                                 onChange={(value) => updateSubject(targetSubjectSemesterId, "credit", value)}
                 />
             </div>
             <div className={"flex-col flex gap-1"}>
@@ -130,7 +135,7 @@ const Sidebar = () => {
                     subjectId={id}
                     semesterId={setPrefixToId(atomSemester.semester.id, "semesters")}
                     type={"selector"}
-                    onChange={(value) => updateSubject(targetSubjectSemesterId, "attestation", value)}
+                    onChange={(value) => updateSubject(targetSubjectSemesterId, "attestations", value)}
                 />
             </div>
             <div className={"flex-col flex gap-1"}>
@@ -144,7 +149,7 @@ const Sidebar = () => {
                         id: activityId,
                         value
                     })}
-                    onAdd={(activityId) => updateSubject(targetSubjectSemesterId, "academicHours", activityId)}
+                    onAdd={(activityId) => updateSubject(targetSubjectSemesterId, "academicHours", {id: activityId, value: undefined})}
                     onRemove={(activityId) => updateSubject(targetSubjectSemesterId, "academicHours", {
                         id: activityId,
                         value: -1

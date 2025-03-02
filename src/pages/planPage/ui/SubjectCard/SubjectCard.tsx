@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useState} from 'react';
+import React, {forwardRef, memo, useEffect, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
@@ -67,6 +67,10 @@ export const SubjectCardMemo =
         } = usePlan();
 
         const [newName, setNewName] = useState(name);
+
+        useEffect(() => {
+            setNewName(name)
+        }, [name])
 
         const {expandSubject, deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
         
@@ -151,14 +155,14 @@ export const SubjectCardMemo =
                             displaySettings.credits &&
                             <CreditsSelector
                                 credits={credit}
-                                onChange={(value) => updateSubject(id, "credits", value)}
+                                onChange={(value) => updateSubject(id, "credit", value)}
                             />
                         }
                         {
                             displaySettings.attestation &&
                             <AttestationTypeSelector
                                 attestation={attestations}
-                                onChange={(value) => updateSubject(id, "attestation", value)}
+                                onChange={(value) => updateSubject(id, "attestations", value)}
                             />
                         }
                         {
@@ -281,13 +285,17 @@ export const SubjectCardMemo =
                             isEditMode={true}
                             academicHours={academicActivityHours}
                             onChange={(activityId, value) => updateSubject(id, "academicHours", {id: activityId, value})}
-                            onAdd={(activityId) => updateSubject(id, "academicHours", activityId)}
+                            onAdd={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: undefined})}
                             onRemove={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: -1})}
                         />
                     }
                     {
                         displaySettings.competencies &&
-                        <CompetenceSelector subjectId={id} competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}/>
+                        <CompetenceSelector
+                            subjectId={id}
+                            competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
+                            onChange={(competenceIds) => updateSubject(id, "competenceIds", competenceIds)}
+                        />
                     }
                 </div>
             </li>

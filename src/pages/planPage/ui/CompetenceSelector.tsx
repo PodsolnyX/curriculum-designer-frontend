@@ -6,25 +6,22 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
 import {useParams} from "react-router-dom";
 import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
-import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 interface CompetenceSelectorProps {
     subjectId?: string | number;
     competencies: number[];
+    onChange?: (competenceIds: number[]) => void;
     size?: "small" | "large";
 }
 
-const CompetenceSelector = ({competencies = [], size = "small", subjectId}: CompetenceSelectorProps) => {
+const CompetenceSelector = ({competencies = [], size = "small", subjectId, onChange}: CompetenceSelectorProps) => {
 
     const { selectedCompetenceId, onSelectCompetence, settings, competences } = usePlan();
-    const {editIndicator, editCompetence} = useEditSubject(subjectId || "");
 
     const {competenceDistributionType} = settings;
 
-    const onRemoveIndicator = (id: number) => {
-        // competenceDistributionType === CompetenceDistributionType.CompetenceIndicator ?
-        // editIndicator(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
-        //     : editCompetence(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
+    const onRemoveCompetence = (id: number) => {
+        onChange?.(competencies.filter(competence => competence !== id))
     }
 
     return (
@@ -52,7 +49,7 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId}: Comp
                                 <span
                                     onClick={(event) => {
                                         event.stopPropagation();
-                                        onRemoveIndicator(competence)
+                                        onRemoveCompetence(competence)
                                     }}
                                     className={"text-[12px] cursor-pointer text-stone-300 hover:text-stone-500 hidden group-hover/item:flex"}
                                 >×</span>
@@ -62,7 +59,7 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId}: Comp
                     }
                     ) : <span className={`${size === "small" ? "text-[10px]" : "text-[12px]"} text-stone-400`}>Нет компетенций</span>
             }
-            <Popover content={AddCompetencePopover({subjectId, competencies, competenceDistributionType})} trigger={"click"} placement={"bottom"}>
+            <Popover content={AddCompetencePopover({subjectId, competencies, competenceDistributionType, onChange})} trigger={"click"} placement={"bottom"}>
                 <Tag color={"default"} className={"m-0 group-hover:opacity-100 opacity-0 cursor-pointer px-5 text-center text-stone-400 hover:text-black"} bordered={size !== "small"}>+</Tag>
             </Popover>
         </div>
@@ -73,9 +70,10 @@ interface AddCompetencePopoverProps {
     subjectId?: string | number;
     competencies: number[];
     competenceDistributionType: CompetenceDistributionType;
+    onChange?: (competenceIds: number[]) => void;
 }
 
-const AddCompetencePopover = ({subjectId, competencies, competenceDistributionType}: AddCompetencePopoverProps) => {
+const AddCompetencePopover = ({subjectId, competencies, competenceDistributionType, onChange}: AddCompetencePopoverProps) => {
 
     const {id} = useParams<{ id: string }>();
     const {data} = useGetCompetencesQuery({curriculumId: Number(id)});
@@ -111,7 +109,14 @@ const AddCompetencePopover = ({subjectId, competencies, competenceDistributionTy
             <div className={"flex flex-col max-h-[300px] overflow-y-auto scrollbar"}>
                 {
                     selectedCompetence.length ? selectedCompetence.map(competence =>
-                        <CompetenceItem competenceDistributionType={competenceDistributionType} key={competence.id} {...competence} subjectId={subjectId} competencies={competencies}/>
+                        <CompetenceItem
+                            competenceDistributionType={competenceDistributionType}
+                            key={competence.id}
+                            {...competence}
+                            subjectId={subjectId}
+                            competencies={competencies}
+                            onChange={onChange}
+                        />
                     ) : <span className={"text-stone-400 text-sm pt-2"}>Компетенций не найдено</span>
                 }
             </div>
@@ -123,38 +128,17 @@ interface CompetenceItemProps extends CompetenceDto {
     subjectId?: string | number;
     competencies: number[];
     competenceDistributionType: CompetenceDistributionType;
+    onChange?: (competenceIds: number[]) => void;
 }
 
-const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, competenceDistributionType}: CompetenceItemProps) => {
+const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, competenceDistributionType, onChange}: CompetenceItemProps) => {
 
     const [showIndicators, setShowIndicators] = useState(false);
 
-    const {editIndicator, editCompetence} = useEditSubject(subjectId || "");
-
-    const onSelectIndicator = (id: number, remove?: boolean) => {
-        editIndicator(
-            remove
-                ? competencies.filter(competence => competence !== id)
-                : [...competencies.map(competence => competence), id]
-        )
-    }
-
     const onSelectCompetence = (id: number, remove?: boolean) => {
-        editCompetence(
-            remove
-                ? competencies.filter(competence => competence !== id)
-                : [...competencies.map(competence => competence), id]
-        )
-    }
-
-    const onSelectAllIndicators = (remove?: boolean) => {
-        editIndicator(
-            remove
-                ? competencies
-                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence))
-                : competencies
-                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence))
-        )
+        onChange?.(remove
+            ? competencies.filter(competence => competence !== id)
+            : [...competencies.map(competence => competence), id])
     }
 
     const countSelectedIndicators = indicators
@@ -196,7 +180,7 @@ const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, c
                                         <Checkbox
                                             disabled={competenceDistributionType === CompetenceDistributionType.Competence}
                                             checked={!!competencies.find(competence => competence === indicator.id)}
-                                            onChange={() => onSelectIndicator(indicator.id, !!competencies.find(competence => competence === indicator.id))}
+                                            onChange={() => onSelectCompetence(indicator.id, !!competencies.find(competence => competence === indicator.id))}
                                         />
                                         <span className={"text-[12px] text-black"}>
                                             {indicator.index}

@@ -35,14 +35,14 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
 
     const {academicActivity} = usePlan();
 
-    const sumAcademicHours = roundToTwo(academicHours.reduce((_sum, type) => _sum + type.value, 0));
+    const sumAcademicHours = roundToTwo(academicHours.reduce((_sum, type) => _sum + type.value, 0)) - credits * 36;
 
     const textSize = size === "small" ? "text-[10px]" : "text-[12px]";
-    const isFullHours = sumAcademicHours === credits * 36;
+    const isFullHours = sumAcademicHours === credits  * 36;
     const isMoreHours = sumAcademicHours > credits * 36;
 
     return (
-        <div className={layout === "vertical" ? "flex flex-col gap-1 group/panel" : "flex items-center flex-row-reverse gap-1"}
+        <div className={layout === "vertical" ? "flex flex-col gap-1 group/panel relative" : "flex items-center relative flex-row-reverse gap-1"}
              onClick={(event) => event.stopPropagation()}>
             <div className={layout === "vertical" ? "grid grid-cols-2 gap-1" : "flex gap-1"}>
                 {
@@ -118,7 +118,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                         />
                     }
                 >
-                    <div className={`hidden group-hover/panel:flex ${textSize} text-center justify-center hover:bg-stone-200/[.5] rounded py-0.5`}>
+                    <div className={`z-10 absolute bottom-0 hidden group-hover/panel:flex ${textSize} text-center justify-center bg-stone-200/[.7] hover:bg-stone-200/[.9] rounded p-0.5 px-3`}>
                         Добавить активность +
                     </div>
                 </Popover>

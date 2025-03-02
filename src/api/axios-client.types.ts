@@ -132,6 +132,7 @@ export function prepareSerializeAttestationDto(_data: AttestationDto): Attestati
 export interface HoursDistributionDto  {
   academicActivity: AcademicActivityDto;
   value: number;
+  isCalculated: boolean;
 }
 export function deserializeHoursDistributionDto(json: string): HoursDistributionDto {
   const data = JSON.parse(json) as HoursDistributionDto;
@@ -159,6 +160,8 @@ export interface AcademicActivityDto  {
   id: number;
   name: string;
   shortName: string;
+  formula?: string | null;
+  formulaName?: string;
 }
 export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
   const data = JSON.parse(json) as AcademicActivityDto;
@@ -177,6 +180,11 @@ export function serializeAcademicActivityDto(_data: AcademicActivityDto | undefi
 export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto): AcademicActivityDto {
   const data: Record<string, any> = { ..._data };
   return data as AcademicActivityDto;
+}
+export enum TableType {
+    Summary = "Summary",
+    Competences = "Competences",
+    CompetenceDistribution = "CompetenceDistribution",
 }
 export interface CreateCurriculumDto  {
   name: string;
@@ -965,6 +973,8 @@ export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAt
 export interface CreateAcademicActivityDto  {
   name: string;
   shortName: string;
+  formula?: string | null;
+  formulaName?: string | null;
 }
 export function deserializeCreateAcademicActivityDto(json: string): CreateAcademicActivityDto {
   const data = JSON.parse(json) as CreateAcademicActivityDto;

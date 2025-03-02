@@ -73,7 +73,6 @@ const PlanPageWrapped = () => {
                             <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
                                 <div className={`flex flex-col pb-10 w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                     {
-                                        // !loadingPlan &&
                                         semesters.map(semester =>
                                             <SemesterField {...semester} key={semester.id}
                                                            subjectsContainerWidth={subjectsContainerWidth}
@@ -88,7 +87,6 @@ const PlanPageWrapped = () => {
                                     style={{left: `${subjectsContainerWidth + 0.2}%`, width: `${100 - subjectsContainerWidth - 0.2}%`}}
                                 >
                                     {
-                                        !loadingPlan &&
                                         modulesList
                                             .sort((a, b) => a.semesters[0].semester.number - b.semesters[0].semester.number)
                                             .map((module, index) => <ModuleArea {...module} key={module.id}/>)

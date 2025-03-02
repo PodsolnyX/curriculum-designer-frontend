@@ -11,7 +11,7 @@ import {
     commonSubjectParamKeys,
     Subject,
     SubjectCompetence,
-    SubjectUpdateParams
+    AtomUpdateParams,
 } from "@/pages/planPage/types/Subject.ts";
 import {
     AcademicActivityDto,
@@ -51,7 +51,9 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setCredits,
         editAttestation,
         editAcademicHours,
-        deleteAcademicHours
+        deleteAcademicHours,
+        editIndicator,
+        editCompetence
     } = useEditSubjectWithParams();
 
     const {
@@ -83,19 +85,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     useEffect(() => {
         if (curriculumData?.semesters.length) {
             setSemesters(curriculumData.semesters)
-            // setSemesters(parseCurriculum({
-            //     semesters: curriculumData.semesters,
-            //     atoms: atomsData,
-            //     modules: modulesData,
-            //     competences: competences
-            // }))
         }
     }, [curriculumData])
 
     useEffect(() => {
         if (atomsData) setAtomsList(atomsData)
+    }, [atomsData])
+
+    useEffect(() => {
         if (modulesData) setModulesList(modulesData)
-    }, [modulesData, atomsData])
+    }, [modulesData])
 
     useEffect(() => {
         if (curriculumData && (competencesData || competenceIndicatorsData)) {
@@ -127,7 +126,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         return atomsList.find(atom => atom.id === atomId)
     }, [atomsList])
 
-    const onSelectSubject = (id: string | null) => {
+    const onSelectAtom = (id: string | null) => {
 
         if ((id === null) || (id === selectedAtom)) {
             setSelectedAtom(null);
@@ -177,77 +176,90 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     // Обновляет состояние предмета в локальном состоянии плана
 
-    function updateSubject(
-        id: UniqueIdentifier,
-        paramKey: keyof SubjectUpdateParams,
-        param: SubjectUpdateParams[typeof paramKey]
+    function updateAtom(
+        id: string,
+        paramKey: keyof AtomUpdateParams,
+        param: AtomUpdateParams[typeof paramKey]
     ) {
-        const parentsIdsActive = splitIds(id as string);
-        const updateSemesters = structuredClone(semesters);
 
-        const getLocalParams = (subject: Subject) => {
-            if (paramKey === "attestation") {
-                return (param as number[]).map(item =>
-                    attestationTypesData ? attestationTypesData.find(type => type.id === item) : { id: item }
-                );
+        const atomId = Number(getIdFromPrefix(id));
+        const semesterId = Number(getSemesterIdFromPrefix(id));
+
+        const getAtomWithUpdatedParam = (atom: AtomDto): AtomDto => {
+            const atomUpdated = structuredClone(atom);
+            if (["name", "type", "isRequired"].includes(paramKey)) {
+                atomUpdated[paramKey] = param as AtomUpdateParams[typeof AtomUpdateCommonParam];
             }
-            if (paramKey === "academicHours") {
-                if (param?.id && param.value === -1) {
-                    return subject.academicHours ? subject.academicHours?.filter(hour => hour.academicActivity.id !== param.id) : [];
-                }
-                if (param?.id && param?.value) {
-                    return subject.academicHours?.map(hour =>
-                        hour.academicActivity.id === param.id ? { ...hour, value: param.value } : hour
+            else if (paramKey === "competenceIds" && curriculumData) {
+                curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence
+                    ? atomUpdated.competenceIds = param as number[]
+                    : atomUpdated.competenceIndicatorIds = param as number[]
+            }
+            else {
+                const semester = atomUpdated.semesters.find(semester => semester.semester.id === semesterId);
+                if (paramKey === "credit") semester.credit = param as number;
+                else if (paramKey === "attestations") {
+                    semester.attestations = (param as number[]).map(item =>
+                        attestationTypesData
+                            ? attestationTypesData.find(type => type.id === item)
+                            : { id: item, name: "", shortName: "" }
                     );
                 }
-                return [
-                    ...(subject.academicHours || []),
-                    {
-                        academicActivity: academicActivityData ? academicActivityData.find(activity => activity.id === param) : { id: param },
-                        value: 0
+                else if (paramKey === "academicHours") {
+                    param = param as {id: number, value: number | undefined};
+                    if (param.id && param.value === -1) {
+                        semester.academicActivityHours = semester.academicActivityHours.filter(hour => hour.academicActivity.id !== param.id);
                     }
-                ];
+                    else if (param.id && param.value) {
+                        semester.academicActivityHours = semester.academicActivityHours.map(hour => hour.academicActivity.id === param.id ? { ...hour, value: param?.value || 0 } : hour);
+                    }
+                    else {
+                        const activity = academicActivityData ? academicActivityData.find(activity => activity.id === param.id) : undefined;
+                        if (activity) {
+                            semester.academicActivityHours.push({
+                                academicActivity: activity,
+                                value: 0,
+                                isCalculated: false
+                            });
+                        }
+                    }
+                }
             }
-            return param;
+            return atomUpdated;
         };
 
-        const findSubjectAndUpdate = (item: any, currentDeep: number) => {
-            const type = getPrefixFromId(parentsIdsActive[currentDeep]);
-            if (type === "subjects") {
-                item.subjects = item.subjects.map((subject: Subject) =>
-                    subject.id !== id ? subject : { ...subject, [paramKey]: getLocalParams(subject) }
-                );
-            } else {
-                const subItem = item[type].find((_item: any) => _item.id === parentsIdsActive[currentDeep]);
-                if (subItem) findSubjectAndUpdate(subItem, currentDeep + 1);
-            }
-        };
+        setAtomsList(prev => prev.map(atom => atomId === atom.id
+            ? {...getAtomWithUpdatedParam(atom)} : atom
+        ))
 
-        findSubjectAndUpdate({ semesters: updateSemesters }, 0);
-        setSemesters(structuredClone(updateSemesters));
-
-        const requestIds = {
-            atomId: Number(getIdFromPrefix(id as string)),
-            semesterId: Number(getIdFromPrefix(parentsIdsActive[0]))
-        };
+        const requestIds = {atomId, semesterId};
 
         const handlers: Record<string, () => void> = {
-            credits: () => setCredits({ ...requestIds, dto: { credit: param as number } }),
-            attestation: () => editAttestation({ ...requestIds, attestationIds: param as number[] }),
+            credit: () => setCredits({ ...requestIds, dto: { credit: param as number } }),
+            attestations: () => editAttestation({ ...requestIds, attestationIds: param as number[] }),
             academicHours: () => {
-                if (param?.id && param?.value === -1) {
+                param = param as {id: number, value: number | undefined};
+                if (param.id && param.value === -1) {
                     deleteAcademicHours({
                         ...requestIds,
-                        academicActivityId: param.id as number,
+                        academicActivityId: param.id,
                         curriculumId
                     });
                 } else {
                     editAcademicHours({
                         ...requestIds,
-                        academicActivityId: (param?.id as number) ?? (param as number),
+                        academicActivityId: param.id,
                         curriculumId,
                         createHoursDistribution: { value: param?.value ?? 0 }
                     });
+                }
+            },
+            competenceIds: () => {
+                if (curriculumData) {
+                    if (curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence)
+                        editCompetence({...requestIds, setAtomCompetencesDto: {competenceIds: param as number[]}})
+                    else
+                        editIndicator({...requestIds, setAtomCompetenceIndicatorsDto: {competenceIndicatorIds: param as number[]}})
                 }
             }
         };
@@ -485,14 +497,14 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         settings: curriculumData?.settings || {competenceDistributionType: CompetenceDistributionType.Competence},
         onSelectCompetence,
         getAtom,
-        onSelectSubject,
+        onSelectSubject: onSelectAtom,
         setToolsOptions,
         setActiveSubject: setSelectedAtom,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
         handleDragCancel,
-        updateSubject,
+        updateSubject: updateAtom,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -553,7 +565,7 @@ interface PlanContextValue {
 
     onSelectPreDisplaySetting(key: string): void;
 
-    updateSubject<T extends keyof SubjectUpdateParams>(id: UniqueIdentifier, paramKey: T, param: SubjectUpdateParams[T]): void;
+    updateSubject<T extends keyof AtomUpdateParams>(id: UniqueIdentifier, paramKey: T, param: AtomUpdateParams[T]): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
@@ -598,5 +610,5 @@ const PlanContext = createContext<PlanContextValue>({
     },
     onSelectPreDisplaySetting: (_key: string) => {
     },
-    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: SubjectUpdateParams) => {}
+    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: AtomUpdateParams) => {}
 })

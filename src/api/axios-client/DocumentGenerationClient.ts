@@ -71,11 +71,15 @@ function processGeneratePdf(response: AxiosResponse): Promise<Types.FileResponse
     return Promise.resolve<Types.FileResponse>(null as any);
 }
 
-export function generateExcel(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel";
+export function generateExcel(curriculumId: number, tableType?: Types.TableType | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+    if (tableType === null)
+        throw new Error("The parameter 'tableType' cannot be null.");
+    else if (tableType !== undefined)
+        url_ += "tableType=" + encodeURIComponent("" + tableType) + "&";
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
@@ -129,11 +133,15 @@ function processGenerateExcel(response: AxiosResponse): Promise<Types.FileRespon
     return Promise.resolve<Types.FileResponse>(null as any);
 }
 
-export function generateTxt(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt";
+export function generateTxt(curriculumId: number, tableType?: Types.TableType | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+    if (tableType === null)
+        throw new Error("The parameter 'tableType' cannot be null.");
+    else if (tableType !== undefined)
+        url_ += "tableType=" + encodeURIComponent("" + tableType) + "&";
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {

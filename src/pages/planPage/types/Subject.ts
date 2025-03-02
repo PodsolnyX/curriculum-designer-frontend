@@ -30,13 +30,14 @@ export interface SubjectCompetence {
     description: string;
 }
 
-export interface SubjectUpdateParams {
+export interface AtomUpdateParams {
     name?: string,
     type?: AtomType,
     isRequired?: boolean,
-    credits?: number;
-    attestation?: number[];
-    academicHours?: {id: number, value: number} | number; // id of academic activity or id of new activity. If value is -1 then activity will be deleted
+    credit?: number;
+    attestations?: number[];
+    academicHours?: {id: number, value: number | undefined}; // id of academic activity or id of new activity. If value is -1 then activity will be deleted
+    competenceIds?: number[];
 }
 
 export const commonSubjectParamKeys = Object.keys({
@@ -47,6 +48,15 @@ export const commonSubjectParamKeys = Object.keys({
     type: null,
     semesterIds: null
 }) as Array<keyof UpdateAtomDto>;
+
+// export const commonSubjectParamKeys = Object.keys({
+//     parentModuleId: null,
+//     name: null,
+//     isRequired: null,
+//     order: null,
+//     type: null,
+//     semesterIds: null
+// }) as Array<keyof UpdateAtomDto>;
 
 export interface SubjectComment {
     id: string;

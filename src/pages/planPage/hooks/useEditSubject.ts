@@ -9,8 +9,8 @@ import {App} from "antd";
 import {getSemestersQueryKey} from "@/api/axios-client/SemestersQuery.ts";
 import {getModulesByCurriculumQueryKey} from "@/api/axios-client/ModuleQuery.ts";
 import {
-    useSetAtomCompetenceIndicatorsMutation,
-    useSetAtomCompetencesMutation
+    useSetAtomCompetenceIndicatorsMutation, useSetAtomCompetenceIndicatorsMutationWithParameters,
+    useSetAtomCompetencesMutation, useSetAtomCompetencesMutationWithParameters
 } from "@/api/axios-client/AtomCompetenceQuery.ts";
 import {useSetAttestationMutation} from "@/api/axios-client/AttestationQuery.ts";
 import {
@@ -120,7 +120,6 @@ export const useEditSubjectWithParams = () => {
 
     const { mutate: editInfoMutate } = useUpdateAtomMutationWithParameters({
         onSuccess: () => {
-            // queryClient.invalidateQueries({queryKey: getSemestersQueryKey(Number(curriculumId))});
             message.success("Предмет успешно обновлен")
         }
     });
@@ -153,11 +152,25 @@ export const useEditSubjectWithParams = () => {
         }
     });
 
+    const { mutate: editIndicator } = useSetAtomCompetenceIndicatorsMutationWithParameters( {
+        onSuccess: () => {
+            message.success("Индикаторы успешно обновлены")
+        }
+    });
+
+    const { mutate: editCompetence } = useSetAtomCompetencesMutationWithParameters( {
+        onSuccess: () => {
+            message.success("Компетенции успешно обновлены")
+        }
+    });
+
     return {
         editInfo: (data: EditSubjectWithParams__MutationParameters) => editInfoMutate({updateAtomDto: data.data, atomId: Number(data.subjectId)}),
         setCredits,
         editAttestation,
         editAcademicHours,
-        deleteAcademicHours
+        deleteAcademicHours,
+        editIndicator,
+        editCompetence
     }
 }
