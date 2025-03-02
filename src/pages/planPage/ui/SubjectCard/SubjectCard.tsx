@@ -1,8 +1,7 @@
-import React, {forwardRef, memo, useRef, useState} from 'react';
+import React, {forwardRef, memo, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
-import {Subject} from "@/pages/planPage/types/Subject.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
 import OptionIcon from "@/shared/assets/icons/more.svg?react";
@@ -18,21 +17,23 @@ import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/planPage/ui/CommentsPopover.tsx";
-import {AtomType} from "@/api/axios-client.ts";
+import {AtomDto, AtomType} from "@/api/axios-client.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
-import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
 export enum Position {
     Before = -1,
     After = 1,
 }
 
-export interface SubjectCardProps extends Subject {
+export interface SubjectCardProps extends Omit<AtomDto, "id"> {
+    id: string;
     active?: boolean;
     clone?: boolean;
     credits?: number;
+    isSelected?: boolean;
     insertPosition?: Position;
     isReplaceMode?: boolean;
 }
@@ -41,46 +42,52 @@ export const SubjectCardMemo =
     forwardRef<HTMLLIElement, SubjectCardProps>((props, ref) => {
         const {
             id,
+            index,
+            name,
+            isRequired,
+            type,
+            semesters,
+            department,
+            competenceIds,
+            competenceIndicatorIds,
+
             active,
+            isSelected,
             clone,
             insertPosition,
             parentModuleId,
-            name = "",
-            index = "Без индекса",
-            department,
-            semesterOrder,
-            isRequired = false,
-            type = AtomType.Subject,
-            academicHours = [],
-            credits = 0,
-            competencies = [],
-            attestation = [],
-            notes = [],
-            semesterId = "",
-            semestersIds= [],
-            neighboringSemesters,
             isReplaceMode,
             ...rest
         } = props;
 
         const {
             displaySettings,
-            selectedSubject,
             updateSubject,
             onSelectSubject
         } = usePlan();
 
-        const refScroll = useRef<HTMLDivElement | null>(null);
-        const [newName, setNewName] = useState(props.name);
+        const [newName, setNewName] = useState(name);
 
-        const {expandSubject, deleteSubject} = useEditSubject(id);
+        const {expandSubject, deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
         
-        const onExtendSemester = (key: "prev" | "next") => {
-            expandSubject({
-                atomId: Number(getIdFromPrefix(id as string)),
-                semesterId: key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0,
-            })
+        // const onExtendSemester = (key: "prev" | "next") => {
+        //     expandSubject({
+        //         atomId: Number(getIdFromPrefix(id as string)),
+        //         semesterId: key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0,
+        //     })
+        // }
+
+        if (!semesters?.find(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id)))) {
+            return null;
         }
+
+        const {
+            credit,
+            attestations,
+            academicActivityHours
+        } = semesters.find(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id)));
+
+        const semesterOrder = semesters.length === 1 ? null : semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1;
 
         return (
             <li
@@ -94,12 +101,10 @@ export const SubjectCardMemo =
                 )}
                 {...rest}
                 ref={ref}
-                onClick={() => !isReplaceMode && onSelectSubject(props.id as string, props.semesterOrder)}
+                onClick={() => !isReplaceMode && onSelectSubject(id)}
             >
                 <div
-
-                    ref={refScroll}
-                    className={classNames(cls.subjectCard, cls[type], String(selectedSubject?.atom.id) === String(getIdFromPrefix(props.id as string)) && cls.selected)}>
+                    className={classNames(cls.subjectCard, cls[type], isSelected && cls.selected)}>
                     {
                         displaySettings.required &&
                         <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
@@ -145,14 +150,14 @@ export const SubjectCardMemo =
                         {
                             displaySettings.credits &&
                             <CreditsSelector
-                                credits={credits}
+                                credits={credit}
                                 onChange={(value) => updateSubject(id, "credits", value)}
                             />
                         }
                         {
                             displaySettings.attestation &&
                             <AttestationTypeSelector
-                                attestation={attestation}
+                                attestation={attestations}
                                 onChange={(value) => updateSubject(id, "attestation", value)}
                             />
                         }
@@ -164,14 +169,14 @@ export const SubjectCardMemo =
                         }
                         {
                             displaySettings.notesNumber &&
-                            <CommentsPopover comments={notes}>
+                            <CommentsPopover comments={[]}>
                                 <div
-                                    className={classNames(cls.notesIcon, notes.length && cls.notesIcon_selected)}
+                                    className={classNames(cls.notesIcon, [].length && cls.notesIcon_selected)}
                                     onClick={(event) => event.stopPropagation()}
                                 >
                                     <Icon component={CommentIcon}/>
                                     <span
-                                        className={"text-[10px] text-stone-400"}>{notes.length ? notes.length : "+"}</span>
+                                        className={"text-[10px] text-stone-400"}>{[].length ? [].length : "+"}</span>
                                 </div>
                             </CommentsPopover>
                         }
@@ -225,8 +230,8 @@ export const SubjectCardMemo =
                                                                     type={"text"}
                                                                     icon={item.icon}
                                                                     className={"w-full justify-start"}
-                                                                    onClick={() => onExtendSemester(item.key)}
-                                                                    disabled={item.key === "prev" && (!neighboringSemesters.prev || semestersIds.includes(neighboringSemesters.prev)) || item.key === "next" && (!neighboringSemesters.next || semestersIds.includes(neighboringSemesters.next))}
+                                                                    // onClick={() => onExtendSemester(item.key)}
+                                                                    // disabled={item.key === "prev" && (!neighboringSemesters.prev || semestersIds.includes(neighboringSemesters.prev)) || item.key === "next" && (!neighboringSemesters.next || semestersIds.includes(neighboringSemesters.next))}
                                                                 >{item.label}</Button>
                                                             </li>
                                                         }
@@ -272,9 +277,9 @@ export const SubjectCardMemo =
                     {
                         displaySettings.academicHours &&
                         <AcademicHoursPanel
-                            credits={credits}
+                            credits={credit}
                             isEditMode={true}
-                            academicHours={academicHours}
+                            academicHours={academicActivityHours}
                             onChange={(activityId, value) => updateSubject(id, "academicHours", {id: activityId, value})}
                             onAdd={(activityId) => updateSubject(id, "academicHours", activityId)}
                             onRemove={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: -1})}
@@ -282,7 +287,7 @@ export const SubjectCardMemo =
                     }
                     {
                         displaySettings.competencies &&
-                        <CompetenceSelector subjectId={id} competencies={competencies}/>
+                        <CompetenceSelector subjectId={id} competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}/>
                     }
                 </div>
             </li>

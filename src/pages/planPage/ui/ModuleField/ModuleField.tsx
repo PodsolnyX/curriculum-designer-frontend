@@ -8,8 +8,7 @@ import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/typ
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {App, Typography} from "antd";
-import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
-import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
+import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
 interface ModuleFieldProps extends Module {
     columnIndex: number;

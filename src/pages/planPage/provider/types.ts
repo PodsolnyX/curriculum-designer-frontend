@@ -1,4 +1,3 @@
-import {UniqueIdentifier} from "@dnd-kit/core";
 
 export type PrefixItemId = "subjects" | "selections" | "semesters" | "modules" | "tracks";
 export const PREFIX_ITEM_ID_KEYS = ["subjects", "selections", "semesters", "modules", "tracks"] as const;
@@ -20,26 +19,8 @@ export interface PreDisplaySetting {
     settings: DisplaySettings
 }
 
-export interface ModulePosition {
-    id: string;
-    name: string;
-    columnIndex: number;
-    startSemesterNumber: number;
-    semesters: UniqueIdentifier[];
-}
-
 export type ModuleSemestersPosition = "first" | "middle" | "last" | "single";
 
-export interface ModuleSemestersInfo {
-    position: ModuleSemestersPosition,
-    countSemesters: number
-}
-
-export interface TrackSelectionSemestersInfo {
-    position: ModuleSemestersPosition,
-    semesterNumber: number,
-    countSemesters: number
-}
 
 export type ItemType = typeof PREFIX_ITEM_ID_KEYS[number];
 

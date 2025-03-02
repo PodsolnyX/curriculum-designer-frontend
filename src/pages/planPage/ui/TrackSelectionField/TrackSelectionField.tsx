@@ -1,23 +1,28 @@
-import {TrackSelection} from "@/pages/planPage/types/Semester.ts";
-import TrackField from "@/pages/planPage/ui/TrackField/TrackField.tsx";
 import React from "react";
 import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
-import {Container, usePositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
-import {getModuleRootStyles} from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
+import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
+import {concatIds, cutSemesterIdFromId, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {getModuleAtomsIds, getModuleRootStyles} from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
+import {ModuleDto} from "@/api/axios-client.types.ts";
+import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import {useDroppable} from "@dnd-kit/core";
+import {SortableContext} from "@dnd-kit/sortable";
+import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 
-interface TrackSelectionProps extends TrackSelection {
-    position?: ModuleSemestersPosition;
+interface TrackSelectionProps {
+    id: string;
+    tracks: ModuleDto[];
+    credits: number;
     semesterNumber?: number;
-    semesterId: string;
-    _id: string;
+    semesterId: number;
+    position?: ModuleSemestersPosition;
 }
 
 const TrackSelectionField = (props: TrackSelectionProps) => {
 
     const {
-        _id,
+        id,
         name,
         tracks,
         credits,
@@ -26,30 +31,13 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
         position = "single" as ModuleSemestersPosition,
     } = props;
 
-    // const {contentRef, maxHeight} = usePositionContainer({
-    //     rowId: semesterId,
-    //     containerId: _id,
-    //     countHeights: true,
-    //     countHorizontalCoordinates: true
-    // })
-
-    const {getMaxHeight} = usePositions()
-
-    const getStyle = (height: number): React.CSSProperties => {
-        return position === "single" ? {height: height - 8} : ["first", "last"].includes(position) ? {height: height - 6} : {height}
-    }
-
-    const maxHeight = getMaxHeight(semesterId);
-
-    console.log(maxHeight)
-
     return (
-        <Container
-            id={_id}
-            rowId={semesterId}
+        <PositionContainer
+            id={cutSemesterIdFromId(id)}
+            rowId={setPrefixToId(semesterId, "semesters")}
             countHeights={true}
             countHorizontalCoordinates={true}
-            rootStyles={(height) => getStyle(height)}
+            rootStyles={(height) => getModuleRootStyles(height, position)}
             rootClassName={`relative px-2 flex`}
             childrenClassName={"flex flex-1 flex-col min-h-max"}
         >
@@ -76,16 +64,78 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                          gridTemplateColumns: `repeat(${tracks.length}, 1fr)`,
                         }}>
                     {
-                        tracks.map(track =>
-                            <TrackField key={track.id} height={maxHeight} {...track} position={position}/>
-                        )
+                        tracks.map((track, index) => {
+
+                            const colors = ["#25b600", "#8019f1", "#e80319", "#f56b0a"];
+
+                            return (
+                                <TrackField
+                                    key={track.id}
+                                    id={concatIds(id, setPrefixToId(track.id, "modules"))}
+                                    name={track.name}
+                                    atomsIds={getModuleAtomsIds(track.atoms, semesterId, concatIds(id, setPrefixToId(track.id, "modules")))}
+                                    color={colors[index]}
+                                    position={position}
+                                />
+                            )
+                        })
                     }
                 </div>
-
             </div>
+        </PositionContainer>
+    )
+}
 
+interface TrackFieldProps {
+    id: string;
+    name: string;
+    atomsIds: string[];
+    color: string;
+    position?: ModuleSemestersPosition;
+}
 
-        </Container>
+const TrackField = (props: TrackFieldProps) => {
+
+    const {id, name, color, position = "single", atomsIds} = props;
+
+    const { overItemId } = usePlan();
+
+    const { setNodeRef } = useDroppable({
+        id
+    });
+
+    const styles: Record<ModuleSemestersPosition, string> = {
+        "single": `border-2 rounded-lg`,
+        "first": `border-2 rounded-t-lg`,
+        "middle": `border-x-2 border-b-2`,
+        "last": `border-x-2 border-b-2 rounded-b-lg`
+    }
+
+    return (
+        <div
+            className={`${styles[position]} border-dotted h-full pb-2 px-3 ${overItemId === id ? "border-blue-300" : ""}`}
+            ref={setNodeRef}
+            style={{
+                backgroundColor: `${color}20`,
+                borderColor: color
+            }}
+        >
+            <div className={"flex flex-col"}>
+                {
+                    (position === "first" || position === "single") ?
+                        <div className={"flex justify-center py-2 max-w-[200px]"}>
+                            <span className={"font-bold text-center overflow-hidden text-nowrap text-ellipsis"} style={{color}}>
+                                {name}
+                            </span>
+                        </div> : null
+                }
+                <div className={`grid grid-cols-1 gap-3 items-center pt-14`}>
+                    <SortableContext items={atomsIds} id={id}>
+                        { atomsIds.map(atom => <SortableSubjectCard key={atom} id={atom}/>) }
+                    </SortableContext>
+                </div>
+            </div>
+        </div>
     )
 }
 

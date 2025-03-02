@@ -120,8 +120,6 @@ export const PositionsProvider: React.FC<{ children: ReactNode }> = ({ children 
         getHorizontalCoordinate
     };
 
-    console.log(heights)
-
     return (
         <PositionsContext.Provider value={value}>
             {children}
@@ -142,50 +140,8 @@ interface ContainerProps {
     childrenClassName?: string;
 }
 
-interface usePositionContainerOptions {
-    rowId: string;
-    containerId: string;
-    countHorizontalCoordinates?: boolean;
-    countHeights?: boolean;
-}
 
-export function usePositionContainer(options: usePositionContainerOptions) {
-
-    const {
-        rowId,
-        containerId,
-        countHorizontalCoordinates,
-        countHeights
-    } = options;
-
-    const contentRef = useRef<HTMLDivElement | null>(null);
-    const { updateHeight, getMaxHeight, updateHorizontalCoordinate } = usePositions();
-    const maxHeight = getMaxHeight(rowId);
-
-    useEffect(() => {
-        const element = contentRef.current;
-        if (!element) return;
-
-        const resizeObserver = new ResizeObserver(([entry]) => {
-            if (entry) {
-                const height = entry.contentRect.height;
-                console.log(rowId, containerId)
-                countHeights && updateHeight(rowId, containerId, height);
-                countHorizontalCoordinates && updateHorizontalCoordinate(rowId, containerId, entry.contentRect.width);
-            }
-        });
-
-        resizeObserver.observe(element);
-        return () => resizeObserver.disconnect();
-    }, [rowId, containerId, updateHeight, updateHorizontalCoordinate]);
-
-    return {
-        contentRef,
-        maxHeight
-    }
-}
-
-export const Container= (props: ContainerProps) => {
+export const PositionContainer = (props: ContainerProps) => {
     const {
         rowId,
         id,

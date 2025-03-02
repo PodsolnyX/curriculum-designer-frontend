@@ -5,7 +5,7 @@ import {Selection} from "@/pages/planPage/types/Semester.ts";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import {useCreateUpdateSelectionMutation} from "@/api/axios-client/SelectionQuery.ts";
 

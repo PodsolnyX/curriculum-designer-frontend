@@ -4,20 +4,18 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {App, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {
-    concatIds,
+    concatIds, cutSemesterIdFromId,
     getIdFromPrefix,
-    parseTrackSelection,
     setPrefixToId
-} from "@/pages/planPage/provider/parseCurriculum.ts";
+} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {useDroppable} from "@dnd-kit/core";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import {Container, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
+import {PositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 
-interface ModuleAreaProps extends ModuleDto {
-}
+interface ModuleAreaProps extends ModuleDto {}
 
 const ModuleArea = (props: ModuleAreaProps) => {
 
@@ -31,7 +29,6 @@ const ModuleArea = (props: ModuleAreaProps) => {
     } = props;
 
     const {getTopCoordinate, getHorizontalCoordinate} = usePositions();
-    const {competences} = usePlan();
 
     const gridColumnsCount = useMemo(() => {
         const averageAtomsCount = atoms.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
@@ -42,6 +39,8 @@ const ModuleArea = (props: ModuleAreaProps) => {
         setPrefixToId(semesters?.[0]?.semester.id || "", "semesters"),
         setPrefixToId(id, "modules")
     ) || 0;
+
+    const getModuleId = (id: number, semesterId: number) => concatIds(setPrefixToId(semesterId, "semesters"), setPrefixToId(id, "modules"));
 
     return (
         <div
@@ -56,36 +55,42 @@ const ModuleArea = (props: ModuleAreaProps) => {
             {
                 semesters
                     .sort((a, b) => a.semester.number - b.semester.number)
-                    .map((semester, index) =>
-                        modules.length ?
-                            <TrackSelectionField
-                                _id={setPrefixToId(id, "modules")}
-                                key={semester.semester.id}
-                                semesterNumber={semester.semester.number}
-                                semesterId={setPrefixToId(semester.semester.id, "semesters")}
-                                position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
-                                {...parseTrackSelection(props, {semester: semester.semester, competences, parentId: ""})}
-                            />
-                        : <ModuleField
-                            key={semester.semester.id}
-                            id={id}
-                            gridColumnsCount={gridColumnsCount}
-                            name={name}
-                            semester={semester}
-                            selection={selection}
-                            position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
-                            atoms={atoms.filter(atom => atom.semesters.some(semester => semester.semester.id === semester.semester.id))}
-                        />
-                    )
+                    .map((semester, index) => {
+
+                        const moduleId = getModuleId(id, semester.semester.id);
+
+                        return (
+                            (selection && modules.length) ?
+                                <TrackSelectionField
+                                    id={moduleId}
+                                    key={semester.semester.id}
+                                    semesterNumber={index + 1}
+                                    credits={selection.semesters[index].credit || 0}
+                                    semesterId={semester.semester.id}
+                                    tracks={modules}
+                                    position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
+                                />
+                                : <ModuleField
+                                    key={semester.semester.id}
+                                    id={moduleId}
+                                    gridColumnsCount={gridColumnsCount}
+                                    name={name}
+                                    semester={semester}
+                                    selection={selection}
+                                    position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
+                                    atomsIds={getModuleAtomsIds(atoms, semester.semester.id, moduleId)}
+                                />
+                        )
+                    })
             }
         </div>
     )
 }
 
 interface ModuleFieldProps {
-    id: number;
+    id: string;
     name: string;
-    atoms: AtomDto[];
+    atomsIds: string[];
     selection?: SelectionDto | null;
     position: ModuleSemestersPosition;
     semester: RefModuleSemesterDto;
@@ -96,7 +101,7 @@ const ModuleField = memo((props: ModuleFieldProps) => {
 
     const {
         id,
-        atoms,
+        atomsIds,
         name,
         position,
         semester,
@@ -105,7 +110,7 @@ const ModuleField = memo((props: ModuleFieldProps) => {
     } = props;
 
     const rowId = setPrefixToId(semester.semester.id, "semesters");
-    const containerId = setPrefixToId(id, "modules");
+    const containerId = cutSemesterIdFromId(id);
 
     const {overItemId, toolsOptions} = usePlan();
     const {message} = App.useApp();
@@ -125,18 +130,11 @@ const ModuleField = memo((props: ModuleFieldProps) => {
 
     const {onCreate} = useCreateEntity();
 
-    const styles: Record<ModuleSemestersPosition, string> = {
-        "single": ``,
-        "first": `relative after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
-        "middle": `relative after:content-[''] after:w-full after:h-[2px] after:bg-stone-500 after:absolute after:bottom-[-2px] after:left-0`,
-        "last": ``
-    }
-
-    const selectionStyles: Record<ModuleSemestersPosition, string> = {
-        "single": ``,
-        "first": `relative after:content-[''] after:w-full after:h-[2px] after:bg-blue-300 after:absolute after:bottom-[-2px] after:left-0`,
-        "middle": `relative after:content-[''] after:w-full after:h-[2px] after:bg-blue-300 after:absolute after:bottom-[-2px] after:left-0`,
-        "last": ``
+    const getFieldClassName = () => {
+        if (["first", "middle"].includes(position)) {
+            return `relative after:content-[''] after:w-full after:h-[2px] after:absolute after:bottom-[-2px] after:left-0 ${selection ? "after:bg-blue-300" : "after:bg-stone-500"}`
+        }
+        return ""
     }
 
     const onHover = () => {
@@ -163,12 +161,13 @@ const ModuleField = memo((props: ModuleFieldProps) => {
     // }
 
     return (
-        <Container
+        <PositionContainer
             countHorizontalCoordinates={true}
             rowId={rowId}
             id={containerId}
-            rootStyles={(height) => position === "single" ? {height: height - 8} : ["first", "last"].includes(position) ? {height: height - 6} : {height}}
-            rootClassName={`${selection ? selectionStyles[position] : styles[position]} flex w-full flex-col relative border-dashed ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "" : (selection ? "" : "")}`}
+            rootStyles={(height) => getModuleRootStyles(height, position)}
+            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "" : (selection ? "" : "")}`}
+            childrenClassName={"min-h-max"}
         >
             <div
                 onMouseEnter={onHover} onMouseLeave={onLeave}
@@ -188,47 +187,31 @@ const ModuleField = memo((props: ModuleFieldProps) => {
                 }
                 <div className={"grid gap-2 p-2"} style={{gridTemplateColumns: `repeat(${gridColumnsCount}, 1fr)`}}>
                     {
-                        atoms
-                        .filter(atom => atom.semesters
-                            .some(_semester => _semester.semester.id === semester.semester.id)
-                        )
-                        .map(atom =>
-                            <SortableSubjectCard
-                                key={String(atom.id)}
-                                type={atom.type}
-                                neighboringSemesters={{prev: null, next: null}}
-                                id={concatIds(setPrefixToId(semester.semester.id, "semesters"), setPrefixToId(atom.id, "atoms"))}
-                                name={atom.name}
-                                isRequired={atom.isRequired}
-                            />
+                        atomsIds.map(atom =>
+                            <SortableSubjectCard key={atom} id={atom}/>
                         )
                     }
                 </div>
             </div>
-        </Container>
+        </PositionContainer>
     )
 })
 
+export const getModuleAtomsIds = (atoms: AtomDto[], semesterId: number, moduleId: string) => {
+
+    const getAtomId = (id: number, moduleId: string) => concatIds(moduleId, setPrefixToId(id, "subjects"));
+
+    return atoms
+        .filter(atom => atom.semesters.some(semester => semester.semester.id === semesterId))
+        .map(atom => getAtomId(atom.id, moduleId))
+}
+
 export const getModuleRootStyles = (height: number, position: ModuleSemestersPosition): CSSProperties => {
-
-    const styles: CSSProperties = {height: "auto"};
-
-    if (!height) return styles;
-
-    if (position === "first" || position === "single" || position === "last") {
-        styles["height"] = position === "single" ? height - 10 : height - 5;
-    }
-    if (position === "middle") {
-        styles["height"] = height;
-    }
-    if (position === "first" || position === "single") {
-        styles["marginTop"] = 5;
-    }
-    if (position === "last" || position === "single") {
-        styles["marginBottom"] = 5;
-    }
-
-    return styles;
+    return position === "single"
+        ? {height: height - 8}
+        : ["first", "last"].includes(position)
+            ? {height: height - 6}
+            : {height}
 }
 
 export default ModuleArea;

@@ -1,14 +1,10 @@
-import {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from "react";
 import {DragCancelEvent, DragEndEvent, DragOverEvent, DragStartEvent, UniqueIdentifier} from "@dnd-kit/core";
-import {Semester} from "@/pages/planPage/types/Semester.ts";
 import {
     CursorMode,
     DisplaySettings,
-    ModulePosition,
-    ModuleSemestersInfo,
     PREFIX_ITEM_ID_KEYS,
     ToolsOptions,
-    TrackSelectionSemestersInfo
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {
@@ -22,18 +18,16 @@ import {
     AtomDto,
     AttestationDto,
     CompetenceDistributionType,
-    CurriculumSettingsDto, ModuleDto, RefModuleSemesterDto, UpdateAtomDto,
+    CurriculumSettingsDto, ModuleDto, RefModuleSemesterDto, SemesterDto, UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
     concatIds, cutAtomIdFromId,
     cutSemesterIdFromId,
     getIdFromPrefix, getParentIdFromPrefix, getParentPrefixFromPrefix,
-    getPrefixFromId, getSemesterIdFromPrefix,
-    parseCurriculum, regenerateId, setPrefixToId, splitIds
-} from "@/pages/planPage/provider/parseCurriculum.ts";
+    getPrefixFromId, getSemesterIdFromPrefix, regenerateId, setPrefixToId, splitIds
+} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
-import {useModulesPosition} from "@/pages/planPage/provider/useModulesPosition.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {App} from "antd";
 
@@ -41,14 +35,15 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {message} = App.useApp();
 
-    const [semesters, setSemesters] = useState<Semester[]>([]);
+    const [semesters, setSemesters] = useState<SemesterDto[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
     const [modulesList, setModulesList] = useState<ModuleDto[]>([]);
     const [competences, setCompetences] = useState<Dictionary<SubjectCompetence>>({});
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
-    const [selectedAtom, setSelectedAtom] = useState<{atom: AtomDto, semesterOrder: number, id: string} | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
+
+    const [selectedAtom, setSelectedAtom] = useState<string | null>(null);
     const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
     const {
@@ -72,16 +67,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         isLoading
     } = useCurriculumData({modulesPlainList: false});
 
-    const {
-        parsePositions,
-        modulesSemesters,
-        selectionsSemesters,
-        tracksSelectionSemesters,
-        getModulePosition,
-        getSelectionPosition,
-        getTrackSelectionPosition
-    } = useModulesPosition();
-
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
         cursorMode: CursorMode.Move,
         selectedCreateEntityType: "subjects"
@@ -96,15 +81,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     } = useDisplaySettings();
 
     useEffect(() => {
-        if (curriculumData?.semesters.length && modulesData && atomsData && Object.keys(competences).length) {
-            setSemesters(parseCurriculum({
-                semesters: curriculumData.semesters,
-                atoms: atomsData,
-                modules: modulesData,
-                competences: competences
-            }))
+        if (curriculumData?.semesters.length) {
+            setSemesters(curriculumData.semesters)
+            // setSemesters(parseCurriculum({
+            //     semesters: curriculumData.semesters,
+            //     atoms: atomsData,
+            //     modules: modulesData,
+            //     competences: competences
+            // }))
         }
-    }, [curriculumData, modulesData, atomsData, competencesData])
+    }, [curriculumData])
 
     useEffect(() => {
         if (atomsData) setAtomsList(atomsData)
@@ -128,11 +114,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }, [curriculumData, competencesData, competenceIndicatorsData])
 
     useEffect(() => {
-        if (!curriculumData || !modulesList.length) return;
-        parsePositions(curriculumData, modulesList)
-    }, [curriculumData, modulesList])
-
-    useEffect(() => {
         if (toolsOptions.cursorMode === CursorMode.Replace)
             disableSettings()
         else
@@ -142,17 +123,18 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     // Выбор предмета
 
-    const onSelectSubject = (id: UniqueIdentifier | null, semesterOrder?: number) => {
+    const getAtom = useCallback((atomId: number): AtomDto | undefined => {
+        return atomsList.find(atom => atom.id === atomId)
+    }, [atomsList])
 
-        if ((id === null) || (String(selectedAtom?.id) === String(id) && selectedAtom?.semesterOrder === semesterOrder)) {
+    const onSelectSubject = (id: string | null) => {
+
+        if ((id === null) || (id === selectedAtom)) {
             setSelectedAtom(null);
             return;
         }
 
-        const atom = atomsList.find(atom => getIdFromPrefix(id as string) === String(atom.id));
-        if (!atom) return;
-
-        setSelectedAtom({atom, semesterOrder: semesterOrder || 1, id: id as string})
+        setSelectedAtom(id)
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
@@ -489,21 +471,20 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         activeItemId,
         overItemId,
         semesters,
-        modulesSemesters,
-        selectionsSemesters,
         competences,
-        modulesList: modulesList || [],
+        atomList: atomsList,
+        modulesList: modulesList,
         semestersInfo: semestersData || [],
-        tracksSelectionSemesters,
         displaySettings,
         toolsOptions,
-        selectedSubject: selectedAtom,
+        selectedAtom,
         attestationTypes: attestationTypesData,
         academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
         selectedCompetenceId,
         settings: curriculumData?.settings || {competenceDistributionType: CompetenceDistributionType.Competence},
         onSelectCompetence,
+        getAtom,
         onSelectSubject,
         setToolsOptions,
         setActiveSubject: setSelectedAtom,
@@ -512,9 +493,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragEnd,
         handleDragCancel,
         updateSubject,
-        getModuleSemesterPosition: getModulePosition,
-        getSelectionPosition: getSelectionPosition,
-        getTrackSemesterPosition: getTrackSelectionPosition,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -535,25 +513,29 @@ export const usePlan = () => {
 interface PlanContextValue {
     activeItemId: UniqueIdentifier | null;
     overItemId: UniqueIdentifier | null;
-    displaySettings: DisplaySettings;
-    toolsOptions: ToolsOptions;
-    semestersInfo: RefModuleSemesterDto[];
-    semesters: Semester[];
+    selectedAtom: string | null;
+    selectedCompetenceId: UniqueIdentifier | null;
+
+    semesters: SemesterDto[];
+    atomList: AtomDto[];
+    modulesList: ModuleDto[];
+
     competences: Dictionary<SubjectCompetence>;
     attestationTypes: AttestationDto[];
     academicActivity: AcademicActivityDto[];
-    modulesSemesters: ModulePosition[];
-    selectionsSemesters: ModulePosition[];
-    tracksSelectionSemesters: ModulePosition[];
-    selectedSubject: {atom: AtomDto, semesterOrder: number, id: string} | null;
-    loadingPlan: boolean;
-    selectedCompetenceId: UniqueIdentifier | null;
+    semestersInfo: RefModuleSemesterDto[];
+
     settings: CurriculumSettingsDto;
-    modulesList: ModuleDto[];
+    displaySettings: DisplaySettings;
+    toolsOptions: ToolsOptions;
+
+    loadingPlan: boolean;
+
+    getAtom(atomId: number): AtomDto | undefined;
 
     onSelectCompetence(id: number | null): void;
 
-    onSelectSubject(id: UniqueIdentifier | null, semesterOrder?: number): void;
+    onSelectSubject(id: string | null): void;
 
     setToolsOptions(options: ToolsOptions): void;
 
@@ -566,12 +548,6 @@ interface PlanContextValue {
     handleDragEnd(event: DragEndEvent): void;
 
     handleDragCancel(event: DragCancelEvent): void;
-
-    getModuleSemesterPosition(id: UniqueIdentifier): ModuleSemestersInfo;
-
-    getSelectionPosition(id: UniqueIdentifier): ModuleSemestersInfo;
-
-    getTrackSemesterPosition(id: UniqueIdentifier): TrackSelectionSemestersInfo;
 
     onChangeDisplaySetting(key: keyof DisplaySettings): void;
 
@@ -592,20 +568,19 @@ const PlanContext = createContext<PlanContextValue>({
     },
     academicActivity: [],
     semesters: [],
-    modulesSemesters: [],
-    selectionsSemesters: [],
-    tracksSelectionSemesters: [],
-    selectedSubject: null,
+    selectedAtom: null,
     attestationTypes: [],
     loadingPlan: true,
     selectedCompetenceId: null,
     settings: {
         competenceDistributionType: CompetenceDistributionType.Competence,
     },
+    atomList: [],
     modulesList: [],
 
+    getAtom: (_id: number) => undefined,
     onSelectCompetence: (_id: number | null) => { },
-    onSelectSubject: (_id: number | null, semesterOrder?: number) => {
+    onSelectSubject: (_id: string | null) => {
     },
     setToolsOptions: (_options: ToolsOptions) => {
     },
@@ -619,110 +594,9 @@ const PlanContext = createContext<PlanContextValue>({
     },
     handleDragCancel: (_event: DragCancelEvent) => {
     },
-    getModuleSemesterPosition: (_id: UniqueIdentifier) => {
-        return {position: "single", countSemesters: 0}
-    },
-    getSelectionPosition: (_id: UniqueIdentifier) => {
-        return {position: "single", countSemesters: 0}
-    },
-    getTrackSemesterPosition: (_id: UniqueIdentifier) => {
-        return {position: "single", countSemesters: 0, semesterNumber: 0}
-    },
     onChangeDisplaySetting: (_key: keyof DisplaySettings) => {
     },
     onSelectPreDisplaySetting: (_key: string) => {
     },
     updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: SubjectUpdateParams) => {}
 })
-
-// Добавление префиксов для контейнеров
-
-// const addPrefixesForItems = (semesters: Semester[]) => {
-//
-//     let modules: ModuleSemesters[] = [];
-//     let tracks: TrackSemesters[] = [];
-//
-//     const addPrefixes = (item: any, key: typeof PREFIX_ITEM_ID_KEYS[number]) => {
-//
-//         let children = {};
-//
-//         for (let _key of PREFIX_ITEM_ID_KEYS.filter(key => key !== "subjects")) {
-//             if (Array.isArray(item[_key])) {
-//                 children[_key] = item[_key].map(subItem => {
-//                     if (_key === "modules" || _key === "tracks") {
-//                         return addPrefixes({...subItem, id: getPrefixId(`${item.id}-${subItem.id}`, key)}, _key)
-//                     }
-//                     return addPrefixes(subItem, _key)
-//                 })
-//             }
-//         }
-//
-//         if (key === "tracks") {
-//             if (tracks.find(track => track.id === getItemIdFromPrefix(item.id))) {
-//                 tracks = tracks.map(track => track.id !== getItemIdFromPrefix(item.id) ? track : {
-//                     ...track,
-//                     semesters: [...track.semesters, getPrefixId(item.id, key)]
-//                 })
-//             } else {
-//                 tracks.push({
-//                     id: getItemIdFromPrefix(item.id),
-//                     name: item.name,
-//                     color: item.color || "#000000",
-//                     semesters: [getPrefixId(item.id, key)]
-//                 })
-//             }
-//         }
-//
-//         if (key === "modules") {
-//             if (modules.find(module => module.id === getItemIdFromPrefix(item.id))) {
-//                 modules = modules.map(module => module.id !== getItemIdFromPrefix(item.id) ? module : {
-//                     ...module,
-//                     semesters: [...module.semesters, getPrefixId(item.id, key)]
-//                 })
-//             } else {
-//                 modules.push({
-//                     id: getItemIdFromPrefix(item.id),
-//                     name: item.name,
-//                     semesters: [getPrefixId(item.id, key)]
-//                 })
-//             }
-//         }
-//
-//
-//         return {
-//             ...item,
-//             id: getPrefixId(item.id, key),
-//             ...children
-//         }
-//     }
-//
-//     const _semesters = addPrefixes({semesters: semesters}, "semesters").semesters;
-//
-//     setModulesSemesters([...modules]);
-//     setTracksSemesters([...tracks]);
-//
-//     return _semesters;
-// }
-
-// Поиск предметов длящихся в других семестрах
-// const findSubjectsInAnotherEntities = (): string[] => {
-//     const ids: string[] = [];
-//
-//     const deepFindSearch = (item: any, currentDeep: number) => {
-//         if (!item) return;
-//         if (currentDeep === parentsIdsActive.length - 1) {
-//             const foundId = item.subjects.find(item =>
-//                 cutSemesterIdFromId(item.id as string) === cutSemesterIdFromId(activeId))?.id;
-//             if (foundId) ids.push(foundId as string);
-//         }
-//         else {
-//             console.log(getPrefixFromId(parentsIdsActive[currentDeep]))
-//             deepFindSearch(item[getPrefixFromId(parentsIdsActive[currentDeep])].find(_item =>
-//                 cutSemesterIdFromId(_item.id as string) === cutSemesterIdFromId(parentsIdsActive[currentDeep])), currentDeep + 1);
-//         }
-//     }
-//
-//     semesters.forEach(semester => deepFindSearch(semester, 1))
-//
-//     return ids;
-// }

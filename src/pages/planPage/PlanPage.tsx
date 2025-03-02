@@ -26,6 +26,7 @@ import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
 import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
 import {PositionsProvider} from "@/pages/planPage/provider/PositionsProvider.tsx";
+import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
 const PlanPageWrapped = () => {
 
@@ -34,6 +35,7 @@ const PlanPageWrapped = () => {
         loadingPlan,
         toolsOptions,
         modulesList,
+        atomList,
         handleDragStart,
         handleDragOver,
         handleDragEnd,
@@ -71,11 +73,12 @@ const PlanPageWrapped = () => {
                             <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
                                 <div className={`flex flex-col pb-10 w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                     {
-                                        !loadingPlan &&
+                                        // !loadingPlan &&
                                         semesters.map(semester =>
                                             <SemesterField {...semester} key={semester.id}
                                                            subjectsContainerWidth={subjectsContainerWidth}
                                                            setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
+                                                           atomsList={atomList.filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id)) || []}
                                             />
                                         )
                                     }
@@ -102,10 +105,20 @@ const PlanPageWrapped = () => {
     )
 }
 
-const DraggableCard = React.memo(({ activeItemId, scale }) => {
+const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activeItemId: string}) => {
+
+    const { getAtom } = usePlan();
+
+    const atomInfo = useMemo(() => {
+        return getAtom(Number(getIdFromPrefix(activeItemId)))
+    }, [activeItemId, getAtom])
+
+    if (!atomInfo) return null;
+
     return (
         <SubjectCard
-            id={activeItemId}
+            {...atomInfo}
+            id={activeItemId as string}
             style={{ transform: `scale(${scale})` }}
         />
     );
@@ -153,7 +166,7 @@ const Overlay = () => {
 
     return createPortal(
         <DragOverlay dropAnimation={dropAnimation} style={overlayStyle}>
-            {activeItemId ? <DraggableCard activeItemId={activeItemId} scale={scale} /> : null}
+            {activeItemId ? <DraggableCard activeItemId={activeItemId as string} scale={scale} /> : null}
         </DragOverlay>,
         document.body
     );

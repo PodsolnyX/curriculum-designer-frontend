@@ -1,19 +1,19 @@
-import {Position, SubjectCard, SubjectCardProps} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
+import {Position, SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
 import {useSortable} from "@dnd-kit/sortable";
 import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
-import React, {memo, useRef} from "react";
+import React, {memo, useMemo, useRef} from "react";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useControls} from "react-zoom-pan-pinch";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
-import {getIdFromPrefix} from "@/pages/planPage/provider/parseCurriculum.ts";
+import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
-interface SortableSubjectCard extends SubjectCardProps {}
+interface SortableSubjectCard {
+    id: string;
+}
 
-const SortableSubjectCard = memo((props: SortableSubjectCard) => {
-
-    const { id, semesterOrder } = props;
+const SortableSubjectCard = memo(({ id }: SortableSubjectCard) => {
 
     const {
         attributes,
@@ -26,21 +26,28 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const { selectedSubject, toolsOptions } = usePlan();
+    const { selectedAtom, toolsOptions, getAtom } = usePlan();
+
+    const atomInfo = useMemo(() => {
+        return getAtom(Number(getIdFromPrefix(id)))
+    }, [id, getAtom])
+
+    if (!atomInfo) return null;
     const getPosition = (): Position | undefined => {
         if (over?.id === id) return Position.Before
         else return undefined;
     }
 
-    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace) ? {...props, ...attributes, ...listeners} : {};
+    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace) ? {...attributes, ...listeners} : {};
 
     return (
         <SubjectCardOutView
-            enable={String(selectedSubject?.atom.id) === String(getIdFromPrefix(props.id as string))}
-            semesterOrder={props.semesterOrder}
+            enable={getIdFromPrefix(selectedAtom || "") === getIdFromPrefix(id)}
+            semesterOrder={atomInfo.semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1}
         >
             <SubjectCard
                 ref={setNodeRef}
+                {...atomInfo}
                 id={id}
                 isReplaceMode={toolsOptions.cursorMode === CursorMode.Replace}
                 active={isDragging}
@@ -48,8 +55,8 @@ const SortableSubjectCard = memo((props: SortableSubjectCard) => {
                     transition,
                     transform: isSorting ? undefined : CSS.Transform.toString(transform),
                 }}
+                isSelected={getIdFromPrefix(selectedAtom || "") === getIdFromPrefix(id)}
                 insertPosition={getPosition()}
-                {...props}
                 {...dndProps}
             />
         </SubjectCardOutView>

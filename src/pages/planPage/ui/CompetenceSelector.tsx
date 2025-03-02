@@ -10,50 +10,56 @@ import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 
 interface CompetenceSelectorProps {
     subjectId?: string | number;
-    competencies: {id: number, index: string, description: string}[];
+    competencies: number[];
     size?: "small" | "large";
 }
 
-const CompetenceSelector = ({competencies, size = "small", subjectId}: CompetenceSelectorProps) => {
+const CompetenceSelector = ({competencies = [], size = "small", subjectId}: CompetenceSelectorProps) => {
 
-    const { selectedCompetenceId, onSelectCompetence, settings } = usePlan();
+    const { selectedCompetenceId, onSelectCompetence, settings, competences } = usePlan();
     const {editIndicator, editCompetence} = useEditSubject(subjectId || "");
 
     const {competenceDistributionType} = settings;
 
     const onRemoveIndicator = (id: number) => {
-        competenceDistributionType === CompetenceDistributionType.CompetenceIndicator ?
-        editIndicator(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
-            : editCompetence(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
+        // competenceDistributionType === CompetenceDistributionType.CompetenceIndicator ?
+        // editIndicator(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
+        //     : editCompetence(competencies.filter(competence => competence.id !== id).map(competence => competence.id))
     }
 
     return (
         <div className={`flex flex-wrap gap-1 max-h-[150px] overflow-y-auto scrollbar group items-center ${!competencies.length ? "justify-between": ""}`} onClick={(event) => event.stopPropagation()}>
             {
                 competencies.length ?
-                    competencies.map(competence =>
-                        <Tag
-                            color={selectedCompetenceId === competence.id ? "purple" : "default"}
-                            className={`m-0 group/item flex gap-1 cursor-pointer hover:text-purple-800`}
-                            bordered={size !== "small"}
-                            key={competence.id}
-                            onClick={() => onSelectCompetence(competence.id !== selectedCompetenceId ? competence.id : null)}
-                        >
-                            <Tooltip title={competence.description}>
+                    competencies.map(competence => {
+
+                        const competenceInfo = competences[competence]
+
+                        return (
+                            <Tag
+                                color={selectedCompetenceId === competence ? "purple" : "default"}
+                                className={`m-0 group/item flex gap-1 cursor-pointer hover:text-purple-800`}
+                                bordered={size !== "small"}
+                                key={competence}
+                                onClick={() => onSelectCompetence(competence !== selectedCompetenceId ? competence : null)}
+                            >
+                                <Tooltip title={competenceInfo.description}>
                                 <span className={`${size === "small" ? "text-[12px]" : "text-[14px]"}`}>
-                                    {competence.index}
+                                    {competenceInfo.index}
                                 </span>
-                            </Tooltip>
-                            <Tooltip title={"Удалить"}>
+                                </Tooltip>
+                                <Tooltip title={"Удалить"}>
                                 <span
                                     onClick={(event) => {
                                         event.stopPropagation();
-                                        onRemoveIndicator(competence.id)
+                                        onRemoveIndicator(competence)
                                     }}
                                     className={"text-[12px] cursor-pointer text-stone-300 hover:text-stone-500 hidden group-hover/item:flex"}
                                 >×</span>
-                            </Tooltip>
-                        </Tag>
+                                </Tooltip>
+                            </Tag>
+                        )
+                    }
                     ) : <span className={`${size === "small" ? "text-[10px]" : "text-[12px]"} text-stone-400`}>Нет компетенций</span>
             }
             <Popover content={AddCompetencePopover({subjectId, competencies, competenceDistributionType})} trigger={"click"} placement={"bottom"}>
@@ -65,7 +71,7 @@ const CompetenceSelector = ({competencies, size = "small", subjectId}: Competenc
 
 interface AddCompetencePopoverProps {
     subjectId?: string | number;
-    competencies: {id: number, index: string, description: string}[];
+    competencies: number[];
     competenceDistributionType: CompetenceDistributionType;
 }
 
@@ -115,7 +121,7 @@ const AddCompetencePopover = ({subjectId, competencies, competenceDistributionTy
 
 interface CompetenceItemProps extends CompetenceDto {
     subjectId?: string | number;
-    competencies: {id: number, index: string, description: string}[];
+    competencies: number[];
     competenceDistributionType: CompetenceDistributionType;
 }
 
@@ -128,16 +134,16 @@ const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, c
     const onSelectIndicator = (id: number, remove?: boolean) => {
         editIndicator(
             remove
-                ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
-                : [...competencies.map(competence => competence.id), id]
+                ? competencies.filter(competence => competence !== id)
+                : [...competencies.map(competence => competence), id]
         )
     }
 
     const onSelectCompetence = (id: number, remove?: boolean) => {
         editCompetence(
             remove
-                ? competencies.filter(competence => competence.id !== id).map(competence => competence.id)
-                : [...competencies.map(competence => competence.id), id]
+                ? competencies.filter(competence => competence !== id)
+                : [...competencies.map(competence => competence), id]
         )
     }
 
@@ -145,11 +151,9 @@ const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, c
         editIndicator(
             remove
                 ? competencies
-                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence.id))
-                    .map(competence => competence.id)
+                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence))
                 : competencies
-                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence.id))
-                    .map(competence => competence.id)
+                    .filter(competence => !indicators.map(indicator => indicator.id).includes(competence))
         )
     }
 
@@ -163,9 +167,9 @@ const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, c
                 <div className={"flex gap-1 items-center"}>
                     <Checkbox
                         indeterminate={countSelectedIndicators > 0 && countSelectedIndicators < indicators.length}
-                        checked={(countSelectedIndicators === indicators.length && indicators.length > 0) || !!competencies.find(competence => competence.id === id)}
+                        checked={(countSelectedIndicators === indicators.length && indicators.length > 0) || !!competencies.find(competence => competence === id)}
                         disabled={competenceDistributionType === CompetenceDistributionType.CompetenceIndicator}
-                        onChange={() => onSelectCompetence(id, !!competencies.find(competence => competence.id === id))}
+                        onChange={() => onSelectCompetence(id, !!competencies.find(competence => competence === id))}
                     />
                     <span className={"text-[12px] text-black"}>
                         {index}
@@ -191,8 +195,8 @@ const CompetenceItem = ({id, name, index, indicators, subjectId, competencies, c
                                     <div className={"flex gap-1 items-center"}>
                                         <Checkbox
                                             disabled={competenceDistributionType === CompetenceDistributionType.Competence}
-                                            checked={!!competencies.find(competence => competence.id === indicator.id)}
-                                            onChange={() => onSelectIndicator(indicator.id, !!competencies.find(competence => competence.id === indicator.id))}
+                                            checked={!!competencies.find(competence => competence === indicator.id)}
+                                            onChange={() => onSelectIndicator(indicator.id, !!competencies.find(competence => competence === indicator.id))}
                                         />
                                         <span className={"text-[12px] text-black"}>
                                             {indicator.index}
