@@ -23,7 +23,7 @@ interface ParseAtomParams extends ParseEntityParams {
     neighboringSemesters?: Array<number | null>
 }
 
-interface ParseModuleParams extends ParseEntityParams {
+export interface ParseModuleParams extends ParseEntityParams {
     semester: SemesterDto
 }
 
@@ -293,7 +293,7 @@ const getSemesterTrackSelections = (modules: ModuleDto[], params: ParseModulePar
     )
 }
 
-const parseTrackSelection = (module: ModuleDto, params: ParseModuleParams): TrackSelection => {
+export const parseTrackSelection = (module: ModuleDto, params: ParseModuleParams): TrackSelection => {
 
     const colors = ["#25b600", "#8019f1", "#e80319", "#f56b0a"];
     const trackSelectionId = concatIds(params.parentId, setPrefixToId(module.id, "tracks"));

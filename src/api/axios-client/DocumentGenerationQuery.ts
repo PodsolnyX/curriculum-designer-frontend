@@ -22,8 +22,16 @@ export type GeneratePdfDocumentGenerationQueryParameters = {
   curriculumId: number ;
 }
 
+export type GenerateExcelDocumentGenerationQueryParameters = {
+  curriculumId: number ;
+}
+
+export type GenerateTxtDocumentGenerationQueryParameters = {
+  curriculumId: number ;
+}
+
 export function generatePdfUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document";
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/pdf";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -63,6 +71,96 @@ export function useGeneratePdfMutationWithParameters<TContext>(options?: Omit<Us
 return useMutation({
   ...options, 
   mutationFn: (data: GeneratePdf__MutationParameters) => Client.generatePdf(data.curriculumId ?? options?.parameters?.curriculumId!),
+  mutationKey: key,
+});
+}
+  
+export function generateExcelUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function generateExcelMutationKey(curriculumId: number): MutationKey {
+  return trimArrayEnd([
+      'DocumentGenerationClient',
+      'generateExcel',
+      curriculumId as any,
+    ]);
+}
+
+export function useGenerateExcelMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<Types.FileResponse, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
+  const key = generateExcelMutationKey(curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: () => Client.generateExcel(curriculumId),
+    mutationKey: key,
+  });
+}
+  
+type GenerateExcel__MutationParameters = GenerateExcelDocumentGenerationQueryParameters
+
+export function useGenerateExcelMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.FileResponse, unknown, GenerateExcel__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: GenerateExcelDocumentGenerationQueryParameters}): UseMutationResult<Types.FileResponse, unknown, GenerateExcel__MutationParameters, TContext> {
+  const key = generateExcelMutationKey(options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: GenerateExcel__MutationParameters) => Client.generateExcel(data.curriculumId ?? options?.parameters?.curriculumId!),
+  mutationKey: key,
+});
+}
+  
+export function generateTxtUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function generateTxtMutationKey(curriculumId: number): MutationKey {
+  return trimArrayEnd([
+      'DocumentGenerationClient',
+      'generateTxt',
+      curriculumId as any,
+    ]);
+}
+
+export function useGenerateTxtMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<Types.FileResponse, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
+  const key = generateTxtMutationKey(curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: () => Client.generateTxt(curriculumId),
+    mutationKey: key,
+  });
+}
+  
+type GenerateTxt__MutationParameters = GenerateTxtDocumentGenerationQueryParameters
+
+export function useGenerateTxtMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.FileResponse, unknown, GenerateTxt__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: GenerateTxtDocumentGenerationQueryParameters}): UseMutationResult<Types.FileResponse, unknown, GenerateTxt__MutationParameters, TContext> {
+  const key = generateTxtMutationKey(options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: GenerateTxt__MutationParameters) => Client.generateTxt(data.curriculumId ?? options?.parameters?.curriculumId!),
   mutationKey: key,
 });
 }
