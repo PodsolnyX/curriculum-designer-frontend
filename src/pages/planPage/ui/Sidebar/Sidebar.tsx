@@ -33,7 +33,7 @@ const Sidebar = () => {
     if (!selectedAtom || !atomInfo) return null;
 
     const targetSubjectSemesterId = concatIds(
-        setPrefixToId(String(atomInfo.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1).semester.id), "semesters"),
+        setPrefixToId(String(atomInfo.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)?.semester.id || ""), "semesters"),
         cutSemesterIdFromId(selectedAtom)
     );
 

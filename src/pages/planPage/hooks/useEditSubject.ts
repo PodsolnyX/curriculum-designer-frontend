@@ -164,6 +164,12 @@ export const useEditSubjectWithParams = () => {
         }
     });
 
+    const { mutate: expand } = useCreateAtomInSemesterMutationWithParameters( {
+        onSuccess: () => {
+            message.success("Предмет успешно продлён на семестр")
+        }
+    });
+
     return {
         editInfo: (data: EditSubjectWithParams__MutationParameters) => editInfoMutate({updateAtomDto: data.data, atomId: Number(data.subjectId)}),
         setCredits,
@@ -171,6 +177,7 @@ export const useEditSubjectWithParams = () => {
         editAcademicHours,
         deleteAcademicHours,
         editIndicator,
-        editCompetence
+        editCompetence,
+        expand
     }
 }

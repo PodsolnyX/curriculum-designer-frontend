@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useEffect, useState} from 'react';
+import React, {forwardRef, memo, useEffect, useMemo, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
@@ -63,24 +63,18 @@ export const SubjectCardMemo =
 
         const {
             displaySettings,
+            expandAtom,
             updateSubject,
             onSelectSubject
         } = usePlan();
 
         const [newName, setNewName] = useState(name);
 
+        const {expandSubject, deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
+
         useEffect(() => {
             setNewName(name)
         }, [name])
-
-        const {expandSubject, deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
-        
-        // const onExtendSemester = (key: "prev" | "next") => {
-        //     expandSubject({
-        //         atomId: Number(getIdFromPrefix(id as string)),
-        //         semesterId: key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0,
-        //     })
-        // }
 
         if (!semesters?.find(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id)))) {
             return null;
@@ -93,6 +87,25 @@ export const SubjectCardMemo =
         } = semesters.find(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id)));
 
         const semesterOrder = semesters.length === 1 ? null : semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1;
+
+        const neighboringSemesters = useMemo(() => {
+
+            const semesterId = Number(getSemesterIdFromPrefix(id));
+            const currentIndex = semesters.findIndex(s => s.semester.id === semesterId);
+
+            if (currentIndex === -1) return { prev: null, next: null };
+
+            const currentNumber = semesters[currentIndex].semester.number;
+
+            return {
+                prev: (currentIndex === 0) ? currentNumber > 1 ? currentNumber - 1 : null : null,
+                next: (currentIndex === semesters.length - 1) ? currentNumber < 8 ? currentNumber + 1 : null : null
+            };
+        }, [id, semesters])
+
+        const onExpendSemester = (key: "prev" | "next") => {
+            expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
+        }
 
         return (
             <li
@@ -235,8 +248,8 @@ export const SubjectCardMemo =
                                                                     type={"text"}
                                                                     icon={item.icon}
                                                                     className={"w-full justify-start"}
-                                                                    // onClick={() => onExtendSemester(item.key)}
-                                                                    // disabled={item.key === "prev" && (!neighboringSemesters.prev || semestersIds.includes(neighboringSemesters.prev)) || item.key === "next" && (!neighboringSemesters.next || semestersIds.includes(neighboringSemesters.next))}
+                                                                    onClick={() => onExpendSemester(item.key)}
+                                                                    disabled={item.key === "prev" && !neighboringSemesters.prev || item.key === "next" && !neighboringSemesters.next}
                                                                 >{item.label}</Button>
                                                             </li>
                                                         }

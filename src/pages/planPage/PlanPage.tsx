@@ -95,6 +95,7 @@ const PlanPageWrapped = () => {
                                         modulesList
                                             .filter(module => module.parentModuleId === null)
                                             .sort((a, b) => a.semesters[0].semester.number - b.semesters[0].semester.number)
+                                            // .sort((a, b) => b.semesters.length - a.semesters.length)
                                             .map((module, index) => <ModuleArea {...module} key={module.id}/>)
                                     }
                                 </div>

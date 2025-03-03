@@ -18,7 +18,7 @@ import {
     AttestationDto,
     CompetenceDistributionType,
     CurriculumSettingsDto,
-    ModuleDto,
+    ModuleDto, RefAtomSemesterDto,
     RefModuleSemesterDto,
     SemesterDto,
     UpdateAtomDto,
@@ -58,7 +58,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         editAcademicHours,
         deleteAcademicHours,
         editIndicator,
-        editCompetence
+        editCompetence,
+        expand
     } = useEditSubjectWithParams();
 
     const {
@@ -164,6 +165,25 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {
         setSelectedCompetenceId(id);
+    }
+
+    function expandAtom(id: string, semesterNumber: number, direction: "prev" | "next") {
+        const atomId = Number(getIdFromPrefix(id));
+        const semesterId = semesters.find(semester => semester.number === semesterNumber)?.id;
+        if (!semesterId) return;
+
+        const newSemester: RefAtomSemesterDto = {
+            semester: semesters.find(semester => semester.number === semesterNumber),
+            credit: 0,
+            attestations: [],
+            academicActivityHours: []
+        };
+
+        setAtomsList(prev => prev.map(atom => atomId === atom.id
+            ? {...atom, semesters: direction === "prev" ? [newSemester, ...atom.semesters] : [...atom.semesters, newSemester]} : atom
+        ))
+
+        expand({atomId: Number(getIdFromPrefix(id)), semesterId})
     }
 
     // Обновляет состояние предмета в локальном состоянии плана
@@ -424,6 +444,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragEnd,
         handleDragCancel,
         updateSubject: updateAtom,
+        expandAtom,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
     }
@@ -489,6 +510,8 @@ interface PlanContextValue {
     onSelectPreDisplaySetting(key: string): void;
 
     updateSubject<T extends keyof AtomUpdateParams>(id: UniqueIdentifier, paramKey: T, param: AtomUpdateParams[T]): void;
+
+    expandAtom(id: string, semesterNumber: number, direction: "prev" | "next"): void;
 }
 
 const PlanContext = createContext<PlanContextValue>({
@@ -535,5 +558,7 @@ const PlanContext = createContext<PlanContextValue>({
     },
     onSelectPreDisplaySetting: (_key: string) => {
     },
-    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: AtomUpdateParams) => {}
+    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: AtomUpdateParams) => {},
+
+    expandAtom: (_id: string, _semesterNumber: number, _direction: "prev" | "next") => {}
 })
