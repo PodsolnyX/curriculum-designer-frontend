@@ -118,7 +118,6 @@ const ModuleField = memo((props: ModuleFieldProps) => {
 
     const {overItemId, toolsOptions} = usePlan();
     const {message} = App.useApp();
-    const [onAdd, setOnAdd] = useState(false);
 
     const [newName, setNewName] = useState(name);
 
@@ -141,22 +140,13 @@ const ModuleField = memo((props: ModuleFieldProps) => {
         return ""
     }
 
-    const onHover = () => {
-        if (toolsOptions.cursorMode === CursorMode.Create)
-            setOnAdd(true)
+    const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (toolsOptions.cursorMode === CursorMode.Create) {
+            event.stopPropagation()
+            onCreate(semester.semester.id, Number(getIdFromPrefix(id)))
+        }
     }
 
-    const onLeave = () => {
-        setOnAdd(false)
-    }
-
-    // const onAddSubject = (event: React.MouseEvent<HTMLDivElement>) => {
-    //     if (onAdd) {
-    //         event.stopPropagation()
-    //         onCreate(semesterId, id)
-    //     }
-    // }
-    //
     // const onNameChange = (value: string) => {
     //     setNewName(value);
     //     if (name !== value) {
@@ -170,14 +160,12 @@ const ModuleField = memo((props: ModuleFieldProps) => {
             rowId={rowId}
             id={containerId}
             rootStyles={(height) => getModuleRootStyles(height, position)}
-            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "bg-blue-300/[.3]" : ""}`}
+            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(toolsOptions.cursorMode === CursorMode.Create) ? "hover:bg-blue-300/[.3] cursor-pointer" : ""} ${(overItemId === id) ? "bg-blue-300/[.3]" : ""}`}
             childrenClassName={"min-h-max"}
             ref={setNodeRef}
+            onClick={onClick}
         >
-            <div
-                onMouseEnter={onHover} onMouseLeave={onLeave}
-                ref={setNodeRef}
-            >
+            <div ref={setNodeRef}>
                 {
                     (position === "first" || position === "single") ?
                         <div className={"flex justify-center p-2 pb-0"}>

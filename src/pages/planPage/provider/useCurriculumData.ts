@@ -7,6 +7,8 @@ import {useGetSemestersQuery} from "@/api/axios-client/SemestersQuery.ts";
 import {useGetAcademicActivitiesQuery} from "@/api/axios-client/AcademicActivityQuery.ts";
 import {useGetCompetenceIndicatorsQuery, useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
 import {CompetenceDistributionType} from "@/api/axios-client.types.ts";
+import {useGetIndexesQuery} from "@/api/axios-client/ComponentQuery.ts";
+import {useGetValidationErrorsQuery} from "@/api/axios-client/ValidationQuery.ts";
 
 interface useCurriculumDataParams {
     atomsHasNoParentModule?: boolean;
@@ -28,10 +30,12 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
     const {data: modulesData, isLoading: loadingModules} = useGetModulesByCurriculumQuery({curriculumId: Number(id), plainList: modulesPlainList});
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
     const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
+    const {data: indexesData, isLoading: loadingIndexes} = useGetIndexesQuery({curriculumId: Number(id)});
     const {data: competencesData, isLoading: loadingCompetences} = useGetCompetencesQuery({curriculumId: Number(id)},
         { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.Competence});
     const {data: competenceIndicatorsData, isLoading: loadingCompetenceIndicators} = useGetCompetenceIndicatorsQuery({curriculumId: Number(id)},
         { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.CompetenceIndicator});
+    const {data: validationErrorsData} = useGetValidationErrorsQuery({curriculumId: Number(id)});
 
     return {
         curriculumId: Number(id),
@@ -43,6 +47,8 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
         academicActivityData: academicActivityData,
         competencesData: competencesData,
         competenceIndicatorsData: competenceIndicatorsData,
+        indexesData,
+        validationErrorsData,
         isLoading:
             loadingPlan ||
             loadingAtoms ||
@@ -51,6 +57,7 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
             loadingSemesters ||
             loadingCompetences ||
             loadingCompetenceIndicators ||
-            loadingAcademicActivity
+            loadingAcademicActivity ||
+            loadingIndexes
     }
 }

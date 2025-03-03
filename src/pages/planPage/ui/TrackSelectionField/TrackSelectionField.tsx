@@ -1,5 +1,5 @@
-import React from "react";
-import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
+import React, {useState} from "react";
+import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {
@@ -13,6 +13,7 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
+import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 
 interface TrackSelectionProps {
     id: string;
@@ -106,11 +107,15 @@ const TrackField = (props: TrackFieldProps) => {
         semesterId
     } = props;
 
-    const { overItemId, getModule, getAtoms } = usePlan();
+    const { overItemId, getModule, getAtoms, toolsOptions } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
     });
+
+    const [isHover, setIsHover] = useState(false);
+
+    const {onCreate} = useCreateEntity();
 
     const styles: Record<ModuleSemestersPosition, string> = {
         "single": `border-2 rounded-lg`,
@@ -127,14 +132,24 @@ const TrackField = (props: TrackFieldProps) => {
 
     const atomsIds = getModuleAtomsIds(getAtoms(atoms), semesterId, id);
 
+    const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (toolsOptions.cursorMode === CursorMode.Create) {
+            event.stopPropagation()
+            onCreate(semesterId, Number(getIdFromPrefix(id)))
+        }
+    }
+
     return (
         <div
             className={`${styles[position]} border-dotted h-full pb-2 px-3`}
             ref={setNodeRef}
             style={{
-                backgroundColor: overItemId === id ? `${color}35` : `${color}20`,
+                backgroundColor: (overItemId === id || isHover) ? `${color}35` : `${color}20`,
                 borderColor: color
             }}
+            onClick={onClick}
+            onMouseLeave={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(false)}
+            onMouseEnter={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(true)}
         >
             <div className={"flex flex-col"}>
                 {

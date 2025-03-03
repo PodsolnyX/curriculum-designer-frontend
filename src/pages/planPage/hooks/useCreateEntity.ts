@@ -31,15 +31,14 @@ export const useCreateEntity = () => {
         }
     });
 
-    const onCreate = (semesterId: string, parentId?: string) => {
+    const onCreate = (semesterId: number, parentId?: number) => {
         if (toolsOptions.selectedCreateEntityType === "subjects")
             createSubject({
                 name: "Новый предмет",
                 type: AtomType.Subject,
                 isRequired: false,
-                //Формат id: "module-semester-17-123"
-                parentModuleId: parentId ? Number(parentId.split("-")[3]) : null,
-                semesterIds: [Number(semesterId.split("-")[1])],
+                parentModuleId: parentId || null,
+                semesterIds: [semesterId],
                 competenceIds: [],
                 competenceIndicatorIds: [],
                 curriculumId: Number(curriculumId),
@@ -48,8 +47,8 @@ export const useCreateEntity = () => {
             createModule({
                 name: "Новый модуль",
                 curriculumId: Number(curriculumId),
-                parentModuleId: parentId ? Number(parentId.split("-")[3]) : null,
-                parentSemesterId: Number(semesterId.split("-")[1]),
+                parentModuleId: parentId || null,
+                parentSemesterId: semesterId,
             }).then(() => {
                 queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
                 message.success("Модуль успешно создан")
@@ -58,14 +57,14 @@ export const useCreateEntity = () => {
             createModule({
                 name: "Новый выбор",
                 curriculumId: Number(curriculumId),
-                parentModuleId: parentId ? Number(parentId.split("-")[3]) : null,
-                parentSemesterId: Number(semesterId.split("-")[1]),
+                parentModuleId: parentId || null,
+                parentSemesterId: semesterId,
             }).then((newModuleId) => updateSelection({
                 moduleId: newModuleId,
                 createUpdateSelectionDto: {
                     semesters: [
                         {
-                            semesterId: Number(semesterId.split("-")[1]),
+                            semesterId: semesterId,
                             credit: 0
                         }
                     ]

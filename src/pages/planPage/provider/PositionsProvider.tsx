@@ -138,6 +138,7 @@ interface ContainerProps {
     countHorizontalCoordinates?: boolean;
     countHeights?: boolean;
     childrenClassName?: string;
+    onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 
@@ -150,7 +151,8 @@ export const PositionContainer = forwardRef<HTMLDivElement, ContainerProps>((pro
         countHorizontalCoordinates,
         rootStyles,
         countHeights = true,
-        childrenClassName
+        childrenClassName,
+        onClick
     } = props;
 
     const contentRef = useRef<HTMLDivElement | null>(null);
@@ -187,6 +189,7 @@ export const PositionContainer = forwardRef<HTMLDivElement, ContainerProps>((pro
             style={styles}
             className={typeof(rootClassName) === "string" ? rootClassName : rootClassName?.(maxHeight)}
             ref={ref}
+            onClick={onClick}
         >
             <div ref={contentRef} className={childrenClassName}>
                 {children}

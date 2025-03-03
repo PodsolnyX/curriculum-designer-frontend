@@ -21,7 +21,7 @@ import {
     ModuleDto, RefAtomSemesterDto,
     RefModuleSemesterDto,
     SemesterDto,
-    UpdateAtomDto,
+    UpdateAtomDto, ValidationError,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
@@ -72,6 +72,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         academicActivityData,
         competencesData,
         competenceIndicatorsData,
+        indexesData,
+        validationErrorsData,
         isLoading
     } = useCurriculumData({modulesPlainList: true});
 
@@ -152,6 +154,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const getModule = useCallback((moduleId: number): ModuleShortDto | undefined => {
         return modulesList.find(module => module.id === moduleId)
     }, [modulesList])
+
+    const getIndex = useCallback((id: number): string | undefined => {
+        if (!indexesData) return undefined;
+        return indexesData.find(index => index.item1 === id)?.item2
+    }, [indexesData])
 
     const onSelectAtom = (id: string | null) => {
 
@@ -427,6 +434,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         displaySettings,
         toolsOptions,
         selectedAtom,
+        validationErrors: validationErrorsData,
         attestationTypes: attestationTypesData,
         academicActivity: academicActivityData,
         loadingPlan: isLoading || semesters.length === 0,
@@ -436,6 +444,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         getAtom,
         getAtoms,
         getModule,
+        getIndex,
         onSelectSubject: onSelectAtom,
         setToolsOptions,
         setActiveSubject: setSelectedAtom,
@@ -482,12 +491,15 @@ interface PlanContextValue {
     toolsOptions: ToolsOptions;
 
     loadingPlan: boolean;
+    validationErrors: ValidationError[];
 
     getAtom(atomId: number): AtomDto | undefined;
 
     getAtoms(atomIds: number[]): AtomDto[];
 
     getModule(moduleId: number): ModuleShortDto | undefined;
+
+    getIndex(id: number): string | undefined;
 
     onSelectCompetence(id: number | null): void;
 
@@ -535,10 +547,12 @@ const PlanContext = createContext<PlanContextValue>({
     },
     atomList: [],
     modulesList: [],
+    validationErrors: [],
 
     getAtom: (_id: number) => undefined,
     getAtoms: (_ids: number[]) => [],
     getModule: (_moduleId: number) => undefined,
+    getIndex: (_id: number) => undefined,
     onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: string | null) => {
     },

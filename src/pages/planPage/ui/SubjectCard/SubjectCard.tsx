@@ -139,7 +139,7 @@ export const SubjectCardMemo =
                         <div className={"flex gap-1 items-center"}>
                             {
                                 displaySettings.index &&
-                                <span className={"text-[10px] text-stone-400"}>{index}</span>
+                                <span className={"text-[10px] text-stone-400"}>{index || "Без индекса"}</span>
                             }
                             {
                                 (displaySettings.index && semesterOrder)

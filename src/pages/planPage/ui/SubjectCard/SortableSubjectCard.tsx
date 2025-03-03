@@ -26,10 +26,11 @@ const SortableSubjectCard = memo(({ id }: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const { selectedAtom, toolsOptions, getAtom } = usePlan();
+    const { selectedAtom, toolsOptions, getIndex, getAtom } = usePlan();
 
     const atomInfo = useMemo(() => {
-        return getAtom(Number(getIdFromPrefix(id)))
+        const atomId = Number(getIdFromPrefix(id));
+        return {...getAtom(atomId), index: getIndex(atomId)};
     }, [id, getAtom])
 
     if (!atomInfo) return null;
