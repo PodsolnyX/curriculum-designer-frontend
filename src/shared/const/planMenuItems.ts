@@ -1,6 +1,6 @@
 import {
     getRoutePlan,
-    getRoutePlanCompetencies,
+    getRoutePlanCompetencies, getRoutePlanDepartments,
     getRoutePlanSettings,
     getRoutePlanTitle
 } from "@/shared/const/router.ts";
@@ -34,7 +34,7 @@ export const getPlanMenuItems = (id: number | string): PlanPageLayoutMenuItem[] 
         value: "departments",
         name: "Кафедры",
         icon: HallIcon,
-        path: getRoutePlanTitle(id)
+        path: getRoutePlanDepartments(id)
     },
     {
         value: "settings",

@@ -14,6 +14,12 @@ export * from './axios-client.types';
 import type { AxiosError } from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 
+export * as ValidationClient from './axios-client/ValidationClient';
+
+export * as ValidationQuery from './axios-client/ValidationQuery';
+
+
+
 export * as SemestersClient from './axios-client/SemestersClient';
 
 export * as SemestersQuery from './axios-client/SemestersQuery';
@@ -32,6 +38,12 @@ export * as DocumentGenerationQuery from './axios-client/DocumentGenerationQuery
 
 
 
+export * as DepartmentClient from './axios-client/DepartmentClient';
+
+export * as DepartmentQuery from './axios-client/DepartmentQuery';
+
+
+
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
@@ -41,6 +53,12 @@ export * as CurriculumQuery from './axios-client/CurriculumQuery';
 export * as SelectionClient from './axios-client/SelectionClient';
 
 export * as SelectionQuery from './axios-client/SelectionQuery';
+
+
+
+export * as ComponentClient from './axios-client/ComponentClient';
+
+export * as ComponentQuery from './axios-client/ComponentQuery';
 
 
 
@@ -183,6 +201,9 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 
 export function initPersister() {
   
+  addResultTypeFactory('ValidationClient___getValidationErrors', (data: any) => Types.initValidationError(data));
+
+
   addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
 
 
@@ -190,10 +211,16 @@ export function initPersister() {
 
 
 
+  addResultTypeFactory('DepartmentClient___getDepartments', (data: any) => Types.initDepartmentDto(data));
+
+
   addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));
   addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
 
 
+
+
+  addResultTypeFactory('ComponentClient___getIndexes', (data: any) => Types.initTupleOfIntegerAndString(data));
 
 
   addResultTypeFactory('ModuleClient___getModule', (data: any) => Types.initModuleDto(data));

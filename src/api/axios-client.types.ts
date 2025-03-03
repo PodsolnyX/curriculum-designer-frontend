@@ -1,4 +1,75 @@
 //-----Types.File-----
+/** Represents a validation error. */
+export interface ValidationError  {
+  /** Gets or sets the type of the validation error. */
+  type?: ValidationErrorType;
+  /** Gets or sets the message of the validation error. */
+  message?: string;
+  /** Gets or sets the list of entities associated with the validation error. */
+  entities?: ValidationErrorEntity[];
+}
+export function deserializeValidationError(json: string): ValidationError {
+  const data = JSON.parse(json) as ValidationError;
+  initValidationError(data);
+  return data;
+}
+export function initValidationError(_data: ValidationError) {
+  if (_data) {
+    _data.type = _data["type"];
+    if (Array.isArray(_data["entities"])) {
+      _data.entities = _data["entities"].map(item => 
+        initValidationErrorEntity(item)
+      );
+    }
+  }
+  return _data;
+}
+export function serializeValidationError(_data: ValidationError | undefined) {
+  if (_data) {
+    _data = prepareSerializeValidationError(_data as ValidationError);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeValidationError(_data: ValidationError): ValidationError {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.entities)) {
+    data["entities"] = _data.entities.map(item => 
+        prepareSerializeValidationErrorEntity(item)
+    );
+  }
+  return data as ValidationError;
+}
+/** Specifies the type of validation error. */
+export enum ValidationErrorType {
+    Custom = "Custom",
+    CreditDistribution = "CreditDistribution",
+    AcademicActivityFormula = "AcademicActivityFormula",
+}
+/** Represents an entity associated with a validation error. */
+export interface ValidationErrorEntity  {
+  /** Gets or sets the type of the entity. */
+  type?: string;
+  /** Gets or sets the ID of the entity. */
+  id?: number;
+}
+export function deserializeValidationErrorEntity(json: string): ValidationErrorEntity {
+  const data = JSON.parse(json) as ValidationErrorEntity;
+  initValidationErrorEntity(data);
+  return data;
+}
+export function initValidationErrorEntity(_data: ValidationErrorEntity) {
+    return _data;
+}
+export function serializeValidationErrorEntity(_data: ValidationErrorEntity | undefined) {
+  if (_data) {
+    _data = prepareSerializeValidationErrorEntity(_data as ValidationErrorEntity);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeValidationErrorEntity(_data: ValidationErrorEntity): ValidationErrorEntity {
+  const data: Record<string, any> = { ..._data };
+  return data as ValidationErrorEntity;
+}
 export interface RefModuleSemesterDto  {
   semester: SemesterDto;
   nonElective: ComponentSemesterDto;
@@ -185,6 +256,28 @@ export enum TableType {
     Summary = "Summary",
     Competences = "Competences",
     CompetenceDistribution = "CompetenceDistribution",
+}
+export interface DepartmentDto  {
+  id: number;
+  name: string;
+}
+export function deserializeDepartmentDto(json: string): DepartmentDto {
+  const data = JSON.parse(json) as DepartmentDto;
+  initDepartmentDto(data);
+  return data;
+}
+export function initDepartmentDto(_data: DepartmentDto) {
+    return _data;
+}
+export function serializeDepartmentDto(_data: DepartmentDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeDepartmentDto(_data as DepartmentDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeDepartmentDto(_data: DepartmentDto): DepartmentDto {
+  const data: Record<string, any> = { ..._data };
+  return data as DepartmentDto;
 }
 export interface CreateCurriculumDto  {
   name: string;
@@ -410,6 +503,28 @@ export function prepareSerializeCreateUpdateSelectionDto(_data: CreateUpdateSele
   }
   return data as CreateUpdateSelectionDto;
 }
+export interface TupleOfIntegerAndString  {
+  item1?: number;
+  item2?: string | null;
+}
+export function deserializeTupleOfIntegerAndString(json: string): TupleOfIntegerAndString {
+  const data = JSON.parse(json) as TupleOfIntegerAndString;
+  initTupleOfIntegerAndString(data);
+  return data;
+}
+export function initTupleOfIntegerAndString(_data: TupleOfIntegerAndString) {
+    return _data;
+}
+export function serializeTupleOfIntegerAndString(_data: TupleOfIntegerAndString | undefined) {
+  if (_data) {
+    _data = prepareSerializeTupleOfIntegerAndString(_data as TupleOfIntegerAndString);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeTupleOfIntegerAndString(_data: TupleOfIntegerAndString): TupleOfIntegerAndString {
+  const data: Record<string, any> = { ..._data };
+  return data as TupleOfIntegerAndString;
+}
 export interface CreateModuleDto  {
   curriculumId: number;
   parentModuleId?: number | null;
@@ -607,28 +722,6 @@ export function prepareSerializeRefAtomSemesterDto(_data: RefAtomSemesterDto): R
   const data = prepareSerializeComponentSemesterDto(_data as RefAtomSemesterDto) as Record<string, any>;
   data["semester"] = _data.semester && prepareSerializeSemesterDto(_data.semester);
   return data as RefAtomSemesterDto;
-}
-export interface DepartmentDto  {
-  id: number;
-  name: string;
-}
-export function deserializeDepartmentDto(json: string): DepartmentDto {
-  const data = JSON.parse(json) as DepartmentDto;
-  initDepartmentDto(data);
-  return data;
-}
-export function initDepartmentDto(_data: DepartmentDto) {
-    return _data;
-}
-export function serializeDepartmentDto(_data: DepartmentDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeDepartmentDto(_data as DepartmentDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeDepartmentDto(_data: DepartmentDto): DepartmentDto {
-  const data: Record<string, any> = { ..._data };
-  return data as DepartmentDto;
 }
 export interface UpdateModuleDto  {
   parentModuleId?: number | null;
@@ -997,6 +1090,8 @@ export function prepareSerializeCreateAcademicActivityDto(_data: CreateAcademicA
 export interface UpdateAcademicActivityDto  {
   name?: string | null;
   shortName?: string | null;
+  formula?: string | null;
+  formulaName?: string | null;
 }
 export function deserializeUpdateAcademicActivityDto(json: string): UpdateAcademicActivityDto {
   const data = JSON.parse(json) as UpdateAcademicActivityDto;

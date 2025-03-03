@@ -123,6 +123,59 @@ function processCreateAcademicActivity(response: AxiosResponse): Promise<void> {
     return Promise.resolve<void>(null as any);
 }
 
+export function getAcademicActivityFormulaParams(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<string[]> {
+    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/formula-params";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetAcademicActivityFormulaParams,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetAcademicActivityFormulaParams?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetAcademicActivityFormulaParams(_response);
+    });
+}
+
+function processGetAcademicActivityFormulaParams(response: AxiosResponse): Promise<string[]> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        result200 = resultData200;
+        return Promise.resolve<string[]>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<string[]>(null as any);
+}
+
 export function updateAcademicActivity(academicActivityId: number, updateAcademicActivityDto: Types.UpdateAcademicActivityDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
     if (academicActivityId === undefined || academicActivityId === null)
@@ -250,6 +303,17 @@ export function setCreateAcademicActivityRequestConfig(value: Partial<AxiosReque
 }
 export function patchCreateAcademicActivityRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigCreateAcademicActivity = patch(_requestConfigCreateAcademicActivity ?? {});
+}
+
+let _requestConfigGetAcademicActivityFormulaParams: Partial<AxiosRequestConfig> | null;
+export function getGetAcademicActivityFormulaParamsRequestConfig() {
+  return _requestConfigGetAcademicActivityFormulaParams;
+}
+export function setGetAcademicActivityFormulaParamsRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetAcademicActivityFormulaParams = value;
+}
+export function patchGetAcademicActivityFormulaParamsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetAcademicActivityFormulaParams = patch(_requestConfigGetAcademicActivityFormulaParams ?? {});
 }
 
 let _requestConfigUpdateAcademicActivity: Partial<AxiosRequestConfig> | null;

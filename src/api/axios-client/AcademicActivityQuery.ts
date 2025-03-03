@@ -26,6 +26,10 @@ export type CreateAcademicActivityAcademicActivityQueryParameters = {
   curriculumId: number ;
 }
 
+export type GetAcademicActivityFormulaParamsAcademicActivityQueryParameters = {
+  curriculumId: number ;
+}
+
 export type UpdateAcademicActivityAcademicActivityQueryParameters = {
   academicActivityId: number ;
   curriculumId: string ;
@@ -163,6 +167,86 @@ return useMutation({
 });
 }
   
+export function getAcademicActivityFormulaParamsUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/formula-params";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+let getAcademicActivityFormulaParamsDefaultOptions: Omit<UseQueryOptions<string[], unknown, string[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<string[], unknown, string[]>, 'queryFn'>> = {
+};
+export function getGetAcademicActivityFormulaParamsDefaultOptions() {
+  return getAcademicActivityFormulaParamsDefaultOptions;
+};
+export function setGetAcademicActivityFormulaParamsDefaultOptions(options: typeof getAcademicActivityFormulaParamsDefaultOptions) {
+  getAcademicActivityFormulaParamsDefaultOptions = options;
+}
+
+export function getAcademicActivityFormulaParamsQueryKey(curriculumId: number): QueryKey;
+export function getAcademicActivityFormulaParamsQueryKey(...params: any[]): QueryKey {
+  if (params.length === 1 && isParameterObject(params[0])) {
+    const { curriculumId,  } = params[0] as GetAcademicActivityFormulaParamsAcademicActivityQueryParameters;
+
+    return trimArrayEnd([
+        'AcademicActivityClient',
+        'getAcademicActivityFormulaParams',
+        curriculumId as any,
+      ]);
+  } else {
+    return trimArrayEnd([
+        'AcademicActivityClient',
+        'getAcademicActivityFormulaParams',
+        ...params
+      ]);
+  }
+}
+export function __getAcademicActivityFormulaParams(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+  return Client.getAcademicActivityFormulaParams(
+      context.queryKey[2] as number,axiosConfig    );
+}
+
+export function useGetAcademicActivityFormulaParamsQuery<TSelectData = string[], TError = unknown>(dto: GetAcademicActivityFormulaParamsAcademicActivityQueryParameters, options?: Omit<UseQueryOptions<string[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+
+export function useGetAcademicActivityFormulaParamsQuery<TSelectData = string[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<string[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetAcademicActivityFormulaParamsQuery<TSelectData = string[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<string[], TError, TSelectData> | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+  let curriculumId: any = undefined;
+  
+  if (params.length > 0) {
+    if (isParameterObject(params[0])) {
+      ({ curriculumId,  } = params[0] as GetAcademicActivityFormulaParamsAcademicActivityQueryParameters);
+      options = params[1];
+      axiosConfig = params[2];
+    } else {
+      [curriculumId, options, axiosConfig] = params;
+    }
+  }
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useQuery<string[], TError, TSelectData>({
+    queryFn: axiosConfig ? (context) => __getAcademicActivityFormulaParams(context, axiosConfig) : __getAcademicActivityFormulaParams,
+    queryKey: getAcademicActivityFormulaParamsQueryKey(curriculumId),
+    ...getAcademicActivityFormulaParamsDefaultOptions as unknown as Omit<UseQueryOptions<string[], TError, TSelectData>, 'queryKey'>,
+    ...options,
+  });
+}
+
+export function setGetAcademicActivityFormulaParamsData(queryClient: QueryClient, updater: (data: string[] | undefined) => string[], curriculumId: number) {
+  queryClient.setQueryData(getAcademicActivityFormulaParamsQueryKey(curriculumId),
+    updater
+  );
+}
+
+export function setGetAcademicActivityFormulaParamsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: string[] | undefined) => string[]) {
+  queryClient.setQueryData(queryKey, updater);
+}
+    
 export function updateAcademicActivityUrl(academicActivityId: number, curriculumId: string): string {
   let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
 if (academicActivityId === undefined || academicActivityId === null)
