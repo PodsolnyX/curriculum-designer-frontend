@@ -3,7 +3,6 @@ import {DragCancelEvent, DragEndEvent, DragOverEvent, DragStartEvent, UniqueIden
 import {
     CursorMode,
     DisplaySettings,
-    PREFIX_ITEM_ID_KEYS,
     ToolsOptions,
 } from "@/pages/planPage/provider/types.ts";
 import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
@@ -18,18 +17,24 @@ import {
     AtomDto,
     AttestationDto,
     CompetenceDistributionType,
-    CurriculumSettingsDto, ModuleDto, RefModuleSemesterDto, SemesterDto, UpdateAtomDto,
+    CurriculumSettingsDto,
+    ModuleDto,
+    RefModuleSemesterDto,
+    SemesterDto,
+    UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
-    concatIds, cutAtomIdFromId,
-    cutSemesterIdFromId,
-    getIdFromPrefix, getParentIdFromPrefix, getParentPrefixFromPrefix,
-    getPrefixFromId, getSemesterIdFromPrefix, regenerateId, setPrefixToId, splitIds
+    getIdFromPrefix, getParentIdFromPrefix, getSemesterIdFromPrefix
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {App} from "antd";
+
+export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
+    atoms: number[];
+    modules: number[];
+}
 
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
@@ -37,7 +42,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const [semesters, setSemesters] = useState<SemesterDto[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
-    const [modulesList, setModulesList] = useState<ModuleDto[]>([]);
+    const [modulesList, setModulesList] = useState<ModuleShortDto[]>([]);
     const [competences, setCompetences] = useState<Dictionary<SubjectCompetence>>({});
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
@@ -67,7 +72,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         competencesData,
         competenceIndicatorsData,
         isLoading
-    } = useCurriculumData({modulesPlainList: false});
+    } = useCurriculumData({modulesPlainList: true});
 
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
         cursorMode: CursorMode.Move,
@@ -93,7 +98,19 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }, [atomsData])
 
     useEffect(() => {
-        if (modulesData) setModulesList(modulesData)
+        if (modulesData) {
+            setModulesList(modulesData
+                .map(module => {
+                    return {
+                        ...module,
+                        atoms: module.atoms.map(atom => atom.id),
+                        modules: modulesData
+                            .filter(_module => module.id === _module.parentModuleId)
+                            .map(module => module.id)
+                    }
+                })
+            )
+        }
     }, [modulesData])
 
     useEffect(() => {
@@ -119,12 +136,21 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             enableSettings()
     }, [toolsOptions])
 
-
-    // Выбор предмета
-
     const getAtom = useCallback((atomId: number): AtomDto | undefined => {
         return atomsList.find(atom => atom.id === atomId)
     }, [atomsList])
+
+    const getAtoms = useCallback((atomId: number[]): AtomDto[] => {
+        const atoms: AtomDto[] = [];
+        atomsList.forEach(atom => {
+            if (atomId.includes(atom.id)) atoms.push(atom)
+        })
+        return atoms
+    }, [atomsList])
+
+    const getModule = useCallback((moduleId: number): ModuleShortDto | undefined => {
+        return modulesList.find(module => module.id === moduleId)
+    }, [modulesList])
 
     const onSelectAtom = (id: string | null) => {
 
@@ -140,40 +166,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         setSelectedCompetenceId(id);
     }
 
-    // Возвращает список id родителей по id текущего элемента
-
-    const getParentsIdsByChildId = (id: UniqueIdentifier): UniqueIdentifier[] => {
-
-        let parentIds: (UniqueIdentifier)[] = [];
-
-        const checkKeys = (obj: any) => {
-            return PREFIX_ITEM_ID_KEYS.some(key => Object.keys(obj).includes(key));
-        }
-
-        const findParentIdActiveItem = (item: any): boolean => {
-            for (let key of PREFIX_ITEM_ID_KEYS) {
-                if (Array.isArray(item[key])) {
-                    if (item[key].find(item => item.id === id)) {
-                        parentIds.unshift(id);
-                        item.id && parentIds.unshift(item.id);
-                        return true;
-                    } else {
-                        for (let subItem of item[key]) {
-                            if (checkKeys(subItem) && findParentIdActiveItem(subItem)) {
-                                item.id && parentIds.unshift(item.id);
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        };
-
-        findParentIdActiveItem({semesters})
-        return parentIds;
-    }
-
     // Обновляет состояние предмета в локальном состоянии плана
 
     function updateAtom(
@@ -187,8 +179,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         const getAtomWithUpdatedParam = (atom: AtomDto): AtomDto => {
             const atomUpdated = structuredClone(atom);
-            if (["name", "type", "isRequired"].includes(paramKey)) {
-                atomUpdated[paramKey] = param as AtomUpdateParams[typeof AtomUpdateCommonParam];
+            if (commonSubjectParamKeys.includes(paramKey as keyof UpdateAtomDto)) {
+                atomUpdated[paramKey] = param;
             }
             else if (paramKey === "competenceIds" && curriculumData) {
                 curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence
@@ -281,21 +273,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     function handleDragStart(event: DragStartEvent) {
         const {active} = event;
         const {id} = active;
-
         setActiveItemId(id);
     }
 
     function handleDragOver(event: DragOverEvent) {
-
         if (!event.over) return;
         const {id: overId} = event.over;
-
         setOverItemId(overId);
     }
 
-    const handleDragCancel = (event: DragCancelEvent) => {
-
-    }
+    const handleDragCancel = (event: DragCancelEvent) => { }
 
     function arraysToDict(keys: string[], values: number[]): Record<string, number> {
         return keys.reduce((acc, key, index) => {
@@ -305,177 +292,107 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }
 
     const handleDragEnd = (event: DragEndEvent) => {
-        if (!event.active?.id || !event.over?.id || event.active.id === event.over.id) {
-            return;
-        }
+        if (!event.active?.id || !event.over?.id || event.active.id === event.over.id) return;
 
         const activeId = event.active?.id as string;
         const overId = event.over?.id as string;
 
-        const updateSemesters = structuredClone(semesters);
-        const updateModulesList = structuredClone(modulesList);
-        let activeSubject: any;
+        const atomId = Number(getIdFromPrefix(activeId));
+        const activeSemesterId = Number(getSemesterIdFromPrefix(activeId));
+        const activeParentModuleId = Number(getParentIdFromPrefix(activeId));
+        const overSemesterId = Number(getSemesterIdFromPrefix(overId));
+        const overParentModuleId = Number(getParentIdFromPrefix(overId));
 
-        const removeSubjectFromParents = (item: any, currentDeep: number, parentsIds: string[]) => {
-            const type = getPrefixFromId(parentsIds[currentDeep]);
-            if (type === "subjects")
-                item.subjects = item.subjects.filter((item: any) => {
-                    if (item.id !== parentsIds[currentDeep]) return true
-                    else {
-                        activeSubject = item;
-                        return false;
+        const atom = atomsList.find(atom => atom.id === atomId);
+
+        if (!atom) return;
+
+        const indexTargetSemester =  semesters.findIndex(semester => semester.id === overSemesterId);
+        const indexInitialSemester =  atom.semesters.findIndex(semester => semester.semester.id === activeSemesterId);
+        const newSubjectSemestersIndex = atom.semesters.map((_, index) => indexTargetSemester + index - indexInitialSemester)
+
+        //Если предметы не помещаются по верхнему или нижнему пределу
+        if (newSubjectSemestersIndex.includes(-1) || newSubjectSemestersIndex.includes(semesters.length)) {
+            message.error("Невозможно переместить предметы в этот семестр")
+            return atom;
+        }
+
+        let newAtomSemesters: SemesterDto[] = [];
+
+        setAtomsList(prev => {
+            return prev.map(atom => atom.id === atomId ? {
+                ...atom,
+                parentModuleId: overSemesterId === overParentModuleId ? null : overParentModuleId,
+                semesters: atom.semesters.map((refSemester, index) => {
+                    newAtomSemesters.push(semesters[newSubjectSemestersIndex[index]]);
+                    return {
+                        ...refSemester,
+                        semester: semesters[newSubjectSemestersIndex[index]]
                     }
                 })
-            else {
-                if (!item[type]) console.log(item, parentsIds[currentDeep], parentsIds)
-                const subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep])
-                removeSubjectFromParents(subItem, currentDeep + 1, parentsIds);
-            }
-        }
+            } : atom)
+        })
 
-        const addSemesterModule = (item: any, currentDeep: number, parentsIds: string[]): any => {
+        const concatModuleSemestersWithAtomSemesters = (moduleSemesters: RefModuleSemesterDto[]): RefModuleSemesterDto[] => {
+            const mergedMap = new Map<number, SemesterDto>();
 
-            if (!semestersData) return;
+            [...moduleSemesters.map(semester => semester.semester), ...newAtomSemesters].forEach(semester => {
+                mergedMap.set(semester.number, semester);
+            });
 
-            const newItem = { id: parentsIds[currentDeep], subjects: [], semesterId: parentsIds[0] };
+            const mergedArray = Array.from(mergedMap.values()).sort((a, b) => a.number - b.number);
 
-            item[getPrefixFromId(parentsIds[currentDeep])] = [
-                ...item[getPrefixFromId(parentsIds[currentDeep])], newItem
-            ]
-
-            const moduleInList = updateModulesList.find(module => module.id === Number(getIdFromPrefix(parentsIds[currentDeep])));
-            const newSemester: RefModuleSemesterDto = {
-                semester: {
-                    ...semestersData.find(semester =>
-                        semester.semester.id === Number(getIdFromPrefix(parentsIds[0]))
-                    ).semester
-                },
-                elective: {
-                    credit: 0,
-                    attestations: [],
-                    academicActivityHours: []
-                },
-                nonElective: {
-                    credit: 0,
-                    attestations: [],
-                    academicActivityHours: []
+            return mergedArray.map(semester => {
+                return {
+                    semester,
+                    nonElective: moduleSemesters.find(sem => sem.semester.id === semester.id)?.nonElective || {
+                        credit: 0, attestations: [], academicActivityHours: []
+                    },
+                    elective: moduleSemesters.find(sem => sem.semester.id === semester.id)?.elective || {
+                        credit: 0, attestations: [], academicActivityHours: []
+                    }
                 }
-            };
-
-            const insertIndex = moduleInList.semesters.findIndex(semester => semester.semester.number > newSemester.semester.number);
-
-            if (insertIndex === -1) moduleInList.semesters.push(newSemester);
-            else moduleInList.semesters.splice(insertIndex, 0, newSemester);
-
-            return newItem;
+            });
         }
 
-        const addSubjectToNewParents = (item: any, currentDeep: number, parentsIds: string[]) => {
-            const type = getPrefixFromId(parentsIds[currentDeep]);
-
-            if (!type && currentDeep === parentsIds.length) {
-                item.subjects = [...item.subjects, {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.at(-1))}]
-            } else if (type === "subjects") {
-                item.subjects.splice(item.subjects.findIndex((_item: any) => _item.id === parentsIds[currentDeep]), 0,
-                    {...activeSubject, id: regenerateId(activeSubject.id, parentsIds.at(-1))})
-            } else {
-                let subItem = item[type].find((_item: any) => _item.id === parentsIds[currentDeep]);
-                if (!subItem) {
-                    subItem = addSemesterModule(item, currentDeep, parentsIds);
-                }
-                addSubjectToNewParents(subItem, currentDeep + 1, parentsIds);
-            }
-        }
-
-        const moveSubject = (activeId: string, overId: string) => {
-            removeSubjectFromParents({semesters: updateSemesters}, 0, splitIds(activeId))
-            addSubjectToNewParents({semesters: updateSemesters}, 0, splitIds(overId))
-        }
-
-        const findSubjectsInAnotherEntities = () => {
-            const ids: string[] = [];
-            let indexOfActiveSubject = 0;
-            if (!atomsData) return ids;
-
-            atomsList
-                .find(atom => String(atom.id) === getIdFromPrefix(activeId)).semesters
-                .forEach(semester => {
-                    const subjectId = concatIds(setPrefixToId(semester.semester.id, "semesters"), cutSemesterIdFromId(activeId));
-                    if (subjectId === activeId) indexOfActiveSubject = ids.length;
-                    ids.push(subjectId)
-                })
-
-            return [indexOfActiveSubject, ids];
-        }
-
-        const [indexOfActiveSubject, initialSubjectSemestersIds] = findSubjectsInAnotherEntities();
-
-        const moveSubjects = () => {
-            if (!initialSubjectSemestersIds.length) return;
-
-            const initialContainerId = getSemesterIdFromPrefix(activeId);
-            const targetContainerId = getSemesterIdFromPrefix(overId);
-
-            // Если перемещаем в семестры
-            if (semestersData) {
-                const indexTargetSemester =  semestersData.findIndex(semester => String(semester.semester.id) === targetContainerId);
-                const indexInitialSemester =  semestersData.findIndex(semester => String(semester.semester.id) === initialContainerId);
-                const newSubjectSemestersIndex = initialSubjectSemestersIds.map((_, index) => indexTargetSemester + index - indexOfActiveSubject)
-
-                //Если предметы не помещаются по верхнему или нижнему пределу
-                if (newSubjectSemestersIndex.includes(-1) || newSubjectSemestersIndex.includes(semestersData.length)) {
-                    message.error("Невозможно переместить предметы в этот семестр")
-                    return;
-                }
-
-                const targetParentIdPart = cutSemesterIdFromId(cutAtomIdFromId(overId));
-
-                const idsNewSemesters = newSubjectSemestersIndex.map(index => {
-                    const _semesterId = setPrefixToId(semestersData[index].semester.id, "semesters");
-                    if (targetParentIdPart.length) return concatIds(_semesterId, targetParentIdPart);
-                    return _semesterId;
-                });
-
-                const shouldReverse = indexInitialSemester < indexTargetSemester;
-                const initialIds = shouldReverse ? [...initialSubjectSemestersIds].reverse() : initialSubjectSemestersIds;
-                const targetIds = shouldReverse ? [...idsNewSemesters].reverse() : idsNewSemesters;
-
-                //Перемещаем предметы в новые места
-
-                initialIds.forEach((id, index) => moveSubject(id, targetIds[index]));
-
-                //Обновляем состояние списка предметов
-
-                setAtomsList(atomsList.map(atom => atom.id === Number(getIdFromPrefix(activeId))
-                    ? {
-                    ...atom,
-                        semesters: atom.semesters.map((refSemester, index) => {
-                            return {
-                                ...refSemester,
-                                semester: {...refSemester.semester, id: semestersData[newSubjectSemestersIndex[index]].semester.id, number: semestersData[newSubjectSemestersIndex[index]].semester.number}
+        if ((activeParentModuleId !== overParentModuleId) && (activeSemesterId !== activeParentModuleId || overSemesterId !== overParentModuleId)) {
+            setModulesList(prev => {
+                return prev.map(module =>
+                    module.id === activeParentModuleId ?
+                        {
+                            ...module,
+                            atoms: module.atoms.filter(moduleAtom => moduleAtom !== atomId),
+                            semesters: module.semesters
+                                .filter(moduleSemester => module.atoms.filter(moduleAtom => moduleAtom !== atomId)
+                                    .some(moduleAtom => {
+                                        const moduleAtomInfo = getAtom(moduleAtom);
+                                        if (!moduleAtomInfo) return false;
+                                        return !!moduleAtomInfo.semesters.find(atomSemester => atomSemester.semester.id === moduleSemester.semester.id)
+                                    })
+                                )
+                        } :
+                        module.id === overParentModuleId ?
+                            {
+                                ...module,
+                                atoms: [...module.atoms, atomId],
+                                semesters: concatModuleSemestersWithAtomSemesters(module.semesters)
                             }
-                        })
-                    }
-                    : atom
-                ))
-
-                //Сохраняем на сервере
-                editInfo({
-                    subjectId: Number(getIdFromPrefix(activeId)),
-                    data: {
-                        semesterIds: arraysToDict(
-                            initialSubjectSemestersIds.map(id => getIdFromPrefix(id.split("_")[0])),
-                            newSubjectSemestersIndex.map(index => semestersData[index].semester.id)
-                        ),
-                        parentModuleId: ["modules", "selections"].includes(getParentPrefixFromPrefix(overId)) ? Number(getParentIdFromPrefix(overId)) : null
-                    }
-                })
-            }
+                        : module
+                )
+            })
         }
 
-        moveSubjects();
-        setSemesters(updateSemesters);
-        setModulesList(updateModulesList);
+        editInfo({
+            subjectId: atomId,
+            data: {
+                semesterIds: arraysToDict(
+                    atom.semesters.map(semester => String(semester.semester.id)),
+                    newSubjectSemestersIndex.map(index => semesters[index].id)
+                ),
+                parentModuleId: overSemesterId === overParentModuleId ? null : overParentModuleId
+            }
+        })
+
         resetAllActiveIds();
     }
 
@@ -497,6 +414,8 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         settings: curriculumData?.settings || {competenceDistributionType: CompetenceDistributionType.Competence},
         onSelectCompetence,
         getAtom,
+        getAtoms,
+        getModule,
         onSelectSubject: onSelectAtom,
         setToolsOptions,
         setActiveSubject: setSelectedAtom,
@@ -530,7 +449,7 @@ interface PlanContextValue {
 
     semesters: SemesterDto[];
     atomList: AtomDto[];
-    modulesList: ModuleDto[];
+    modulesList: ModuleShortDto[];
 
     competences: Dictionary<SubjectCompetence>;
     attestationTypes: AttestationDto[];
@@ -544,6 +463,10 @@ interface PlanContextValue {
     loadingPlan: boolean;
 
     getAtom(atomId: number): AtomDto | undefined;
+
+    getAtoms(atomIds: number[]): AtomDto[];
+
+    getModule(moduleId: number): ModuleShortDto | undefined;
 
     onSelectCompetence(id: number | null): void;
 
@@ -591,6 +514,8 @@ const PlanContext = createContext<PlanContextValue>({
     modulesList: [],
 
     getAtom: (_id: number) => undefined,
+    getAtoms: (_ids: number[]) => [],
+    getModule: (_moduleId: number) => undefined,
     onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: string | null) => {
     },

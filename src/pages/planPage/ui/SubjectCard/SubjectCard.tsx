@@ -50,6 +50,7 @@ export const SubjectCardMemo =
             department,
             competenceIds,
             competenceIndicatorIds,
+            curriculumId,
 
             active,
             isSelected,

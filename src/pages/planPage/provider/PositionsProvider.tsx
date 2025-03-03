@@ -4,7 +4,7 @@ import React, {
     useEffect,
     useRef,
     useState,
-    ReactNode, useCallback, CSSProperties, useMemo,
+    ReactNode, useCallback, CSSProperties, useMemo, forwardRef,
 } from 'react';
 
 interface PositionsContextProps {
@@ -141,7 +141,7 @@ interface ContainerProps {
 }
 
 
-export const PositionContainer = (props: ContainerProps) => {
+export const PositionContainer = forwardRef<HTMLDivElement, ContainerProps>((props, ref) => {
     const {
         rowId,
         id,
@@ -186,10 +186,11 @@ export const PositionContainer = (props: ContainerProps) => {
         <div
             style={styles}
             className={typeof(rootClassName) === "string" ? rootClassName : rootClassName?.(maxHeight)}
+            ref={ref}
         >
             <div ref={contentRef} className={childrenClassName}>
                 {children}
             </div>
         </div>
     );
-};
+});

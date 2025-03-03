@@ -49,15 +49,6 @@ export const commonSubjectParamKeys = Object.keys({
     semesterIds: null
 }) as Array<keyof UpdateAtomDto>;
 
-// export const commonSubjectParamKeys = Object.keys({
-//     parentModuleId: null,
-//     name: null,
-//     isRequired: null,
-//     order: null,
-//     type: null,
-//     semesterIds: null
-// }) as Array<keyof UpdateAtomDto>;
-
 export interface SubjectComment {
     id: string;
     author: string;

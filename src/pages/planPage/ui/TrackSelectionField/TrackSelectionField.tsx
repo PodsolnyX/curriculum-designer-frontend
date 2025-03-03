@@ -2,9 +2,13 @@ import React from "react";
 import {ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
-import {concatIds, cutSemesterIdFromId, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {
+    concatIds,
+    cutSemesterIdFromId,
+    getIdFromPrefix,
+    setPrefixToId
+} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {getModuleAtomsIds, getModuleRootStyles} from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
-import {ModuleDto} from "@/api/axios-client.types.ts";
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
@@ -12,7 +16,8 @@ import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubject
 
 interface TrackSelectionProps {
     id: string;
-    tracks: ModuleDto[];
+    tracks: number[];
+    name?: string;
     credits: number;
     semesterNumber?: number;
     semesterId: number;
@@ -43,7 +48,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
         >
             {
                 (position === "first" || position === "single") ?
-                    <div className={"flex justify-center py-2"}>
+                    <div className={"flex justify-center py-2 min-w-[200px]"}>
                         <span
                             className={"text-black font-bold text-center overflow-hidden text-nowrap text-ellipsis"}>
                             {name}
@@ -70,10 +75,9 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
 
                             return (
                                 <TrackField
-                                    key={track.id}
-                                    id={concatIds(id, setPrefixToId(track.id, "modules"))}
-                                    name={track.name}
-                                    atomsIds={getModuleAtomsIds(track.atoms, semesterId, concatIds(id, setPrefixToId(track.id, "modules")))}
+                                    key={track}
+                                    id={concatIds(id, setPrefixToId(track, "modules"))}
+                                    semesterId={semesterId}
                                     color={colors[index]}
                                     position={position}
                                 />
@@ -88,17 +92,21 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
 
 interface TrackFieldProps {
     id: string;
-    name: string;
-    atomsIds: string[];
     color: string;
+    semesterId: number;
     position?: ModuleSemestersPosition;
 }
 
 const TrackField = (props: TrackFieldProps) => {
 
-    const {id, name, color, position = "single", atomsIds} = props;
+    const {
+        id,
+        color,
+        position = "single",
+        semesterId
+    } = props;
 
-    const { overItemId } = usePlan();
+    const { overItemId, getModule, getAtoms } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
@@ -111,12 +119,20 @@ const TrackField = (props: TrackFieldProps) => {
         "last": `border-x-2 border-b-2 rounded-b-lg`
     }
 
+    const module = getModule(Number(getIdFromPrefix(id)));
+
+    if (!module) return null;
+
+    const {name, atoms} = module;
+
+    const atomsIds = getModuleAtomsIds(getAtoms(atoms), semesterId, id);
+
     return (
         <div
-            className={`${styles[position]} border-dotted h-full pb-2 px-3 ${overItemId === id ? "border-blue-300" : ""}`}
+            className={`${styles[position]} border-dotted h-full pb-2 px-3`}
             ref={setNodeRef}
             style={{
-                backgroundColor: `${color}20`,
+                backgroundColor: overItemId === id ? `${color}35` : `${color}20`,
                 borderColor: color
             }}
         >

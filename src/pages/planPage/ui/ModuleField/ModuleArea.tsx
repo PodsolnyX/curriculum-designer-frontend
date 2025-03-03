@@ -1,6 +1,6 @@
-import {AtomDto, ModuleDto, RefModuleSemesterDto, SelectionDto} from "@/api/axios-client.types.ts";
+import {AtomDto, RefModuleSemesterDto, SelectionDto} from "@/api/axios-client.types.ts";
 import React, {CSSProperties, memo, useMemo, useState} from "react";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import {ModuleShortDto, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {App, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {
@@ -15,7 +15,7 @@ import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubject
 import {PositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 
-interface ModuleAreaProps extends ModuleDto {}
+interface ModuleAreaProps extends ModuleShortDto {}
 
 const ModuleArea = (props: ModuleAreaProps) => {
 
@@ -28,12 +28,15 @@ const ModuleArea = (props: ModuleAreaProps) => {
         modules
     } = props;
 
+    const {getAtoms} = usePlan()
     const {getTopCoordinate, getHorizontalCoordinate} = usePositions();
 
+    const atomsInfo = useMemo(() => getAtoms(atoms), [getAtoms, atoms])
+
     const gridColumnsCount = useMemo(() => {
-        const averageAtomsCount = atoms.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
-        return ~~(averageAtomsCount / 2) || 1
-    }, [atoms, semesters])
+        const averageAtomsCount = atomsInfo.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
+        return ~~((averageAtomsCount + 1) / 2) || 1
+    }, [atomsInfo, semesters])
 
     const x = getHorizontalCoordinate(
         setPrefixToId(semesters?.[0]?.semester.id || "", "semesters"),
@@ -65,9 +68,10 @@ const ModuleArea = (props: ModuleAreaProps) => {
                                     id={moduleId}
                                     key={semester.semester.id}
                                     semesterNumber={index + 1}
-                                    credits={selection.semesters[index].credit || 0}
+                                    credits={selection.semesters[index]?.credit || 0}
                                     semesterId={semester.semester.id}
                                     tracks={modules}
+                                    name={name}
                                     position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
                                 />
                                 : <ModuleField
@@ -78,7 +82,7 @@ const ModuleArea = (props: ModuleAreaProps) => {
                                     semester={semester}
                                     selection={selection}
                                     position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
-                                    atomsIds={getModuleAtomsIds(atoms, semester.semester.id, moduleId)}
+                                    atomsIds={getModuleAtomsIds(atomsInfo, semester.semester.id, moduleId)}
                                 />
                         )
                     })
@@ -166,8 +170,9 @@ const ModuleField = memo((props: ModuleFieldProps) => {
             rowId={rowId}
             id={containerId}
             rootStyles={(height) => getModuleRootStyles(height, position)}
-            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "" : (selection ? "" : "")}`}
+            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(onAdd) ? "cursor-pointer" : ""} ${(overItemId === id || onAdd) ? "bg-blue-300/[.3]" : ""}`}
             childrenClassName={"min-h-max"}
+            ref={setNodeRef}
         >
             <div
                 onMouseEnter={onHover} onMouseLeave={onLeave}

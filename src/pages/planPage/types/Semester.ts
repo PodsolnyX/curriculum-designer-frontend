@@ -1,13 +1,5 @@
 import {Subject} from "@/pages/planPage/types/Subject.ts";
 
-export interface Semester {
-    id: string;
-    number: number;
-    subjects: Subject[];
-    selections: Selection[];
-    modules: Module[];
-    trackSelection: TrackSelection[];
-}
 
 export interface Selection {
     id: string;
@@ -20,19 +12,5 @@ export interface Module {
     id: string;
     name: string;
     semesterId: string;
-    subjects: Subject[];
-}
-
-export interface TrackSelection {
-    id: string;
-    name: string;
-    tracks: Track[];
-    credits: number;
-}
-
-export interface Track {
-    id: string;
-    name: string;
-    color?: string;
     subjects: Subject[];
 }

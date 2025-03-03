@@ -26,7 +26,7 @@ import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
 import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
 import {PositionsProvider} from "@/pages/planPage/provider/PositionsProvider.tsx";
-import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
 const PlanPageWrapped = () => {
 
@@ -77,7 +77,11 @@ const PlanPageWrapped = () => {
                                             <SemesterField {...semester} key={semester.id}
                                                            subjectsContainerWidth={subjectsContainerWidth}
                                                            setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
-                                                           atomsList={atomList.filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id)) || []}
+                                                           atomsIds={atomList
+                                                               .filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id))
+                                                                   .map(atom => concatIds(setPrefixToId(semester.id, "semesters"), setPrefixToId(atom.id, "subjects")))
+                                                               || []
+                                            }
                                             />
                                         )
                                     }
@@ -87,7 +91,9 @@ const PlanPageWrapped = () => {
                                     style={{left: `${subjectsContainerWidth + 0.2}%`, width: `${100 - subjectsContainerWidth - 0.2}%`}}
                                 >
                                     {
+                                        atomList &&
                                         modulesList
+                                            .filter(module => module.parentModuleId === null)
                                             .sort((a, b) => a.semesters[0].semester.number - b.semesters[0].semester.number)
                                             .map((module, index) => <ModuleArea {...module} key={module.id}/>)
                                     }
