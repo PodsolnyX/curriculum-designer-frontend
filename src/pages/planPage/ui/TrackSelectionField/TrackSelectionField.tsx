@@ -141,7 +141,7 @@ const TrackField = (props: TrackFieldProps) => {
 
     return (
         <div
-            className={`${styles[position]} border-dotted h-full pb-2 px-3`}
+            className={`${styles[position]} border-dotted h-full pb-2 px-3 min-w-[200px]`}
             ref={setNodeRef}
             style={{
                 backgroundColor: (overItemId === id || isHover) ? `${color}35` : `${color}20`,

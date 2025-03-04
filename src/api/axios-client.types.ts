@@ -414,7 +414,6 @@ export function prepareSerializeSetCurriculumSettingsDto(_data: SetCurriculumSet
   return data as SetCurriculumSettingsDto;
 }
 export interface SelectionDto  {
-  name: string;
   semesters: CreditPerSemesterDto[];
 }
 export function deserializeSelectionDto(json: string): SelectionDto {
@@ -785,6 +784,7 @@ export interface UpdateAtomDto  {
   order?: number | null;
   type?: AtomType | null;
   semesterIds?: { [key: string]: number; } | null;
+  departmentId?: number | null;
 }
 export function deserializeUpdateAtomDto(json: string): UpdateAtomDto {
   const data = JSON.parse(json) as UpdateAtomDto;

@@ -2,10 +2,13 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useParams} from "react-router-dom";
 import {useQueryClient} from "@tanstack/react-query";
 import {App} from "antd";
-import {getModulesByCurriculumQueryKey, useCreateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
+import {
+    getModulesByCurriculumQueryKey,
+    useCreateModuleMutation,
+    useCreateModuleWithSelectionMutation
+} from "@/api/axios-client/ModuleQuery.ts";
 import {getAtomsByCurriculumQueryKey, useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
 import {AtomType} from "@/api/axios-client.types.ts";
-import {useCreateUpdateSelectionMutationWithParameters} from "@/api/axios-client/SelectionQuery.ts";
 
 export const useCreateEntity = () => {
     const {toolsOptions} = usePlan();
@@ -22,9 +25,13 @@ export const useCreateEntity = () => {
         }
     });
 
-    const {mutateAsync: createModule} = useCreateModuleMutation();
-
-    const {mutate: updateSelection} = useCreateUpdateSelectionMutationWithParameters({
+    const {mutateAsync: createModule} = useCreateModuleMutation({
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
+            message.success("Модуль успешно создан")
+        }
+    });
+    const {mutateAsync: createSelection} = useCreateModuleWithSelectionMutation({
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
             message.success("Выбор успешно создан")
@@ -54,14 +61,14 @@ export const useCreateEntity = () => {
                 message.success("Модуль успешно создан")
             })
         else if (toolsOptions.selectedCreateEntityType === "selections")
-            createModule({
-                name: "Новый выбор",
-                curriculumId: Number(curriculumId),
-                parentModuleId: parentId || null,
-                parentSemesterId: semesterId,
-            }).then((newModuleId) => updateSelection({
-                moduleId: newModuleId,
-                createUpdateSelectionDto: {
+            createSelection({
+                module: {
+                    name: "Новый выбор",
+                    curriculumId: Number(curriculumId),
+                    parentModuleId: parentId || null,
+                    parentSemesterId: semesterId
+                },
+                selection: {
                     semesters: [
                         {
                             semesterId: semesterId,
@@ -69,7 +76,7 @@ export const useCreateEntity = () => {
                         }
                     ]
                 }
-            }))
+            })
     }
 
     return {onCreate}
