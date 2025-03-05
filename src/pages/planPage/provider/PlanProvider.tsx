@@ -163,7 +163,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }, [indexesData])
 
     const getValidationErrors = useCallback((id: string): ValidationError[] | undefined => {
-        if (!validationErrorsData.length) return undefined;
+        if (!validationErrorsData?.length) return undefined;
         const ids = splitIds(id).map(id => Number(getIdFromPrefix(id)));
         return validationErrorsData.filter(error => error.entities ? error.entities?.every(ent => ids.includes(ent?.id || 0)) : false)
     }, [validationErrorsData]);
