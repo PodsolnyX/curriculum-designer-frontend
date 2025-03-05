@@ -27,8 +27,8 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId, onCha
     return (
         <div className={`flex flex-wrap gap-1 max-h-[150px] overflow-y-auto scrollbar group items-center ${!competencies.length ? "justify-between": ""}`} onClick={(event) => event.stopPropagation()}>
             {
-                competencies.length ?
-                    competencies.map(competence => {
+                competencies?.length ?
+                    competencies?.map(competence => {
 
                         const competenceInfo = competences[competence]
 
@@ -40,9 +40,9 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId, onCha
                                 key={competence}
                                 onClick={() => onSelectCompetence(competence !== selectedCompetenceId ? competence : null)}
                             >
-                                <Tooltip title={competenceInfo.description}>
+                                <Tooltip title={competenceInfo?.description}>
                                 <span className={`${size === "small" ? "text-[12px]" : "text-[14px]"}`}>
-                                    {competenceInfo.index}
+                                    {competenceInfo?.index}
                                 </span>
                                 </Tooltip>
                                 <Tooltip title={"Удалить"}>

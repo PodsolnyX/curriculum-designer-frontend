@@ -1,5 +1,5 @@
 import {
-    AtomType, AttestationDto, HoursDistributionDto, UpdateAtomDto,
+    AtomType, AttestationDto, DepartmentDto, HoursDistributionDto, UpdateAtomDto,
 } from "@/api/axios-client.ts";
 import {UniqueIdentifier} from "@dnd-kit/core";
 
@@ -38,6 +38,7 @@ export interface AtomUpdateParams {
     attestations?: number[];
     academicHours?: {id: number, value: number | undefined}; // id of academic activity or id of new activity. If value is -1 then activity will be deleted
     competenceIds?: number[];
+    department?: DepartmentDto;
 }
 
 export const commonSubjectParamKeys = Object.keys({
@@ -45,6 +46,7 @@ export const commonSubjectParamKeys = Object.keys({
     name: null,
     isRequired: null,
     order: null,
+    department: null,
     type: null,
     semesterIds: null
 }) as Array<keyof UpdateAtomDto>;

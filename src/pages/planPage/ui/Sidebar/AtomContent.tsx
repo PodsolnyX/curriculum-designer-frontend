@@ -1,11 +1,11 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import React, {useEffect, useState} from "react";
 import {
-    concatIds, cutSemesterIdFromId,
+    concatIds,
     getSemesterIdFromPrefix,
     setPrefixToId
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
-import {Badge, Checkbox, InputNumber, Segmented, Select, Typography} from "antd";
+import {Badge, Segmented, Select, Switch, Typography} from "antd";
 import {AtomType} from "@/api/axios-client.types.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
 import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
@@ -13,6 +13,7 @@ import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
+import DepartmentsSelector from "@/pages/planPage/ui/DepartmentsSelector.tsx";
 
 
 const AtomContent = () => {
@@ -43,7 +44,7 @@ const AtomContent = () => {
 
     const targetSubjectSemesterId = concatIds(
         setPrefixToId(String(atomInfo.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)?.semester.id || ""), "semesters"),
-        cutSemesterIdFromId(selectedAtom)
+        setPrefixToId(selectedAtom, "subjects")
     );
 
     const onNameChange = (value: string) => {
@@ -81,12 +82,15 @@ const AtomContent = () => {
                     {newName}
                 </Typography.Text>
             </div>
-            <div className={"flex gap-3"}>
-                <Checkbox checked={isRequired}
-                          onClick={() => updateSubject(targetSubjectSemesterId, "isRequired", !isRequired)}/>
-                <span className={"font-bold text-[14px]"}>Обязательность</span>
-            </div>
             <div className={"grid-cols-2 grid gap-2"}>
+                <div className={"flex flex-col"}>
+                    <span className={"font-bold text-[14px]"}>Обязательность</span>
+                    <Switch
+                        className={"w-max"}
+                        checked={isRequired}
+                        onClick={() => updateSubject(targetSubjectSemesterId, "isRequired", !isRequired)}
+                    />
+                </div>
                 <div className={"flex-col flex gap-1"}>
                     <span className={"font-bold text-[14px]"}>Тип</span>
                     <Select
@@ -102,10 +106,14 @@ const AtomContent = () => {
                         onChange={(value) => updateSubject(targetSubjectSemesterId, "type", value as AtomType)}
                     />
                 </div>
-                <div className={"flex-col flex gap-1"}>
-                    <span className={"font-bold text-[14px]"}>Кафедра</span>
-                    <InputNumber size={"small"} className={"w-full"} min={0} value={department?.id}/>
-                </div>
+            </div>
+            <div className={"flex-col flex gap-1"}>
+                <span className={"font-bold text-[14px]"}>Кафедра</span>
+                <DepartmentsSelector
+                    onChange={(department) => updateSubject(targetSubjectSemesterId, "department", department)}
+                    department={department}
+                    type={"input"}
+                />
             </div>
             <div className={"flex-col flex gap-1 border-b border-stone-300 border-solid pb-3"}>
                 <span className={"font-bold text-[14px]"}>Компетенции</span>
@@ -116,18 +124,20 @@ const AtomContent = () => {
                     onChange={(competenceIds) => updateSubject(targetSubjectSemesterId, "competenceIds", competenceIds)}
                 />
             </div>
-            <div>
-                <span className={"font-bold text-[14px]"}>Семестры предмета</span>
-                {
-                    atomInfo.semesters.length > 1 ?
-                        <Segmented
-                            options={atomInfo.semesters.map((_, index) => index + 1)}
-                            block
-                            value={selectedSemesterNumber}
-                            onChange={setSelectedSemesterNumber}
-                        /> : null
-                }
-            </div>
+            {
+                atomInfo.semesters.length > 1 ?
+                    <>
+                        <div>
+                            <span className={"font-bold text-[14px]"}>Семестры предмета</span>
+                            <Segmented
+                                options={atomInfo.semesters.map((_, index) => index + 1)}
+                                block
+                                value={selectedSemesterNumber}
+                                onChange={setSelectedSemesterNumber}
+                            />
+                        </div>
+                    </> : null
+            }
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Зачётных единиц</span>
                 <CreditsSelector credits={atomSemester.credit} type={"input"}
