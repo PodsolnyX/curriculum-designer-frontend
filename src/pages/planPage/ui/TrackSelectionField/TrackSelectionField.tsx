@@ -56,7 +56,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                         </span>
                     </div> : null
             }
-            <div className={"flex flex-1 relative gap-3"}>
+            <div className={"flex flex-1 relative gap-3"} id={id}>
                 <div
                     className={`w-full absolute left-0 z-10 py-2 px-3 ${position === "first" ? "top-9" : "top-0"}`}>
                     <div
@@ -150,6 +150,7 @@ const TrackField = (props: TrackFieldProps) => {
             onClick={onClick}
             onMouseLeave={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(false)}
             onMouseEnter={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(true)}
+            id={id}
         >
             <div className={"flex flex-col"}>
                 {

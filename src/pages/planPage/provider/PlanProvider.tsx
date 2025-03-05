@@ -30,6 +30,7 @@ import {
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {App} from "antd";
+import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 
 export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
     atoms: number[];
@@ -39,6 +40,7 @@ export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {message} = App.useApp();
+    const {setSidebarContent} = usePlanParams()
 
     const [semesters, setSemesters] = useState<SemesterDto[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
@@ -157,17 +159,19 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const getIndex = useCallback((id: number): string | undefined => {
         if (!indexesData) return undefined;
-        return indexesData.find(index => index.item1 === id)?.item2
+        return indexesData.find(index => index.item1 === id)?.item2 || undefined
     }, [indexesData])
 
     const onSelectAtom = (id: string | null) => {
 
         if ((id === null) || (id === selectedAtom)) {
             setSelectedAtom(null);
+            setSidebarContent(undefined)
             return;
         }
 
         setSelectedAtom(id)
+        setSidebarContent("atom", getIdFromPrefix(id))
     }
 
     const onSelectCompetence = (id: UniqueIdentifier | null) => {

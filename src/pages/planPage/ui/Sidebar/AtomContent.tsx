@@ -2,7 +2,6 @@ import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import React, {useEffect, useState} from "react";
 import {
     concatIds, cutSemesterIdFromId,
-    getIdFromPrefix,
     getSemesterIdFromPrefix,
     setPrefixToId
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
@@ -13,16 +12,18 @@ import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
+import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 
 
 const AtomContent = () => {
 
-    const {selectedAtom, getAtom, updateSubject, onSelectSubject} = usePlan();
+    const {getAtom, updateSubject} = usePlan();
+    const {sidebarValue: selectedAtom} = usePlanParams()
 
     const [selectedSemesterNumber, setSelectedSemesterNumber] = useState<number>(1);
     const [newName, setNewName] = useState("");
 
-    const atomInfo = getAtom(Number(getIdFromPrefix(selectedAtom || "")));
+    const atomInfo = getAtom(Number(selectedAtom));
 
     useEffect(() => {
         if (selectedAtom && atomInfo) {
@@ -31,7 +32,14 @@ const AtomContent = () => {
         }
     }, [selectedAtom, atomInfo])
 
-    if (!selectedAtom || !atomInfo) return null;
+    if (!selectedAtom || !atomInfo) return (
+        <div className={"flex flex-col items-center justify-center mt-16"}>
+            <Typography.Text className={"text-center text-stone-400"}>
+                Предмет не найден или удалён
+            </Typography.Text>
+        </div>
+
+    );
 
     const targetSubjectSemesterId = concatIds(
         setPrefixToId(String(atomInfo.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)?.semester.id || ""), "semesters"),
@@ -78,24 +86,26 @@ const AtomContent = () => {
                           onClick={() => updateSubject(targetSubjectSemesterId, "isRequired", !isRequired)}/>
                 <span className={"font-bold text-[14px]"}>Обязательность</span>
             </div>
-            <div className={"flex-col flex gap-1"}>
-                <span className={"font-bold text-[14px]"}>Тип</span>
-                <Select
-                    options={Object.values(AtomType).map(type => {
-                        return {
-                            value: type,
-                            label: <span className={"flex gap-2"}><Badge
-                                color={AtomTypeFullName[type].color}/>{AtomTypeFullName[type].name}</span>
-                        }
-                    })}
-                    size={"small"}
-                    value={type}
-                    onChange={(value) => updateSubject(targetSubjectSemesterId, "type", value as AtomType)}
-                />
-            </div>
-            <div className={"flex-col flex gap-1"}>
-                <span className={"font-bold text-[14px]"}>Кафедра</span>
-                <InputNumber size={"small"} className={"w-full"} min={0} value={department?.id}/>
+            <div className={"grid-cols-2 grid gap-2"}>
+                <div className={"flex-col flex gap-1"}>
+                    <span className={"font-bold text-[14px]"}>Тип</span>
+                    <Select
+                        options={Object.values(AtomType).map(type => {
+                            return {
+                                value: type,
+                                label: <span className={"flex gap-2"}><Badge
+                                    color={AtomTypeFullName[type].color}/>{AtomTypeFullName[type].name}</span>
+                            }
+                        })}
+                        size={"small"}
+                        value={type}
+                        onChange={(value) => updateSubject(targetSubjectSemesterId, "type", value as AtomType)}
+                    />
+                </div>
+                <div className={"flex-col flex gap-1"}>
+                    <span className={"font-bold text-[14px]"}>Кафедра</span>
+                    <InputNumber size={"small"} className={"w-full"} min={0} value={department?.id}/>
+                </div>
             </div>
             <div className={"flex-col flex gap-1 border-b border-stone-300 border-solid pb-3"}>
                 <span className={"font-bold text-[14px]"}>Компетенции</span>

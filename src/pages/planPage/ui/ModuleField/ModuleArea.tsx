@@ -165,7 +165,7 @@ const ModuleField = memo((props: ModuleFieldProps) => {
             ref={setNodeRef}
             onClick={onClick}
         >
-            <div ref={setNodeRef}>
+            <div ref={setNodeRef} id={id}>
                 {
                     (position === "first" || position === "single") ?
                         <div className={"flex justify-center p-2 pb-0"}>

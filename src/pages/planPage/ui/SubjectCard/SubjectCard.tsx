@@ -70,7 +70,7 @@ export const SubjectCardMemo =
 
         const [newName, setNewName] = useState(name);
 
-        const {expandSubject, deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
+        const {deleteSubject} = useEditSubject(Number(getIdFromPrefix(id)));
 
         useEffect(() => {
             setNewName(name)
@@ -120,6 +120,7 @@ export const SubjectCardMemo =
                 {...rest}
                 ref={ref}
                 onClick={() => !isReplaceMode && onSelectSubject(id)}
+                id={id}
             >
                 <div
                     className={classNames(cls.subjectCard, cls[type], isSelected && cls.selected)}>

@@ -6,7 +6,7 @@ import {App} from "antd";
 import {useQueryClient} from "@tanstack/react-query";
 import {
     getAcademicActivitiesQueryKey,
-    useCreateAcademicActivityMutation
+    useCreateAcademicActivityMutation, useGetAcademicActivityFormulaParamsQuery
 } from "@/api/axios-client/AcademicActivityQuery.ts";
 
 interface FieldType extends CreateAcademicActivityDto {}
@@ -17,6 +17,7 @@ export const AddActivityModal = (props: ModalProps) => {
     const queryClient = useQueryClient();
     const {id} = useParams<{ id: string }>();
     const {message} = App.useApp();
+    const {data: params} = useGetAcademicActivityFormulaParamsQuery(Number(id));
 
     const {mutateAsync: addActivity, isPending: loading} = useCreateAcademicActivityMutation(Number(id));
 
@@ -40,6 +41,18 @@ export const AddActivityModal = (props: ModalProps) => {
             label: "Название",
             isRequired: true,
             inputComponent: "textArea"
+        },
+        {
+            name: "formulaName",
+            label: "Название для внедрения в формулу",
+            isRequired: true,
+            inputComponent: "input"
+        },
+        {
+            name: "formula",
+            label: "Формула",
+            inputComponent: "input",
+            optionalInfo: `Служебные слова: ${params?.join(", ")}`
         }
     ];
 

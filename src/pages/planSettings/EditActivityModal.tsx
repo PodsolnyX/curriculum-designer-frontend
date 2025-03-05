@@ -5,7 +5,7 @@ import {AcademicActivityDto, CreateAcademicActivityDto} from "@/api/axios-client
 import {App} from "antd";
 import {useQueryClient} from "@tanstack/react-query";
 import {
-    getAcademicActivitiesQueryKey, useUpdateAcademicActivityMutation
+    getAcademicActivitiesQueryKey, useGetAcademicActivityFormulaParamsQuery, useUpdateAcademicActivityMutation
 } from "@/api/axios-client/AcademicActivityQuery.ts";
 
 interface FieldType extends CreateAcademicActivityDto {}
@@ -20,6 +20,7 @@ export const EditActivityModal = (props: EditActivityModalProps) => {
     const queryClient = useQueryClient();
     const {id} = useParams<{ id: string }>();
     const {message} = App.useApp();
+    const {data: params} = useGetAcademicActivityFormulaParamsQuery(Number(id));
 
     const {mutateAsync: editActivity, isPending: loading} = useUpdateAcademicActivityMutation(initialData?.id || 0, id || "");
 
@@ -43,6 +44,18 @@ export const EditActivityModal = (props: EditActivityModalProps) => {
             label: "Название",
             isRequired: true,
             inputComponent: "textArea"
+        },
+        {
+            name: "formulaName",
+            label: "Название формулы",
+            isRequired: true,
+            inputComponent: "input"
+        },
+        {
+            name: "formula",
+            label: "Формула",
+            inputComponent: "input",
+            optionalInfo: `Служебные слова: ${params?.join(", ")}`
         }
     ];
 

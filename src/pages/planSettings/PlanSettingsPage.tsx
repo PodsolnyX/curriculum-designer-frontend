@@ -6,7 +6,7 @@ import {
     useGetCurriculumQuery,
     useSetCurriculumSettingsMutation
 } from "@/api/axios-client/CurriculumQuery.ts";
-import {App, Popconfirm, Select, Tooltip, Typography} from "antd";
+import {App, Button, Popconfirm, Select, Typography} from "antd";
 import React, {useState} from "react";
 import {AcademicActivityDto, CompetenceDistributionType} from "@/api/axios-client.types.ts";
 import {useQueryClient} from "@tanstack/react-query";
@@ -14,7 +14,7 @@ import {
     getAcademicActivitiesQueryKey, useDeleteAcademicActivityMutationWithParameters,
     useGetAcademicActivitiesQuery
 } from "@/api/axios-client/AcademicActivityQuery.ts";
-import {CloseOutlined, EditOutlined, InfoCircleOutlined, PlusOutlined} from "@ant-design/icons";
+import {CloseOutlined, EditOutlined} from "@ant-design/icons";
 import {AddActivityModal} from "@/pages/planSettings/AddActivityModal.tsx";
 import {EditActivityModal} from "@/pages/planSettings/EditActivityModal.tsx";
 
@@ -79,43 +79,68 @@ const PlanSettingsPage = () => {
                     </div>
                 </div>
                 <div className={"flex flex-col gap-5"}>
-                    <Typography.Text className={"text-2xl"}>{"Академические активности"}</Typography.Text>
-                    <div className={"flex flex-wrap gap-2"}>
+                    <div className={"flex items-center justify-between flex-wrap gap-2"}>
+                        <Typography.Text className={"text-2xl"}>{"Академические активности"}</Typography.Text>
+                        <Button
+                            shape={"round"}
+                            onClick={() => setOpenAdd(true)}
+                        >+ Добавить</Button>
+                    </div>
+                    <div className={"flex flex-col"}>
                         {
                             academicActivities?.map(activity =>
-                                <div key={activity.id} className={"flex items-center border border-solid border-stone-200 rounded-md p-2 group gap-2"}>
-                                    <Tooltip title={activity.name}>
-                                        <InfoCircleOutlined className={"text-stone-400"}/>
-                                    </Tooltip>
-                                    <Typography.Text>
-                                        {activity.shortName}
-                                    </Typography.Text>
-                                    <EditOutlined
-                                        onClick={() => setEditActivity({...activity})}
-                                        className={"text-stone-400 hover:text-stone-500 cursor-pointer hidden group-hover:block"}
-                                    />
-                                    <Popconfirm
-                                        title={"Вы хотите удалить активность?"}
-                                        onConfirm={() => removeActivity({academicActivityId: activity.id, curriculumId: id || ""})}
-                                    >
-                                        <CloseOutlined className={"text-stone-400 hover:text-red-500 cursor-pointer hidden group-hover:block"}/>
-                                    </Popconfirm>
-                                </div>
+                                <AcademicActivityItem
+                                    activity={activity}
+                                    key={activity.id}
+                                    onEdit={() => setEditActivity({...activity})}
+                                    onRemove={() => removeActivity({academicActivityId: activity.id, curriculumId: id || ""})}
+                                />
                             )
                         }
-                        <button
-                            className={"flex items-center bg-stone-50 hover:bg-stone-100 cursor-pointer rounded-md p-2 gap-2"}
-                            onClick={() => setOpenAdd(true)}
-                        >
-                            <PlusOutlined className={"text-stone-400"}/>
-                            <Typography.Text>Добавить</Typography.Text>
-                        </button>
                         <AddActivityModal isOpen={openAdd} onClose={() => setOpenAdd(false)}/>
                         <EditActivityModal isOpen={!!editActivity} onClose={() => setEditActivity(undefined)} initialData={editActivity}/>
                     </div>
                 </div>
             </div>
         </PlanPageLayout>
+    )
+}
+
+interface AcademicActivityItemProps {
+    activity: AcademicActivityDto,
+    onEdit(): void,
+    onRemove(): void
+}
+
+const AcademicActivityItem = ({activity, onEdit, onRemove}: AcademicActivityItemProps) => {
+
+    return (
+        <div key={activity.id} className={"flex items-center rounded-md p-2 group gap-2 w-full hover:bg-stone-50"}>
+            <div className={"flex flex-col flex-1"}>
+                <Typography.Text type={"secondary"} className={"text-sm"}>
+                    {`${activity.shortName} • ${activity.formulaName}`}
+                </Typography.Text>
+                <Typography.Text>
+                    {activity.name}
+                </Typography.Text>
+            </div>
+            {
+                activity?.formula &&
+                <Typography.Text className={"bg-stone-50 tracking-wider p-1 px-2 rounded-md border border-solid border-stone-200 text-stone-800"}>
+                    {activity.formula}
+                </Typography.Text>
+            }
+            <EditOutlined
+                onClick={() => onEdit()}
+                className={"text-stone-400 hover:text-stone-500 cursor-pointer hidden group-hover:block"}
+            />
+            <Popconfirm
+                title={"Вы хотите удалить активность?"}
+                onConfirm={() => onRemove()}
+            >
+                <CloseOutlined className={"text-stone-400 hover:text-red-500 cursor-pointer hidden group-hover:block"}/>
+            </Popconfirm>
+        </div>
     )
 }
 

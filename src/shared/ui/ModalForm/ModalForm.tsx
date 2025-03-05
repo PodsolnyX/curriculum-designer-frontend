@@ -1,5 +1,6 @@
-import {Button, DatePicker, Form, FormProps, Input, InputNumber, Modal, Select, Switch} from "antd";
+import {Button, DatePicker, Form, FormProps, Input, InputNumber, Modal, Select, Switch, Tooltip} from "antd";
 import React, {ReactNode, useEffect} from "react";
+import {InfoCircleOutlined} from "@ant-design/icons";
 
 export interface ModalFormField<T> {
     name: keyof T,
@@ -7,7 +8,8 @@ export interface ModalFormField<T> {
     isRequired?: boolean,
     inputComponent?: ModalFormInput,
     options?: OptionType[],
-    customInput?: React.ReactNode
+    customInput?: React.ReactNode,
+    optionalInfo?: string
 }
 
 interface ModalFormFieldsProps<T> {
@@ -80,7 +82,17 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
                             fields.map(field =>
                                 <Form.Item<T>
                                     name={field.name}
-                                    label={field.label}
+                                    label={
+                                        <>
+                                            {field.label}
+                                            {
+                                                field.optionalInfo &&
+                                                <Tooltip title={field.optionalInfo}>
+                                                    <InfoCircleOutlined className={"ml-2 text-stone-400"}/>
+                                                </Tooltip>
+                                            }
+                                        </>
+                                    }
                                     rules={field.isRequired ? [{required: true, message: 'Обязательное поле'}] : []}
                                     key={field.name as string}
                                     valuePropName={field.inputComponent === "switch" ? "checked" : undefined}

@@ -1,7 +1,9 @@
 import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {Select, Tag, Typography} from "antd";
-import {ValidationErrorType} from "@/api/axios-client.types.ts";
+import {ValidationError, ValidationErrorType} from "@/api/axios-client.types.ts";
 import {useState} from "react";
+import {useControls} from "react-zoom-pan-pinch";
+import {concatIds, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
 const ValidationContent = () => {
 
@@ -9,9 +11,25 @@ const ValidationContent = () => {
 
     const [filters, setFilters] = useState<ValidationErrorType[]>([]);
 
-    console.log(validationErrors)
+    const {zoomToElement} = useControls()
 
     const data = validationErrors?.filter(error => filters.length === 0 || filters.includes(error!!.type));
+
+    const scrollToTarget = (error: ValidationError) => {
+
+        const Entities: Record<string, string> = {
+            "Semester": "semesters",
+            "Module": "modules",
+        }
+        if (!error.entities) return;
+
+        const targetId = error.entities?.reduce((prev, current) => {
+            return prev ? concatIds(setPrefixToId(Number(current.id), Entities[current.type]), prev) : setPrefixToId(Number(current.id), Entities[current.type]);
+        }, "");
+        if (!targetId) return;
+        console.log(targetId)
+        zoomToElement(document.getElementById(targetId));
+    };
 
     return (
         <div className={"flex flex-col gap-2"}>
@@ -28,11 +46,15 @@ const ValidationContent = () => {
                     })}
             />
             {
-                data.length ?
+                data?.length ?
                     <ul>
                         {
-                            data.map((error, index) =>
-                                <li key={index} className={"flex flex-col hover:bg-stone-100 p-2 rounded-md"}>
+                            data?.map((error, index) =>
+                                <li
+                                    key={index}
+                                    className={"flex flex-col hover:bg-stone-100 p-2 rounded-md cursor-pointer"}
+                                    onClick={() => scrollToTarget(error)}
+                                >
                                     <Tag className={"w-max"} color={"red"}>{ValidationErrorTypeTitle[error.type]}</Tag>
                                     <Typography.Text>{error.message}</Typography.Text>
                                 </li>
