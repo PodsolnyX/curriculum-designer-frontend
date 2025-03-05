@@ -240,7 +240,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
                     if (param.id && param.value === -1) {
                         semester.academicActivityHours = semester.academicActivityHours.filter(hour => hour.academicActivity.id !== param.id);
                     }
-                    else if (param.id && param.value) {
+                    else if (param.id && (param.value >= 0)) {
                         semester.academicActivityHours = semester.academicActivityHours.map(hour => hour.academicActivity.id === param.id ? { ...hour, value: param?.value || 0 } : hour);
                     }
                     else {
