@@ -52,7 +52,7 @@ const ValidationContent = () => {
                             data?.map((error, index) =>
                                 <li
                                     key={index}
-                                    className={"flex flex-col hover:bg-stone-100 p-2 rounded-md cursor-pointer"}
+                                    className={"flex flex-col bg-white hover:bg-stone-100 p-2 transition rounded-md cursor-pointer"}
                                     onClick={() => scrollToTarget(error)}
                                 >
                                     <Tag className={"w-max"} color={"red"}>{ValidationErrorTypeTitle[error.type]}</Tag>

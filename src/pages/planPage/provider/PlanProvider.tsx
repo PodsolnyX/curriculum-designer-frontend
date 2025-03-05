@@ -25,7 +25,7 @@ import {
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
-    getIdFromPrefix, getParentIdFromPrefix, getSemesterIdFromPrefix
+    getIdFromPrefix, getParentIdFromPrefix, getSemesterIdFromPrefix, splitIds
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
@@ -162,6 +162,12 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         return indexesData.find(index => index.item1 === id)?.item2 || undefined
     }, [indexesData])
 
+    const getValidationErrors = useCallback((id: string): ValidationError[] | undefined => {
+        if (!validationErrorsData.length) return undefined;
+        const ids = splitIds(id).map(id => Number(getIdFromPrefix(id)));
+        return validationErrorsData.filter(error => error.entities ? error.entities?.every(ent => ids.includes(ent?.id || 0)) : false)
+    }, [validationErrorsData]);
+
     const onSelectAtom = (id: string | null) => {
 
         if ((id === null) || (id === selectedAtom)) {
@@ -198,6 +204,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }
 
     // Обновляет состояние предмета в локальном состоянии плана
+
 
     function updateAtom(
         id: string,
@@ -367,9 +374,16 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         const concatModuleSemestersWithAtomSemesters = (moduleSemesters: RefModuleSemesterDto[]): RefModuleSemesterDto[] => {
             const mergedMap = new Map<number, SemesterDto>();
 
-            [...moduleSemesters.map(semester => semester.semester), ...newAtomSemesters].forEach(semester => {
-                mergedMap.set(semester.number, semester);
-            });
+            if (moduleSemesters.length === 1 && moduleSemesters[0].semester.number === 0) {
+                [...newAtomSemesters].forEach(semester => {
+                    mergedMap.set(semester.number, semester);
+                });
+            }
+            else {
+                [...moduleSemesters.map(semester => semester.semester), ...newAtomSemesters].forEach(semester => {
+                    mergedMap.set(semester.number, semester);
+                });
+            }
 
             const mergedArray = Array.from(mergedMap.values()).sort((a, b) => a.number - b.number);
 
@@ -386,22 +400,39 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
             });
         }
 
+        const removeAtomFromModules = (module: ModuleShortDto, atomId: number): ModuleShortDto => {
+
+            const updatedSemesters = module.semesters
+                .filter(moduleSemester => module.atoms.filter(moduleAtom => moduleAtom !== atomId)
+                    .some(moduleAtom => {
+                        const moduleAtomInfo = getAtom(moduleAtom);
+                        if (!moduleAtomInfo) return false;
+                        return !!moduleAtomInfo.semesters.find(atomSemester => atomSemester.semester.id === moduleSemester.semester.id)
+                    })
+                );
+
+            if (!updatedSemesters.length) {
+                updatedSemesters.push({
+                    semester: semesters.find(semester => semester.id === module.parentSemesterId),
+                    nonElective: {credit: 0, attestations: [], academicActivityHours: []},
+                    elective: {credit: 0, attestations: [], academicActivityHours: []},
+                })
+            }
+
+            return (
+                {
+                    ...module,
+                    atoms: module.atoms.filter(moduleAtom => moduleAtom !== atomId),
+                    semesters: [...updatedSemesters]
+                }
+            )
+        }
+
         if ((activeParentModuleId !== overParentModuleId) && (activeSemesterId !== activeParentModuleId || overSemesterId !== overParentModuleId)) {
             setModulesList(prev => {
                 return prev.map(module =>
                     module.id === activeParentModuleId ?
-                        {
-                            ...module,
-                            atoms: module.atoms.filter(moduleAtom => moduleAtom !== atomId),
-                            semesters: module.semesters
-                                .filter(moduleSemester => module.atoms.filter(moduleAtom => moduleAtom !== atomId)
-                                    .some(moduleAtom => {
-                                        const moduleAtomInfo = getAtom(moduleAtom);
-                                        if (!moduleAtomInfo) return false;
-                                        return !!moduleAtomInfo.semesters.find(atomSemester => atomSemester.semester.id === moduleSemester.semester.id)
-                                    })
-                                )
-                        } :
+                        removeAtomFromModules(module, atomId) :
                         module.id === overParentModuleId ?
                             {
                                 ...module,
@@ -449,6 +480,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         getAtoms,
         getModule,
         getIndex,
+        getValidationErrors,
         onSelectSubject: onSelectAtom,
         setToolsOptions,
         setActiveSubject: setSelectedAtom,
@@ -505,6 +537,8 @@ interface PlanContextValue {
 
     getIndex(id: number): string | undefined;
 
+    getValidationErrors(id: string): ValidationError[] | undefined;
+
     onSelectCompetence(id: number | null): void;
 
     onSelectSubject(id: string | null): void;
@@ -557,6 +591,7 @@ const PlanContext = createContext<PlanContextValue>({
     getAtoms: (_ids: number[]) => [],
     getModule: (_moduleId: number) => undefined,
     getIndex: (_id: number) => undefined,
+    getValidationErrors: (_id: string) => undefined,
     onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: string | null) => {
     },

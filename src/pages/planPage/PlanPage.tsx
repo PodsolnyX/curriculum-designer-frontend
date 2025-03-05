@@ -70,7 +70,11 @@ const PlanPageWrapped = () => {
                 >
                     <div className={"flex relative"}>
                         <PositionsProvider>
-                            <TransformComponent wrapperStyle={{ height: 'calc(100vh - 64px)', width: '100vw', cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto" }}>
+                            <TransformComponent wrapperStyle={{
+                                height: 'calc(100vh - 64px)',
+                                width: '100vw',
+                                cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto"
+                            }}>
                                 <div className={`flex flex-col pb-10 w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                     {
                                         semesters.map(semester =>
@@ -88,7 +92,12 @@ const PlanPageWrapped = () => {
                                 </div>
                                 <div
                                     className={"h-full absolute"}
-                                    style={{left: `${subjectsContainerWidth + 0.2}%`, width: `${100 - subjectsContainerWidth - 0.2}%`}}
+                                    style={{
+                                        left: `${subjectsContainerWidth + 0.2}%`,
+                                        width: `${100 - subjectsContainerWidth - 0.2}%`,
+                                        cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
+                                        pointerEvents: toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
+                                    }}
                                 >
                                     {
                                         atomList &&

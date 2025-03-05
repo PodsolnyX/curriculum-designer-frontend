@@ -14,6 +14,7 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
+import {ValidationErrorType} from "@/api/axios-client.types.ts";
 
 interface TrackSelectionProps {
     id: string;
@@ -36,6 +37,10 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
         semesterId,
         position = "single" as ModuleSemestersPosition,
     } = props;
+
+    const {getValidationErrors} = usePlan()
+
+    const errors = getValidationErrors(id);
 
     return (
         <PositionContainer
@@ -62,7 +67,10 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                     <div
                         className={"p-2 px-3 bg-white rounded-lg shadow-md text-blue-500 items-center flex justify-between"}>
                         {`Семестр ${semesterNumber}`}
-                        <CreditsSelector credits={credits}/>
+                        <CreditsSelector
+                            credits={credits}
+                            error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
+                        />
                     </div>
                 </div>
                 <div className={`grid gap-3 ${position === "last" ? "pb-2" : ""}`}

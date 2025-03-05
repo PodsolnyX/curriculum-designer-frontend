@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useEffect, useMemo, useState} from 'react';
+import React, {forwardRef, memo, useEffect, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
@@ -87,8 +87,7 @@ export const SubjectCardMemo =
         } = semesters.find(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id)));
 
         const semesterOrder = semesters.length === 1 ? null : semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1;
-
-        const neighboringSemesters = useMemo(() => {
+        const getNeighboringSemesters = () => {
 
             const semesterId = Number(getSemesterIdFromPrefix(id));
             const currentIndex = semesters.findIndex(s => s.semester.id === semesterId);
@@ -101,7 +100,11 @@ export const SubjectCardMemo =
                 prev: (currentIndex === 0) ? currentNumber > 1 ? currentNumber - 1 : null : null,
                 next: (currentIndex === semesters.length - 1) ? currentNumber < 8 ? currentNumber + 1 : null : null
             };
-        }, [id, semesters])
+        }
+
+        const neighboringSemesters = getNeighboringSemesters();
+
+        console.log(33)
 
         const onExpendSemester = (key: "prev" | "next") => {
             expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
@@ -160,6 +163,7 @@ export const SubjectCardMemo =
                                     (name !== value) && updateSubject(id, "name", value)
                                 }
                             }}
+                            title={newName}
                             className={"text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text hover:underline"}
                         >
                             {newName}

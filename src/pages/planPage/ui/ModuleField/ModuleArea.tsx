@@ -1,10 +1,11 @@
-import {AtomDto, RefModuleSemesterDto, SelectionDto} from "@/api/axios-client.types.ts";
+import {AtomDto, RefModuleSemesterDto, SelectionDto, ValidationErrorType} from "@/api/axios-client.types.ts";
 import React, {CSSProperties, memo, useMemo, useState} from "react";
 import {ModuleShortDto, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
-import {App, Typography} from "antd";
+import {App, Tag, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {
-    concatIds, cutSemesterIdFromId,
+    concatIds,
+    cutSemesterIdFromId,
     getIdFromPrefix,
     setPrefixToId
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
@@ -14,6 +15,7 @@ import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/typ
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {PositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
+import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 
 interface ModuleAreaProps extends ModuleShortDto {}
 
@@ -81,6 +83,7 @@ const ModuleArea = (props: ModuleAreaProps) => {
                                     name={name}
                                     semester={semester}
                                     selection={selection}
+                                    semesterIndex={index}
                                     position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
                                     atomsIds={getModuleAtomsIds(atomsInfo, semester.semester.id, moduleId)}
                                 />
@@ -99,6 +102,7 @@ interface ModuleFieldProps {
     position: ModuleSemestersPosition;
     semester: RefModuleSemesterDto;
     gridColumnsCount?: number;
+    semesterIndex: number;
 }
 
 const ModuleField = memo((props: ModuleFieldProps) => {
@@ -110,16 +114,18 @@ const ModuleField = memo((props: ModuleFieldProps) => {
         position,
         semester,
         selection,
-        gridColumnsCount = 1
+        gridColumnsCount = 1,
+        semesterIndex
     } = props;
 
     const rowId = setPrefixToId(semester.semester.id, "semesters");
     const containerId = cutSemesterIdFromId(id);
 
-    const {overItemId, toolsOptions} = usePlan();
+    const {overItemId, toolsOptions, getValidationErrors} = usePlan();
     const {message} = App.useApp();
 
     const [newName, setNewName] = useState(name);
+    const errors = getValidationErrors(id);
 
     const {mutate: editModule} = useUpdateModuleMutation(Number(getIdFromPrefix(String(id))), {
         onSuccess: () => {
@@ -165,20 +171,31 @@ const ModuleField = memo((props: ModuleFieldProps) => {
             ref={setNodeRef}
             onClick={onClick}
         >
-            <div ref={setNodeRef} id={id}>
-                {
-                    (position === "first" || position === "single") ?
-                        <div className={"flex justify-center p-2 pb-0"}>
+            <div ref={setNodeRef} id={id} className={"flex flex-col gap-2 p-2"}>
+                <div style={{width: `${gridColumnsCount * 200}px`}} className={`overflow-hidden text-nowrap text-ellipsis text-center ${selection ? "text-blue-400" : "text-black"}`}>
+                    {
+                        (position === "first" || position === "single") ?
                             <Typography.Text
+                                title={newName}
                                 editable={{icon: null, triggerType: ["text"]}}
-                                className={`${selection ? "text-blue-400" : "text-black"} font-bold text-center overflow-hidden text-nowrap text-ellipsis cursor-text`}
-                                style={{width: `${gridColumnsCount * 200}px`}}
+                                className={`${selection ? "text-blue-400" : "text-black"} font-bold cursor-text`}
                             >
                                 {newName}
-                            </Typography.Text>
-                        </div> : null
-                }
-                <div className={"grid gap-2 p-2"} style={{gridTemplateColumns: `repeat(${gridColumnsCount}, 1fr)`}}>
+                            </Typography.Text> : null
+                    }
+                </div>
+                <div className={"flex items-center justify-between bg-white shadow-md rounded-md w-full p-1 px-2"} style={{width: `${gridColumnsCount * 200 + (gridColumnsCount - 1) * 5}px`}}>
+                    <Typography.Text className={"text-blue-400 text-sm font-bold"}>Семестр {semesterIndex + 1}</Typography.Text>
+                    {
+                        selection
+                            ? <CreditsSelector
+                                error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
+                                credits={selection.semesters.find(sem => sem.semesterId === semester.semester.id)?.credit || 0}
+                            />
+                            : <Tag color={"default"} className={"m-0"} bordered={false}>{semester.nonElective.credit} ЗЕТ</Tag>
+                    }
+                </div>
+                <div className={"grid gap-2"} style={{gridTemplateColumns: `repeat(${gridColumnsCount}, 1fr)`}}>
                     {
                         atomsIds.map(atom =>
                             <SortableSubjectCard key={atom} id={atom}/>

@@ -5,9 +5,10 @@ interface CreditsSelectorProps {
     credits: number;
     onChange?: (value: number) => void;
     type?: "input" | "tag";
+    error?: boolean;
 }
 
-const CreditsSelector = ({credits, onChange, type = "tag"}: CreditsSelectorProps) => {
+const CreditsSelector = ({credits, onChange, type = "tag", error}: CreditsSelectorProps) => {
 
     const [isEdit, setIsEdit] = useState(false);
     const ref = useRef<HTMLInputElement | null>(null);
@@ -28,7 +29,7 @@ const CreditsSelector = ({credits, onChange, type = "tag"}: CreditsSelectorProps
         type === "tag" ?
         <span className={"relative"} onClick={(event) => event.stopPropagation()}>
             <Tag
-                color={"blue"}
+                color={error ? "red" : "blue"}
                 className={"m-0 hover:cursor-text hover:opacity-50"}
                 bordered={false}
                 onClick={() => setIsEdit(true)}
