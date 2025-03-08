@@ -1,11 +1,12 @@
-import React, {memo, useState} from "react";
+import React, {useState} from "react";
 import {AcademicActivityDto, HoursDistributionDto} from "@/api/axios-client.ts";
 import {Button, InputNumber, List, Popover, Tooltip} from "antd";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {
     CloseOutlined,
     PlusOutlined
 } from "@ant-design/icons";
+import {observer} from "mobx-react-lite";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface AcademicHoursPanelProps {
     credits: number;
@@ -19,7 +20,7 @@ interface AcademicHoursPanelProps {
     onRemove?(activityId: number): void;
 }
 
-const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
+const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
 
     const {
         credits,
@@ -33,8 +34,6 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
         onRemove
     } = props;
 
-    const {academicActivity} = usePlan();
-
     const sumAcademicHours = roundToTwo(academicHours.reduce((_sum, type) => _sum + type.value, 0)) - credits * 36;
 
     const textSize = size === "small" ? "text-[10px]" : "text-[12px]";
@@ -47,7 +46,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
             <div className={layout === "vertical" ? "grid grid-cols-2 gap-1" : "flex gap-1"}>
                 {
                     showAllActivities
-                        ? academicActivity.map((activity, index) => {
+                        ? commonStore.academicActivity.map((activity, index) => {
                                 const academicHour = academicHours.find(hour => hour.academicActivity.id === activity.id);
                                 return (
                                     <AcademicActivityItem
@@ -56,7 +55,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                                         value={academicHour?.value || 0}
                                         index={index}
                                         isEditMode={isEditMode}
-                                        academicActivityLength={academicActivity.length}
+                                        academicActivityLength={commonStore.academicActivity.length}
                                         textSize={textSize}
                                         onChange={(value) => onChange && onChange(activity.id, value)}
                                         onRemove={() => onRemove && onRemove(activity.id)}
@@ -80,7 +79,7 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                 }
             </div>
             {
-                (isEditMode && academicHours.length !== academicActivity.length) &&
+                (isEditMode && academicHours.length !== commonStore.academicActivity.length) &&
                 <Popover
                     trigger={"click"}
                     placement={"right"}
@@ -90,8 +89,8 @@ const AcademicHoursPanel = memo((props: AcademicHoursPanelProps) => {
                             size="small"
                             itemLayout={"vertical"}
                             dataSource={
-                                academicActivity
-                                    ? academicActivity
+                                commonStore.academicActivity
+                                    ? commonStore.academicActivity
                                         .filter(activity => !academicHours
                                             .map(hour => hour.academicActivity.id).includes(activity.id))
                                         .map(activity => {

@@ -1,4 +1,4 @@
-import React, {forwardRef, memo, useEffect, useState} from 'react';
+import React, {forwardRef, useEffect, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
@@ -22,6 +22,8 @@ import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
 import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {observer} from "mobx-react-lite";
 
 export enum Position {
     Before = -1,
@@ -62,7 +64,6 @@ export const SubjectCardMemo =
         } = props;
 
         const {
-            displaySettings,
             expandAtom,
             updateSubject,
             onSelectSubject
@@ -104,7 +105,7 @@ export const SubjectCardMemo =
 
         const neighboringSemesters = getNeighboringSemesters();
 
-        console.log(33)
+        console.log(22)
 
         const onExpendSemester = (key: "prev" | "next") => {
             expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
@@ -128,7 +129,7 @@ export const SubjectCardMemo =
                 <div
                     className={classNames(cls.subjectCard, cls[type], isSelected && cls.selected)}>
                     {
-                        displaySettings.required &&
+                        optionsStore.displaySettings.required &&
                         <Tooltip title={isRequired ? "Сделать по выбору" : "Сделать обязательным"}>
                             <span
                                 onClick={(event) => {
@@ -142,11 +143,11 @@ export const SubjectCardMemo =
                     <div className={"flex flex-col flex-1"} onClick={(event) => event.stopPropagation()}>
                         <div className={"flex gap-1 items-center"}>
                             {
-                                displaySettings.index &&
+                                optionsStore.displaySettings.index &&
                                 <span className={"text-[10px] text-stone-400"}>{index || "Без индекса"}</span>
                             }
                             {
-                                (displaySettings.index && semesterOrder)
+                                (optionsStore.displaySettings.index && semesterOrder)
                                 && <span className={"text-[8px] text-stone-400"}>•</span>
                             }
                             {
@@ -171,27 +172,27 @@ export const SubjectCardMemo =
                     </div>
                     <div className={"flex gap-1 flex-wrap"} onClick={(event) => event.stopPropagation()}>
                         {
-                            displaySettings.credits &&
+                            optionsStore.displaySettings.credits &&
                             <CreditsSelector
                                 credits={credit}
                                 onChange={(value) => updateSubject(id, "credit", value)}
                             />
                         }
                         {
-                            displaySettings.attestation &&
+                            optionsStore.displaySettings.attestation &&
                             <AttestationTypeSelector
                                 attestation={attestations}
                                 onChange={(value) => updateSubject(id, "attestations", value)}
                             />
                         }
                         {
-                            displaySettings.department &&
+                            optionsStore.displaySettings.department &&
                             <Tooltip title={department?.name}>
                                 <Tag className={"m-0"} rootClassName={"bg-transparent"}>{department?.id || '-'}</Tag>
                             </Tooltip>
                         }
                         {
-                            displaySettings.notesNumber &&
+                            optionsStore.displaySettings.notesNumber &&
                             <CommentsPopover comments={[]}>
                                 <div
                                     className={classNames(cls.notesIcon, [].length && cls.notesIcon_selected)}
@@ -298,7 +299,7 @@ export const SubjectCardMemo =
                         </div>
                     </div>
                     {
-                        displaySettings.academicHours &&
+                        optionsStore.displaySettings.academicHours &&
                         <AcademicHoursPanel
                             credits={credit}
                             isEditMode={true}
@@ -309,7 +310,7 @@ export const SubjectCardMemo =
                         />
                     }
                     {
-                        displaySettings.competencies &&
+                        optionsStore.displaySettings.competencies &&
                         <CompetenceSelector
                             subjectId={id}
                             competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
@@ -321,4 +322,4 @@ export const SubjectCardMemo =
         );
     })
 
-export const SubjectCard = memo(SubjectCardMemo);
+export const SubjectCard = observer(SubjectCardMemo);

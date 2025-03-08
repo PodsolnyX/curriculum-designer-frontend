@@ -9,12 +9,15 @@ import {
     setPrefixToId
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {getModuleAtomsIds, getModuleRootStyles} from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {ValidationErrorType} from "@/api/axios-client.types.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {observer} from "mobx-react-lite";
 
 interface TrackSelectionProps {
     id: string;
@@ -38,9 +41,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
         position = "single" as ModuleSemestersPosition,
     } = props;
 
-    const {getValidationErrors} = usePlan()
-
-    const errors = getValidationErrors(id);
+    const errors = commonStore.getValidationErrors(id);
 
     return (
         <PositionContainer
@@ -106,7 +107,7 @@ interface TrackFieldProps {
     position?: ModuleSemestersPosition;
 }
 
-const TrackField = (props: TrackFieldProps) => {
+const TrackField = observer((props: TrackFieldProps) => {
 
     const {
         id,
@@ -114,8 +115,6 @@ const TrackField = (props: TrackFieldProps) => {
         position = "single",
         semesterId
     } = props;
-
-    const { overItemId, getModule, getAtoms, toolsOptions } = usePlan();
 
     const { setNodeRef } = useDroppable({
         id
@@ -132,16 +131,16 @@ const TrackField = (props: TrackFieldProps) => {
         "last": `border-x-2 border-b-2 rounded-b-lg`
     }
 
-    const module = getModule(Number(getIdFromPrefix(id)));
+    const module = componentsStore.getModule(Number(getIdFromPrefix(id)));
 
     if (!module) return null;
 
     const {name, atoms} = module;
 
-    const atomsIds = getModuleAtomsIds(getAtoms(atoms), semesterId, id);
+    const atomsIds = getModuleAtomsIds(componentsStore.getAtoms(atoms), semesterId, id);
 
     const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (toolsOptions.cursorMode === CursorMode.Create) {
+        if (optionsStore.toolsOptions.cursorMode === CursorMode.Create) {
             event.stopPropagation()
             onCreate(semesterId, Number(getIdFromPrefix(id)))
         }
@@ -152,12 +151,12 @@ const TrackField = (props: TrackFieldProps) => {
             className={`${styles[position]} border-dotted h-full pb-2 px-3 min-w-[200px]`}
             ref={setNodeRef}
             style={{
-                backgroundColor: (overItemId === id || isHover) ? `${color}35` : `${color}20`,
+                backgroundColor: (componentsStore.overId === id || isHover) ? `${color}35` : `${color}20`,
                 borderColor: color
             }}
             onClick={onClick}
-            onMouseLeave={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(false)}
-            onMouseEnter={() => toolsOptions.cursorMode === CursorMode.Create && setIsHover(true)}
+            onMouseLeave={() => optionsStore.toolsOptions.cursorMode === CursorMode.Create && setIsHover(false)}
+            onMouseEnter={() => optionsStore.toolsOptions.cursorMode === CursorMode.Create && setIsHover(true)}
             id={id}
         >
             <div className={"flex flex-col"}>
@@ -177,6 +176,6 @@ const TrackField = (props: TrackFieldProps) => {
             </div>
         </div>
     )
-}
+})
 
 export default TrackSelectionField;

@@ -1,5 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import {AtomDto, ModuleDto, SemesterDto} from "@/api/axios-client.types.ts";
+import {
+    AtomDto,
+    ModuleDto,
+    RefModuleSemesterDto,
+    SemesterDto,
+    TupleOfIntegerAndString
+} from "@/api/axios-client.types.ts";
 
 export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
     atoms: number[];
@@ -8,9 +14,14 @@ export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
 
 class ComponentsStore {
 
+    activeId: string | null;
+    overId: string | null;
+
     semesters: SemesterDto[] = [];
+    semestersActivity: RefModuleSemesterDto[] = [];
     modules: ModuleShortDto[] = [];
     atoms: AtomDto[] = [];
+    indexes: TupleOfIntegerAndString[] = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -18,6 +29,10 @@ class ComponentsStore {
 
     setSemesters(semesters: SemesterDto[]) {
         this.semesters = semesters;
+    }
+
+    setSemestersActivity(semesters: RefModuleSemesterDto[]) {
+        this.semestersActivity = semesters;
     }
 
     setModules(modulesData: ModuleDto[]) {
@@ -36,6 +51,35 @@ class ComponentsStore {
         this.atoms = atomsData;
     }
 
+    setIndexes(indexesData: TupleOfIntegerAndString[]) {
+        this.indexes = indexesData;
+    }
+
+    getAtom(atomId: number): AtomDto | undefined {
+        return this.atoms.find(atom => atom.id === atomId)
+    }
+
+    getAtoms(atomId: number[]): AtomDto[] {
+        const atoms: AtomDto[] = [];
+        this.atoms.forEach(atom => {
+            if (atomId.includes(atom.id)) atoms.push(atom)
+        })
+        return atoms
+    }
+
+    getModule(moduleId: number): ModuleShortDto | undefined {
+        return this.modules.find(module => module.id === moduleId)
+    }
+
+    getIndex(id: number): string | undefined {
+        return this.indexes.find(index => index.item1 === id)?.item2 || undefined
+    }
+
+    moveAtoms(activeId: string, overId: string) {
+
+    }
 }
+
+
 
 export const componentsStore = new ComponentsStore();
