@@ -1,6 +1,6 @@
 import {
     defaultDropAnimationSideEffects,
-    DndContext,
+    DndContext, DragEndEvent,
     DragOverlay,
     DropAnimation,
     KeyboardSensor,
@@ -15,7 +15,6 @@ import {SemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx
 import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/planPage/ui/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
-import {PlanProvider, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
 import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
@@ -31,15 +30,11 @@ import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 
-const PlanPageWrapped = observer(() => {
+const PlanPage = observer(() => {
 
-    // const {
-    //     handleDragStart,
-    //     handleDragOver,
-    //     handleDragEnd,
-    //     handleDragCancel
-    // } = usePlan();
+    useCurriculumData({modulesPlainList: true});
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -55,10 +50,25 @@ const PlanPageWrapped = observer(() => {
                 {!commonStore.isLoadingData && <PlanHeader/> }
                 <DndContext
                     sensors={sensors}
-                    // onDragStart={handleDragStart}
-                    // onDragOver={handleDragOver}
-                    // onDragEnd={handleDragEnd}
-                    // onDragCancel={handleDragCancel}
+                    onDragStart={(event) => {
+                        const {active} = event;
+                        const {id} = active;
+                        componentsStore.setActiveId(id as string);
+                    }}
+                    onDragOver={(event) => {
+                        if (!event.over) return;
+                        const {id: overId} = event.over;
+                        componentsStore.setOverId(overId as string);
+                    }}
+                    onDragEnd={(event: DragEndEvent) => {
+                        if (!event.active?.id || !event.over?.id || event.active.id === event.over.id) return;
+
+                        const activeId = event.active?.id as string;
+                        const overId = event.over?.id as string;
+
+                        componentsStore.moveAtoms(activeId, overId);
+                    }}
+                    onDragCancel={() => {}}
                     collisionDetection={(args) => {
                         const pointerCollisions = pointerWithin(args);
                         if (pointerCollisions.length > 0) return pointerCollisions;
@@ -117,11 +127,9 @@ const PlanPageWrapped = observer(() => {
 
 const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activeItemId: string}) => {
 
-    const { getAtom } = usePlan();
-
     const atomInfo = useMemo(() => {
-        return getAtom(Number(getIdFromPrefix(activeItemId)))
-    }, [activeItemId, getAtom])
+        return componentsStore.getAtom(Number(getIdFromPrefix(activeItemId)))
+    }, [activeItemId])
 
     if (!atomInfo) return null;
 
@@ -135,7 +143,6 @@ const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activ
 });
 
 const Overlay = () => {
-    const { activeItemId } = usePlan();
     const { transformState } = useTransformContext();
     const scale = transformState.scale;
     const [coords, setCoords] = useState({ x: 0, y: 0 });
@@ -176,7 +183,7 @@ const Overlay = () => {
 
     return createPortal(
         <DragOverlay dropAnimation={dropAnimation} style={overlayStyle}>
-            {activeItemId ? <DraggableCard activeItemId={activeItemId as string} scale={scale} /> : null}
+            {componentsStore.activeId ? <DraggableCard activeItemId={componentsStore.activeId} scale={scale} /> : null}
         </DragOverlay>,
         document.body
     );
@@ -204,13 +211,5 @@ const dropAnimation: DropAnimation = {
         },
     }),
 } as DropAnimation;
-
-const PlanPage = () => {
-    return (
-        <PlanProvider>
-            <PlanPageWrapped/>
-        </PlanProvider>
-    )
-};
 
 export default PlanPage;

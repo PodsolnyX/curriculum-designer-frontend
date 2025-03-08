@@ -31,14 +31,13 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
 
     const {sidebarValue: selectedAtom} = usePlanParams()
 
-    const atomInfo = useMemo(() => {
-        const atomId = Number(getIdFromPrefix(id));
-        const atom = componentsStore.getAtom(atomId);
-        if (!atom) return undefined;
-        return {...atom, index: componentsStore.getIndex(atomId)};
-    }, [id])
+    const atomId = Number(getIdFromPrefix(id));
+    const atom = componentsStore.getAtom(atomId);
 
-    if (!atomInfo) return null;
+    if (!atom) return null;
+
+    const atomInfo =  {...atom, index: componentsStore.getIndex(atomId)};
+
     const getPosition = (): Position | undefined => {
         if (over?.id === id) return Position.Before
         else return undefined;

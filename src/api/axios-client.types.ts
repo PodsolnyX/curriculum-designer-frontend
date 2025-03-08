@@ -1016,6 +1016,109 @@ export function prepareSerializeUpdateCompetenceIndicatorDto(_data: UpdateCompet
   const data: Record<string, any> = { ..._data };
   return data as UpdateCompetenceIndicatorDto;
 }
+/** Data transfer object for tokens. */
+export interface TokenDto  {
+  /** Expired access token */
+  accessToken: string;
+  /** Refresh token */
+  refreshToken: string;
+}
+export function deserializeTokenDto(json: string): TokenDto {
+  const data = JSON.parse(json) as TokenDto;
+  initTokenDto(data);
+  return data;
+}
+export function initTokenDto(_data: TokenDto) {
+    return _data;
+}
+export function serializeTokenDto(_data: TokenDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeTokenDto(_data as TokenDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeTokenDto(_data: TokenDto): TokenDto {
+  const data: Record<string, any> = { ..._data };
+  return data as TokenDto;
+}
+export interface RegisterDto  {
+  /** User`s email */
+  email: string;
+  /** User`s password */
+  password: string;
+  /** User`s first name */
+  firstName: string;
+  /** User`s last name */
+  lastName: string;
+}
+export function deserializeRegisterDto(json: string): RegisterDto {
+  const data = JSON.parse(json) as RegisterDto;
+  initRegisterDto(data);
+  return data;
+}
+export function initRegisterDto(_data: RegisterDto) {
+    return _data;
+}
+export function serializeRegisterDto(_data: RegisterDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeRegisterDto(_data as RegisterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeRegisterDto(_data: RegisterDto): RegisterDto {
+  const data: Record<string, any> = { ..._data };
+  return data as RegisterDto;
+}
+/** Data transfer object for user login. */
+export interface LoginDto  {
+  /** User email */
+  email: string;
+  /** User password */
+  password: string;
+}
+export function deserializeLoginDto(json: string): LoginDto {
+  const data = JSON.parse(json) as LoginDto;
+  initLoginDto(data);
+  return data;
+}
+export function initLoginDto(_data: LoginDto) {
+    return _data;
+}
+export function serializeLoginDto(_data: LoginDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeLoginDto(_data as LoginDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeLoginDto(_data: LoginDto): LoginDto {
+  const data: Record<string, any> = { ..._data };
+  return data as LoginDto;
+}
+/** Data transfer object for changing password */
+export interface ChangePasswordDto  {
+  /** Old password */
+  oldPassword: string;
+  /** New password */
+  newPassword: string;
+}
+export function deserializeChangePasswordDto(json: string): ChangePasswordDto {
+  const data = JSON.parse(json) as ChangePasswordDto;
+  initChangePasswordDto(data);
+  return data;
+}
+export function initChangePasswordDto(_data: ChangePasswordDto) {
+    return _data;
+}
+export function serializeChangePasswordDto(_data: ChangePasswordDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeChangePasswordDto(_data as ChangePasswordDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeChangePasswordDto(_data: ChangePasswordDto): ChangePasswordDto {
+  const data: Record<string, any> = { ..._data };
+  return data as ChangePasswordDto;
+}
 export interface SetAttestationDto  {
   semesterId: number;
   atomId: number;

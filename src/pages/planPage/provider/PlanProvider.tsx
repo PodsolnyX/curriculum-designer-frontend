@@ -5,23 +5,15 @@ import {
     DisplaySettings,
     ToolsOptions,
 } from "@/pages/planPage/provider/types.ts";
-import {PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
 import {
-    commonSubjectParamKeys,
     Subject,
-    SubjectCompetence,
-    AtomUpdateParams,
 } from "@/pages/planPage/types/Subject.ts";
 import {
-    AcademicActivityDto,
     AtomDto,
-    AttestationDto,
-    CompetenceDistributionType,
-    CurriculumSettingsDto,
     ModuleDto, RefAtomSemesterDto,
     RefModuleSemesterDto,
     SemesterDto,
-    UpdateAtomDto, ValidationError,
+    ValidationError,
 } from "@/api/axios-client.ts";
 import {useDisplaySettings} from "@/pages/planPage/provider/useDisplaySettings.ts";
 import {
@@ -51,20 +43,10 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {
         editInfo,
-        setCredits,
-        editAttestation,
-        editAcademicHours,
-        deleteAcademicHours,
-        editIndicator,
-        editCompetence,
         expand
     } = useEditSubjectWithParams();
 
     const {
-        curriculumId,
-        curriculumData,
-        attestationTypesData,
-        academicActivityData,
         indexesData,
         validationErrorsData
     } = useCurriculumData({modulesPlainList: true});
@@ -147,102 +129,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     }
 
     // Обновляет состояние предмета в локальном состоянии плана
-
-
-    function updateAtom(
-        id: string,
-        paramKey: keyof AtomUpdateParams,
-        param: AtomUpdateParams[typeof paramKey]
-    ) {
-
-        const atomId = Number(getIdFromPrefix(id));
-        const semesterId = Number(getSemesterIdFromPrefix(id));
-
-        const getAtomWithUpdatedParam = (atom: AtomDto): AtomDto => {
-            const atomUpdated = structuredClone(atom);
-            if (commonSubjectParamKeys.includes(paramKey as keyof UpdateAtomDto)) {
-                atomUpdated[paramKey] = param;
-            }
-            else if (paramKey === "competenceIds" && curriculumData) {
-                curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence
-                    ? atomUpdated.competenceIds = param as number[]
-                    : atomUpdated.competenceIndicatorIds = param as number[]
-            }
-            else {
-                const semester = atomUpdated.semesters.find(semester => semester.semester.id === semesterId);
-                if (paramKey === "credit") semester.credit = param as number;
-                else if (paramKey === "attestations") {
-                    semester.attestations = (param as number[]).map(item =>
-                        attestationTypesData
-                            ? attestationTypesData.find(type => type.id === item)
-                            : { id: item, name: "", shortName: "" }
-                    );
-                }
-                else if (paramKey === "academicHours") {
-                    param = param as {id: number, value: number | undefined};
-                    if (param.id && param.value === -1) {
-                        semester.academicActivityHours = semester.academicActivityHours.filter(hour => hour.academicActivity.id !== param.id);
-                    }
-                    else if (param.id && (param.value >= 0)) {
-                        semester.academicActivityHours = semester.academicActivityHours.map(hour => hour.academicActivity.id === param.id ? { ...hour, value: param?.value || 0 } : hour);
-                    }
-                    else {
-                        const activity = academicActivityData ? academicActivityData.find(activity => activity.id === param.id) : undefined;
-                        if (activity) {
-                            semester.academicActivityHours.push({
-                                academicActivity: activity,
-                                value: 0,
-                                isCalculated: false
-                            });
-                        }
-                    }
-                }
-            }
-            return atomUpdated;
-        };
-
-        setAtomsList(prev => prev.map(atom => atomId === atom.id
-            ? {...getAtomWithUpdatedParam(atom)} : atom
-        ))
-
-        const requestIds = {atomId, semesterId};
-
-        const handlers: Record<string, () => void> = {
-            credit: () => setCredits({ ...requestIds, dto: { credit: param as number } }),
-            attestations: () => editAttestation({ ...requestIds, attestationIds: param as number[] }),
-            academicHours: () => {
-                param = param as {id: number, value: number | undefined};
-                if (param.id && param.value === -1) {
-                    deleteAcademicHours({
-                        ...requestIds,
-                        academicActivityId: param.id,
-                        curriculumId
-                    });
-                } else {
-                    editAcademicHours({
-                        ...requestIds,
-                        academicActivityId: param.id,
-                        curriculumId,
-                        createHoursDistribution: { value: param?.value ?? 0 }
-                    });
-                }
-            },
-            competenceIds: () => {
-                if (curriculumData) {
-                    if (curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence)
-                        editCompetence({...requestIds, setAtomCompetencesDto: {competenceIds: param as number[]}})
-                    else
-                        editIndicator({...requestIds, setAtomCompetenceIndicatorsDto: {competenceIndicatorIds: param as number[]}})
-                }
-            }
-        };
-
-        if (commonSubjectParamKeys.includes(paramKey as keyof UpdateAtomDto)) {
-            editInfo({ subjectId: requestIds.atomId, data: { [paramKey]: param } });
-        } else {
-            handlers[paramKey]?.();
-        }
-    }
 
     // Обработка DnD
 
@@ -417,7 +303,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         handleDragOver,
         handleDragEnd,
         handleDragCancel,
-        updateSubject: updateAtom,
         expandAtom,
         onChangeDisplaySetting,
         onSelectPreDisplaySetting
@@ -468,8 +353,6 @@ interface PlanContextValue {
 
     onSelectPreDisplaySetting(key: string): void;
 
-    updateSubject<T extends keyof AtomUpdateParams>(id: UniqueIdentifier, paramKey: T, param: AtomUpdateParams[T]): void;
-
     expandAtom(id: string, semesterNumber: number, direction: "prev" | "next"): void;
 }
 
@@ -500,7 +383,6 @@ const PlanContext = createContext<PlanContextValue>({
     },
     onSelectPreDisplaySetting: (_key: string) => {
     },
-    updateSubject: (_id: UniqueIdentifier, paramKey: "name", _param: AtomUpdateParams) => {},
 
     expandAtom: (_id: string, _semesterNumber: number, _direction: "prev" | "next") => {}
 })
