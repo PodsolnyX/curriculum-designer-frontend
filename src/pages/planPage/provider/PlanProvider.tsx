@@ -30,7 +30,6 @@ import {
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
 import {useEditSubjectWithParams} from "@/pages/planPage/hooks/useEditSubject.ts";
 import {App} from "antd";
-import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 
 export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
     atoms: number[];
@@ -40,18 +39,15 @@ export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
 export const PlanProvider = ({children}: { children: ReactNode }) => {
 
     const {message} = App.useApp();
-    const {setSidebarContent} = usePlanParams()
 
     const [semesters, setSemesters] = useState<SemesterDto[]>([]);
     const [atomsList, setAtomsList] = useState<AtomDto[]>([]);
     const [modulesList, setModulesList] = useState<ModuleShortDto[]>([]);
-    const [competences, setCompetences] = useState<Dictionary<SubjectCompetence>>({});
 
     const [activeItemId, setActiveItemId] = useState<UniqueIdentifier | null>(null);
     const [overItemId, setOverItemId] = useState<UniqueIdentifier | null>(null);
 
     const [selectedAtom, setSelectedAtom] = useState<string | null>(null);
-    const [selectedCompetenceId, setSelectedCompetenceId] = useState<UniqueIdentifier | null>(null);
 
     const {
         editInfo,
@@ -67,16 +63,10 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const {
         curriculumId,
         curriculumData,
-        semestersData,
-        atomsData,
-        modulesData,
         attestationTypesData,
         academicActivityData,
-        competencesData,
-        competenceIndicatorsData,
         indexesData,
-        validationErrorsData,
-        isLoading
+        validationErrorsData
     } = useCurriculumData({modulesPlainList: true});
 
     const [toolsOptions, setToolsOptions] = useState<ToolsOptions>({
@@ -85,7 +75,6 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     });
 
     const {
-        displaySettings,
         disableSettings,
         enableSettings,
         onChangeDisplaySetting,
@@ -93,54 +82,11 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     } = useDisplaySettings();
 
     useEffect(() => {
-        if (curriculumData?.semesters.length) {
-            setSemesters(curriculumData.semesters)
-        }
-    }, [curriculumData])
-
-    useEffect(() => {
-        if (atomsData) setAtomsList(atomsData)
-    }, [atomsData])
-
-    useEffect(() => {
-        if (modulesData) {
-            setModulesList(modulesData
-                .map(module => {
-                    return {
-                        ...module,
-                        atoms: module.atoms.map(atom => atom.id),
-                        modules: modulesData
-                            .filter(_module => module.id === _module.parentModuleId)
-                            .map(module => module.id)
-                    }
-                })
-            )
-        }
-    }, [modulesData])
-
-    useEffect(() => {
-        if (curriculumData && (competencesData || competenceIndicatorsData)) {
-            let _competences: Dictionary<SubjectCompetence> = {};
-
-            if (competencesData && curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence)
-                competencesData.forEach(competence => {
-                    _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
-                })
-            else if (competenceIndicatorsData) competenceIndicatorsData.forEach(competence => {
-                _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
-            })
-
-            setCompetences(_competences)
-        }
-    }, [curriculumData, competencesData, competenceIndicatorsData])
-
-    useEffect(() => {
         if (toolsOptions.cursorMode === CursorMode.Replace)
             disableSettings()
         else
             enableSettings()
     }, [toolsOptions])
-
     const getAtom = useCallback((atomId: number): AtomDto | undefined => {
         return atomsList.find(atom => atom.id === atomId)
     }, [atomsList])
@@ -162,6 +108,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
         return indexesData.find(index => index.item1 === id)?.item2 || undefined
     }, [indexesData])
 
+
     const getValidationErrors = useCallback((id: string): ValidationError[] | undefined => {
         if (!validationErrorsData?.length) return undefined;
         const ids = splitIds(id).map(id => Number(getIdFromPrefix(id)));
@@ -172,16 +119,12 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
 
         if ((id === null) || (id === selectedAtom)) {
             setSelectedAtom(null);
-            setSidebarContent(undefined)
+            // setSidebarContent(undefined)
             return;
         }
 
         setSelectedAtom(id)
-        setSidebarContent("atom", getIdFromPrefix(id))
-    }
-
-    const onSelectCompetence = (id: UniqueIdentifier | null) => {
-        setSelectedCompetenceId(id);
+        // setSidebarContent("atom", getIdFromPrefix(id))
     }
 
     function expandAtom(id: string, semesterNumber: number, direction: "prev" | "next") {
@@ -461,21 +404,7 @@ export const PlanProvider = ({children}: { children: ReactNode }) => {
     const value: PlanContextValue = {
         activeItemId,
         overItemId,
-        semesters,
-        competences,
-        atomList: atomsList,
-        modulesList: modulesList,
-        semestersInfo: semestersData || [],
-        displaySettings,
-        toolsOptions,
-        selectedAtom,
-        validationErrors: validationErrorsData,
-        attestationTypes: attestationTypesData,
-        academicActivity: academicActivityData,
-        loadingPlan: isLoading || semesters.length === 0,
-        selectedCompetenceId,
-        settings: curriculumData?.settings || {competenceDistributionType: CompetenceDistributionType.Competence},
-        onSelectCompetence,
+
         getAtom,
         getAtoms,
         getModule,
@@ -510,24 +439,6 @@ export const usePlan = () => {
 interface PlanContextValue {
     activeItemId: UniqueIdentifier | null;
     overItemId: UniqueIdentifier | null;
-    selectedAtom: string | null;
-    selectedCompetenceId: UniqueIdentifier | null;
-
-    semesters: SemesterDto[];
-    atomList: AtomDto[];
-    modulesList: ModuleShortDto[];
-
-    competences: Dictionary<SubjectCompetence>;
-    attestationTypes: AttestationDto[];
-    academicActivity: AcademicActivityDto[];
-    semestersInfo: RefModuleSemesterDto[];
-
-    settings: CurriculumSettingsDto;
-    displaySettings: DisplaySettings;
-    toolsOptions: ToolsOptions;
-
-    loadingPlan: boolean;
-    validationErrors: ValidationError[];
 
     getAtom(atomId: number): AtomDto | undefined;
 
@@ -538,8 +449,6 @@ interface PlanContextValue {
     getIndex(id: number): string | undefined;
 
     getValidationErrors(id: string): ValidationError[] | undefined;
-
-    onSelectCompetence(id: number | null): void;
 
     onSelectSubject(id: string | null): void;
 
@@ -567,32 +476,12 @@ interface PlanContextValue {
 const PlanContext = createContext<PlanContextValue>({
     activeItemId: null,
     overItemId: null,
-    semestersInfo: [],
-    competences: {},
-    displaySettings: PreDisplaySettings[0].settings,
-    toolsOptions: {
-        cursorMode: CursorMode.Move,
-        selectedCreateEntityType: "subjects"
-    },
-    academicActivity: [],
-    semesters: [],
-    selectedAtom: null,
-    attestationTypes: [],
-    loadingPlan: true,
-    selectedCompetenceId: null,
-    settings: {
-        competenceDistributionType: CompetenceDistributionType.Competence,
-    },
-    atomList: [],
-    modulesList: [],
-    validationErrors: [],
 
     getAtom: (_id: number) => undefined,
     getAtoms: (_ids: number[]) => [],
     getModule: (_moduleId: number) => undefined,
     getIndex: (_id: number) => undefined,
     getValidationErrors: (_id: string) => undefined,
-    onSelectCompetence: (_id: number | null) => { },
     onSelectSubject: (_id: string | null) => {
     },
     setToolsOptions: (_options: ToolsOptions) => {

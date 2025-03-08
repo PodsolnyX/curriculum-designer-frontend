@@ -1,21 +1,18 @@
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {Tag} from "antd";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import React from "react";
+import {observer} from "mobx-react-lite";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 interface SemesterHeaderProps {
     semesterId: string;
 }
 
-const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
+const SemesterHeader = observer(({semesterId}: SemesterHeaderProps) => {
 
-    const {
-        displaySettings,
-        semestersInfo,
-    } = usePlan();
-
-    const info = semestersInfo?.find(semester => semester.semester.id === Number(getIdFromPrefix(semesterId)));
+    const info = componentsStore.semestersActivity?.find(semester => semester.semester.id === Number(getIdFromPrefix(semesterId)));
 
     if (!info) return null;
 
@@ -47,7 +44,7 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
                     </div>
                 </div>
                 {
-                    displaySettings.academicHours &&
+                    optionsStore.displaySettings.academicHours &&
                     <div className={"rounded-lg px-3 py-2 bg-white shadow-md"}>
                         <AcademicHoursPanel
                             credits={nonElective.credit}
@@ -61,6 +58,6 @@ const SemesterHeader = ({semesterId}: SemesterHeaderProps) => {
             </div>
         </div>
     )
-}
+})
 
 export default SemesterHeader;

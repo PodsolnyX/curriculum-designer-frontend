@@ -12,9 +12,10 @@ import cls from "./ToolsPanel.module.scss"
 import classNames from "classnames";
 import React, {useState} from "react";
 import {CursorMode, ItemType} from "@/pages/planPage/provider/types.ts";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {Tooltip} from "antd";
 import {useControls, useTransformContext, useTransformEffect} from "react-zoom-pan-pinch";
+import {observer} from "mobx-react-lite";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 
 interface ToolsItem {
     value: ItemType;
@@ -71,12 +72,7 @@ const EditItems: ToolsItem[] = [
     }
 ]
 
-const ToolsPanel = () => {
-
-    const {
-        toolsOptions,
-        setToolsOptions
-    } = usePlan();
+const ToolsPanel = observer(() => {
 
     const { zoomIn, zoomOut } = useControls();
     const { props} = useTransformContext();
@@ -96,8 +92,8 @@ const ToolsPanel = () => {
                         <ToolsButton
                             {...item}
                             key={item.value}
-                            selected={toolsOptions.cursorMode === item.value}
-                            onClick={() => setToolsOptions({...toolsOptions, cursorMode: item.value as CursorMode})}
+                            selected={optionsStore.toolsOptions.cursorMode === item.value}
+                            onClick={() => optionsStore.setToolsMode(item.value as CursorMode)}
                         />
                     )
                 }
@@ -108,8 +104,11 @@ const ToolsPanel = () => {
                         <ToolsButton
                             {...item}
                             key={item.value}
-                            selected={(toolsOptions.cursorMode === CursorMode.Create && toolsOptions.selectedCreateEntityType === item.value)}
-                            onClick={() => setToolsOptions({...toolsOptions, selectedCreateEntityType: item.value, cursorMode: CursorMode.Create})}
+                            selected={(optionsStore.toolsOptions.cursorMode === CursorMode.Create && optionsStore.toolsOptions.selectedCreateEntityType === item.value)}
+                            onClick={() => {
+                                optionsStore.setToolsMode(CursorMode.Create)
+                                optionsStore.setToolsEntityType(item.value)
+                            }}
                         />
                     )
                 }
@@ -125,7 +124,7 @@ const ToolsPanel = () => {
             </div>
         </div>
     )
-}
+})
 
 interface ToolsButtonProps extends ToolsItem {
     selected?: boolean;

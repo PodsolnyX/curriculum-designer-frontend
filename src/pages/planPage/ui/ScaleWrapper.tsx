@@ -1,11 +1,10 @@
 import React from "react";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {TransformWrapper} from "react-zoom-pan-pinch";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import {observer} from "mobx-react-lite";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 
-const ScaleWrapper = ({children}: React.PropsWithChildren) => {
-
-    const {toolsOptions} = usePlan();
+const ScaleWrapper = observer(({children}: React.PropsWithChildren) => {
 
     // const [position, setPosition] = useState({ x: 0, y: 0 });
     // const [isPanning, setIsPanning] = useState(false);
@@ -82,7 +81,7 @@ const ScaleWrapper = ({children}: React.PropsWithChildren) => {
             limitToBounds={true}
             disablePadding={true}
             panning={{
-                allowLeftClickPan: toolsOptions.cursorMode === CursorMode.Hand,
+                allowLeftClickPan: optionsStore.toolsOptions.cursorMode === CursorMode.Hand,
             }}
         >
 
@@ -97,6 +96,6 @@ const ScaleWrapper = ({children}: React.PropsWithChildren) => {
             }}
         </TransformWrapper>
     )
-}
+})
 
 export default ScaleWrapper;

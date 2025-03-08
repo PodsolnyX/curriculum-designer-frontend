@@ -9,6 +9,9 @@ import {useGetCompetenceIndicatorsQuery, useGetCompetencesQuery} from "@/api/axi
 import {CompetenceDistributionType} from "@/api/axios-client.types.ts";
 import {useGetIndexesQuery} from "@/api/axios-client/ComponentQuery.ts";
 import {useGetValidationErrorsQuery} from "@/api/axios-client/ValidationQuery.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {useEffect} from "react";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface useCurriculumDataParams {
     atomsHasNoParentModule?: boolean;
@@ -36,6 +39,65 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
     const {data: competenceIndicatorsData, isLoading: loadingCompetenceIndicators} = useGetCompetenceIndicatorsQuery({curriculumId: Number(id)},
         { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.CompetenceIndicator});
     const {data: validationErrorsData} = useGetValidationErrorsQuery({curriculumId: Number(id)});
+
+    const loadingList = [
+        loadingPlan,
+        loadingAtoms,
+        loadingModules,
+        loadingAttestationTypes,
+        loadingSemesters,
+        loadingCompetences,
+        loadingCompetenceIndicators,
+        loadingAcademicActivity,
+        loadingIndexes
+    ]
+
+    useEffect(() => {
+        if (curriculumData) {
+            commonStore.setCurriculumData(curriculumData);
+            componentsStore.setSemesters(curriculumData.semesters)
+        }
+    }, [curriculumData])
+
+    useEffect(() => {
+        if (semestersData) {
+            componentsStore.setSemestersActivity(semestersData)
+        }
+    }, [semestersData])
+
+    useEffect(() => {
+        if (modulesData) componentsStore.setModules(modulesData);
+    }, [modulesData])
+
+    useEffect(() => {
+        if (atomsData) componentsStore.setAtoms(atomsData);
+    }, [atomsData])
+
+    useEffect(() => {
+        if (indexesData) componentsStore.setIndexes(indexesData);
+    }, [indexesData])
+
+    useEffect(() => {
+        if (attestationTypesData) commonStore.setAttestationTypes(attestationTypesData);
+    }, [attestationTypesData])
+
+    useEffect(() => {
+        if (academicActivityData) commonStore.setAcademicActivity(academicActivityData);
+    }, [academicActivityData])
+
+    useEffect(() => {
+        if (competencesData) commonStore.setCompetences(competencesData);
+        else if (competenceIndicatorsData) commonStore.setCompetences(competenceIndicatorsData);
+    }, [competencesData, competenceIndicatorsData])
+
+    useEffect(() => {
+        if (validationErrorsData) commonStore.setValidationErrors(validationErrorsData);
+    }, [validationErrorsData])
+
+    useEffect(() => {
+        if (loadingList.some(loading => loading === true)) commonStore.setIsLoadingData(true);
+        else commonStore.setIsLoadingData(false);
+    }, [loadingList]);
 
     return {
         curriculumId: Number(id),

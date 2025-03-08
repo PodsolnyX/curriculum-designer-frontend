@@ -1,8 +1,7 @@
 import {useDroppable} from "@dnd-kit/core";
 import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import React, {memo, useEffect, useRef, useState} from "react";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import React, {useEffect, useRef, useState} from "react";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
@@ -10,27 +9,23 @@ import SemesterHeader from "@/pages/planPage/ui/SemesterField/SemesterHeader.tsx
 import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {SemesterDto} from "@/api/axios-client.types.ts";
 import {setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {observer} from "mobx-react-lite";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 export interface SemesterFieldProps extends SemesterDto {
     atomsIds: string[];
-    subjectsContainerWidth: number;
-    setSubjectsContainerWidth(width: number): void;
 }
 
-export const SemesterField = memo(function (props: SemesterFieldProps) {
+export const SemesterField = observer(function (props: SemesterFieldProps) {
 
     const {
         id,
         number,
         atomsIds,
-        subjectsContainerWidth,
-        setSubjectsContainerWidth
     } = props;
 
-    const {
-        overItemId,
-        toolsOptions,
-    } = usePlan();
+    const overItemId = componentsStore.overId;
 
     const containerId = setPrefixToId(id, "semesters");
 
@@ -46,11 +41,11 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
 
     useEffect(() => {
         if (subjectsPanelRef.current)
-            subjectsPanelRef.current?.resize(subjectsContainerWidth)
-    }, [subjectsContainerWidth])
+            subjectsPanelRef.current?.resize(optionsStore.atomsContainerWidth)
+    }, [optionsStore.atomsContainerWidth])
 
     const onHoverSemester = () => {
-        if (toolsOptions.cursorMode === CursorMode.Create)
+        if (optionsStore.toolsOptions.cursorMode === CursorMode.Create)
             setAddSubjectCard(true)
     }
 
@@ -69,7 +64,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
         <PositionContainer
             id={containerId}
             rowId={containerId}
-            rootClassName={`flex w-full flex-col gap-5 relative ${toolsOptions.cursorMode === CursorMode.Create ? "" : ""} ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === containerId || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0" : ""}`}
+            rootClassName={`flex w-full flex-col gap-5 relative ${optionsStore.toolsOptions.cursorMode === CursorMode.Create ? "" : ""} ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === containerId || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0" : ""}`}
         >
             <div ref={setNodeRef} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester} onClick={(event) => onAddSubject(event)}
                  className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}`}
@@ -87,7 +82,7 @@ export const SemesterField = memo(function (props: SemesterFieldProps) {
                                     <Panel
                                         ref={subjectsPanelRef}
                                         order={1}
-                                        onResize={(width) => setSubjectsContainerWidth(width)}
+                                        onResize={(width) => optionsStore.setAtomsContainerWidth(width)}
                                         className={"pr-5"}
                                     >
                                         <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5 pl-4 `}>

@@ -14,17 +14,18 @@ import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 import DepartmentsSelector from "@/pages/planPage/ui/DepartmentsSelector.tsx";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 
 const AtomContent = () => {
 
-    const {getAtom, updateSubject} = usePlan();
+    const {updateSubject} = usePlan();
     const {sidebarValue: selectedAtom} = usePlanParams()
 
     const [selectedSemesterNumber, setSelectedSemesterNumber] = useState<number>(1);
     const [newName, setNewName] = useState("");
 
-    const atomInfo = getAtom(Number(selectedAtom));
+    const atomInfo = componentsStore.getAtom(Number(selectedAtom));
 
     useEffect(() => {
         if (selectedAtom && atomInfo) {
