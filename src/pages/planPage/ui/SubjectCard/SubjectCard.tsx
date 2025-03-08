@@ -2,7 +2,6 @@ import React, {forwardRef, useEffect, useState} from 'react';
 import cls from './SubjectCard.module.scss';
 import classNames from "classnames";
 import {Badge, Button, List, Popover, Tag, Tooltip, Typography} from "antd";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import CommentIcon from "@/shared/assets/icons/comment.svg?react";
 import OptionIcon from "@/shared/assets/icons/more.svg?react";
 import Icon, {
@@ -24,6 +23,7 @@ import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
 import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {observer} from "mobx-react-lite";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 export enum Position {
     Before = -1,
@@ -62,12 +62,6 @@ export const SubjectCardMemo =
             isReplaceMode,
             ...rest
         } = props;
-
-        const {
-            expandAtom,
-            updateSubject,
-            onSelectSubject
-        } = usePlan();
 
         const [newName, setNewName] = useState(name);
 
@@ -108,7 +102,7 @@ export const SubjectCardMemo =
         console.log(22)
 
         const onExpendSemester = (key: "prev" | "next") => {
-            expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
+            // expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
         }
 
         return (
@@ -123,7 +117,7 @@ export const SubjectCardMemo =
                 )}
                 {...rest}
                 ref={ref}
-                onClick={() => !isReplaceMode && onSelectSubject(id)}
+                // onClick={() => !isReplaceMode && onSelectSubject(id)}
                 id={id}
             >
                 <div
@@ -134,7 +128,7 @@ export const SubjectCardMemo =
                             <span
                                 onClick={(event) => {
                                     event.stopPropagation()
-                                    updateSubject(id, "isRequired", !isRequired)
+                                    componentsStore.updateAtom(id, "isRequired", !isRequired)
                                 }}
                                 className={classNames(cls.requiredIcon, isRequired && cls.requiredIcon_selected)}
                             >*</span>
@@ -161,7 +155,7 @@ export const SubjectCardMemo =
                                 triggerType: ["text"],
                                 onChange: (value) => {
                                     setNewName(value);
-                                    (name !== value) && updateSubject(id, "name", value)
+                                    (name !== value) && componentsStore.updateAtom(id, "name", value)
                                 }
                             }}
                             title={newName}
@@ -175,14 +169,14 @@ export const SubjectCardMemo =
                             optionsStore.displaySettings.credits &&
                             <CreditsSelector
                                 credits={credit}
-                                onChange={(value) => updateSubject(id, "credit", value)}
+                                onChange={(value) => componentsStore.updateAtom(id, "credit", value)}
                             />
                         }
                         {
                             optionsStore.displaySettings.attestation &&
                             <AttestationTypeSelector
                                 attestation={attestations}
-                                onChange={(value) => updateSubject(id, "attestations", value)}
+                                onChange={(value) => componentsStore.updateAtom(id, "attestations", value)}
                             />
                         }
                         {
@@ -232,7 +226,7 @@ export const SubjectCardMemo =
                                                                     type={"text"}
                                                                     className={"w-full justify-start"}
                                                                     disabled={item.key === type}
-                                                                    onClick={() => updateSubject(id, "type", item.key as AtomType)}
+                                                                    onClick={() => componentsStore.updateAtom(id, "type", item.key as AtomType)}
                                                                 >{item.label}</Button>
                                                             </li>
                                                         }
@@ -304,9 +298,9 @@ export const SubjectCardMemo =
                             credits={credit}
                             isEditMode={true}
                             academicHours={academicActivityHours}
-                            onChange={(activityId, value) => updateSubject(id, "academicHours", {id: activityId, value})}
-                            onAdd={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: undefined})}
-                            onRemove={(activityId) => updateSubject(id, "academicHours", {id: activityId, value: -1})}
+                            onChange={(activityId, value) => componentsStore.updateAtom(id, "academicHours", {id: activityId, value})}
+                            onAdd={(activityId) => componentsStore.updateAtom(id, "academicHours", {id: activityId, value: undefined})}
+                            onRemove={(activityId) => componentsStore.updateAtom(id, "academicHours", {id: activityId, value: -1})}
                         />
                     }
                     {
@@ -314,7 +308,7 @@ export const SubjectCardMemo =
                         <CompetenceSelector
                             subjectId={id}
                             competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
-                            onChange={(competenceIds) => updateSubject(id, "competenceIds", competenceIds)}
+                            onChange={(competenceIds) => componentsStore.updateAtom(id, "competenceIds", competenceIds)}
                         />
                     }
                 </div>

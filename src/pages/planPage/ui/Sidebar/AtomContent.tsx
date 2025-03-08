@@ -1,4 +1,3 @@
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import React, {useEffect, useState} from "react";
 import {
     concatIds,
@@ -19,7 +18,6 @@ import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 const AtomContent = () => {
 
-    const {updateSubject} = usePlan();
     const {sidebarValue: selectedAtom} = usePlanParams()
 
     const [selectedSemesterNumber, setSelectedSemesterNumber] = useState<number>(1);
@@ -51,7 +49,7 @@ const AtomContent = () => {
     const onNameChange = (value: string) => {
         setNewName(value);
         if (name !== value) {
-            updateSubject(targetSubjectSemesterId, "name", value)
+            componentsStore.updateAtom(targetSubjectSemesterId, "name", value)
         }
     }
 
@@ -89,7 +87,7 @@ const AtomContent = () => {
                     <Switch
                         className={"w-max"}
                         checked={isRequired}
-                        onClick={() => updateSubject(targetSubjectSemesterId, "isRequired", !isRequired)}
+                        onClick={() => componentsStore.updateAtom(targetSubjectSemesterId, "isRequired", !isRequired)}
                     />
                 </div>
                 <div className={"flex-col flex gap-1"}>
@@ -104,14 +102,14 @@ const AtomContent = () => {
                         })}
                         size={"small"}
                         value={type}
-                        onChange={(value) => updateSubject(targetSubjectSemesterId, "type", value as AtomType)}
+                        onChange={(value) => componentsStore.updateAtom(targetSubjectSemesterId, "type", value as AtomType)}
                     />
                 </div>
             </div>
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Кафедра</span>
                 <DepartmentsSelector
-                    onChange={(department) => updateSubject(targetSubjectSemesterId, "department", department)}
+                    onChange={(department) => componentsStore.updateAtom(targetSubjectSemesterId, "department", department)}
                     department={department}
                     type={"input"}
                 />
@@ -122,7 +120,7 @@ const AtomContent = () => {
                     competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
                     size={"large"}
                     subjectId={id}
-                    onChange={(competenceIds) => updateSubject(targetSubjectSemesterId, "competenceIds", competenceIds)}
+                    onChange={(competenceIds) => componentsStore.updateAtom(targetSubjectSemesterId, "competenceIds", competenceIds)}
                 />
             </div>
             {
@@ -142,7 +140,7 @@ const AtomContent = () => {
             <div className={"flex-col flex gap-1"}>
                 <span className={"font-bold text-[14px]"}>Зачётных единиц</span>
                 <CreditsSelector credits={atomSemester.credit} type={"input"}
-                                 onChange={(value) => updateSubject(targetSubjectSemesterId, "credit", value)}
+                                 onChange={(value) => componentsStore.updateAtom(targetSubjectSemesterId, "credit", value)}
                 />
             </div>
             <div className={"flex-col flex gap-1"}>
@@ -152,7 +150,7 @@ const AtomContent = () => {
                     subjectId={id}
                     semesterId={setPrefixToId(atomSemester.semester.id, "semesters")}
                     type={"selector"}
-                    onChange={(value) => updateSubject(targetSubjectSemesterId, "attestations", value)}
+                    onChange={(value) => componentsStore.updateAtom(targetSubjectSemesterId, "attestations", value)}
                 />
             </div>
             <div className={"flex-col flex gap-1"}>
@@ -162,12 +160,12 @@ const AtomContent = () => {
                     academicHours={atomSemester.academicActivityHours}
                     size={"large"}
                     isEditMode={true}
-                    onChange={(activityId, value) => updateSubject(targetSubjectSemesterId, "academicHours", {
+                    onChange={(activityId, value) => componentsStore.updateAtom(targetSubjectSemesterId, "academicHours", {
                         id: activityId,
                         value
                     })}
-                    onAdd={(activityId) => updateSubject(targetSubjectSemesterId, "academicHours", {id: activityId, value: undefined})}
-                    onRemove={(activityId) => updateSubject(targetSubjectSemesterId, "academicHours", {
+                    onAdd={(activityId) => componentsStore.updateAtom(targetSubjectSemesterId, "academicHours", {id: activityId, value: undefined})}
+                    onRemove={(activityId) => componentsStore.updateAtom(targetSubjectSemesterId, "academicHours", {
                         id: activityId,
                         value: -1
                     })}

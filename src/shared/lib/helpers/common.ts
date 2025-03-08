@@ -20,3 +20,10 @@ export function addPropsToChildren<T>(children: ReactNode, props?: (Partial<T> &
         addPropsToReactElement<T>(childElement, props)
     )
 }
+
+export function arraysToDict(keys: string[], values: number[]): Record<string, number> {
+    return keys.reduce((acc, key, index) => {
+        acc[key] = values[index];
+        return acc;
+    }, {} as Record<string, number>);
+}
