@@ -15,7 +15,25 @@ import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 
 export interface SemesterFieldProps extends SemesterDto {
     atomsIds: string[];
+    isOver: boolean;
 }
+
+export const SortableSemesterField = observer(function (props: SemesterFieldProps) {
+
+    const containerId = setPrefixToId(props.id, "semesters");
+
+    const isOver = componentsStore.isOver(containerId);
+
+    const { setNodeRef } = useDroppable({
+        id: containerId
+    });
+
+    return (
+        <div ref={setNodeRef}>
+            <SemesterField {...props} isOver={isOver}/>
+        </div>
+    )
+})
 
 export const SemesterField = observer(function (props: SemesterFieldProps) {
 
@@ -23,19 +41,14 @@ export const SemesterField = observer(function (props: SemesterFieldProps) {
         id,
         number,
         atomsIds,
+        isOver
     } = props;
-
-    const overItemId = componentsStore.overId;
 
     const containerId = setPrefixToId(id, "semesters");
 
     const [addSubjectCard, setAddSubjectCard] = useState(false);
 
     const subjectsPanelRef = useRef<ImperativePanelHandle | null>(null);
-
-    const { setNodeRef } = useDroppable({
-        id: containerId
-    });
 
     const {onCreate} = useCreateEntity()
 
@@ -64,9 +77,9 @@ export const SemesterField = observer(function (props: SemesterFieldProps) {
         <PositionContainer
             id={containerId}
             rowId={containerId}
-            rootClassName={`flex w-full flex-col gap-5 relative ${optionsStore.toolsOptions.cursorMode === CursorMode.Create ? "" : ""} ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(overItemId === containerId || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0" : ""}`}
+            rootClassName={`flex w-full flex-col gap-5 relative ${optionsStore.toolsOptions.cursorMode === CursorMode.Create ? "" : ""} ${number & 1 ? "bg-stone-100" : "bg-stone-200"} ${(isOver || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0" : ""}`}
         >
-            <div ref={setNodeRef} onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester} onClick={(event) => onAddSubject(event)}
+            <div onMouseEnter={onHoverSemester} onMouseLeave={onLeaveSemester} onClick={(event) => onAddSubject(event)}
                  className={`flex w-full flex-col gap-5 relative ${number & 1 ? "bg-stone-100" : "bg-stone-200"}`}
                  // ${(overItemId === containerId || addSubjectCard) ? "after:content-[''] after:w-full after:h-full after:border-2 after:border-dashed after:pointer-events-none after:border-sky-500 after:absolute after:top-0 after:left-0"
                  //     : ""}

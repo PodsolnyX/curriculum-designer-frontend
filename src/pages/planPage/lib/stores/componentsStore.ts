@@ -1,7 +1,7 @@
 import {makeAutoObservable, runInAction} from "mobx";
 import {
     AtomDto, CompetenceDistributionType,
-    ModuleDto,
+    ModuleDto, RefAtomSemesterDto,
     RefModuleSemesterDto,
     SemesterDto,
     TupleOfIntegerAndString, UpdateAtomDto
@@ -97,6 +97,14 @@ class ComponentsStore {
 
     setOverId(id: string | null) {
         this.overId = id;
+    }
+
+    isActive(id: string) {
+        return this.activeId === id;
+    }
+
+    isOver(id: string) {
+        return this.overId === id;
     }
 
     resetAllActiveIds() {
@@ -195,6 +203,28 @@ class ComponentsStore {
         }
     }
 
+    expandAtom(id: string, semesterNumber: number, direction: "prev" | "next") {
+        const atomId = Number(getIdFromPrefix(id));
+        const semesterId = this.semesters.find(semester => semester.number === semesterNumber)?.id;
+        const atom = this.atoms.find(atom => atom.id === atomId);
+
+        if (!atom || !semesterId) return;
+
+        const newSemester: RefAtomSemesterDto = {
+            semester: this.semesters.find(semester => semester.number === semesterNumber),
+            credit: 0,
+            attestations: [],
+            academicActivityHours: []
+        };
+
+        runInAction(() => {
+            atom.semesters = direction === "prev" ? [newSemester, ...atom.semesters] : [...atom.semesters, newSemester];
+        })
+
+        AtomInSemesterClient.createAtomInSemester(atomId, semesterId)
+            .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE))
+    }
+
     moveAtoms(activeId: string, overId: string) {
         const atomId = Number(getIdFromPrefix(activeId));
         const activeSemesterId = Number(getSemesterIdFromPrefix(activeId));
@@ -208,6 +238,7 @@ class ComponentsStore {
 
         const indexTargetSemester =  this.semesters.findIndex(semester => semester.id === overSemesterId);
         const indexInitialSemester =  atom.semesters.findIndex(semester => semester.semester.id === activeSemesterId);
+        const initialSubjectSemestersIndex = atom.semesters.map(semester => semester.semester.number - 1);
         const newSubjectSemestersIndex = atom.semesters.map((_, index) => indexTargetSemester + index - indexInitialSemester)
 
         //Если предметы не помещаются по верхнему или нижнему пределу
@@ -225,36 +256,41 @@ class ComponentsStore {
                     ...refSemester,
                     semester: this.semesters[newSubjectSemestersIndex[index]]
                 }
-            })
+            });
         })
 
-        const concatModuleSemestersWithAtomSemesters = (moduleSemesters: RefModuleSemesterDto[]): RefModuleSemesterDto[] => {
+        const concatModuleSemestersWithAtomSemesters = (module: ModuleShortDto) => {
             const mergedMap = new Map<number, SemesterDto>();
 
-            if (moduleSemesters.length === 1 && moduleSemesters[0].semester.number === 0) {
+            if (module.semesters.length === 1 && module.semesters[0].semester.number === 0) {
                 [...newAtomSemesters].forEach(semester => {
                     mergedMap.set(semester.number, semester);
                 });
             }
             else {
-                [...moduleSemesters.map(semester => semester.semester), ...newAtomSemesters].forEach(semester => {
+                [...module.semesters.map(semester => semester.semester), ...newAtomSemesters].forEach(semester => {
                     mergedMap.set(semester.number, semester);
                 });
             }
 
             const mergedArray = Array.from(mergedMap.values()).sort((a, b) => a.number - b.number);
 
-            return mergedArray.map(semester => {
+            const mergedSemesters = mergedArray.map(semester => {
                 return {
                     semester,
-                    nonElective: moduleSemesters.find(sem => sem.semester.id === semester.id)?.nonElective || {
+                    nonElective: module.semesters.find(sem => sem.semester.id === semester.id)?.nonElective || {
                         credit: 0, attestations: [], academicActivityHours: []
                     },
-                    elective: moduleSemesters.find(sem => sem.semester.id === semester.id)?.elective || {
+                    elective: module.semesters.find(sem => sem.semester.id === semester.id)?.elective || {
                         credit: 0, attestations: [], academicActivityHours: []
                     }
                 }
             });
+
+            runInAction(() => {
+                module.atoms = [...module.atoms, atomId];
+                module.semesters = mergedSemesters;
+            })
         }
 
         const removeAtomFromModules = (module: ModuleShortDto, atomId: number) => {
@@ -284,27 +320,22 @@ class ComponentsStore {
 
         runInAction(() => {
             if ((activeParentModuleId !== overParentModuleId) && (activeSemesterId !== activeParentModuleId || overSemesterId !== overParentModuleId)) {
-                this.modules.map(module =>
-                    module.id === activeParentModuleId ?
-                        removeAtomFromModules(module, atomId) :
-                        module.id === overParentModuleId ?
-                            {
-                                ...module,
-                                atoms: [...module.atoms, atomId],
-                                semesters: concatModuleSemestersWithAtomSemesters(module.semesters)
-                            }
-                            : module
-                )
+                this.modules.forEach(module => {
+                    if (module.id === activeParentModuleId)
+                        removeAtomFromModules(module, atomId);
+                    else if (module.id === overParentModuleId)
+                        concatModuleSemestersWithAtomSemesters(module);
+                });
             }
         })
 
         AtomClient.updateAtom(atomId, {
             semesterIds: arraysToDict(
-                atom.semesters.map(semester => String(semester.semester.id)),
+                initialSubjectSemestersIndex.map(index => this.semesters[index].id),
                 newSubjectSemestersIndex.map(index => this.semesters[index].id)
-            ),
+            ) as {[p: string]: number},
             parentModuleId: overSemesterId === overParentModuleId ? null : overParentModuleId
-        })
+        }).then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE))
 
         runInAction(() => {
             this.resetAllActiveIds();

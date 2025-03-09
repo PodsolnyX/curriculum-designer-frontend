@@ -84,7 +84,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                             const colors = ["#25b600", "#8019f1", "#e80319", "#f56b0a"];
 
                             return (
-                                <TrackField
+                                <SortableTrackField
                                     key={track}
                                     id={concatIds(id, setPrefixToId(track, "modules"))}
                                     semesterId={semesterId}
@@ -105,7 +105,23 @@ interface TrackFieldProps {
     color: string;
     semesterId: number;
     position?: ModuleSemestersPosition;
+    isOver?: boolean;
 }
+
+const SortableTrackField = observer((props: TrackFieldProps) => {
+
+    const isOver = componentsStore.isOver(props.id);
+
+    const { setNodeRef } = useDroppable({
+        id: props.id
+    });
+
+    return (
+        <div ref={setNodeRef}>
+            <TrackField {...props} isOver={isOver}/>
+        </div>
+    )
+})
 
 const TrackField = observer((props: TrackFieldProps) => {
 
@@ -113,12 +129,9 @@ const TrackField = observer((props: TrackFieldProps) => {
         id,
         color,
         position = "single",
-        semesterId
+        semesterId,
+        isOver
     } = props;
-
-    const { setNodeRef } = useDroppable({
-        id
-    });
 
     const [isHover, setIsHover] = useState(false);
 
@@ -149,9 +162,8 @@ const TrackField = observer((props: TrackFieldProps) => {
     return (
         <div
             className={`${styles[position]} border-dotted h-full pb-2 px-3 min-w-[200px]`}
-            ref={setNodeRef}
             style={{
-                backgroundColor: (componentsStore.overId === id || isHover) ? `${color}35` : `${color}20`,
+                backgroundColor: (isOver || isHover) ? `${color}35` : `${color}20`,
                 borderColor: color
             }}
             onClick={onClick}
