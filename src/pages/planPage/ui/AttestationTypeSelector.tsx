@@ -1,7 +1,8 @@
 import {Checkbox, Popover, Select, Tag} from "antd";
 import React from "react";
 import {AttestationDto} from "@/api/axios-client.types.ts";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import {observer} from "mobx-react-lite";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface AttestationTypeSelectorProps {
     attestation: AttestationDto[];
@@ -9,9 +10,7 @@ interface AttestationTypeSelectorProps {
     type?: "tag" | "selector";
 }
 
-const AttestationTypeSelector = ({attestation, type = "tag", onChange}: AttestationTypeSelectorProps) => {
-
-    const {attestationTypes} = usePlan()
+const AttestationTypeSelector = observer(({attestation, type = "tag", onChange}: AttestationTypeSelectorProps) => {
 
     const onChangeCheckbox = (attestationId: number) => {
         onChange && onChange(
@@ -29,7 +28,7 @@ const AttestationTypeSelector = ({attestation, type = "tag", onChange}: Attestat
         return (
             <ul>
                 {
-                    attestationTypes?.map(type =>
+                    commonStore.attestationTypes?.map(type =>
                         <li key={type.id} className={"flex gap-1 items-center"}>
                             <Checkbox
                                 onChange={() => onChangeCheckbox(type.id)}
@@ -62,13 +61,13 @@ const AttestationTypeSelector = ({attestation, type = "tag", onChange}: Attestat
             </Tag>
         </Popover> :
         <Select
-            options={attestationTypes.map(type => {return{value: type.id, label: type.name}})}
+            options={commonStore.attestationTypes.map(type => {return{value: type.id, label: type.name}})}
             mode={"multiple"}
             size={"small"}
             value={attestation.map(att => att.id)}
             onChange={(value) => onChangeSelect(value)}
         />
     )
-}
+})
 
 export default AttestationTypeSelector;

@@ -1,19 +1,17 @@
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {Select, Tag, Typography} from "antd";
 import {ValidationError, ValidationErrorType} from "@/api/axios-client.types.ts";
 import {useState} from "react";
 import {useControls} from "react-zoom-pan-pinch";
 import {concatIds, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 const ValidationContent = () => {
-
-    const {validationErrors} = usePlan();
 
     const [filters, setFilters] = useState<ValidationErrorType[]>([]);
 
     const {zoomToElement} = useControls()
 
-    const data = validationErrors?.filter(error => filters.length === 0 || filters.includes(error!!.type));
+    const data = commonStore.validationErrors?.filter(error => filters.length === 0 || filters.includes(error!!.type));
 
     const scrollToTarget = (error: ValidationError) => {
 
@@ -27,27 +25,29 @@ const ValidationContent = () => {
             return prev ? concatIds(setPrefixToId(Number(current.id), Entities[current.type]), prev) : setPrefixToId(Number(current.id), Entities[current.type]);
         }, "");
         if (!targetId) return;
-        console.log(targetId)
+
         zoomToElement(document.getElementById(targetId));
     };
 
     return (
-        <div className={"flex flex-col gap-2"}>
-            <Typography.Text className={"text-xl"}>Ошибки валидации</Typography.Text>
-            <Select
-                size={"small"}
-                placeholder={"Тип ошибки"}
-                mode={"multiple"}
-                value={filters}
-                onChange={setFilters}
-                options={Object.keys(ValidationErrorType)
-                    .map(key => {
-                        return {label: ValidationErrorTypeTitle[key], value: key}
-                    })}
-            />
+        <div className={"flex flex-col gap-2 h-full"}>
+            <div className={"flex flex-col gap-1"}>
+                <Typography.Text className={"text-xl"}>Ошибки валидации</Typography.Text>
+                <Select
+                    size={"small"}
+                    placeholder={"Тип ошибки"}
+                    mode={"multiple"}
+                    value={filters}
+                    onChange={setFilters}
+                    options={Object.keys(ValidationErrorType)
+                        .map(key => {
+                            return {label: ValidationErrorTypeTitle[key], value: key}
+                        })}
+                />
+            </div>
             {
                 data?.length ?
-                    <ul>
+                    <ul className={"flex flex-1 flex-col overflow-y-auto scrollbar"}>
                         {
                             data?.map((error, index) =>
                                 <li

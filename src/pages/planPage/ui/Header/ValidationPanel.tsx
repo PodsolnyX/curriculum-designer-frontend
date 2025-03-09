@@ -1,13 +1,11 @@
 import {CheckCircleOutlined, WarningOutlined} from "@ant-design/icons";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {Tooltip, Typography} from "antd";
-import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {observer} from "mobx-react-lite";
 
-const ValidationPanel = () => {
-    const { validationErrors } = usePlan();
-    const {setSidebarContent} = usePlanParams()
+const ValidationPanel = observer(() => {
 
-    const hasErrors = validationErrors.length > 0;
+    const hasErrors = commonStore.validationErrors?.length > 0;
     const colorBG = hasErrors ? "bg-red-500/[.1]" : "bg-green-500/[.1]";
     const colorHoverBG = hasErrors ? "hover:bg-red-500/[.2]" : "hover:bg-green-500/[.2]";
     const colorText = hasErrors ? "text-red-500" : "text-green-500";
@@ -16,16 +14,19 @@ const ValidationPanel = () => {
 
     return (
         <div className="flex gap-5 items-center">
-            <Tooltip title={message}>
+            <Tooltip title={message} placement={"left"}>
                 <div className={`flex gap-1 items-center h-max ${colorBG} ${colorHoverBG} transition p-2 px-3 rounded-lg cursor-pointer`}
-                     onClick={() => setSidebarContent("validation")}
+                     onClick={() => commonStore.sideBarContent !== "validation"
+                         ? commonStore.setSideBarContent("validation")
+                         : commonStore.setSideBarContent(null)
+                     }
                 >
-                    <Typography.Text className={colorText}>{validationErrors.length}</Typography.Text>
+                    <Typography.Text className={colorText}>{commonStore.validationErrors?.length}</Typography.Text>
                     <Icon className={colorText} />
                 </div>
             </Tooltip>
         </div>
     );
-};
+})
 
 export default ValidationPanel;

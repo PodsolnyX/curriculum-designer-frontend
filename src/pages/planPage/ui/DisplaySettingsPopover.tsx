@@ -1,24 +1,18 @@
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {Button, Checkbox, Popover, Select} from "antd";
 import React from "react";
 import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
-import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {Link, useParams} from "react-router-dom";
 import {getRoutePlanTable} from "@/shared/const/router.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {observer} from "mobx-react-lite";
 
-const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
-
-    const {
-        onChangeDisplaySetting,
-        onSelectPreDisplaySetting,
-        displaySettings,
-        toolsOptions
-    } = usePlan();
+const DisplaySettingsPopover = observer(({children}: React.PropsWithChildren<{}>) => {
 
     const {id} = useParams<{id: string}>();
 
-    const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(displaySettings))?.key || "";
-    const disabledEditSettings = toolsOptions.cursorMode === CursorMode.Replace;
+    const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(optionsStore.displaySettings))?.key || "";
+    // const disabledEditSettings = optionsStore.toolsOptions.cursorMode === CursorMode.Replace;
+    const disabledEditSettings = false;
 
     const Content = () => {
         return (
@@ -30,15 +24,15 @@ const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
                     size={"small"}
                     value={selectedPreSetting}
                     options={PreDisplaySettings.map(setting => ({value: setting.key, label: setting.name}))}
-                    onChange={(value) => onSelectPreDisplaySetting(value)}
+                    onChange={(value) => optionsStore.onSelectPreDisplaySetting(value)}
                 />
                 <div className={"grid grid-cols-1 gap-1 mb-2"}>
                     {
                         DisplaySettingsList.map(setting =>
                             <Checkbox
                                 key={setting.key}
-                                checked={displaySettings[setting.key]}
-                                onChange={() => onChangeDisplaySetting(setting.key)}
+                                checked={optionsStore.displaySettings[setting.key]}
+                                onChange={() => optionsStore.onChangeDisplaySetting(setting.key)}
                                 disabled={disabledEditSettings}
                             >
                                 {setting.name}
@@ -63,6 +57,6 @@ const DisplaySettingsPopover = ({children}: React.PropsWithChildren<{}>) => {
             {children}
         </Popover>
     )
-}
+})
 
 export default DisplaySettingsPopover;

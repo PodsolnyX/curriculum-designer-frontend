@@ -2,69 +2,78 @@ import {Position, SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard
 import {useSortable} from "@dnd-kit/sortable";
 import {Arguments} from "@dnd-kit/sortable/dist/hooks/useSortable";
 import {CSS} from "@dnd-kit/utilities";
-import React, {memo, useMemo} from "react";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import React, {useMemo} from "react";
 import {useControls} from "react-zoom-pan-pinch";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
-import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {observer} from "mobx-react-lite";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface SortableSubjectCard {
     id: string;
 }
 
-const SortableSubjectCard = memo(({ id }: SortableSubjectCard) => {
+const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
 
     const {
         attributes,
         listeners,
         isDragging,
         isSorting,
-        over,
         setNodeRef,
         transform,
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const { toolsOptions, getIndex, getAtom } = usePlan();
-    const {sidebarValue: selectedAtom} = usePlanParams()
+    const isOver = componentsStore.isOver(id);
+    const isSelected = commonStore.isSelectedComponent(id);
 
-    const atomInfo = useMemo(() => {
-        const atomId = Number(getIdFromPrefix(id));
-        const atom = getAtom(atomId);
-        if (!atom) return undefined;
-        return {...atom, index: getIndex(atomId)};
-    }, [id, getAtom])
+    const atomId = Number(getIdFromPrefix(id));
+    const atom = componentsStore.getAtom(atomId);
 
-    if (!atomInfo) return null;
+    if (!atom) return null;
+
+    const atomInfo =  {...atom, index: componentsStore.getIndex(atomId)};
+
     const getPosition = (): Position | undefined => {
-        if (over?.id === id) return Position.Before
+        if (isOver) return Position.Before
         else return undefined;
     }
 
-    const dndProps = (toolsOptions.cursorMode === CursorMode.Replace) ? {...attributes, ...listeners} : {};
+    const isReplaceMode = useMemo(() => optionsStore.toolsOptions.cursorMode === CursorMode.Replace, [optionsStore.toolsOptions.cursorMode]);
 
     return (
         <SubjectCardOutView
             id={id}
-            enable={selectedAtom === getIdFromPrefix(id)}
+            enable={isSelected}
             semesterOrder={atomInfo.semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1}
         >
-            <SubjectCard
-                ref={setNodeRef}
-                {...atomInfo}
-                id={id}
-                isReplaceMode={toolsOptions.cursorMode === CursorMode.Replace}
-                active={isDragging}
-                style={{
+            {
+                isReplaceMode ? <div ref={setNodeRef} {...attributes} {...listeners} style={{
                     transition,
                     transform: isSorting ? undefined : CSS.Transform.toString(transform),
-                }}
-                isSelected={selectedAtom === getIdFromPrefix(id)}
-                insertPosition={getPosition()}
-                {...dndProps}
-            />
+                }}>
+                    <SubjectCard
+                        {...atomInfo}
+                        id={id}
+                        isReplaceMode={isReplaceMode}
+                        active={isDragging}
+                        isSelected={isSelected}
+                        insertPosition={getPosition()}
+                    />
+                </div> : <SubjectCard
+                    {...atomInfo}
+                    id={id}
+                    isReplaceMode={isReplaceMode}
+                    active={isDragging}
+                    isSelected={isSelected}
+                    insertPosition={getPosition()}
+                />
+            }
+
         </SubjectCardOutView>
     );
 })

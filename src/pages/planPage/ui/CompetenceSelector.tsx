@@ -2,10 +2,11 @@ import {Checkbox, Input, Popover, Segmented, Tag, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {DownOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import {CompetenceDistributionType, CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
 import {useParams} from "react-router-dom";
 import {useGetCompetencesQuery} from "@/api/axios-client/CompetenceQuery.ts";
+import {observer} from "mobx-react-lite";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface CompetenceSelectorProps {
     subjectId?: string | number;
@@ -14,11 +15,9 @@ interface CompetenceSelectorProps {
     size?: "small" | "large";
 }
 
-const CompetenceSelector = ({competencies = [], size = "small", subjectId, onChange}: CompetenceSelectorProps) => {
+const CompetenceSelector = observer(({competencies = [], size = "small", subjectId, onChange}: CompetenceSelectorProps) => {
 
-    const { selectedCompetenceId, onSelectCompetence, settings, competences } = usePlan();
-
-    const {competenceDistributionType} = settings;
+    const {competenceDistributionType} = commonStore.curriculumData.settings;
 
     const onRemoveCompetence = (id: number) => {
         onChange?.(competencies.filter(competence => competence !== id))
@@ -30,15 +29,15 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId, onCha
                 competencies?.length ?
                     competencies?.map(competence => {
 
-                        const competenceInfo = competences[competence]
+                        const competenceInfo = commonStore.competences[competence]
 
                         return (
                             <Tag
-                                color={selectedCompetenceId === competence ? "purple" : "default"}
+                                color={commonStore.selectedCompetence === competence ? "purple" : "default"}
                                 className={`m-0 group/item flex gap-1 cursor-pointer hover:text-purple-800`}
                                 bordered={size !== "small"}
                                 key={competence}
-                                onClick={() => onSelectCompetence(competence !== selectedCompetenceId ? competence : null)}
+                                onClick={() => commonStore.selectCompetence(competence !== commonStore.selectedCompetence ? competence : null)}
                             >
                                 <Tooltip title={competenceInfo?.description}>
                                 <span className={`${size === "small" ? "text-[12px]" : "text-[14px]"}`}>
@@ -64,7 +63,7 @@ const CompetenceSelector = ({competencies = [], size = "small", subjectId, onCha
             </Popover>
         </div>
     )
-}
+})
 
 interface AddCompetencePopoverProps {
     subjectId?: string | number;

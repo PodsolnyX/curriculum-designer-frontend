@@ -1,4 +1,3 @@
-import {usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {useParams} from "react-router-dom";
 import {useQueryClient} from "@tanstack/react-query";
 import {App} from "antd";
@@ -9,9 +8,9 @@ import {
 } from "@/api/axios-client/ModuleQuery.ts";
 import {getAtomsByCurriculumQueryKey, useCreateAtomMutation} from "@/api/axios-client/AtomQuery.ts";
 import {AtomType} from "@/api/axios-client.types.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 
 export const useCreateEntity = () => {
-    const {toolsOptions} = usePlan();
 
     const {id: curriculumId} = useParams<{ id: string }>();
     const queryClient = useQueryClient();
@@ -39,7 +38,7 @@ export const useCreateEntity = () => {
     });
 
     const onCreate = (semesterId: number, parentId?: number) => {
-        if (toolsOptions.selectedCreateEntityType === "subjects")
+        if (optionsStore.toolsOptions.selectedCreateEntityType === "subjects")
             createSubject({
                 name: "Новый предмет",
                 type: AtomType.Subject,
@@ -50,7 +49,7 @@ export const useCreateEntity = () => {
                 competenceIndicatorIds: [],
                 curriculumId: Number(curriculumId),
             })
-        else if (toolsOptions.selectedCreateEntityType === "modules")
+        else if (optionsStore.toolsOptions.selectedCreateEntityType === "modules")
             createModule({
                 name: "Новый модуль",
                 curriculumId: Number(curriculumId),
@@ -60,7 +59,7 @@ export const useCreateEntity = () => {
                 queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(Number(curriculumId))});
                 message.success("Модуль успешно создан")
             })
-        else if (toolsOptions.selectedCreateEntityType === "selections")
+        else if (optionsStore.toolsOptions.selectedCreateEntityType === "selections")
             createSelection({
                 module: {
                     name: "Новый выбор",

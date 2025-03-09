@@ -1,10 +1,8 @@
 @layer utilities {
   .scrollbar {
-    //scrollbar-width: thin;
-    //scrollbar-color: #c4c4c4 white;
 
     &::-webkit-scrollbar {
-      width: 6px; /* Ширина скроллбара */
+      width: 6px;
       position: absolute;
       right: 0;
       top: 0;
@@ -13,13 +11,19 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: rgba(0, 0, 0, 0.09); /* Цвет "ползунка" скроллбара */
-      border-radius: 4px; /* Закругленные углы */
+      background-color: rgba(0, 0, 0, 0.09);
+      border-radius: 4px;
       border: 3px solid rgba(0, 0, 0, 0.01);
+      transition: background-color .2s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.4);
+      }
     }
 
     &::-webkit-scrollbar-track {
-      background-color: transparent; /* Прозрачный фон трека */
+      background-color: transparent;
     }
   }
 

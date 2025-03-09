@@ -86,6 +86,12 @@ export * as CompetenceQuery from './axios-client/CompetenceQuery';
 
 
 
+export * as AuthClient from './axios-client/AuthClient';
+
+export * as AuthQuery from './axios-client/AuthQuery';
+
+
+
 export * as AttestationClient from './axios-client/AttestationClient';
 
 export * as AttestationQuery from './axios-client/AttestationQuery';
@@ -234,6 +240,8 @@ export function initPersister() {
 
   addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceDto(data));
   addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorDto(data));
+
+
 
 
   addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));

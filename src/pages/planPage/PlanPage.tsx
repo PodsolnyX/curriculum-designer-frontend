@@ -1,6 +1,6 @@
 import {
     defaultDropAnimationSideEffects,
-    DndContext,
+    DndContext, DragEndEvent,
     DragOverlay,
     DropAnimation,
     KeyboardSensor,
@@ -11,11 +11,10 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {sortableKeyboardCoordinates} from '@dnd-kit/sortable';
-import {SemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
+import {SortableSemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/planPage/ui/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
-import {PlanProvider, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
 import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
 import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
@@ -25,22 +24,17 @@ import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
 import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
-import {PositionsProvider} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {observer} from "mobx-react-lite";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
+import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 
-const PlanPageWrapped = () => {
+const PlanPage = observer(() => {
 
-    const {
-        semesters,
-        loadingPlan,
-        toolsOptions,
-        modulesList,
-        atomList,
-        handleDragStart,
-        handleDragOver,
-        handleDragEnd,
-        handleDragCancel
-    } = usePlan();
+    useCurriculumData({modulesPlainList: true});
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -49,19 +43,32 @@ const PlanPageWrapped = () => {
         })
     );
 
-    const [subjectsContainerWidth, setSubjectsContainerWidth] = useState(50);
-
     return (
         <div className={"flex flex-col bg-stone-100 relative"}>
-            <PageLoader loading={loadingPlan}/>
+            <PageLoader loading={commonStore.isLoadingData}/>
             <ScaleWrapper>
-                {!loadingPlan && <PlanHeader/> }
+                {!commonStore.isLoadingData && <PlanHeader/> }
                 <DndContext
                     sensors={sensors}
-                    onDragStart={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragEnd={handleDragEnd}
-                    onDragCancel={handleDragCancel}
+                    onDragStart={(event) => {
+                        const {active} = event;
+                        const {id} = active;
+                        componentsStore.setActiveId(id as string);
+                    }}
+                    onDragOver={(event) => {
+                        if (!event.over) return;
+                        const {id: overId} = event.over;
+                        componentsStore.setOverId(overId as string);
+                    }}
+                    onDragEnd={(event: DragEndEvent) => {
+                        if (!event.active?.id || !event.over?.id || event.active.id === event.over.id) return;
+
+                        const activeId = event.active?.id as string;
+                        const overId = event.over?.id as string;
+
+                        componentsStore.moveAtoms(activeId, overId);
+                    }}
+                    onDragCancel={() => componentsStore.setOverId(null)}
                     collisionDetection={(args) => {
                         const pointerCollisions = pointerWithin(args);
                         if (pointerCollisions.length > 0) return pointerCollisions;
@@ -69,19 +76,16 @@ const PlanPageWrapped = () => {
                     }}
                 >
                     <div className={"flex relative"}>
-                        <PositionsProvider>
                             <TransformComponent wrapperStyle={{
                                 height: 'calc(100vh - 64px)',
                                 width: '100vw',
-                                cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto"
+                                cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto"
                             }}>
-                                <div className={`flex flex-col pb-10 w-max ${toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
+                                <div className={`flex flex-col pb-10 w-max ${optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                     {
-                                        semesters.map(semester =>
-                                            <SemesterField {...semester} key={semester.id}
-                                                           subjectsContainerWidth={subjectsContainerWidth}
-                                                           setSubjectsContainerWidth={(width) => setSubjectsContainerWidth(width)}
-                                                           atomsIds={atomList
+                                        componentsStore.semesters.map(semester =>
+                                            <SortableSemesterField {...semester} key={semester.id}
+                                                           atomsIds={componentsStore.atoms
                                                                .filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id))
                                                                    .map(atom => concatIds(setPrefixToId(semester.id, "semesters"), setPrefixToId(atom.id, "subjects")))
                                                                || []
@@ -93,41 +97,35 @@ const PlanPageWrapped = () => {
                                 <div
                                     className={"h-full absolute"}
                                     style={{
-                                        left: `${subjectsContainerWidth + 0.2}%`,
-                                        width: `${100 - subjectsContainerWidth - 0.2}%`,
-                                        cursor: toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
-                                        pointerEvents: toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
+                                        left: `${positionsStore.atomsContainerWidth + 0.2}%`,
+                                        width: `${100 - positionsStore.atomsContainerWidth - 0.2}%`,
+                                        cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
+                                        pointerEvents: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
                                     }}
                                 >
                                     {
-                                        atomList &&
-                                        modulesList
+                                        (!commonStore.isLoadingData) &&
+                                        componentsStore.modules
                                             .filter(module => module.parentModuleId === null)
                                             .sort((a, b) =>
                                                 (a?.semesters && b?.semesters && !!a.semesters[0] && !!b.semesters[0]) ? (a.semesters[0].semester.number - b.semesters[0].semester.number) : 0
                                             )
-                                            // .sort((a, b) => b.semesters.length - a.semesters.length)
-                                            .map((module, index) => <ModuleArea {...module} key={module.id}/>)
+                                            .map((module) => <ModuleArea {...module} key={module.id}/>)
                                     }
                                 </div>
                                 <Overlay/>
                             </TransformComponent>
-                        </PositionsProvider>
                         <Sidebar/>
                     </div>
                 </DndContext>
             </ScaleWrapper>
         </div>
     )
-}
+})
 
 const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activeItemId: string}) => {
 
-    const { getAtom } = usePlan();
-
-    const atomInfo = useMemo(() => {
-        return getAtom(Number(getIdFromPrefix(activeItemId)))
-    }, [activeItemId, getAtom])
+    const atomInfo = componentsStore.getAtom(Number(getIdFromPrefix(activeItemId)));
 
     if (!atomInfo) return null;
 
@@ -141,7 +139,6 @@ const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activ
 });
 
 const Overlay = () => {
-    const { activeItemId } = usePlan();
     const { transformState } = useTransformContext();
     const scale = transformState.scale;
     const [coords, setCoords] = useState({ x: 0, y: 0 });
@@ -182,7 +179,7 @@ const Overlay = () => {
 
     return createPortal(
         <DragOverlay dropAnimation={dropAnimation} style={overlayStyle}>
-            {activeItemId ? <DraggableCard activeItemId={activeItemId as string} scale={scale} /> : null}
+            {componentsStore.activeId ? <DraggableCard activeItemId={componentsStore.activeId} scale={scale} /> : null}
         </DragOverlay>,
         document.body
     );
@@ -210,13 +207,5 @@ const dropAnimation: DropAnimation = {
         },
     }),
 } as DropAnimation;
-
-const PlanPage = () => {
-    return (
-        <PlanProvider>
-            <PlanPageWrapped/>
-        </PlanProvider>
-    )
-};
 
 export default PlanPage;

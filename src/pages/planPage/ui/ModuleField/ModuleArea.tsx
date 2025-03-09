@@ -1,6 +1,5 @@
 import {AtomDto, RefModuleSemesterDto, SelectionDto, ValidationErrorType} from "@/api/axios-client.types.ts";
-import React, {CSSProperties, memo, useMemo, useState} from "react";
-import {ModuleShortDto, usePlan} from "@/pages/planPage/provider/PlanProvider.tsx";
+import React, {CSSProperties, useMemo, useState} from "react";
 import {App, Tag, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {
@@ -13,13 +12,18 @@ import {useDroppable} from "@dnd-kit/core";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import {PositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
+import {observer} from "mobx-react-lite";
+import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
+import {componentsStore, ModuleShortDto} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
 
 interface ModuleAreaProps extends ModuleShortDto {}
 
-const ModuleArea = (props: ModuleAreaProps) => {
+const ModuleArea = observer((props: ModuleAreaProps) => {
 
     const {
         id,
@@ -30,17 +34,14 @@ const ModuleArea = (props: ModuleAreaProps) => {
         modules
     } = props;
 
-    const {getAtoms} = usePlan()
-    const {getTopCoordinate, getHorizontalCoordinate} = usePositions();
-
-    const atomsInfo = useMemo(() => getAtoms(atoms), [getAtoms, atoms])
+    const atomsInfo = useMemo(() => componentsStore.getAtoms(atoms), [atoms])
 
     const gridColumnsCount = useMemo(() => {
         const averageAtomsCount = atomsInfo.reduce((sum, atom) => sum + atom.semesters.length, 0) / semesters.length;
         return ~~((averageAtomsCount + 1) / 2) || 1
     }, [atomsInfo, semesters])
 
-    const x = getHorizontalCoordinate(
+    const x = positionsStore.getHorizontalCoordinate(
         setPrefixToId(semesters?.[0]?.semester.id || "", "semesters"),
         setPrefixToId(id, "modules")
     ) || 0;
@@ -54,11 +55,11 @@ const ModuleArea = (props: ModuleAreaProps) => {
                 marginTop: 4,
                 marginBottom: 4,
                 left: `${x}px`,
-                top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`
+                top: `${positionsStore.getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`
             }}
         >
             {
-                semesters
+                [...semesters]
                     .sort((a, b) => a.semester.number - b.semester.number)
                     .map((semester, index) => {
 
@@ -76,7 +77,7 @@ const ModuleArea = (props: ModuleAreaProps) => {
                                     name={name}
                                     position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
                                 />
-                                : <ModuleField
+                                : <SortableModuleField
                                     key={semester.semester.id}
                                     id={moduleId}
                                     gridColumnsCount={gridColumnsCount}
@@ -92,7 +93,7 @@ const ModuleArea = (props: ModuleAreaProps) => {
             }
         </div>
     )
-}
+})
 
 interface ModuleFieldProps {
     id: string;
@@ -105,7 +106,22 @@ interface ModuleFieldProps {
     semesterIndex: number;
 }
 
-const ModuleField = memo((props: ModuleFieldProps) => {
+const SortableModuleField = observer((props: ModuleFieldProps) => {
+
+    const isOver = componentsStore.isOver(props.id);
+
+    const { setNodeRef } = useDroppable({
+        id: props.id
+    });
+
+    return (
+        <div ref={setNodeRef}>
+            <ModuleField {...props} isOver={isOver}/>
+        </div>
+    )
+})
+
+const ModuleField = observer((props: ModuleFieldProps) => {
 
     const {
         id,
@@ -115,26 +131,22 @@ const ModuleField = memo((props: ModuleFieldProps) => {
         semester,
         selection,
         gridColumnsCount = 1,
-        semesterIndex
+        semesterIndex,
+        isOver
     } = props;
 
     const rowId = setPrefixToId(semester.semester.id, "semesters");
     const containerId = cutSemesterIdFromId(id);
 
-    const {overItemId, toolsOptions, getValidationErrors} = usePlan();
     const {message} = App.useApp();
 
     const [newName, setNewName] = useState(name);
-    const errors = getValidationErrors(id);
+    const errors = commonStore.getValidationErrors(id);
 
     const {mutate: editModule} = useUpdateModuleMutation(Number(getIdFromPrefix(String(id))), {
         onSuccess: () => {
             message.success("Модуль успешно обновлен")
         }
-    });
-
-    const {setNodeRef} = useDroppable({
-        id
     });
 
     const {onCreate} = useCreateEntity();
@@ -147,7 +159,7 @@ const ModuleField = memo((props: ModuleFieldProps) => {
     }
 
     const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (toolsOptions.cursorMode === CursorMode.Create) {
+        if (optionsStore.toolsOptions.cursorMode === CursorMode.Create) {
             event.stopPropagation()
             onCreate(semester.semester.id, Number(getIdFromPrefix(id)))
         }
@@ -166,12 +178,11 @@ const ModuleField = memo((props: ModuleFieldProps) => {
             rowId={rowId}
             id={containerId}
             rootStyles={(height) => getModuleRootStyles(height, position)}
-            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(toolsOptions.cursorMode === CursorMode.Create) ? "hover:bg-blue-300/[.3] cursor-pointer" : ""} ${(overItemId === id) ? "bg-blue-300/[.3]" : ""}`}
+            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(optionsStore.toolsOptions.cursorMode === CursorMode.Create) ? "hover:bg-blue-300/[.3] cursor-pointer" : ""} ${isOver ? "bg-blue-300/[.3]" : ""}`}
             childrenClassName={"min-h-max"}
-            ref={setNodeRef}
             onClick={onClick}
         >
-            <div ref={setNodeRef} id={id} className={"flex flex-col gap-2 p-2"}>
+            <div id={id} className={"flex flex-col gap-2 p-2"}>
                 <div style={{width: `${gridColumnsCount * 200}px`}} className={`overflow-hidden text-nowrap text-ellipsis text-center ${selection ? "text-blue-400" : "text-black"}`}>
                     {
                         (position === "first" || position === "single") ?
