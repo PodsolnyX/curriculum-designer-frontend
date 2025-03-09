@@ -149,3 +149,60 @@ export function useChangePasswordMutation<TContext>(options?: Omit<UseMutationOp
     mutationKey: key,
   });
 }
+  
+export function getUserUrl(): string {
+  let url_ = getBaseUrl() + "/api/auth/profile";
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+let getUserDefaultOptions: Omit<UseQueryOptions<Types.UserDto, unknown, Types.UserDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.UserDto, unknown, Types.UserDto>, 'queryFn'>> = {
+};
+export function getGetUserDefaultOptions() {
+  return getUserDefaultOptions;
+};
+export function setGetUserDefaultOptions(options: typeof getUserDefaultOptions) {
+  getUserDefaultOptions = options;
+}
+
+export function getUserQueryKey(): QueryKey;
+export function getUserQueryKey(...params: any[]): QueryKey {
+  return trimArrayEnd([
+      'AuthClient',
+      'getUser',
+    ]);
+}
+export function __getUser(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+  return Client.getUser(
+axiosConfig    );
+}
+
+export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(options?: Omit<UseQueryOptions<Types.UserDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.UserDto, TError, TSelectData> | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+  
+
+  options = params[0] as any;
+  axiosConfig = params[1] as any;
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useQuery<Types.UserDto, TError, TSelectData>({
+    queryFn: axiosConfig ? (context) => __getUser(context, axiosConfig) : __getUser,
+    queryKey: getUserQueryKey(),
+    ...getUserDefaultOptions as unknown as Omit<UseQueryOptions<Types.UserDto, TError, TSelectData>, 'queryKey'>,
+    ...options,
+  });
+}
+
+export function setGetUserData(queryClient: QueryClient, updater: (data: Types.UserDto | undefined) => Types.UserDto, ) {
+  queryClient.setQueryData(getUserQueryKey(),
+    updater
+  );
+}
+
+export function setGetUserDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.UserDto | undefined) => Types.UserDto) {
+  queryClient.setQueryData(queryKey, updater);
+}

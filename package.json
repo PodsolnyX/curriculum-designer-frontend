@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "local": "cross-env VITE_API_URL=http://localhost:5059 vite",
     "build": "vite build && npx import-meta-env -x .env.example -p ./dist/*",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -42,6 +43,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "eslint": "^9.13.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",

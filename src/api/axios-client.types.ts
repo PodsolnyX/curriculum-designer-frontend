@@ -231,6 +231,8 @@ export interface AcademicActivityDto  {
   id: number;
   name: string;
   shortName: string;
+  isCountable: boolean;
+  isIncludedInDocumentation: boolean;
   formula?: string | null;
   formulaName?: string;
 }
@@ -1119,6 +1121,32 @@ export function prepareSerializeChangePasswordDto(_data: ChangePasswordDto): Cha
   const data: Record<string, any> = { ..._data };
   return data as ChangePasswordDto;
 }
+export interface UserDto  {
+  /** User`s email */
+  email: string;
+  /** User`s first name */
+  firstName: string;
+  /** User`s last name */
+  lastName: string;
+}
+export function deserializeUserDto(json: string): UserDto {
+  const data = JSON.parse(json) as UserDto;
+  initUserDto(data);
+  return data;
+}
+export function initUserDto(_data: UserDto) {
+    return _data;
+}
+export function serializeUserDto(_data: UserDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUserDto(_data as UserDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUserDto(_data: UserDto): UserDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UserDto;
+}
 export interface SetAttestationDto  {
   semesterId: number;
   atomId: number;
@@ -1169,6 +1197,8 @@ export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAt
 export interface CreateAcademicActivityDto  {
   name: string;
   shortName: string;
+  isCountable: boolean;
+  isIncludedInDocumentation: boolean;
   formula?: string | null;
   formulaName?: string | null;
 }
@@ -1193,6 +1223,7 @@ export function prepareSerializeCreateAcademicActivityDto(_data: CreateAcademicA
 export interface UpdateAcademicActivityDto  {
   name?: string | null;
   shortName?: string | null;
+  order?: number | null;
   formula?: string | null;
   formulaName?: string | null;
 }

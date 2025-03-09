@@ -270,6 +270,56 @@ function processChangePassword(response: AxiosResponse): Promise<void> {
     }
     return Promise.resolve<void>(null as any);
 }
+
+export function getUser(config?: AxiosRequestConfig | undefined): Promise<Types.UserDto> {
+    let url_ = getBaseUrl() + "/api/auth/profile";
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetUser,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetUser?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetUser(_response);
+    });
+}
+
+function processGetUser(response: AxiosResponse): Promise<Types.UserDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        result200 = Types.initUserDto(resultData200);
+        return Promise.resolve<Types.UserDto>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.UserDto>(null as any);
+}
 let _requestConfigRegister: Partial<AxiosRequestConfig> | null;
 export function getRegisterRequestConfig() {
   return _requestConfigRegister;
@@ -323,4 +373,15 @@ export function setChangePasswordRequestConfig(value: Partial<AxiosRequestConfig
 }
 export function patchChangePasswordRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigChangePassword = patch(_requestConfigChangePassword ?? {});
+}
+
+let _requestConfigGetUser: Partial<AxiosRequestConfig> | null;
+export function getGetUserRequestConfig() {
+  return _requestConfigGetUser;
+}
+export function setGetUserRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetUser = value;
+}
+export function patchGetUserRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetUser = patch(_requestConfigGetUser ?? {});
 }

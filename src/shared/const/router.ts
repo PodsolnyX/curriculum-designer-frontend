@@ -1,6 +1,7 @@
 export enum AppRoutes {
     MAIN = 'main',
     LOGIN = 'login',
+    REGISTER = 'register',
     PLAN = 'plan',
     PLAN_TABLE = 'table',
     TITLE = 'title',
@@ -13,6 +14,8 @@ export enum AppRoutes {
 export const getRouteMain = () => '/';
 
 export const getRouteLogin = () => '/login';
+
+export const getRouteRegister = () => '/register';
 
 export const getRoutePlan = (id: string | number) => `/curriculum/${id}/plan`;
 

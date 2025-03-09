@@ -34,7 +34,7 @@ const AppRouter = () => {
         );
     }, [isAuth]);
 
-    return <Routes>{Object.values(routeConfig()).map(renderWithWrapper)}</Routes>;
+    return <Routes>{Object.values(routeConfig(isAuth)).map(renderWithWrapper)}</Routes>;
 };
 
 //Хок, делающий путь недоступным для неавторизованного пользователя
@@ -42,9 +42,7 @@ const PrivateRoute = ({children}: {children: ReactNode}) => {
     const {isAuth} = useAuth();
 
     return (
-        isAuth ?
-            children
-            : <Navigate to={getRouteLogin()} replace />
+        isAuth ? children : <Navigate to={getRouteLogin()} replace />
     )
 }
 
