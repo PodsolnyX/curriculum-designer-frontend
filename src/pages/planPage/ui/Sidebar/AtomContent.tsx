@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
-    concatIds,
+    concatIds, getIdFromPrefix,
     getSemesterIdFromPrefix,
     setPrefixToId
 } from "@/pages/planPage/provider/prefixIdHelpers.ts";
@@ -11,19 +11,21 @@ import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
-import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 import DepartmentsSelector from "@/pages/planPage/ui/DepartmentsSelector.tsx";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {observer} from "mobx-react-lite";
 
 
-const AtomContent = () => {
+const AtomContent = observer(() => {
 
-    const {sidebarValue: selectedAtom} = usePlanParams()
+    const selectedAtom = commonStore.selectedComponent;
+    const atomId = Number(getIdFromPrefix(selectedAtom || ""));
 
     const [selectedSemesterNumber, setSelectedSemesterNumber] = useState<number>(1);
     const [newName, setNewName] = useState("");
 
-    const atomInfo = componentsStore.getAtom(Number(selectedAtom));
+    const atomInfo = componentsStore.getAtom(atomId);
 
     useEffect(() => {
         if (selectedAtom && atomInfo) {
@@ -43,7 +45,7 @@ const AtomContent = () => {
 
     const targetSubjectSemesterId = concatIds(
         setPrefixToId(String(atomInfo.semesters.find((atomSemester, index) => index === selectedSemesterNumber - 1)?.semester.id || ""), "semesters"),
-        setPrefixToId(selectedAtom, "subjects")
+        setPrefixToId(atomId, "subjects")
     );
 
     const onNameChange = (value: string) => {
@@ -193,6 +195,6 @@ const AtomContent = () => {
             </div>
         </div>
     )
-}
+})
 
 export default AtomContent;

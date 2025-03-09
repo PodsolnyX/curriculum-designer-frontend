@@ -24,6 +24,7 @@ import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provide
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 export enum Position {
     Before = -1,
@@ -111,7 +112,11 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
                 insertPosition === Position.Before && cls.insertBefore,
                 insertPosition === Position.After && cls.insertAfter
             )}
-            // onClick={() => !isReplaceMode && onSelectSubject(id)}
+            onClick={() => {
+                if (isReplaceMode) return;
+                commonStore.selectComponent(id);
+                commonStore.setSideBarContent("atom")
+            }}
             id={id}
         >
             <div

@@ -30,22 +30,24 @@ const ValidationContent = () => {
     };
 
     return (
-        <div className={"flex flex-col gap-2"}>
-            <Typography.Text className={"text-xl"}>Ошибки валидации</Typography.Text>
-            <Select
-                size={"small"}
-                placeholder={"Тип ошибки"}
-                mode={"multiple"}
-                value={filters}
-                onChange={setFilters}
-                options={Object.keys(ValidationErrorType)
-                    .map(key => {
-                        return {label: ValidationErrorTypeTitle[key], value: key}
-                    })}
-            />
+        <div className={"flex flex-col gap-2 h-full"}>
+            <div className={"flex flex-col gap-1"}>
+                <Typography.Text className={"text-xl"}>Ошибки валидации</Typography.Text>
+                <Select
+                    size={"small"}
+                    placeholder={"Тип ошибки"}
+                    mode={"multiple"}
+                    value={filters}
+                    onChange={setFilters}
+                    options={Object.keys(ValidationErrorType)
+                        .map(key => {
+                            return {label: ValidationErrorTypeTitle[key], value: key}
+                        })}
+                />
+            </div>
             {
                 data?.length ?
-                    <ul>
+                    <ul className={"flex flex-1 flex-col overflow-y-auto scrollbar"}>
                         {
                             data?.map((error, index) =>
                                 <li
