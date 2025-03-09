@@ -1,5 +1,5 @@
 import React from "react";
-import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {CursorMode} from "@/pages/planPage/types/types.ts";
 import {TransformWrapper} from "react-zoom-pan-pinch";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";

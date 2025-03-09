@@ -11,25 +11,25 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {sortableKeyboardCoordinates} from '@dnd-kit/sortable';
-import {SortableSemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
+import {SortableSemesterField} from "@/pages/planPage/ui/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/planPage/ui/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
-import Sidebar from "@/pages/planPage/ui/Sidebar/Sidebar.tsx";
+import Sidebar from "@/pages/planPage/ui/Sidebar.tsx";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
-import PlanHeader from "@/pages/planPage/ui/Header/PlanHeader.tsx";
+import PlanHeader from "@/pages/planPage/ui/PlanHeader.tsx";
 import {TransformComponent, useTransformContext} from "react-zoom-pan-pinch";
 import React, {useEffect, useMemo, useState} from "react";
 import {createPortal} from "react-dom";
-import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {CursorMode} from "@/pages/planPage/types/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
-import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
-import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import ModuleArea from "@/pages/planPage/ui/ModuleArea.tsx";
+import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
-import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
+import {useCurriculumData} from "@/pages/planPage/lib/hooks/useCurriculumData.ts";
 import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 
 const PlanPage = observer(() => {
@@ -47,7 +47,7 @@ const PlanPage = observer(() => {
         <div className={"flex flex-col bg-stone-100 relative"}>
             <PageLoader loading={commonStore.isLoadingData}/>
             <ScaleWrapper>
-                {!commonStore.isLoadingData && <PlanHeader/> }
+                {!commonStore.isLoadingData && <PlanHeader/>}
                 <DndContext
                     sensors={sensors}
                     onDragStart={(event) => {
@@ -76,45 +76,46 @@ const PlanPage = observer(() => {
                     }}
                 >
                     <div className={"flex relative"}>
-                            <TransformComponent wrapperStyle={{
-                                height: 'calc(100vh - 64px)',
-                                width: '100vw',
-                                cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto"
-                            }}>
-                                <div className={`flex flex-col pb-10 w-max ${optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
-                                    {
-                                        componentsStore.semesters.map(semester =>
-                                            <SortableSemesterField {...semester} key={semester.id}
-                                                           atomsIds={componentsStore.atoms
-                                                               .filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id))
-                                                                   .map(atom => concatIds(setPrefixToId(semester.id, "semesters"), setPrefixToId(atom.id, "subjects")))
-                                                               || []
-                                            }
-                                            />
+                        <TransformComponent wrapperStyle={{
+                            height: 'calc(100vh - 64px)',
+                            width: '100vw',
+                            cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto"
+                        }}>
+                            <div
+                                className={`flex flex-col pb-10 w-max ${optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
+                                {
+                                    componentsStore.semesters.map(semester =>
+                                        <SortableSemesterField {...semester} key={semester.id}
+                                                               atomsIds={componentsStore.atoms
+                                                                       .filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id))
+                                                                       .map(atom => concatIds(setPrefixToId(semester.id, "semesters"), setPrefixToId(atom.id, "subjects")))
+                                                                   || []
+                                                               }
+                                        />
+                                    )
+                                }
+                            </div>
+                            <div
+                                className={"h-full absolute"}
+                                style={{
+                                    left: `${positionsStore.atomsContainerWidth + 0.2}%`,
+                                    width: `${100 - positionsStore.atomsContainerWidth - 0.2}%`,
+                                    cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
+                                    pointerEvents: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
+                                }}
+                            >
+                                {
+                                    (!commonStore.isLoadingData) &&
+                                    componentsStore.modules
+                                        .filter(module => module.parentModuleId === null)
+                                        .sort((a, b) =>
+                                            (a?.semesters && b?.semesters && !!a.semesters[0] && !!b.semesters[0]) ? (a.semesters[0].semester.number - b.semesters[0].semester.number) : 0
                                         )
-                                    }
-                                </div>
-                                <div
-                                    className={"h-full absolute"}
-                                    style={{
-                                        left: `${positionsStore.atomsContainerWidth + 0.2}%`,
-                                        width: `${100 - positionsStore.atomsContainerWidth - 0.2}%`,
-                                        cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
-                                        pointerEvents: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
-                                    }}
-                                >
-                                    {
-                                        (!commonStore.isLoadingData) &&
-                                        componentsStore.modules
-                                            .filter(module => module.parentModuleId === null)
-                                            .sort((a, b) =>
-                                                (a?.semesters && b?.semesters && !!a.semesters[0] && !!b.semesters[0]) ? (a.semesters[0].semester.number - b.semesters[0].semester.number) : 0
-                                            )
-                                            .map((module) => <ModuleArea {...module} key={module.id}/>)
-                                    }
-                                </div>
-                                <Overlay/>
-                            </TransformComponent>
+                                        .map((module) => <ModuleArea {...module} key={module.id}/>)
+                                }
+                            </div>
+                            <Overlay/>
+                        </TransformComponent>
                         <Sidebar/>
                     </div>
                 </DndContext>
@@ -123,7 +124,7 @@ const PlanPage = observer(() => {
     )
 })
 
-const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activeItemId: string}) => {
+const DraggableCard = React.memo(({activeItemId, scale}: { scale: number, activeItemId: string }) => {
 
     const atomInfo = componentsStore.getAtom(Number(getIdFromPrefix(activeItemId)));
 
@@ -133,15 +134,15 @@ const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activ
         <SubjectCard
             {...atomInfo}
             id={activeItemId as string}
-            style={{ transform: `scale(${scale})` }}
+            style={{transform: `scale(${scale})`}}
         />
     );
 });
 
 const Overlay = () => {
-    const { transformState } = useTransformContext();
+    const {transformState} = useTransformContext();
     const scale = transformState.scale;
-    const [coords, setCoords] = useState({ x: 0, y: 0 });
+    const [coords, setCoords] = useState({x: 0, y: 0});
 
     useEffect(() => {
         let animationFrameId = null;
@@ -152,7 +153,7 @@ const Overlay = () => {
                     cancelAnimationFrame(animationFrameId);
                 }
                 animationFrameId = requestAnimationFrame(() => {
-                    setCoords({ x: event.clientX, y: event.clientY });
+                    setCoords({x: event.clientX, y: event.clientY});
                 });
             }
         };
@@ -179,7 +180,7 @@ const Overlay = () => {
 
     return createPortal(
         <DragOverlay dropAnimation={dropAnimation} style={overlayStyle}>
-            {componentsStore.activeId ? <DraggableCard activeItemId={componentsStore.activeId} scale={scale} /> : null}
+            {componentsStore.activeId ? <DraggableCard activeItemId={componentsStore.activeId} scale={scale}/> : null}
         </DragOverlay>,
         document.body
     );

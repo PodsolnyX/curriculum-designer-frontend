@@ -17,6 +17,7 @@ interface ModalFormFieldsProps<T> {
     loading?: boolean,
     title?: string,
     buttonLabel?: string,
+    disabled?: boolean,
     initialValues?: any,
     isOpen?: boolean,
     loadingContent?: React.ReactNode,
@@ -45,6 +46,7 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
         isOpen,
         title,
         loadingContent,
+        disabled,
         onSubmit,
         onClose
     } = props;
@@ -106,7 +108,9 @@ export const ModalForm = <T, >(props: ModalFormFieldsProps<T>) => {
                                 </Form.Item>
                             )
                         }
-                        <Button htmlType={"submit"} type={"primary"} disabled={loading}>{buttonLabel}</Button>
+                        <Button htmlType={"submit"} type={"primary"} disabled={disabled || loading}>
+                            {buttonLabel}
+                        </Button>
                     </Form>
             }
         </Modal>

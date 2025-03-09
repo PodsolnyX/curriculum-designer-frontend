@@ -1,6 +1,6 @@
 import {makeAutoObservable} from "mobx";
-import {CursorMode, DisplaySettings, ToolsOptions} from "@/pages/planPage/provider/types.ts";
-import {PreDisplaySettings, ReplacePreDisplaySetting} from "@/pages/planPage/provider/preDisplaySettings.ts";
+import {CursorMode, DisplaySettings, ToolsOptions} from "@/pages/planPage/types/types.ts";
+import {PreDisplaySettings, ReplacePreDisplaySetting} from "@/pages/planPage/const/preDisplaySettings.ts";
 
 
 class OptionsStore {

@@ -1,10 +1,9 @@
 import {Button, Input, Popover} from "antd";
 import React, {ReactNode, useState} from "react";
-import {SubjectComment} from "@/pages/planPage/types/Subject.ts";
 
 interface CommentsPopoverProps {
     children: ReactNode;
-    comments: SubjectComment[];
+    comments: string[];
 }
 
 const CommentsPopover = ({children, comments}: CommentsPopoverProps) => {
@@ -17,17 +16,17 @@ const CommentsPopover = ({children, comments}: CommentsPopoverProps) => {
                 {
                     comments.length ?
                         <div className={"flex flex-col gap-2 max-h-[200px] overflow-y-auto mb-1"}>
-                            {
-                                comments.map(comment =>
-                                    <div className={"flex flex-col"} key={comment.id}>
-                                        <div className={"flex gap-1 justify-between"}>
-                                            <span className={"text-[10px] text-stone-400"}>{comment.author}</span>
-                                            <span className={"text-[10px] text-stone-400"}>{comment.date}</span>
-                                        </div>
-                                        <p className={"text-black text-[12px]"}>{comment.text}</p>
-                                    </div>
-                                )
-                            }
+                            {/*{*/}
+                            {/*    comments.map(comment =>*/}
+                            {/*        <div className={"flex flex-col"} key={comment.id}>*/}
+                            {/*            <div className={"flex gap-1 justify-between"}>*/}
+                            {/*                <span className={"text-[10px] text-stone-400"}>{comment.author}</span>*/}
+                            {/*                <span className={"text-[10px] text-stone-400"}>{comment.date}</span>*/}
+                            {/*            </div>*/}
+                            {/*            <p className={"text-black text-[12px]"}>{comment.text}</p>*/}
+                            {/*        </div>*/}
+                            {/*    )*/}
+                            {/*}*/}
                         </div> : null
                 }
                 <Input.TextArea

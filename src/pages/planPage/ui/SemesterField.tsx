@@ -2,16 +2,16 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext,} from '@dnd-kit/sortable';
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import React, {useEffect, useRef, useState} from "react";
-import {CursorMode} from "@/pages/planPage/provider/types.ts";
+import {CursorMode} from "@/pages/planPage/types/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
-import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
-import SemesterHeader from "@/pages/planPage/ui/SemesterField/SemesterHeader.tsx";
+import {useCreateEntity} from "@/pages/planPage/lib/hooks/useCreateEntity.ts";
+import SemesterHeader from "@/pages/planPage/ui/SemesterHeader.tsx";
 import {SemesterDto} from "@/api/axios-client.types.ts";
-import {setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {setPrefixToId} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
-import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer.tsx";
 import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 
 export interface SemesterFieldProps extends SemesterDto {

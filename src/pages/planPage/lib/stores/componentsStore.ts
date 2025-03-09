@@ -1,30 +1,28 @@
 import {makeAutoObservable, runInAction} from "mobx";
 import {
-    AtomDto, CompetenceDistributionType,
-    ModuleDto, RefAtomSemesterDto,
+    AtomDto,
+    CompetenceDistributionType,
+    ModuleDto,
+    RefAtomSemesterDto,
     RefModuleSemesterDto,
     SemesterDto,
-    TupleOfIntegerAndString, UpdateAtomDto
+    TupleOfIntegerAndString,
+    UpdateAtomDto
 } from "@/api/axios-client.types.ts";
-import {AtomUpdateParams, commonSubjectParamKeys} from "@/pages/planPage/types/Subject.ts";
 import {
     getIdFromPrefix,
     getParentIdFromPrefix,
     getSemesterIdFromPrefix
-} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {Client as AtomClient} from "@/api/axios-client/AtomQuery.ts";
 import {Client as AtomInSemesterClient} from "@/api/axios-client/AtomInSemesterQuery.ts";
 import {Client as HoursDistributionClient} from "@/api/axios-client/HoursDistributionQuery.ts";
 import {Client as AtomCompetenceClient} from "@/api/axios-client/AtomCompetenceQuery.ts";
 import {Client as AttestationClient} from "@/api/axios-client/AttestationQuery.ts";
-import { message } from "antd";
+import {message} from "antd";
 import {arraysToDict} from "@/shared/lib/helpers/common.ts";
-
-export interface ModuleShortDto extends Omit<ModuleDto, "atoms" | "modules"> {
-    atoms: number[];
-    modules: number[];
-}
+import {AtomUpdateParams, commonSubjectParamKeys, ModuleShortDto} from "@/pages/planPage/types/types.ts";
 
 const ATOM_SUCCESS_UPDATE_MESSAGE = "Предмет успешно обновлён";
 

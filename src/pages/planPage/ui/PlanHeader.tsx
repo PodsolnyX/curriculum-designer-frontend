@@ -10,7 +10,7 @@ import {
     useGenerateTxtMutation
 } from "@/api/axios-client/DocumentGenerationQuery.ts";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
-import ValidationPanel from "@/pages/planPage/ui/Header/ValidationPanel.tsx";
+import ValidationPanel from "@/pages/planPage/ui/ValidationPanel.tsx";
 import {CaretRightOutlined, FileExcelOutlined, FilePdfOutlined, FileTextOutlined} from "@ant-design/icons";
 import {TableType} from "@/api/axios-client.types.ts";
 import React from "react";

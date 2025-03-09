@@ -1,6 +1,6 @@
 import {Button, Checkbox, Popover, Select} from "antd";
 import React from "react";
-import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
+import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/const/preDisplaySettings.ts";
 import {Link, useParams} from "react-router-dom";
 import {getRoutePlanTable} from "@/shared/const/router.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";

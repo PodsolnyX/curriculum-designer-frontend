@@ -1,15 +1,15 @@
 import {
     AcademicActivityDto,
     AttestationDto,
-    CompetenceDistributionType, CompetenceDto, CompetenceIndicatorDto,
+    CompetenceDistributionType,
+    CompetenceDto,
+    CompetenceIndicatorDto,
     CurriculumDto,
     ValidationError
 } from "@/api/axios-client.types.ts";
 import {makeAutoObservable} from "mobx";
-import {SubjectCompetence} from "@/pages/planPage/types/Subject.ts";
-import {getIdFromPrefix, splitIds} from "@/pages/planPage/provider/prefixIdHelpers.ts";
-
-export type SidebarContent = "validation" | "atom";
+import {getIdFromPrefix, splitIds} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
+import {AtomCompetence, SidebarContent} from "@/pages/planPage/types/types.ts";
 
 class CommonStore {
 
@@ -21,7 +21,7 @@ class CommonStore {
             competenceDistributionType: CompetenceDistributionType.Competence
         }
     };
-    competences: Dictionary<SubjectCompetence> = {};
+    competences: Dictionary<AtomCompetence> = {};
     attestationTypes: AttestationDto[] = [];
     academicActivity: AcademicActivityDto[] = [];
     validationErrors: ValidationError[] = [];
@@ -40,7 +40,7 @@ class CommonStore {
     }
 
     setCompetences(competencesData: Array<CompetenceDto | CompetenceIndicatorDto>) {
-        let _competences: Dictionary<SubjectCompetence> = {};
+        let _competences: Dictionary<AtomCompetence> = {};
         competencesData.forEach(competence => {
             _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
         })

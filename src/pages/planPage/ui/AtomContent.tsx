@@ -3,7 +3,7 @@ import {
     concatIds, getIdFromPrefix,
     getSemesterIdFromPrefix,
     setPrefixToId
-} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {Badge, Segmented, Select, Switch, Typography} from "antd";
 import {AtomType} from "@/api/axios-client.types.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";

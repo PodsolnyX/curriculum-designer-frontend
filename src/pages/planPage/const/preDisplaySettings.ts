@@ -1,4 +1,4 @@
-import {DisplaySettings, PreDisplaySetting} from "@/pages/planPage/provider/types.ts";
+import {DisplaySettings, PreDisplaySetting} from "@/pages/planPage/types/types.ts";
 
 export const DisplaySettingsList: {key: keyof DisplaySettings, name: string}[] = [
     { key: "index", name: "Индексы" },

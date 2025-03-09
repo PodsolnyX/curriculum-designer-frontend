@@ -1,5 +1,5 @@
 import {UniqueIdentifier} from "@dnd-kit/core";
-import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/provider/types.ts";
+import {PREFIX_ITEM_ID_KEYS, PrefixItemId} from "@/pages/planPage/types/types.ts";
 
 // ---------------------Общее----------------------
 

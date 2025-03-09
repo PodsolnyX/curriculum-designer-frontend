@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table";
 import cls from "./Table.module.sass"
 import {AtomType} from "@/api/axios-client.types.ts";
-import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
+import {useCurriculumData} from "@/pages/planPage/lib/hooks/useCurriculumData.ts";
 import React, {useCallback, useMemo, useRef} from "react";
 import PageLoader from "@/shared/ui/PageLoader/PageLoader.tsx";
 import classNames from "classnames";

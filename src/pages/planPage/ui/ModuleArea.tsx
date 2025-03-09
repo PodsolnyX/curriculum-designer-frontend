@@ -7,19 +7,19 @@ import {
     cutSemesterIdFromId,
     getIdFromPrefix,
     setPrefixToId
-} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {useDroppable} from "@dnd-kit/core";
-import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
-import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
+import {useCreateEntity} from "@/pages/planPage/lib/hooks/useCreateEntity.ts";
+import {CursorMode, ModuleSemestersPosition, ModuleShortDto} from "@/pages/planPage/types/types.ts";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
+import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
-import {componentsStore, ModuleShortDto} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
-import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer.tsx";
 
 interface ModuleAreaProps extends ModuleShortDto {}
 

@@ -11,7 +11,7 @@ import MoveIcon from "@/shared/assets/icons/move.svg?react";
 import cls from "./ToolsPanel.module.scss"
 import classNames from "classnames";
 import React, {useState} from "react";
-import {CursorMode, ItemType} from "@/pages/planPage/provider/types.ts";
+import {CursorMode, ItemType} from "@/pages/planPage/types/types.ts";
 import {Tooltip} from "antd";
 import {useControls, useTransformContext, useTransformEffect} from "react-zoom-pan-pinch";
 import {observer} from "mobx-react-lite";

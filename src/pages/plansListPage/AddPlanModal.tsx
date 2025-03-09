@@ -6,7 +6,7 @@ import {ModalForm, ModalFormField, ModalProps} from "@/shared/ui/ModalForm/Modal
 import {useNavigate} from "react-router-dom";
 import {getRoutePlan} from "@/shared/const/router.ts";
 import {CreateCurriculumDto} from "@/api/axios-client.types.ts";
-import {useState} from "react";
+import React, {useState} from "react";
 import {
     Client
 } from "@/api/axios-client/ImportQuery.ts";
@@ -56,6 +56,16 @@ export const AddPlanModal = (props: ModalProps) => {
         navigate(getRoutePlan(newPlanId))
     }
 
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0];
+
+        if (selectedFile && !selectedFile.name.toLowerCase().endsWith(".plx")) {
+            message.warning("Выберите файл с расширением .plx");
+        }
+
+        setFile(selectedFile || null);
+    };
+
     const formFields = [
         {
             name: "name",
@@ -76,7 +86,8 @@ export const AddPlanModal = (props: ModalProps) => {
             customInput: <input
                 type={"file"}
                 className={"w-full"}
-                onChange={event => setFile(event.target?.files[0])}
+                onChange={handleFileChange}
+                accept={".plx"}
             />
         }
     ] as ModalFormField<FieldType>[];
@@ -88,6 +99,7 @@ export const AddPlanModal = (props: ModalProps) => {
             title={"Добавление плана"}
             buttonLabel={"Добавить"}
             loading={loadingCreate || loadingImport}
+            disabled={file !== null && !(file.name.toLowerCase().endsWith(".plx"))}
             isOpen={isOpen}
             onClose={onClose}
             initialValues={{semesterCount: 8}}

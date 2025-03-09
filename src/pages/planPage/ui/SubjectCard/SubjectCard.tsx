@@ -18,9 +18,9 @@ import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/planPage/ui/CommentsPopover.tsx";
 import {AtomDto, AtomType} from "@/api/axios-client.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
-import {useEditSubject} from "@/pages/planPage/hooks/useEditSubject.ts";
+import {useEditSubject} from "@/pages/planPage/lib/hooks/useEditSubject.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
-import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
@@ -52,13 +52,11 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
         department,
         competenceIds,
         competenceIndicatorIds,
-        curriculumId,
 
         active,
         isSelected,
         clone,
         insertPosition,
-        parentModuleId,
         isReplaceMode
     } = props;
 

@@ -1,9 +1,10 @@
 import {CloseOutlined} from "@ant-design/icons";
-import ValidationContent from "@/pages/planPage/ui/Sidebar/ValidationContent.tsx";
-import AtomContent from "@/pages/planPage/ui/Sidebar/AtomContent.tsx";
+import ValidationContent from "@/pages/planPage/ui/ValidationContent.tsx";
+import AtomContent from "@/pages/planPage/ui/AtomContent.tsx";
 import {ReactNode} from "react";
-import {commonStore, SidebarContent} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {observer} from "mobx-react-lite";
+import {SidebarContent} from "@/pages/planPage/types/types.ts";
 
 const Sidebar = observer(() => {
 

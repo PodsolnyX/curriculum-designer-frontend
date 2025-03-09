@@ -1,4 +1,4 @@
-import {getIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {getIdFromPrefix} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {Tag} from "antd";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import React from "react";

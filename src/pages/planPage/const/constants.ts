@@ -1,9 +1,5 @@
 import {AtomType, CompetenceType} from "@/api/axios-client.ts";
-
-type CompetenceTypeName = {
-    name: string,
-    shortName: string
-}
+import {CompetenceTypeName} from "@/pages/planPage/types/types.ts";
 
 export const CompetenceTypeName: Record<CompetenceType, CompetenceTypeName> = {
     [CompetenceType.Universal]: {name: "Универсальные", shortName: "УК"},

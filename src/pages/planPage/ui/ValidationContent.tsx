@@ -2,7 +2,7 @@ import {Select, Tag, Typography} from "antd";
 import {ValidationError, ValidationErrorType} from "@/api/axios-client.types.ts";
 import {useState} from "react";
 import {useControls} from "react-zoom-pan-pinch";
-import {concatIds, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
+import {concatIds, setPrefixToId} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 const ValidationContent = () => {
