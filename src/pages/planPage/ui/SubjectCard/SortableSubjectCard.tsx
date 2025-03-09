@@ -7,10 +7,10 @@ import {useControls} from "react-zoom-pan-pinch";
 import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/provider/prefixIdHelpers.ts";
-import {usePlanParams} from "@/pages/planPage/hooks/usePlanParams.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {observer} from "mobx-react-lite";
+import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface SortableSubjectCard {
     id: string;
@@ -28,8 +28,8 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
-    const {sidebarValue: selectedAtom} = usePlanParams()
     const isOver = componentsStore.isOver(id);
+    const isSelected = commonStore.isSelectedComponent(id);
 
     const atomId = Number(getIdFromPrefix(id));
     const atom = componentsStore.getAtom(atomId);
@@ -48,7 +48,7 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
     return (
         <SubjectCardOutView
             id={id}
-            enable={selectedAtom === getIdFromPrefix(id)}
+            enable={isSelected}
             semesterOrder={atomInfo.semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1}
         >
             {
@@ -61,7 +61,7 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
                         id={id}
                         isReplaceMode={isReplaceMode}
                         active={isDragging}
-                        // isSelected={selectedAtom === getIdFromPrefix(id)}
+                        isSelected={isSelected}
                         insertPosition={getPosition()}
                     />
                 </div> : <SubjectCard
@@ -69,7 +69,7 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
                     id={id}
                     isReplaceMode={isReplaceMode}
                     active={isDragging}
-                    // isSelected={selectedAtom === getIdFromPrefix(id)}
+                    isSelected={isSelected}
                     insertPosition={getPosition()}
                 />
             }

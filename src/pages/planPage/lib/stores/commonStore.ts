@@ -9,6 +9,7 @@ import {makeAutoObservable} from "mobx";
 import {SubjectCompetence} from "@/pages/planPage/types/Subject.ts";
 import {getIdFromPrefix, splitIds} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 
+export type SidebarContent = "validation" | "atom";
 
 class CommonStore {
 
@@ -25,7 +26,9 @@ class CommonStore {
     academicActivity: AcademicActivityDto[] = [];
     validationErrors: ValidationError[] = [];
 
+    selectedComponent: string | null = null;
     selectedCompetence: number | null = null;
+    sideBarContent: SidebarContent | null = null;
     isLoadingData: boolean = false;
 
     constructor() {
@@ -64,6 +67,23 @@ class CommonStore {
         if (!this.validationErrors?.length) return undefined;
         const ids = splitIds(id).map(id => Number(getIdFromPrefix(id)));
         return this.validationErrors.filter(error => error.entities ? error.entities?.every(ent => ids.includes(ent?.id || 0)) : false)
+    }
+
+    isSelectedComponent(id: string | null) {
+        if (!id || !this.selectedComponent) return false;
+        return getIdFromPrefix(this.selectedComponent) === getIdFromPrefix(id);
+    }
+
+    selectComponent(id: string | null) {
+        if (!id || this.selectedComponent === id) {
+            if (this.sideBarContent === "atom") this.sideBarContent = null;
+            this.selectedComponent = null;
+        }
+        else this.selectedComponent = id;
+    }
+
+    setSideBarContent(content: SidebarContent | null) {
+        this.sideBarContent = content;
     }
 
     selectCompetence(id: number | null) {
