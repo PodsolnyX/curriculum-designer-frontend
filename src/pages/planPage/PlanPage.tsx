@@ -24,13 +24,13 @@ import {createPortal} from "react-dom";
 import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import ScaleWrapper from "@/pages/planPage/ui/ScaleWrapper.tsx";
 import ModuleArea from "@/pages/planPage/ui/ModuleField/ModuleArea.tsx";
-import {PositionsProvider} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {concatIds, getIdFromPrefix, setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {useCurriculumData} from "@/pages/planPage/provider/useCurriculumData.ts";
+import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 
 const PlanPage = observer(() => {
 
@@ -76,7 +76,6 @@ const PlanPage = observer(() => {
                     }}
                 >
                     <div className={"flex relative"}>
-                        <PositionsProvider>
                             <TransformComponent wrapperStyle={{
                                 height: 'calc(100vh - 64px)',
                                 width: '100vw',
@@ -98,8 +97,8 @@ const PlanPage = observer(() => {
                                 <div
                                     className={"h-full absolute"}
                                     style={{
-                                        left: `${optionsStore.atomsContainerWidth + 0.2}%`,
-                                        width: `${100 - optionsStore.atomsContainerWidth - 0.2}%`,
+                                        left: `${positionsStore.atomsContainerWidth + 0.2}%`,
+                                        width: `${100 - positionsStore.atomsContainerWidth - 0.2}%`,
                                         cursor: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "grab" : "auto",
                                         pointerEvents: optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "none" : "auto"
                                     }}
@@ -116,7 +115,6 @@ const PlanPage = observer(() => {
                                 </div>
                                 <Overlay/>
                             </TransformComponent>
-                        </PositionsProvider>
                         <Sidebar/>
                     </div>
                 </DndContext>

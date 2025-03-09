@@ -12,13 +12,14 @@ import {useDroppable} from "@dnd-kit/core";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
-import {PositionContainer, usePositions} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSelectionField.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {componentsStore, ModuleShortDto} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
 
 interface ModuleAreaProps extends ModuleShortDto {}
 
@@ -33,8 +34,6 @@ const ModuleArea = observer((props: ModuleAreaProps) => {
         modules
     } = props;
 
-    const {getTopCoordinate, getHorizontalCoordinate} = usePositions();
-
     const atomsInfo = useMemo(() => componentsStore.getAtoms(atoms), [atoms])
 
     const gridColumnsCount = useMemo(() => {
@@ -42,7 +41,7 @@ const ModuleArea = observer((props: ModuleAreaProps) => {
         return ~~((averageAtomsCount + 1) / 2) || 1
     }, [atomsInfo, semesters])
 
-    const x = getHorizontalCoordinate(
+    const x = positionsStore.getHorizontalCoordinate(
         setPrefixToId(semesters?.[0]?.semester.id || "", "semesters"),
         setPrefixToId(id, "modules")
     ) || 0;
@@ -56,7 +55,7 @@ const ModuleArea = observer((props: ModuleAreaProps) => {
                 marginTop: 4,
                 marginBottom: 4,
                 left: `${x}px`,
-                top: `${getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`
+                top: `${positionsStore.getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`
             }}
         >
             {

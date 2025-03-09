@@ -10,7 +10,6 @@ class OptionsStore {
         cursorMode: CursorMode.Move,
         selectedCreateEntityType: "subjects"
     }
-    atomsContainerWidth: number = 50;
 
     constructor() {
         makeAutoObservable(this);
@@ -22,10 +21,6 @@ class OptionsStore {
 
     setToolsEntityType(type: string) {
         this.toolsOptions.selectedCreateEntityType = type;
-    }
-
-    setAtomsContainerWidth(width: number) {
-        this.atomsContainerWidth = width;
     }
 
     disableSettings() {
