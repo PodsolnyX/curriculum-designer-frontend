@@ -1,7 +1,6 @@
 import {Button, Checkbox, Popover, Select} from "antd";
 import React from "react";
 import {DisplaySettingsList, PreDisplaySettings} from "@/pages/planPage/provider/preDisplaySettings.ts";
-import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {Link, useParams} from "react-router-dom";
 import {getRoutePlanTable} from "@/shared/const/router.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
@@ -12,7 +11,8 @@ const DisplaySettingsPopover = observer(({children}: React.PropsWithChildren<{}>
     const {id} = useParams<{id: string}>();
 
     const selectedPreSetting = PreDisplaySettings.find(setting => JSON.stringify(setting.settings) === JSON.stringify(optionsStore.displaySettings))?.key || "";
-    const disabledEditSettings = optionsStore.toolsOptions.cursorMode === CursorMode.Replace;
+    // const disabledEditSettings = optionsStore.toolsOptions.cursorMode === CursorMode.Replace;
+    const disabledEditSettings = false;
 
     const Content = () => {
         return (

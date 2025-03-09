@@ -11,7 +11,7 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {sortableKeyboardCoordinates} from '@dnd-kit/sortable';
-import {SemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
+import {SortableSemesterField} from "@/pages/planPage/ui/SemesterField/SemesterField.tsx";
 import {CSS} from "@dnd-kit/utilities";
 import pageStyles from "@/pages/planPage/ui/SubjectCard/SubjectCard.module.scss";
 import {SubjectCard} from "@/pages/planPage/ui/SubjectCard/SubjectCard.tsx";
@@ -68,7 +68,7 @@ const PlanPage = observer(() => {
 
                         componentsStore.moveAtoms(activeId, overId);
                     }}
-                    onDragCancel={() => {}}
+                    onDragCancel={() => componentsStore.setOverId(null)}
                     collisionDetection={(args) => {
                         const pointerCollisions = pointerWithin(args);
                         if (pointerCollisions.length > 0) return pointerCollisions;
@@ -85,7 +85,7 @@ const PlanPage = observer(() => {
                                 <div className={`flex flex-col pb-10 w-max ${optionsStore.toolsOptions.cursorMode === CursorMode.Hand ? "pointer-events-none" : "pointer-events-auto"}`}>
                                     {
                                         componentsStore.semesters.map(semester =>
-                                            <SemesterField {...semester} key={semester.id}
+                                            <SortableSemesterField {...semester} key={semester.id}
                                                            atomsIds={componentsStore.atoms
                                                                .filter(atom => !atom.parentModuleId && atom.semesters.some(atomSemester => atomSemester.semester.id === semester.id))
                                                                    .map(atom => concatIds(setPrefixToId(semester.id, "semesters"), setPrefixToId(atom.id, "subjects")))
@@ -111,7 +111,7 @@ const PlanPage = observer(() => {
                                             .sort((a, b) =>
                                                 (a?.semesters && b?.semesters && !!a.semesters[0] && !!b.semesters[0]) ? (a.semesters[0].semester.number - b.semesters[0].semester.number) : 0
                                             )
-                                            .map((module, index) => <ModuleArea {...module} key={module.id}/>)
+                                            .map((module) => <ModuleArea {...module} key={module.id}/>)
                                     }
                                 </div>
                                 <Overlay/>
@@ -127,9 +127,7 @@ const PlanPage = observer(() => {
 
 const DraggableCard = React.memo(({ activeItemId, scale }: {scale: number, activeItemId: string}) => {
 
-    const atomInfo = useMemo(() => {
-        return componentsStore.getAtom(Number(getIdFromPrefix(activeItemId)))
-    }, [activeItemId])
+    const atomInfo = componentsStore.getAtom(Number(getIdFromPrefix(activeItemId)));
 
     if (!atomInfo) return null;
 

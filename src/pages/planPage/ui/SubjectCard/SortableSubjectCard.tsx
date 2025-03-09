@@ -23,13 +23,13 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
         listeners,
         isDragging,
         isSorting,
-        over,
         setNodeRef,
         transform,
         transition,
     } = useSortable({id, animateLayoutChanges: () => true} as Arguments);
 
     const {sidebarValue: selectedAtom} = usePlanParams()
+    const isOver = componentsStore.isOver(id);
 
     const atomId = Number(getIdFromPrefix(id));
     const atom = componentsStore.getAtom(atomId);
@@ -39,13 +39,9 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
     const atomInfo =  {...atom, index: componentsStore.getIndex(atomId)};
 
     const getPosition = (): Position | undefined => {
-        if (over?.id === id) return Position.Before
+        if (isOver) return Position.Before
         else return undefined;
     }
-
-    const dndProps = useMemo(() => {
-        return optionsStore.toolsOptions.cursorMode === CursorMode.Replace ? {...attributes, ...listeners} : {}
-    }, [optionsStore.toolsOptions.cursorMode]);
 
     const isReplaceMode = useMemo(() => optionsStore.toolsOptions.cursorMode === CursorMode.Replace, [optionsStore.toolsOptions.cursorMode]);
 
@@ -55,20 +51,29 @@ const SortableSubjectCard = observer(({ id }: SortableSubjectCard) => {
             enable={selectedAtom === getIdFromPrefix(id)}
             semesterOrder={atomInfo.semesters.findIndex(semester => semester.semester.id === Number(getSemesterIdFromPrefix(id))) + 1}
         >
-            <SubjectCard
-                ref={setNodeRef}
-                {...atomInfo}
-                id={id}
-                isReplaceMode={isReplaceMode}
-                active={isDragging}
-                style={{
+            {
+                isReplaceMode ? <div ref={setNodeRef} {...attributes} {...listeners} style={{
                     transition,
                     transform: isSorting ? undefined : CSS.Transform.toString(transform),
-                }}
-                isSelected={selectedAtom === getIdFromPrefix(id)}
-                insertPosition={getPosition()}
-                {...dndProps}
-            />
+                }}>
+                    <SubjectCard
+                        {...atomInfo}
+                        id={id}
+                        isReplaceMode={isReplaceMode}
+                        active={isDragging}
+                        // isSelected={selectedAtom === getIdFromPrefix(id)}
+                        insertPosition={getPosition()}
+                    />
+                </div> : <SubjectCard
+                    {...atomInfo}
+                    id={id}
+                    isReplaceMode={isReplaceMode}
+                    active={isDragging}
+                    // isSelected={selectedAtom === getIdFromPrefix(id)}
+                    insertPosition={getPosition()}
+                />
+            }
+
         </SubjectCardOutView>
     );
 })

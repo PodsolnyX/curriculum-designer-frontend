@@ -1,6 +1,5 @@
 import {AtomDto, RefModuleSemesterDto, SelectionDto, ValidationErrorType} from "@/api/axios-client.types.ts";
 import React, {CSSProperties, useMemo, useState} from "react";
-import {ModuleShortDto} from "@/pages/planPage/provider/PlanProvider.tsx";
 import {App, Tag, Typography} from "antd";
 import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
 import {
@@ -18,7 +17,7 @@ import TrackSelectionField from "@/pages/planPage/ui/TrackSelectionField/TrackSe
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
-import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {componentsStore, ModuleShortDto} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 
 interface ModuleAreaProps extends ModuleShortDto {}
@@ -79,7 +78,7 @@ const ModuleArea = observer((props: ModuleAreaProps) => {
                                     name={name}
                                     position={(index === 0 && semesters.length <= 1) ? "single" : index === 0 ? "first" : index === semesters.length - 1 ? "last" : "middle"}
                                 />
-                                : <ModuleField
+                                : <SortableModuleField
                                     key={semester.semester.id}
                                     id={moduleId}
                                     gridColumnsCount={gridColumnsCount}
@@ -108,6 +107,21 @@ interface ModuleFieldProps {
     semesterIndex: number;
 }
 
+const SortableModuleField = observer((props: ModuleFieldProps) => {
+
+    const isOver = componentsStore.isOver(props.id);
+
+    const { setNodeRef } = useDroppable({
+        id: props.id
+    });
+
+    return (
+        <div ref={setNodeRef}>
+            <ModuleField {...props} isOver={isOver}/>
+        </div>
+    )
+})
+
 const ModuleField = observer((props: ModuleFieldProps) => {
 
     const {
@@ -118,13 +132,13 @@ const ModuleField = observer((props: ModuleFieldProps) => {
         semester,
         selection,
         gridColumnsCount = 1,
-        semesterIndex
+        semesterIndex,
+        isOver
     } = props;
 
     const rowId = setPrefixToId(semester.semester.id, "semesters");
     const containerId = cutSemesterIdFromId(id);
 
-    const overItemId = componentsStore.overId;
     const {message} = App.useApp();
 
     const [newName, setNewName] = useState(name);
@@ -134,10 +148,6 @@ const ModuleField = observer((props: ModuleFieldProps) => {
         onSuccess: () => {
             message.success("Модуль успешно обновлен")
         }
-    });
-
-    const {setNodeRef} = useDroppable({
-        id
     });
 
     const {onCreate} = useCreateEntity();
@@ -169,12 +179,11 @@ const ModuleField = observer((props: ModuleFieldProps) => {
             rowId={rowId}
             id={containerId}
             rootStyles={(height) => getModuleRootStyles(height, position)}
-            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(optionsStore.toolsOptions.cursorMode === CursorMode.Create) ? "hover:bg-blue-300/[.3] cursor-pointer" : ""} ${(overItemId === id) ? "bg-blue-300/[.3]" : ""}`}
+            rootClassName={`${getFieldClassName()} flex w-full flex-col relative border-dashed ${(optionsStore.toolsOptions.cursorMode === CursorMode.Create) ? "hover:bg-blue-300/[.3] cursor-pointer" : ""} ${isOver ? "bg-blue-300/[.3]" : ""}`}
             childrenClassName={"min-h-max"}
-            ref={setNodeRef}
             onClick={onClick}
         >
-            <div ref={setNodeRef} id={id} className={"flex flex-col gap-2 p-2"}>
+            <div id={id} className={"flex flex-col gap-2 p-2"}>
                 <div style={{width: `${gridColumnsCount * 200}px`}} className={`overflow-hidden text-nowrap text-ellipsis text-center ${selection ? "text-blue-400" : "text-black"}`}>
                     {
                         (position === "first" || position === "single") ?
