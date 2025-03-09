@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {CursorMode, ModuleSemestersPosition} from "@/pages/planPage/provider/types.ts";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
-import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {
     concatIds,
     cutSemesterIdFromId,
@@ -18,6 +17,7 @@ import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {observer} from "mobx-react-lite";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
 
 interface TrackSelectionProps {
     id: string;

@@ -6,12 +6,13 @@ import {CursorMode} from "@/pages/planPage/provider/types.ts";
 import {PanelGroup, PanelResizeHandle, Panel, ImperativePanelHandle} from "react-resizable-panels";
 import {useCreateEntity} from "@/pages/planPage/hooks/useCreateEntity.ts";
 import SemesterHeader from "@/pages/planPage/ui/SemesterField/SemesterHeader.tsx";
-import {PositionContainer} from "@/pages/planPage/provider/PositionsProvider.tsx";
 import {SemesterDto} from "@/api/axios-client.types.ts";
 import {setPrefixToId} from "@/pages/planPage/provider/prefixIdHelpers.ts";
 import {observer} from "mobx-react-lite";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
+import {PositionContainer} from "@/pages/planPage/ui/PositionContainer/PositionContainer.tsx";
+import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 
 export interface SemesterFieldProps extends SemesterDto {
     atomsIds: string[];
@@ -54,8 +55,8 @@ export const SemesterField = observer(function (props: SemesterFieldProps) {
 
     useEffect(() => {
         if (subjectsPanelRef.current)
-            subjectsPanelRef.current?.resize(optionsStore.atomsContainerWidth)
-    }, [optionsStore.atomsContainerWidth])
+            subjectsPanelRef.current?.resize(positionsStore.atomsContainerWidth)
+    }, [positionsStore.atomsContainerWidth])
 
     const onHoverSemester = () => {
         if (optionsStore.toolsOptions.cursorMode === CursorMode.Create)
@@ -95,7 +96,7 @@ export const SemesterField = observer(function (props: SemesterFieldProps) {
                                     <Panel
                                         ref={subjectsPanelRef}
                                         order={1}
-                                        onResize={(width) => optionsStore.setAtomsContainerWidth(width)}
+                                        onResize={(width) => positionsStore.setAtomsContainerWidth(width)}
                                         className={"pr-5"}
                                     >
                                         <div className={`flex flex-wrap gap-3 w-full pt-20 pb-5 pl-4 `}>
