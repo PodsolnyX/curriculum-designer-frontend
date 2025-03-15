@@ -1,8 +1,4 @@
-import {Checkbox, Input, Popover, Segmented, Tag, Tooltip} from "antd";
-import React, {useEffect, useState} from "react";
-import {DownOutlined, InfoCircleOutlined} from "@ant-design/icons";
-import {CompetenceDistributionType, CompetenceDto, CompetenceType} from "@/api/axios-client.ts";
-import {CompetenceTypeName} from "@/pages/planPage/const/constants.ts";
+import {Popover, Tag, Tooltip} from "antd";
 import {observer} from "mobx-react-lite";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import AddCompetencePopover from "@/pages/planPage/ui/CompetenceSelector/AddCompetencePopover.tsx";

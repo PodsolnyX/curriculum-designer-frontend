@@ -71,7 +71,7 @@ const columns: TableProps<CurriculumShortDto>['columns'] = [
         title: 'Имя плана',
         dataIndex: 'name',
         key: 'name',
-        render: (text: string, record) => <Link to={getRoutePlanTitle(record.id)}>{text}</Link>
+        render: (text: string, record) => <Link to={getRoutePlanTitle(record.id)} target={"_blank"}>{text}</Link>
     },
     {
         key: "",

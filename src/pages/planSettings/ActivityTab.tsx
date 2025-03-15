@@ -1,4 +1,4 @@
-import {App, Button, Popconfirm, Typography} from "antd";
+import {App, Button, Popconfirm, Skeleton, Typography} from "antd";
 import {AddActivityModal} from "@/pages/planSettings/AddActivityModal.tsx";
 import {EditActivityModal} from "@/pages/planSettings/EditActivityModal.tsx";
 import React, {useState} from "react";
@@ -23,7 +23,7 @@ const ActivityTab = () => {
     const [openAdd, setOpenAdd] = useState(false);
     const [editActivity, setEditActivity] = useState<AcademicActivityDto | undefined>(undefined);
 
-    const {data: academicActivities} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
+    const {data: academicActivities, isLoading} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
 
     const {mutate: removeActivity} = useDeleteAcademicActivityMutationWithParameters({
         onSuccess: () => {
@@ -43,6 +43,7 @@ const ActivityTab = () => {
             </div>
             <div className={"flex flex-col"}>
                 {
+                    isLoading ? <Skeleton/> :
                     academicActivities?.map(activity =>
                         <AcademicActivityItem
                             activity={activity}

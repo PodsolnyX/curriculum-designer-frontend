@@ -1,35 +1,14 @@
 import {useParams} from "react-router-dom";
-import {useQueryClient} from "@tanstack/react-query";
-import {App, Button, Skeleton, Typography} from "antd";
-import React, {useState} from "react";
-import {AcademicActivityDto, ValidatorDto} from "@/api/axios-client.types.ts";
-import {
-    getAcademicActivitiesQueryKey,
-    useDeleteAcademicActivityMutationWithParameters,
-} from "@/api/axios-client/AcademicActivityQuery.ts";
+import {Button, Skeleton, Typography} from "antd";
+import {ValidatorDto} from "@/api/axios-client.types.ts";
 import {useGetValidatorsQuery} from "@/api/axios-client/ValidationQuery.ts";
 
 const ValidationTab = () => {
 
     const {id} = useParams<{id: string}>();
 
-    const queryClient = useQueryClient();
-    const {message} = App.useApp();
-
-    const [openAdd, setOpenAdd] = useState(false);
-    const [editActivity, setEditActivity] = useState<AcademicActivityDto | undefined>(undefined);
-
     const {data: validators, isLoading}
         = useGetValidatorsQuery({curriculumId : Number(id)}, {enabled: !!id});
-
-    const {mutate: removeActivity} = useDeleteAcademicActivityMutationWithParameters({
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: getAcademicActivitiesQueryKey(Number(id))});
-            message.success("Активность удалена");
-        }
-    });
-
-    console.log(isLoading);
 
     return (
         <div className={"flex flex-col gap-5"}>
@@ -37,7 +16,7 @@ const ValidationTab = () => {
                 <Typography.Text className={"text-2xl"}>{"Валидаторы"}</Typography.Text>
                 <Button
                     shape={"round"}
-                    onClick={() => setOpenAdd(true)}
+                    onClick={() => {}}
                 >+ Добавить</Button>
             </div>
             <div className={"flex flex-col"}>
@@ -62,37 +41,36 @@ interface ValidatorItemProps {
 const ValidatorItem = ({validator}: ValidatorItemProps) => {
 
     return (
-        <div className={"flex items-center rounded-md p-2 group gap-2 w-full hover:bg-stone-50"}>
-            <div className={"flex flex-col flex-1"}>
+        <div className={"flex flex-wrap items-center rounded-md p-2 group gap-2 w-full hover:bg-stone-50"}>
+            <div className={"flex flex-col flex-1 min-w-[300px]"}>
                 <Typography.Text type={"secondary"} className={"text-sm"}>
-                    {`${validator.iterationType} • ${validator.messagePattern}`}
+                    {`${validator.iterationType}`}
                 </Typography.Text>
                 <Typography.Text>
                     {validator.name}
                 </Typography.Text>
+                <Typography.Text type={"secondary"}>
+                    {`${validator.messagePattern}`}
+                </Typography.Text>
             </div>
-            {
-                validator?.validationFormula &&
-                <Typography.Text className={"bg-stone-50 tracking-wider p-1 px-2 rounded-md border border-solid border-stone-200 text-stone-800"}>
-                    {validator.validationFormula }
-                </Typography.Text>
-            }
-            {
-                validator?.filterFormula &&
-                <Typography.Text className={"bg-stone-50 tracking-wider p-1 px-2 rounded-md border border-solid border-stone-200 text-stone-800"}>
-                    {validator.filterFormula }
-                </Typography.Text>
-            }
-            {/*<EditOutlined*/}
-            {/*    onClick={() => onEdit()}*/}
-            {/*    className={"text-stone-400 hover:text-stone-500 cursor-pointer hidden group-hover:block"}*/}
-            {/*/>*/}
-            {/*<Popconfirm*/}
-            {/*    title={"Вы хотите удалить активность?"}*/}
-            {/*    onConfirm={() => onRemove()}*/}
-            {/*>*/}
-            {/*    <CloseOutlined className={"text-stone-400 hover:text-red-500 cursor-pointer hidden group-hover:block"}/>*/}
-            {/*</Popconfirm>*/}
+            <div className={"flex flex-col gap-1 items-end"}>
+                <div className={"flex gap-1 items-center"}>
+                    <Typography.Text type={"secondary"}>
+                        {`Формула валидации:`}
+                    </Typography.Text>
+                    <Typography.Text className={"bg-stone-50 tracking-wider p-1 px-2 rounded-md border border-solid border-stone-200 text-stone-800"}>
+                        {validator.validationFormula}
+                    </Typography.Text>
+                </div>
+                <div className={"flex gap-1 items-center"}>
+                    <Typography.Text type={"secondary"}>
+                        {`Формула фильтра:`}
+                    </Typography.Text>
+                    <Typography.Text className={"bg-stone-50 tracking-wider p-1 px-2 rounded-md border border-solid border-stone-200 text-stone-800"}>
+                        {validator.filterFormula}
+                    </Typography.Text>
+                </div>
+            </div>
         </div>
     )
 }

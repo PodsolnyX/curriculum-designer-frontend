@@ -18,6 +18,7 @@ const ValidationContent = () => {
         const Entities: Record<string, string> = {
             "Semester": "semesters",
             "Module": "modules",
+            "Atom": "subjects",
         }
         if (!error.entities) return;
 
