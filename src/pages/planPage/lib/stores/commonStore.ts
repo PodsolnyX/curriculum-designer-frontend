@@ -22,6 +22,7 @@ class CommonStore {
         }
     };
     competences: Dictionary<AtomCompetence> = {};
+    competencesTree: CompetenceDto[] = [];
     attestationTypes: AttestationDto[] = [];
     academicActivity: AcademicActivityDto[] = [];
     validationErrors: ValidationError[] = [];
@@ -45,6 +46,10 @@ class CommonStore {
             _competences[competence.id] = {id: competence.id, index: competence.index, description: competence.name};
         })
         this.competences = _competences;
+    }
+
+    setCompetencesTree(competencesTree: CompetenceDto[]) {
+        this.competencesTree = competencesTree;
     }
 
     setAttestationTypes(attestationTypes: AttestationDto[]) {
@@ -72,6 +77,11 @@ class CommonStore {
     isSelectedComponent(id: string | null) {
         if (!id || !this.selectedComponent) return false;
         return getIdFromPrefix(this.selectedComponent) === getIdFromPrefix(id);
+    }
+
+    isSelectedCompetence(id: number | null) {
+        if (!id || !this.selectedCompetence) return false;
+        return this.selectedCompetence === id;
     }
 
     selectComponent(id: string | null) {

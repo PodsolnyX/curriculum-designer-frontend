@@ -62,6 +62,7 @@ const PlanDepartmentPage = () => {
                         key: 'name',
                     }
                 ]}
+                size={"small"}
                 dataSource={filteredData}
                 pagination={{
                     position: ["topLeft", "bottomLeft"],

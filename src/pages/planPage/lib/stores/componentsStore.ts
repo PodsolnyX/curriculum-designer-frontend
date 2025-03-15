@@ -23,6 +23,9 @@ import {Client as AttestationClient} from "@/api/axios-client/AttestationQuery.t
 import {message} from "antd";
 import {arraysToDict} from "@/shared/lib/helpers/common.ts";
 import {AtomUpdateParams, commonSubjectParamKeys, ModuleShortDto} from "@/pages/planPage/types/types.ts";
+import {queryClient} from "@/shared/lib/api/queryClient.tsx";
+import {getSemestersQueryKey} from "@/api/axios-client/SemestersQuery.ts";
+import {getValidationErrorsQueryKey} from "@/api/axios-client/ValidationQuery.ts";
 
 const ATOM_SUCCESS_UPDATE_MESSAGE = "Предмет успешно обновлён";
 
@@ -168,34 +171,58 @@ class ComponentsStore {
 
         const handlers: Record<string, () => void> = {
             credit: () => AtomInSemesterClient.setAtomCredit(atomId, semesterId, { credit: param as number })
-                .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE)),
+                .then(() => {
+                    queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                    queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                    message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                }),
             attestations: () => AttestationClient.setAttestation({ atomId, semesterId, attestationIds: param as number[] })
                 .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE)),
             academicHours: () => {
                 param = param as {id: number, value: number | undefined};
                 if (param.id && param.value === -1) {
                     HoursDistributionClient.deleteHoursDistribution(commonStore.curriculumData.id, param.id, semesterId, atomId )
-                        .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE));
+                        .then(() => {
+                            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                            queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                            message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                        });
                 } else {
                     HoursDistributionClient.createUpdateHoursDistribution(commonStore.curriculumData.id, param.id, { value: param?.value ?? 0 }, semesterId, atomId )
-                        .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE));
+                        .then(() => {
+                            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                            queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                            message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                        });
                 }
             },
             competenceIds: () => {
                 if (commonStore.curriculumData) {
                     if (commonStore.curriculumData.settings.competenceDistributionType === CompetenceDistributionType.Competence)
                         AtomCompetenceClient.setAtomCompetences(atomId, { competenceIds: param as number[]})
-                            .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE));
+                            .then(() => {
+                                queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                                queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                                message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                            });
                     else
                         AtomCompetenceClient.setAtomCompetenceIndicators(atomId, { competenceIndicatorIds: param as number[]})
-                            .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE));
+                            .then(() => {
+                                queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                                queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                                message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                            });
                 }
             }
         };
 
         if (commonSubjectParamKeys.includes(paramKey as keyof UpdateAtomDto)) {
             AtomClient.updateAtom(atomId, { [paramKey]: param })
-                .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE));
+                .then(() => {
+                    queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                    queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                    message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+                })
         } else {
             handlers[paramKey]?.();
         }
@@ -220,7 +247,11 @@ class ComponentsStore {
         })
 
         AtomInSemesterClient.createAtomInSemester(atomId, semesterId)
-            .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE))
+            .then(() => {
+                queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+                queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+                message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+            })
     }
 
     moveAtoms(activeId: string, overId: string) {
@@ -242,6 +273,7 @@ class ComponentsStore {
         //Если предметы не помещаются по верхнему или нижнему пределу
         if (newSubjectSemestersIndex.includes(-1) || newSubjectSemestersIndex.includes(this.semesters.length)) {
             message.error("Невозможно переместить предметы в этот семестр")
+            return;
         }
 
         let newAtomSemesters: SemesterDto[] = [];
@@ -333,7 +365,11 @@ class ComponentsStore {
                 newSubjectSemestersIndex.map(index => this.semesters[index].id)
             ) as {[p: string]: number},
             parentModuleId: overSemesterId === overParentModuleId ? null : overParentModuleId
-        }).then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE))
+        }).then(() => {
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+            queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+            message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
+        })
 
         runInAction(() => {
             this.resetAllActiveIds();

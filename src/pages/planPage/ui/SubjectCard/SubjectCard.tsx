@@ -12,7 +12,7 @@ import Icon, {
     TagOutlined,
     UpOutlined
 } from "@ant-design/icons";
-import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
+import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector/CompetenceSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import CommentsPopover from "@/pages/planPage/ui/CommentsPopover.tsx";
@@ -99,6 +99,8 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
     const onExpendSemester = (key: "prev" | "next") => {
         componentsStore.expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
     }
+
+    console.log(2222)
 
     return (
         <li
@@ -329,6 +331,7 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
                     optionsStore.displaySettings.competencies &&
                     <CompetenceSelector
                         subjectId={id}
+                        size={"small"}
                         competencies={competenceIds.length ? competenceIds : competenceIndicatorIds}
                         onChange={(competenceIds) => componentsStore.updateAtom(id, "competenceIds", competenceIds)}
                     />

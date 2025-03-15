@@ -23,7 +23,6 @@ interface AcademicHoursPanelProps {
 const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
 
     const {
-        credits,
         academicHours,
         size = "small",
         layout = "vertical",
@@ -34,11 +33,12 @@ const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
         onRemove
     } = props;
 
-    const sumAcademicHours = roundToTwo(academicHours.reduce((_sum, type) => _sum + type.value, 0)) - credits * 36;
+    const totalHours = academicHours.find(academic => academic.academicActivity.formulaName === "all")?.value || 0
+    const byPlanHours = academicHours.find(academic => academic.academicActivity.formulaName === "by_plan")?.value || 0
 
     const textSize = size === "small" ? "text-[10px]" : "text-[12px]";
-    const isFullHours = sumAcademicHours === credits  * 36;
-    const isMoreHours = sumAcademicHours > credits * 36;
+    const isFullHours = totalHours === byPlanHours;
+    const isMoreHours = totalHours > byPlanHours;
 
     return (
         <div className={layout === "vertical" ? "flex flex-col gap-1 group/panel relative" : "flex items-center relative flex-row-reverse gap-1"}
@@ -46,7 +46,9 @@ const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
             <div className={layout === "vertical" ? "grid grid-cols-2 gap-1" : "flex gap-1"}>
                 {
                     showAllActivities
-                        ? commonStore.academicActivity.map((activity, index) => {
+                        ? commonStore.academicActivity
+                            .filter(activity => activity.formulaName !== "all" && activity.formulaName !== "by_plan")
+                            .map((activity, index) => {
                                 const academicHour = academicHours.find(hour => hour.academicActivity.id === activity.id);
                                 return (
                                     <AcademicActivityItem
@@ -63,7 +65,9 @@ const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
                                 )
                             }
                         )
-                        : academicHours.map((type, index) =>
+                        : academicHours
+                            .filter(activity => activity.academicActivity.formulaName !== "all" && activity.academicActivity.formulaName !== "by_plan")
+                            .map((type, index) =>
                             <AcademicActivityItem
                                 key={type.academicActivity.id}
                                 academicActivity={type.academicActivity}
@@ -130,7 +134,7 @@ const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
                 </div>
                 <div
                     className={`${isFullHours ? "text-[#389e0d]" : isMoreHours ? "text-[#cf1322]" : "text-stone-600"} ${textSize} pr-1`}>
-                    {`${sumAcademicHours}/${credits * 36}`}
+                    {`${academicHours.find(academic => academic.academicActivity.formulaName === "all")?.value || 0} / ${academicHours.find(academic => academic.academicActivity.formulaName === "by_plan")?.value || 0}`}
                 </div>
             </div>
         </div>
