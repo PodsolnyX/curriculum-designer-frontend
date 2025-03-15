@@ -130,7 +130,7 @@ const AcademicHoursPanel = observer((props: AcademicHoursPanelProps) => {
                 </div>
                 <div
                     className={`${isFullHours ? "text-[#389e0d]" : isMoreHours ? "text-[#cf1322]" : "text-stone-600"} ${textSize} pr-1`}>
-                    {`${sumAcademicHours}/${credits * 36}`}
+                    {`${academicHours.find(academic => academic.academicActivity.formulaName === "all")?.value || 0} / ${academicHours.find(academic => academic.academicActivity.formulaName === "by_plan")?.value || 0}`}
                 </div>
             </div>
         </div>

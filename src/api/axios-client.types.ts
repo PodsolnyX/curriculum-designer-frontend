@@ -70,6 +70,41 @@ export function prepareSerializeValidationErrorEntity(_data: ValidationErrorEnti
   const data: Record<string, any> = { ..._data };
   return data as ValidationErrorEntity;
 }
+export interface ValidatorDto  {
+  id: number;
+  name: string;
+  iterationType: ValidatorIterationType;
+  filterFormula: string;
+  validationFormula: string;
+  messagePattern: string;
+}
+export function deserializeValidatorDto(json: string): ValidatorDto {
+  const data = JSON.parse(json) as ValidatorDto;
+  initValidatorDto(data);
+  return data;
+}
+export function initValidatorDto(_data: ValidatorDto) {
+  if (_data) {
+    _data.iterationType = _data["iterationType"];
+  }
+  return _data;
+}
+export function serializeValidatorDto(_data: ValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeValidatorDto(_data as ValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeValidatorDto(_data: ValidatorDto): ValidatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as ValidatorDto;
+}
+export enum ValidatorIterationType {
+    Atom = "Atom",
+    AtomSemester = "AtomSemester",
+    Competence = "Competence",
+    Semester = "Semester",
+}
 export interface RefModuleSemesterDto  {
   semester: SemesterDto;
   nonElective: ComponentSemesterDto;

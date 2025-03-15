@@ -242,6 +242,7 @@ class ComponentsStore {
         //Если предметы не помещаются по верхнему или нижнему пределу
         if (newSubjectSemestersIndex.includes(-1) || newSubjectSemestersIndex.includes(this.semesters.length)) {
             message.error("Невозможно переместить предметы в этот семестр")
+            return;
         }
 
         let newAtomSemesters: SemesterDto[] = [];

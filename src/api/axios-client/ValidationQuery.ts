@@ -22,6 +22,10 @@ export type GetValidationErrorsValidationQueryParameters = {
   curriculumId: number ;
 }
 
+export type GetValidatorsValidationQueryParameters = {
+  curriculumId: number ;
+}
+
 export function getValidationErrorsUrl(curriculumId: number): string {
   let url_ = getBaseUrl() + "/validation/{curriculumId}";
 if (curriculumId === undefined || curriculumId === null)
@@ -99,5 +103,85 @@ export function setGetValidationErrorsData(queryClient: QueryClient, updater: (d
 }
 
 export function setGetValidationErrorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ValidationError[] | undefined) => Types.ValidationError[]) {
+  queryClient.setQueryData(queryKey, updater);
+}
+    
+export function getValidatorsUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/validation/{curriculumId}/validators";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+let getValidatorsDefaultOptions: Omit<UseQueryOptions<Types.ValidatorDto[], unknown, Types.ValidatorDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ValidatorDto[], unknown, Types.ValidatorDto[]>, 'queryFn'>> = {
+};
+export function getGetValidatorsDefaultOptions() {
+  return getValidatorsDefaultOptions;
+};
+export function setGetValidatorsDefaultOptions(options: typeof getValidatorsDefaultOptions) {
+  getValidatorsDefaultOptions = options;
+}
+
+export function getValidatorsQueryKey(curriculumId: number): QueryKey;
+export function getValidatorsQueryKey(...params: any[]): QueryKey {
+  if (params.length === 1 && isParameterObject(params[0])) {
+    const { curriculumId,  } = params[0] as GetValidatorsValidationQueryParameters;
+
+    return trimArrayEnd([
+        'ValidationClient',
+        'getValidators',
+        curriculumId as any,
+      ]);
+  } else {
+    return trimArrayEnd([
+        'ValidationClient',
+        'getValidators',
+        ...params
+      ]);
+  }
+}
+export function __getValidators(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+  return Client.getValidators(
+      context.queryKey[2] as number,axiosConfig    );
+}
+
+export function useGetValidatorsQuery<TSelectData = Types.ValidatorDto[], TError = unknown>(dto: GetValidatorsValidationQueryParameters, options?: Omit<UseQueryOptions<Types.ValidatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+
+export function useGetValidatorsQuery<TSelectData = Types.ValidatorDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.ValidatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetValidatorsQuery<TSelectData = Types.ValidatorDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.ValidatorDto[], TError, TSelectData> | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+  let curriculumId: any = undefined;
+  
+  if (params.length > 0) {
+    if (isParameterObject(params[0])) {
+      ({ curriculumId,  } = params[0] as GetValidatorsValidationQueryParameters);
+      options = params[1];
+      axiosConfig = params[2];
+    } else {
+      [curriculumId, options, axiosConfig] = params;
+    }
+  }
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useQuery<Types.ValidatorDto[], TError, TSelectData>({
+    queryFn: axiosConfig ? (context) => __getValidators(context, axiosConfig) : __getValidators,
+    queryKey: getValidatorsQueryKey(curriculumId),
+    ...getValidatorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.ValidatorDto[], TError, TSelectData>, 'queryKey'>,
+    ...options,
+  });
+}
+
+export function setGetValidatorsData(queryClient: QueryClient, updater: (data: Types.ValidatorDto[] | undefined) => Types.ValidatorDto[], curriculumId: number) {
+  queryClient.setQueryData(getValidatorsQueryKey(curriculumId),
+    updater
+  );
+}
+
+export function setGetValidatorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ValidatorDto[] | undefined) => Types.ValidatorDto[]) {
   queryClient.setQueryData(queryKey, updater);
 }

@@ -34,8 +34,7 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
     const {data: attestationTypesData, isLoading: loadingAttestationTypes} = useSearchAttestationsQuery();
     const {data: academicActivityData, isLoading: loadingAcademicActivity} = useGetAcademicActivitiesQuery({curriculumId: Number(id)});
     const {data: indexesData, isLoading: loadingIndexes} = useGetIndexesQuery({curriculumId: Number(id)});
-    const {data: competencesData, isLoading: loadingCompetences} = useGetCompetencesQuery({curriculumId: Number(id)},
-        { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.Competence});
+    const {data: competencesData, isLoading: loadingCompetences} = useGetCompetencesQuery({curriculumId: Number(id)});
     const {data: competenceIndicatorsData, isLoading: loadingCompetenceIndicators} = useGetCompetenceIndicatorsQuery({curriculumId: Number(id)},
         { enabled: curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.CompetenceIndicator});
     const {data: validationErrorsData} = useGetValidationErrorsQuery({curriculumId: Number(id)});
@@ -86,9 +85,15 @@ export const useCurriculumData = (params: useCurriculumDataParams) => {
     }, [academicActivityData])
 
     useEffect(() => {
-        if (competencesData) commonStore.setCompetences(competencesData);
-        else if (competenceIndicatorsData) commonStore.setCompetences(competenceIndicatorsData);
-    }, [competencesData, competenceIndicatorsData])
+        if (competencesData) commonStore.setCompetencesTree(competencesData)
+    }, [competencesData])
+
+    useEffect(() => {
+        if (competencesData && curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.Competence)
+            commonStore.setCompetences(competencesData);
+        else if (competenceIndicatorsData && curriculumData?.settings.competenceDistributionType === CompetenceDistributionType.CompetenceIndicator)
+            commonStore.setCompetences(competenceIndicatorsData);
+    }, [curriculumData, competencesData, competenceIndicatorsData])
 
     useEffect(() => {
         if (validationErrorsData) commonStore.setValidationErrors(validationErrorsData);

@@ -7,7 +7,7 @@ import {
 import {Badge, Segmented, Select, Switch, Typography} from "antd";
 import {AtomType} from "@/api/axios-client.types.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
-import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector.tsx";
+import CompetenceSelector from "@/pages/planPage/ui/CompetenceSelector/CompetenceSelector.tsx";
 import CreditsSelector from "@/pages/planPage/ui/CreditsSelector.tsx";
 import AttestationTypeSelector from "@/pages/planPage/ui/AttestationTypeSelector.tsx";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
