@@ -18,8 +18,6 @@ const CompetenceSelector = observer(({competencies = [], size = "small", subject
         onChange?.(competencies.filter(competence => competence !== id))
     }
 
-    console.log(1111)
-
     return (
         <div className={`flex flex-wrap gap-1 max-h-[150px] overflow-y-auto scrollbar group items-center ${!competencies.length ? "justify-between": ""}`} onClick={(event) => event.stopPropagation()}>
             {

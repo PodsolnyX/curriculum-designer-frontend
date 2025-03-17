@@ -20,7 +20,12 @@ import {AtomDto, AtomType} from "@/api/axios-client.ts";
 import AcademicHoursPanel from "@/pages/planPage/ui/AcademicHoursPanel.tsx";
 import {useEditSubject} from "@/pages/planPage/lib/hooks/useEditSubject.ts";
 import {AtomTypeFullName} from "@/pages/planPage/const/constants.ts";
-import {getIdFromPrefix, getSemesterIdFromPrefix} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
+import {
+    concatIds,
+    getIdFromPrefix,
+    getSemesterIdFromPrefix,
+    setPrefixToId
+} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {observer} from "mobx-react-lite";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
@@ -100,8 +105,6 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
         componentsStore.expandAtom(id, key === "prev" ? neighboringSemesters.prev || 0 : neighboringSemesters.next || 0, key)
     }
 
-    console.log(2222)
-
     return (
         <li
             className={classNames(
@@ -117,7 +120,7 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
                 commonStore.selectComponent(id);
                 commonStore.setSideBarContent("atom")
             }}
-            id={id}
+            id={concatIds(setPrefixToId(getSemesterIdFromPrefix(id), "semesters"), setPrefixToId(getIdFromPrefix(id), "subjects"))}
         >
             <div
                 className={classNames(cls.subjectCard, cls[type], isSelected && cls.selected)}>

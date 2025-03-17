@@ -1,7 +1,8 @@
 import {useParams} from "react-router-dom";
-import {Button, Skeleton, Typography} from "antd";
-import {ValidatorDto} from "@/api/axios-client.types.ts";
+import {Button, Checkbox, Skeleton, Typography} from "antd";
+import {CustomValidatorDto, StructuralValidatorDto} from "@/api/axios-client.types.ts";
 import {useGetValidatorsQuery} from "@/api/axios-client/ValidationQuery.ts";
+import {ValidationLevelDisplay} from "@/shared/const/records.tsx";
 
 const ValidationTab = () => {
 
@@ -13,7 +14,18 @@ const ValidationTab = () => {
     return (
         <div className={"flex flex-col gap-5"}>
             <div className={"flex items-center justify-between flex-wrap gap-2"}>
-                <Typography.Text className={"text-2xl"}>{"Валидаторы"}</Typography.Text>
+                <Typography.Text className={"text-2xl"}>{"Структурные валидаторы"}</Typography.Text>
+            </div>
+            <div className={"flex flex-col"}>
+                {
+                    isLoading ? <Skeleton/> :
+                    validators?.structuralValidators.map(validator =>
+                        <ValidatorItem validator={validator} key={validator.id}/>
+                    )
+                }
+            </div>
+            <div className={"flex items-center justify-between flex-wrap gap-2"}>
+                <Typography.Text className={"text-2xl"}>{"Настраиваемые валидаторы"}</Typography.Text>
                 <Button
                     shape={"round"}
                     onClick={() => {}}
@@ -22,11 +34,8 @@ const ValidationTab = () => {
             <div className={"flex flex-col"}>
                 {
                     isLoading ? <Skeleton/> :
-                    validators?.map(validator =>
-                        <ValidatorItem
-                            validator={validator}
-                            key={validator.id}
-                        />
+                    validators?.customValidators.map(validator =>
+                        <CustomValidatorItem validator={validator} key={validator.id}/>
                     )
                 }
             </div>
@@ -34,23 +43,43 @@ const ValidationTab = () => {
     )
 }
 
+
+
 interface ValidatorItemProps {
-    validator: ValidatorDto,
+    validator: StructuralValidatorDto,
 }
 
 const ValidatorItem = ({validator}: ValidatorItemProps) => {
 
     return (
-        <div className={"flex flex-wrap items-center rounded-md p-2 group gap-2 w-full hover:bg-stone-50"}>
+        <div className={"flex flex-wrap items-center rounded-md p-2 group gap-4 w-full hover:bg-stone-50"}>
+            <Checkbox checked={validator.isEnabled}/>
             <div className={"flex flex-col flex-1 min-w-[300px]"}>
-                <Typography.Text type={"secondary"} className={"text-sm"}>
-                    {`${validator.iterationType}`}
+                {ValidationLevelDisplay[validator.level]}
+                <Typography.Text>
+                    {validator.name}
                 </Typography.Text>
+            </div>
+        </div>
+    )
+}
+
+interface CustomValidatorItemProps {
+    validator: CustomValidatorDto,
+}
+
+const CustomValidatorItem = ({validator}: CustomValidatorItemProps) => {
+
+    return (
+        <div className={"flex flex-wrap items-center rounded-md p-2 group gap-4 w-full hover:bg-stone-50"}>
+            <Checkbox checked={validator.isEnabled}/>
+            <div className={"flex flex-col flex-1 min-w-[300px]"}>
+                {ValidationLevelDisplay[validator.level]}
                 <Typography.Text>
                     {validator.name}
                 </Typography.Text>
                 <Typography.Text type={"secondary"}>
-                    {`${validator.messagePattern}`}
+                    {validator.messagePattern}
                 </Typography.Text>
             </div>
             <div className={"flex flex-col gap-1 items-end"}>
@@ -74,5 +103,7 @@ const ValidatorItem = ({validator}: ValidatorItemProps) => {
         </div>
     )
 }
+
+
 
 export default ValidationTab

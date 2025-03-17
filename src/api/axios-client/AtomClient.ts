@@ -13,6 +13,9 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
+/**
+ * Create atom
+ */
 export function createAtom(createAtomDto: Types.CreateAtomDto, config?: AxiosRequestConfig | undefined): Promise<number> {
     let url_ = getBaseUrl() + "/atom";
       url_ = url_.replace(/[?&]$/, "");
@@ -69,6 +72,9 @@ function processCreateAtom(response: AxiosResponse): Promise<number> {
     return Promise.resolve<number>(null as any);
 }
 
+/**
+ * Update atom
+ */
 export function updateAtom(atomId: number, updateAtomDto: Types.UpdateAtomDto, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/atom/{atomId}";
     if (atomId === undefined || atomId === null)
@@ -122,6 +128,9 @@ function processUpdateAtom(response: AxiosResponse): Promise<void> {
     return Promise.resolve<void>(null as any);
 }
 
+/**
+ * Delete atom
+ */
 export function deleteAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
     let url_ = getBaseUrl() + "/atom/{atomId}";
     if (atomId === undefined || atomId === null)
@@ -169,6 +178,62 @@ function processDeleteAtom(response: AxiosResponse): Promise<void> {
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
     return Promise.resolve<void>(null as any);
+}
+
+/**
+ * Get atom by id
+ */
+export function getAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto> {
+    let url_ = getBaseUrl() + "/atom/{atomId}";
+    if (atomId === undefined || atomId === null)
+      throw new Error("The parameter 'atomId' must be defined.");
+    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigGetAtom,
+        ...config,
+        method: "GET",
+        url: url_,
+        headers: {
+            ..._requestConfigGetAtom?.headers,
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processGetAtom(_response);
+    });
+}
+
+function processGetAtom(response: AxiosResponse): Promise<Types.AtomDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        result200 = Types.initAtomDto(resultData200);
+        return Promise.resolve<Types.AtomDto>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.AtomDto>(null as any);
 }
 
 /**
@@ -266,6 +331,17 @@ export function setDeleteAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
 }
 export function patchDeleteAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigDeleteAtom = patch(_requestConfigDeleteAtom ?? {});
+}
+
+let _requestConfigGetAtom: Partial<AxiosRequestConfig> | null;
+export function getGetAtomRequestConfig() {
+  return _requestConfigGetAtom;
+}
+export function setGetAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigGetAtom = value;
+}
+export function patchGetAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigGetAtom = patch(_requestConfigGetAtom ?? {});
 }
 
 let _requestConfigGetAtomsByCurriculum: Partial<AxiosRequestConfig> | null;

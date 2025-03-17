@@ -12,7 +12,6 @@ import {useDroppable} from "@dnd-kit/core";
 import {SortableContext} from "@dnd-kit/sortable";
 import SortableSubjectCard from "@/pages/planPage/ui/SubjectCard/SortableSubjectCard.tsx";
 import {useCreateEntity} from "@/pages/planPage/lib/hooks/useCreateEntity.ts";
-import {ValidationErrorType} from "@/api/axios-client.types.ts";
 import {optionsStore} from "@/pages/planPage/lib/stores/optionsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
@@ -70,7 +69,7 @@ const TrackSelectionField = (props: TrackSelectionProps) => {
                         {`Семестр ${semesterNumber}`}
                         <CreditsSelector
                             credits={credits}
-                            error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
+                            // error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
                         />
                     </div>
                 </div>

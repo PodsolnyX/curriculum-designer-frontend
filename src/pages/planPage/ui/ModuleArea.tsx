@@ -1,7 +1,11 @@
-import {AtomDto, RefModuleSemesterDto, SelectionDto, ValidationErrorType} from "@/api/axios-client.types.ts";
+import {AtomDto, RefModuleSemesterDto, SelectionDto} from "@/api/axios-client.types.ts";
 import React, {CSSProperties, useMemo, useState} from "react";
 import {App, Tag, Typography} from "antd";
-import {useUpdateModuleMutation} from "@/api/axios-client/ModuleQuery.ts";
+import {
+    getModuleQueryKey,
+    getModulesByCurriculumQueryKey,
+    useUpdateModuleMutation
+} from "@/api/axios-client/ModuleQuery.ts";
 import {
     concatIds,
     cutSemesterIdFromId,
@@ -20,6 +24,10 @@ import {componentsStore} from "@/pages/planPage/lib/stores/componentsStore.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
 import {positionsStore} from "@/pages/planPage/lib/stores/positionsStore.ts";
 import {PositionContainer} from "@/pages/planPage/ui/PositionContainer.tsx";
+import {useCreateUpdateSelectionMutation} from "@/api/axios-client/SelectionQuery.ts";
+import {queryClient} from "@/shared/lib/api/queryClient.tsx";
+import {getSemestersQueryKey} from "@/api/axios-client/SemestersQuery.ts";
+import {getValidationErrorsQueryKey} from "@/api/axios-client/ValidationQuery.ts";
 
 interface ModuleAreaProps extends ModuleShortDto {}
 
@@ -57,6 +65,7 @@ const ModuleArea = observer((props: ModuleAreaProps) => {
                 left: `${x}px`,
                 top: `${positionsStore.getTopCoordinate(setPrefixToId(semesters[0]?.semester.id || "", "semesters"))}px`
             }}
+            id={setPrefixToId(id, "modules")}
         >
             {
                 [...semesters]
@@ -149,6 +158,15 @@ const ModuleField = observer((props: ModuleFieldProps) => {
         }
     });
 
+    const {mutate: editSelection} = useCreateUpdateSelectionMutation(Number(getIdFromPrefix(String(id))), {
+        onSuccess: () => {
+            message.success("Выбор успешно обновлен")
+            queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
+            queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
+            queryClient.invalidateQueries({queryKey: getModulesByCurriculumQueryKey(commonStore.curriculumData?.id || 0)});
+        }
+    });
+
     const {onCreate} = useCreateEntity();
 
     const getFieldClassName = () => {
@@ -200,8 +218,11 @@ const ModuleField = observer((props: ModuleFieldProps) => {
                     {
                         selection
                             ? <CreditsSelector
-                                error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
+                                // error={errors ? errors.some(e => e.type === ValidationErrorType.CreditDistribution) : false}
                                 credits={selection.semesters.find(sem => sem.semesterId === semester.semester.id)?.credit || 0}
+                                onChange={(value) => editSelection({ semesters: selection?.semesters
+                                        .map((_sem, index) =>
+                                            index !== semesterIndex ? _sem : {semesterId: semester.semester.id, credit: value})})}
                             />
                             : <Tag color={"default"} className={"m-0"} bordered={false}>{semester.nonElective.credit} ЗЕТ</Tag>
                     }

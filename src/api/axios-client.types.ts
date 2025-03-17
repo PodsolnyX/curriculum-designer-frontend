@@ -1,11 +1,13 @@
 //-----Types.File-----
 /** Represents a validation error. */
 export interface ValidationError  {
-  /** Gets or sets the type of the validation error. */
-  type?: ValidationErrorType;
-  /** Gets or sets the message of the validation error. */
-  message?: string;
-  /** Gets or sets the list of entities associated with the validation error. */
+  /** Identifier of the validator that generated the error. */
+  validatorId: number;
+  /** Validation level of the error. */
+  level: ValidationLevel;
+  /** Message of the validation error. */
+  message: string;
+  /** Entities associated with the validation error. */
   entities?: ValidationErrorEntity[];
 }
 export function deserializeValidationError(json: string): ValidationError {
@@ -15,7 +17,7 @@ export function deserializeValidationError(json: string): ValidationError {
 }
 export function initValidationError(_data: ValidationError) {
   if (_data) {
-    _data.type = _data["type"];
+    _data.level = _data["level"];
     if (Array.isArray(_data["entities"])) {
       _data.entities = _data["entities"].map(item => 
         initValidationErrorEntity(item)
@@ -39,18 +41,17 @@ export function prepareSerializeValidationError(_data: ValidationError): Validat
   }
   return data as ValidationError;
 }
-/** Specifies the type of validation error. */
-export enum ValidationErrorType {
-    Custom = "Custom",
-    CreditDistribution = "CreditDistribution",
-    AcademicActivityFormula = "AcademicActivityFormula",
+export enum ValidationLevel {
+    Information = "Information",
+    Warning = "Warning",
+    Error = "Error",
 }
 /** Represents an entity associated with a validation error. */
 export interface ValidationErrorEntity  {
-  /** Gets or sets the type of the entity. */
-  type?: string;
-  /** Gets or sets the ID of the entity. */
-  id?: number;
+  /** Entity type. */
+  type: string;
+  /** Entity identifier. */
+  id: number;
 }
 export function deserializeValidationErrorEntity(json: string): ValidationErrorEntity {
   const data = JSON.parse(json) as ValidationErrorEntity;
@@ -70,13 +71,55 @@ export function prepareSerializeValidationErrorEntity(_data: ValidationErrorEnti
   const data: Record<string, any> = { ..._data };
   return data as ValidationErrorEntity;
 }
+export interface ValidatorsDto  {
+  customValidators: CustomValidatorDto[];
+  structuralValidators: StructuralValidatorDto[];
+}
+export function deserializeValidatorsDto(json: string): ValidatorsDto {
+  const data = JSON.parse(json) as ValidatorsDto;
+  initValidatorsDto(data);
+  return data;
+}
+export function initValidatorsDto(_data: ValidatorsDto) {
+  if (_data) {
+    if (Array.isArray(_data["customValidators"])) {
+      _data.customValidators = _data["customValidators"].map(item => 
+        initCustomValidatorDto(item)
+      );
+    }
+    if (Array.isArray(_data["structuralValidators"])) {
+      _data.structuralValidators = _data["structuralValidators"].map(item => 
+        initStructuralValidatorDto(item)
+      );
+    }
+  }
+  return _data;
+}
+export function serializeValidatorsDto(_data: ValidatorsDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeValidatorsDto(_data as ValidatorsDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeValidatorsDto(_data: ValidatorsDto): ValidatorsDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.customValidators)) {
+    data["customValidators"] = _data.customValidators.map(item => 
+        prepareSerializeCustomValidatorDto(item)
+    );
+  }
+  if (Array.isArray(_data.structuralValidators)) {
+    data["structuralValidators"] = _data.structuralValidators.map(item => 
+        prepareSerializeStructuralValidatorDto(item)
+    );
+  }
+  return data as ValidatorsDto;
+}
 export interface ValidatorDto  {
   id: number;
   name: string;
-  iterationType: ValidatorIterationType;
-  filterFormula: string;
-  validationFormula: string;
-  messagePattern: string;
+  isEnabled: boolean;
+  level: ValidationLevel;
 }
 export function deserializeValidatorDto(json: string): ValidatorDto {
   const data = JSON.parse(json) as ValidatorDto;
@@ -85,7 +128,7 @@ export function deserializeValidatorDto(json: string): ValidatorDto {
 }
 export function initValidatorDto(_data: ValidatorDto) {
   if (_data) {
-    _data.iterationType = _data["iterationType"];
+    _data.level = _data["level"];
   }
   return _data;
 }
@@ -99,11 +142,149 @@ export function prepareSerializeValidatorDto(_data: ValidatorDto): ValidatorDto 
   const data: Record<string, any> = { ..._data };
   return data as ValidatorDto;
 }
+export interface CustomValidatorDto extends ValidatorDto  {
+  iterationType: ValidatorIterationType;
+  filterFormula: string;
+  validationFormula: string;
+  messagePattern: string;
+}
+export function deserializeCustomValidatorDto(json: string): CustomValidatorDto {
+  const data = JSON.parse(json) as CustomValidatorDto;
+  initCustomValidatorDto(data);
+  return data;
+}
+export function initCustomValidatorDto(_data: CustomValidatorDto) {
+  initValidatorDto(_data);
+  if (_data) {
+    _data.iterationType = _data["iterationType"];
+  }
+  return _data;
+}
+export function serializeCustomValidatorDto(_data: CustomValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCustomValidatorDto(_data as CustomValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCustomValidatorDto(_data: CustomValidatorDto): CustomValidatorDto {
+  const data = prepareSerializeValidatorDto(_data as CustomValidatorDto) as Record<string, any>;
+  return data as CustomValidatorDto;
+}
 export enum ValidatorIterationType {
     Atom = "Atom",
     AtomSemester = "AtomSemester",
     Competence = "Competence",
     Semester = "Semester",
+}
+export interface StructuralValidatorDto extends ValidatorDto  {
+  typeName: string;
+}
+export function deserializeStructuralValidatorDto(json: string): StructuralValidatorDto {
+  const data = JSON.parse(json) as StructuralValidatorDto;
+  initStructuralValidatorDto(data);
+  return data;
+}
+export function initStructuralValidatorDto(_data: StructuralValidatorDto) {
+  initValidatorDto(_data);
+    return _data;
+}
+export function serializeStructuralValidatorDto(_data: StructuralValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeStructuralValidatorDto(_data as StructuralValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeStructuralValidatorDto(_data: StructuralValidatorDto): StructuralValidatorDto {
+  const data = prepareSerializeValidatorDto(_data as StructuralValidatorDto) as Record<string, any>;
+  return data as StructuralValidatorDto;
+}
+export interface CreateCustomValidatorDto  {
+  name: string;
+  isEnabled: boolean;
+  level: ValidationLevel;
+  iterationType: ValidatorIterationType;
+  filterFormula: string;
+  validationFormula: string;
+  messagePattern: string;
+}
+export function deserializeCreateCustomValidatorDto(json: string): CreateCustomValidatorDto {
+  const data = JSON.parse(json) as CreateCustomValidatorDto;
+  initCreateCustomValidatorDto(data);
+  return data;
+}
+export function initCreateCustomValidatorDto(_data: CreateCustomValidatorDto) {
+  if (_data) {
+    _data.level = _data["level"];
+    _data.iterationType = _data["iterationType"];
+  }
+  return _data;
+}
+export function serializeCreateCustomValidatorDto(_data: CreateCustomValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCreateCustomValidatorDto(_data as CreateCustomValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreateCustomValidatorDto(_data: CreateCustomValidatorDto): CreateCustomValidatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreateCustomValidatorDto;
+}
+export interface UpdateCustomValidatorDto  {
+  name?: string;
+  isEnabled?: boolean;
+  level?: ValidationLevel;
+  iterationType?: ValidatorIterationType;
+  filterFormula?: string;
+  validationFormula?: string;
+  messagePattern?: string;
+}
+export function deserializeUpdateCustomValidatorDto(json: string): UpdateCustomValidatorDto {
+  const data = JSON.parse(json) as UpdateCustomValidatorDto;
+  initUpdateCustomValidatorDto(data);
+  return data;
+}
+export function initUpdateCustomValidatorDto(_data: UpdateCustomValidatorDto) {
+  if (_data) {
+    _data.level = _data["level"];
+    _data.iterationType = _data["iterationType"];
+  }
+  return _data;
+}
+export function serializeUpdateCustomValidatorDto(_data: UpdateCustomValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUpdateCustomValidatorDto(_data as UpdateCustomValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUpdateCustomValidatorDto(_data: UpdateCustomValidatorDto): UpdateCustomValidatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UpdateCustomValidatorDto;
+}
+export interface UpdateStructuralValidatorDto  {
+  name?: string;
+  isEnabled?: boolean;
+  level?: ValidationLevel;
+}
+export function deserializeUpdateStructuralValidatorDto(json: string): UpdateStructuralValidatorDto {
+  const data = JSON.parse(json) as UpdateStructuralValidatorDto;
+  initUpdateStructuralValidatorDto(data);
+  return data;
+}
+export function initUpdateStructuralValidatorDto(_data: UpdateStructuralValidatorDto) {
+  if (_data) {
+    _data.level = _data["level"];
+  }
+  return _data;
+}
+export function serializeUpdateStructuralValidatorDto(_data: UpdateStructuralValidatorDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUpdateStructuralValidatorDto(_data as UpdateStructuralValidatorDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUpdateStructuralValidatorDto(_data: UpdateStructuralValidatorDto): UpdateStructuralValidatorDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UpdateStructuralValidatorDto;
 }
 export interface RefModuleSemesterDto  {
   semester: SemesterDto;
@@ -378,6 +559,7 @@ export function prepareSerializeCurriculumDto(_data: CurriculumDto): CurriculumD
 }
 export interface CurriculumSettingsDto  {
   competenceDistributionType: CompetenceDistributionType;
+  hoursPerCredit: number;
 }
 export function deserializeCurriculumSettingsDto(json: string): CurriculumSettingsDto {
   const data = JSON.parse(json) as CurriculumSettingsDto;
@@ -428,6 +610,7 @@ export function prepareSerializeCurriculumShortDto(_data: CurriculumShortDto): C
 }
 export interface SetCurriculumSettingsDto  {
   competenceDistributionType: CompetenceDistributionType;
+  hoursPerCredit: number;
 }
 export function deserializeSetCurriculumSettingsDto(json: string): SetCurriculumSettingsDto {
   const data = JSON.parse(json) as SetCurriculumSettingsDto;

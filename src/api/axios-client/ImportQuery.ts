@@ -50,7 +50,7 @@ export function importMutationKey(curriculumId?: number | undefined): MutationKe
  * @param curriculumId (optional) Curriculum Id
  * @param file (optional) 
  */
-export function useImportMutation<TContext>(curriculumId?: number | undefined, options?: Omit<UseMutationOptions<void, unknown, ImportImportMutationParameters, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, ImportImportMutationParameters, TContext> {
+export function useImportMutation<TContext>(curriculumId?: number | undefined, options?: Omit<UseMutationOptions<string, unknown, ImportImportMutationParameters, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<string, unknown, ImportImportMutationParameters, TContext> {
   const key = importMutationKey(curriculumId);
   
   const metaContext = useContext(QueryMetaContext);
@@ -72,7 +72,7 @@ type Import__MutationParameters = ImportImportQueryParameters & {
  * @param curriculumId (optional) Curriculum Id
  * @param file (optional) 
  */
-export function useImportMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, Import__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: ImportImportQueryParameters}): UseMutationResult<void, unknown, Import__MutationParameters, TContext> {
+export function useImportMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<string, unknown, Import__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: ImportImportQueryParameters}): UseMutationResult<string, unknown, Import__MutationParameters, TContext> {
   const key = importMutationKey(options?.parameters?.curriculumId!);
   
   const metaContext = useContext(QueryMetaContext);

@@ -208,7 +208,7 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 export function initPersister() {
   
   addResultTypeFactory('ValidationClient___getValidationErrors', (data: any) => Types.initValidationError(data));
-  addResultTypeFactory('ValidationClient___getValidators', (data: any) => Types.initValidatorDto(data));
+  addResultTypeFactory('ValidationClient___getValidators', (data: any) => Types.initValidatorsDto(data));
 
 
   addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
@@ -234,6 +234,7 @@ export function initPersister() {
   addResultTypeFactory('ModuleClient___getModulesByCurriculum', (data: any) => Types.initModuleDto(data));
 
 
+  addResultTypeFactory('AtomClient___getAtom', (data: any) => Types.initAtomDto(data));
   addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) => Types.initAtomDto(data));
 
 

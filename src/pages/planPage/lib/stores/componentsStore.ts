@@ -175,7 +175,16 @@ class ComponentsStore {
                     queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
                     queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
                     message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
-                }),
+                    return AtomClient.getAtom(atomId)
+                }).then(updateAtom => {
+                    runInAction(() => {
+                        this.atoms
+                            .find(atom => atom.id === atomId).semesters
+                            .find(semester => semester.semester.id === semesterId)
+                            .academicActivityHours = updateAtom.semesters.find(semester => semester.semester.id === semesterId).academicActivityHours;
+                    })
+                })
+            ,
             attestations: () => AttestationClient.setAttestation({ atomId, semesterId, attestationIds: param as number[] })
                 .then(() => message.success(ATOM_SUCCESS_UPDATE_MESSAGE)),
             academicHours: () => {
@@ -186,14 +195,30 @@ class ComponentsStore {
                             queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
                             queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
                             message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
-                        });
+                            return AtomClient.getAtom(atomId)
+                        }).then(updateAtom => {
+                            runInAction(() => {
+                                this.atoms
+                                    .find(atom => atom.id === atomId).semesters
+                                    .find(semester => semester.semester.id === semesterId)
+                                    .academicActivityHours = updateAtom.semesters.find(semester => semester.semester.id === semesterId).academicActivityHours;
+                            })
+                        })
                 } else {
                     HoursDistributionClient.createUpdateHoursDistribution(commonStore.curriculumData.id, param.id, { value: param?.value ?? 0 }, semesterId, atomId )
                         .then(() => {
                             queryClient.invalidateQueries({queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0)});
                             queryClient.invalidateQueries({queryKey: getValidationErrorsQueryKey(commonStore.curriculumData?.id || 0)});
                             message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
-                        });
+                            return AtomClient.getAtom(atomId)
+                        }).then(updateAtom => {
+                        runInAction(() => {
+                            this.atoms
+                                .find(atom => atom.id === atomId).semesters
+                                .find(semester => semester.semester.id === semesterId)
+                                .academicActivityHours = updateAtom.semesters.find(semester => semester.semester.id === semesterId).academicActivityHours;
+                        })
+                    })
                 }
             },
             competenceIds: () => {

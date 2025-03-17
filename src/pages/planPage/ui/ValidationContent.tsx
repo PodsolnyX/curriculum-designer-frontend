@@ -1,17 +1,20 @@
 import {Select, Tag, Typography} from "antd";
-import {ValidationError, ValidationErrorType} from "@/api/axios-client.types.ts";
-import {useState} from "react";
+import {ValidationError} from "@/api/axios-client.types.ts";
 import {useControls} from "react-zoom-pan-pinch";
 import {concatIds, setPrefixToId} from "@/pages/planPage/lib/helpers/prefixIdHelpers.ts";
 import {commonStore} from "@/pages/planPage/lib/stores/commonStore.ts";
+import {ValidationLevelDisplay} from "@/shared/const/records.tsx";
+import {observer} from "mobx-react-lite";
 
-const ValidationContent = () => {
+const ValidationContent = observer(() => {
 
-    const [filters, setFilters] = useState<ValidationErrorType[]>([]);
+    // const [filters, setFilters] = useState<ValidationErrorType[]>([]);
 
     const {zoomToElement} = useControls()
 
-    const data = commonStore.validationErrors?.filter(error => filters.length === 0 || filters.includes(error!!.type));
+    // const data = commonStore.validationErrors?.filter(error => filters.length === 0 || filters.includes(error!!.type));
+
+    const data = commonStore.validationErrors
 
     const scrollToTarget = (error: ValidationError) => {
 
@@ -34,17 +37,17 @@ const ValidationContent = () => {
         <div className={"flex flex-col gap-2 h-full"}>
             <div className={"flex flex-col gap-1"}>
                 <Typography.Text className={"text-xl"}>Ошибки валидации</Typography.Text>
-                <Select
-                    size={"small"}
-                    placeholder={"Тип ошибки"}
-                    mode={"multiple"}
-                    value={filters}
-                    onChange={setFilters}
-                    options={Object.keys(ValidationErrorType)
-                        .map(key => {
-                            return {label: ValidationErrorTypeTitle[key], value: key}
-                        })}
-                />
+                {/*<Select*/}
+                {/*    size={"small"}*/}
+                {/*    placeholder={"Тип ошибки"}*/}
+                {/*    mode={"multiple"}*/}
+                {/*    value={filters}*/}
+                {/*    onChange={setFilters}*/}
+                {/*    options={Object.keys(ValidationErrorType)*/}
+                {/*        .map(key => {*/}
+                {/*            return {label: ValidationErrorTypeTitle[key], value: key}*/}
+                {/*        })}*/}
+                {/*/>*/}
             </div>
             {
                 data?.length ?
@@ -56,7 +59,7 @@ const ValidationContent = () => {
                                     className={"flex flex-col bg-white hover:bg-stone-100 p-2 transition rounded-md cursor-pointer"}
                                     onClick={() => scrollToTarget(error)}
                                 >
-                                    <Tag className={"w-max"} color={"red"}>{ValidationErrorTypeTitle[error.type]}</Tag>
+                                    {ValidationLevelDisplay[error.level]}
                                     <Typography.Text>{error.message}</Typography.Text>
                                 </li>
                             )
@@ -70,12 +73,12 @@ const ValidationContent = () => {
 
         </div>
     )
-}
+})
 
-const ValidationErrorTypeTitle: Record<ValidationErrorType, string> = {
-    [ValidationErrorType.Custom]: "Неизвестная ошибка",
-    [ValidationErrorType.CreditDistribution]: "Распределение ЗЕТ",
-    [ValidationErrorType.AcademicActivityFormula]: "Распределение часов"
-}
+// const ValidationErrorTypeTitle: Record<ValidationErrorType, string> = {
+//     [ValidationErrorType.Custom]: "Неизвестная ошибка",
+//     [ValidationErrorType.CreditDistribution]: "Распределение ЗЕТ",
+//     [ValidationErrorType.AcademicActivityFormula]: "Распределение часов"
+// }
 
 export default ValidationContent;

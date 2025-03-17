@@ -18,7 +18,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * @param curriculumId (optional) Curriculum Id
  * @param file (optional) 
  */
-export function import_(curriculumId?: number | undefined, file?: Types.FileParameter | null | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
+export function import_(curriculumId?: number | undefined, file?: Types.FileParameter | null | undefined, config?: AxiosRequestConfig | undefined): Promise<string> {
     let url_ = getBaseUrl() + "/import?";
     if (curriculumId === null)
         throw new Error("The parameter 'curriculumId' cannot be null.");
@@ -38,6 +38,7 @@ export function import_(curriculumId?: number | undefined, file?: Types.FilePara
         url: url_,
         headers: {
             ..._requestConfigImport?.headers,
+            "Accept": "application/json"
         }
     };
 
@@ -52,7 +53,7 @@ export function import_(curriculumId?: number | undefined, file?: Types.FilePara
     });
 }
 
-function processImport(response: AxiosResponse): Promise<void> {
+function processImport(response: AxiosResponse): Promise<string> {
     const status = response.status;
     let _headers: any = {};
     if (response.headers && typeof response.headers === "object") {
@@ -64,13 +65,18 @@ function processImport(response: AxiosResponse): Promise<void> {
     }
     if (status === 200) {
         const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
+        let result200: any = null;
+        let resultData200  = _responseText;
+    
+        result200 = resultData200;
+    
+        return Promise.resolve<string>(result200);
 
     } else if (status !== 200 && status !== 204) {
         const _responseText = response.data;
         return throwException("An unexpected server error occurred.", status, _responseText, _headers);
     }
-    return Promise.resolve<void>(null as any);
+    return Promise.resolve<string>(null as any);
 }
 let _requestConfigImport: Partial<AxiosRequestConfig> | null;
 export function getImportRequestConfig() {
