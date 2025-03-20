@@ -1,5 +1,4 @@
 import {QueryClient} from "@tanstack/react-query";
-import axios from "axios";
 import {setAxiosFactory} from "@/api/axios-client.ts";
 import {instance} from "@/shared/lib/api/api.ts";
 import {ReactNode} from "react";
@@ -8,11 +7,11 @@ import {message} from "antd";
 import {Client} from "@/api/axios-client/AuthQuery.ts";
 import {
     getAccessToken,
-    getRefreshToken,
-    removeAccessToken,
-    removeRefreshToken,
-    setAccessToken
+    getRefreshToken, getSessionToken,
+    removeAccessToken, removeRefreshToken, removeSessionToken,
+    setAccessToken, setRefreshToken, setSessionToken
 } from "@/shared/lib/helpers/localStorage.ts";
+import {setAuthHeaderToInstance} from "@/app/providers/AuthProvider.tsx";
 
 setAxiosFactory(() => instance);
 
@@ -23,25 +22,33 @@ export const queryClient = new QueryClient({
             throwOnError: false,
             retry(failureCount, error) {
                 if (failureCount >= 3) return false;
-                if (axios.isAxiosError(error) && error.response?.status === 401) {
+                if (error && error?.status === 401) {
                     const accessToken = getAccessToken();
                     const refreshToken = getRefreshToken();
-                    if (accessToken && refreshToken) {
-                        Client.refresh({accessToken, refreshToken})
+                    const sessionToken = getSessionToken();
+                    if (accessToken && (refreshToken || sessionToken)) {
+                        Client.refresh({accessToken, refreshToken: (refreshToken || sessionToken) as string})
                             .then((data) => {
                                 setAccessToken(data.accessToken);
+                                setAuthHeaderToInstance(data.accessToken);
+                                if (refreshToken) setRefreshToken(data.refreshToken);
+                                else setSessionToken(data.refreshToken);
                             })
                             .catch(() => {
                                 removeAccessToken();
                                 removeRefreshToken();
+                                removeSessionToken();
                             });
-                        return true;
+                    }
+                    else {
+                        removeAccessToken();
                     }
                 }
                 return true;
             },
         },
         mutations: {
+            retry: 4,
             onError: () => {
                 message.error("Не удалось выполнить операцию")
             }

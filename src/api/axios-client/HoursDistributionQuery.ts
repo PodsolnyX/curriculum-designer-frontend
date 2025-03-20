@@ -33,7 +33,7 @@ export type DeleteHoursDistributionHoursDistributionQueryParameters = {
 }
 
 export function createUpdateHoursDistributionUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -94,7 +94,7 @@ return useMutation({
 }
   
 export function deleteHoursDistributionUrl(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

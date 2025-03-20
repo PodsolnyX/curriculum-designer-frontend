@@ -1,35 +1,40 @@
+import {LS_KEY_ACCESS_TOKEN, LS_KEY_REFRESH_TOKEN, LS_KEY_SESSION_TOKEN} from "@/shared/const/localStorageKeys.ts";
+import {LS_EVENT_NAME} from "@/shared/lib/hooks/useStorage.ts";
+
 export function getAccessToken(): string | null {
-    return localStorage.getItem("accessToken");
+    return JSON.parse(localStorage.getItem(LS_KEY_ACCESS_TOKEN));
 }
 
 export function getRefreshToken(): string | null {
-    return localStorage.getItem("refreshToken");
+    return JSON.parse(localStorage.getItem(LS_KEY_REFRESH_TOKEN));
 }
 
 export function getSessionToken(): string | null {
-    return sessionStorage.getItem("refreshToken");
+    return JSON.parse(sessionStorage.getItem(LS_KEY_SESSION_TOKEN));
 }
 
 export function removeAccessToken(): void {
-    localStorage.removeItem("accessToken");
+    localStorage.setItem(LS_KEY_ACCESS_TOKEN, JSON.stringify(""));
+    window.dispatchEvent(new StorageEvent(LS_EVENT_NAME, { key: LS_KEY_ACCESS_TOKEN }));
 }
 
 export function removeRefreshToken(): void {
-    localStorage.removeItem("refreshToken");
+    localStorage.setItem(LS_KEY_REFRESH_TOKEN, JSON.stringify(""));
 }
 
 export function removeSessionToken(): void {
-    sessionStorage.removeItem("refreshToken");
+    sessionStorage.setItem(LS_KEY_SESSION_TOKEN, JSON.stringify(""));
 }
 
 export function setAccessToken(token: string): void {
-    localStorage.setItem("accessToken", token);
+    localStorage.setItem(LS_KEY_ACCESS_TOKEN, JSON.stringify(token));
+    window.dispatchEvent(new StorageEvent(LS_EVENT_NAME, { key: LS_KEY_ACCESS_TOKEN }));
 }
 
 export function setRefreshToken(token: string): void {
-    localStorage.setItem("refreshToken", token);
+    localStorage.setItem(LS_KEY_REFRESH_TOKEN, JSON.stringify(token));
 }
 
 export function setSessionToken(token: string): void {
-    sessionStorage.setItem("refreshToken", token);
+    sessionStorage.setItem(LS_KEY_SESSION_TOKEN, JSON.stringify(token));
 }

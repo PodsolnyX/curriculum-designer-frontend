@@ -41,7 +41,7 @@ export type DeleteAcademicActivityAcademicActivityQueryParameters = {
 }
 
 export function getAcademicActivitiesUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -121,7 +121,7 @@ export function setGetAcademicActivitiesDataByQueryId(queryClient: QueryClient, 
 }
     
 export function createAcademicActivityUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -168,7 +168,7 @@ return useMutation({
 }
   
 export function getAcademicActivityFormulaParamsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/formula-params";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/formula-params";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -248,7 +248,7 @@ export function setGetAcademicActivityFormulaParamsDataByQueryId(queryClient: Qu
 }
     
 export function updateAcademicActivityUrl(academicActivityId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
 if (academicActivityId === undefined || academicActivityId === null)
   throw new Error("The parameter 'academicActivityId' must be defined.");
 url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
@@ -299,7 +299,7 @@ return useMutation({
 }
   
 export function deleteAcademicActivityUrl(academicActivityId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
 if (academicActivityId === undefined || academicActivityId === null)
   throw new Error("The parameter 'academicActivityId' must be defined.");
 url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));

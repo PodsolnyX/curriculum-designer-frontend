@@ -23,7 +23,7 @@ export type GetDepartmentsDepartmentQueryParameters = {
 }
 
 export function getDepartmentsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/department/{curriculumId}";
+  let url_ = getBaseUrl() + "/api/department/{curriculumId}";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

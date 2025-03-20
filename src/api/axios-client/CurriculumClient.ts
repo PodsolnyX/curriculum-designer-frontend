@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function createCurriculum(createCurriculumDto: Types.CreateCurriculumDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/curriculum";
+    let url_ = getBaseUrl() + "/api/curriculum";
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeCreateCurriculumDto(createCurriculumDto);
@@ -70,7 +70,7 @@ function processCreateCurriculum(response: AxiosResponse): Promise<number> {
 }
 
 export function searchCurriculums(config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumShortDto[]> {
-    let url_ = getBaseUrl() + "/curriculum";
+    let url_ = getBaseUrl() + "/api/curriculum";
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
@@ -124,7 +124,7 @@ function processSearchCurriculums(response: AxiosResponse): Promise<Types.Curric
 }
 
 export function getCurriculum(id: number, config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumDto> {
-    let url_ = getBaseUrl() + "/curriculum/{id}";
+    let url_ = getBaseUrl() + "/api/curriculum/{id}";
     if (id === undefined || id === null)
       throw new Error("The parameter 'id' must be defined.");
     url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -177,7 +177,7 @@ function processGetCurriculum(response: AxiosResponse): Promise<Types.Curriculum
 }
 
 export function deleteCurriculum(id: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{id}";
+    let url_ = getBaseUrl() + "/api/curriculum/{id}";
     if (id === undefined || id === null)
       throw new Error("The parameter 'id' must be defined.");
     url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -226,7 +226,7 @@ function processDeleteCurriculum(response: AxiosResponse): Promise<void> {
 }
 
 export function setCurriculumSettings(id: number, setCurriculumSettingsDto: Types.SetCurriculumSettingsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{id}/settings";
+    let url_ = getBaseUrl() + "/api/curriculum/{id}/settings";
     if (id === undefined || id === null)
       throw new Error("The parameter 'id' must be defined.");
     url_ = url_.replace("{id}", encodeURIComponent("" + id));

@@ -203,7 +203,7 @@ export const SubjectCard = observer((props: SubjectCardProps) => {
                     <div onClick={(event) => event.stopPropagation()}>
                         <Popover
                             trigger={"click"}
-                            placement={"bottom"}
+                            placement={"right"}
                             overlayInnerStyle={{padding: 0}}
                             content={
                                 <List

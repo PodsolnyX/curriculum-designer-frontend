@@ -27,7 +27,7 @@ export type DeleteSelectionSelectionQueryParameters = {
 }
 
 export function createUpdateSelectionUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/module/{moduleId}/selection";
+  let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
 url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -80,7 +80,7 @@ return useMutation({
 }
   
 export function deleteSelectionUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/module/{moduleId}/selection";
+  let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
 url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));

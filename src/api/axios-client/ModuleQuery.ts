@@ -38,7 +38,7 @@ export type GetModulesByCurriculumModuleQueryParameters = {
 }
 
 export function createModuleUrl(): string {
-  let url_ = getBaseUrl() + "/module";
+  let url_ = getBaseUrl() + "/api/module";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -64,7 +64,7 @@ export function useCreateModuleMutation<TContext>(options?: Omit<UseMutationOpti
 }
   
 export function createModuleWithSelectionUrl(): string {
-  let url_ = getBaseUrl() + "/module/with-selection";
+  let url_ = getBaseUrl() + "/api/module/with-selection";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -90,7 +90,7 @@ export function useCreateModuleWithSelectionMutation<TContext>(options?: Omit<Us
 }
   
 export function getModuleUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/module/{moduleId}";
+  let url_ = getBaseUrl() + "/api/module/{moduleId}";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
 url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -170,7 +170,7 @@ export function setGetModuleDataByQueryId(queryClient: QueryClient, queryKey: Qu
 }
     
 export function updateModuleUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/module/{moduleId}";
+  let url_ = getBaseUrl() + "/api/module/{moduleId}";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
 url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -217,7 +217,7 @@ return useMutation({
 }
   
 export function deleteModuleUrl(moduleId: number, deleteChildren?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/module/{moduleId}?";
+  let url_ = getBaseUrl() + "/api/module/{moduleId}?";
 if (moduleId === undefined || moduleId === null)
   throw new Error("The parameter 'moduleId' must be defined.");
 url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -279,7 +279,7 @@ return useMutation({
 }
   
 export function getModulesByCurriculumUrl(curriculumId: number, plainList?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/module/curriculum/{curriculumId}?";
+  let url_ = getBaseUrl() + "/api/module/curriculum/{curriculumId}?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

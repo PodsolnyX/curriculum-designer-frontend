@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function createModule(createModuleDto: Types.CreateModuleDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/module";
+    let url_ = getBaseUrl() + "/api/module";
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeCreateModuleDto(createModuleDto);
@@ -70,7 +70,7 @@ function processCreateModule(response: AxiosResponse): Promise<number> {
 }
 
 export function createModuleWithSelection(createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/module/with-selection";
+    let url_ = getBaseUrl() + "/api/module/with-selection";
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeCreateModuleWithSelectionDto(createModuleWithSelectionDto);
@@ -126,7 +126,7 @@ function processCreateModuleWithSelection(response: AxiosResponse): Promise<numb
 }
 
 export function getModule(moduleId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ModuleDto> {
-    let url_ = getBaseUrl() + "/module/{moduleId}";
+    let url_ = getBaseUrl() + "/api/module/{moduleId}";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
     url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -179,7 +179,7 @@ function processGetModule(response: AxiosResponse): Promise<Types.ModuleDto> {
 }
 
 export function updateModule(moduleId: number, updateModuleDto: Types.UpdateModuleDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/module/{moduleId}";
+    let url_ = getBaseUrl() + "/api/module/{moduleId}";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
     url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -238,7 +238,7 @@ function processUpdateModule(response: AxiosResponse): Promise<void> {
             Else, only deletes the module, moving its children to the parent module.
  */
 export function deleteModule(moduleId: number, deleteChildren?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/module/{moduleId}?";
+    let url_ = getBaseUrl() + "/api/module/{moduleId}?";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
     url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -296,7 +296,7 @@ function processDeleteModule(response: AxiosResponse): Promise<void> {
  * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
  */
 export function getModulesByCurriculum(curriculumId: number, plainList?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.ModuleDto[]> {
-    let url_ = getBaseUrl() + "/module/curriculum/{curriculumId}?";
+    let url_ = getBaseUrl() + "/api/module/curriculum/{curriculumId}?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

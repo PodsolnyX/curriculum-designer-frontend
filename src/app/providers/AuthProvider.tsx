@@ -1,26 +1,37 @@
-import React, {createContext, useContext, useState} from "react";
-import {
-    getAccessToken,
-    removeAccessToken,
-    removeRefreshToken,
-    removeSessionToken,
-    setAccessToken,
-    setRefreshToken,
-    setSessionToken
-} from "@/shared/lib/helpers/localStorage.ts";
+import React, {createContext, useContext, useEffect, useLayoutEffect, useState} from "react";
 import {useQueryClient} from "@tanstack/react-query";
 import {instance} from "@/shared/lib/api/api.ts";
+import {useLocalStorage, useSessionStorage} from "@/shared/lib/hooks/useStorage.ts";
+import {LS_KEY_ACCESS_TOKEN, LS_KEY_REFRESH_TOKEN, LS_KEY_SESSION_TOKEN} from "@/shared/const/localStorageKeys.ts";
 
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
 
-    const [isAuth, setIsAuth] = useState<boolean>(!!getAccessToken());
+    const [accessToken, setAccessToken] = useLocalStorage<string>(LS_KEY_ACCESS_TOKEN, "");
+    const [refreshToken, setRefreshToken] = useLocalStorage<string>(LS_KEY_REFRESH_TOKEN, "");
+    const [sessionToken, setSessionToken] = useSessionStorage<string>(LS_KEY_SESSION_TOKEN, "");
+    const [isAuth, setIsAuth] = useState<boolean>(!!accessToken);
     const queryClient = useQueryClient();
+
+    useLayoutEffect(() => {
+        if (accessToken) {
+            setIsAuth(true);
+        }
+    }, [accessToken]);
+
+    useEffect(() => {
+        if (!!accessToken) {
+            setAuthHeaderToInstance(accessToken);
+        }
+        else {
+            signOut();
+        }
+    }, [accessToken])
 
     const signIn = (accessToken: string, refreshToken: string, rememberMe: boolean) => {
         setAccessToken(accessToken);
         if (rememberMe) setRefreshToken(refreshToken);
         else {
-            removeRefreshToken();
+            setRefreshToken("");
             setSessionToken(refreshToken);
         }
         setAuthHeaderToInstance(accessToken);
@@ -31,9 +42,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const signOut = () => {
 
         const removeCache = () => {
-            removeAccessToken();
-            removeSessionToken();
-            removeRefreshToken();
+            setAccessToken("");
+            setSessionToken("");
+            setRefreshToken("");
             queryClient.clear();
         }
 

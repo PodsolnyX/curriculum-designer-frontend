@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function createUpdateHoursDistribution(curriculumId: number, academicActivityId: number, createHoursDistribution: Types.CreateUpdateHoursDistributionDto, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -78,7 +78,7 @@ function processCreateUpdateHoursDistribution(response: AxiosResponse): Promise<
 }
 
 export function deleteHoursDistribution(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

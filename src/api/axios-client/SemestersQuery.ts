@@ -23,7 +23,7 @@ export type GetSemestersSemestersQueryParameters = {
 }
 
 export function getSemestersUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/semester/{curriculumId}";
+  let url_ = getBaseUrl() + "/api/semester/{curriculumId}";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

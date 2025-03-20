@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function getDepartments(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.DepartmentDto[]> {
-    let url_ = getBaseUrl() + "/department/{curriculumId}";
+    let url_ = getBaseUrl() + "/api/department/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

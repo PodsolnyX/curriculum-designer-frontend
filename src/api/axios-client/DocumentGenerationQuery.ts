@@ -33,7 +33,7 @@ export type GenerateTxtDocumentGenerationQueryParameters = {
 }
 
 export function generatePdfUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/pdf";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/pdf";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -78,7 +78,7 @@ return useMutation({
 }
   
 export function generateExcelUrl(curriculumId: number, tableType?: Types.TableType | undefined): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel?";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/excel?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -128,7 +128,7 @@ return useMutation({
 }
   
 export function generateTxtUrl(curriculumId: number, tableType?: Types.TableType | undefined): string {
-  let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt?";
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/txt?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

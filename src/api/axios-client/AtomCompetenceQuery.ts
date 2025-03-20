@@ -27,7 +27,7 @@ export type SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters = {
 }
 
 export function setAtomCompetencesUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/competence/atom/{atomId}/competence";
+  let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -74,7 +74,7 @@ return useMutation({
 }
   
 export function setAtomCompetenceIndicatorsUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/competence/atom/{atomId}/competence-indicator";
+  let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence-indicator";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));

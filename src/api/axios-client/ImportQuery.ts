@@ -28,7 +28,7 @@ export type ImportImportMutationParameters = {
 }
 
 export function importUrl(curriculumId?: number | undefined): string {
-  let url_ = getBaseUrl() + "/import?";
+  let url_ = getBaseUrl() + "/api/import?";
 if (curriculumId === null)
     throw new Error("The parameter 'curriculumId' cannot be null.");
 else if (curriculumId !== undefined)

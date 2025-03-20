@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function getAcademicActivities(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.AcademicActivityDto[]> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -71,7 +71,7 @@ function processGetAcademicActivities(response: AxiosResponse): Promise<Types.Ac
 }
 
 export function createAcademicActivity(curriculumId: number, createAcademicActivityDto: Types.CreateAcademicActivityDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -124,7 +124,7 @@ function processCreateAcademicActivity(response: AxiosResponse): Promise<void> {
 }
 
 export function getAcademicActivityFormulaParams(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<string[]> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/formula-params";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/formula-params";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -177,7 +177,7 @@ function processGetAcademicActivityFormulaParams(response: AxiosResponse): Promi
 }
 
 export function updateAcademicActivity(academicActivityId: number, updateAcademicActivityDto: Types.UpdateAcademicActivityDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
     if (academicActivityId === undefined || academicActivityId === null)
       throw new Error("The parameter 'academicActivityId' must be defined.");
     url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
@@ -233,7 +233,7 @@ function processUpdateAcademicActivity(response: AxiosResponse): Promise<void> {
 }
 
 export function deleteAcademicActivity(academicActivityId: number, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}";
     if (academicActivityId === undefined || academicActivityId === null)
       throw new Error("The parameter 'academicActivityId' must be defined.");
     url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));

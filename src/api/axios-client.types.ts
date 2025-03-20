@@ -41,6 +41,7 @@ export function prepareSerializeValidationError(_data: ValidationError): Validat
   }
   return data as ValidationError;
 }
+/** Validation level. Used to determine the severity of a validation message. Used in Validator. */
 export enum ValidationLevel {
     Information = "Information",
     Warning = "Warning",
@@ -170,10 +171,12 @@ export function prepareSerializeCustomValidatorDto(_data: CustomValidatorDto): C
   const data = prepareSerializeValidatorDto(_data as CustomValidatorDto) as Record<string, any>;
   return data as CustomValidatorDto;
 }
+/** Type of the custom validator iteration. It defines how the validator will be executed and what items will be validated. */
 export enum ValidatorIterationType {
     Atom = "Atom",
     AtomSemester = "AtomSemester",
     Competence = "Competence",
+    CompetenceIndicator = "CompetenceIndicator",
     Semester = "Semester",
 }
 export interface StructuralValidatorDto extends ValidatorDto  {
@@ -443,14 +446,22 @@ export function prepareSerializeHoursDistributionDto(_data: HoursDistributionDto
   data["academicActivity"] = _data.academicActivity && prepareSerializeAcademicActivityDto(_data.academicActivity);
   return data as HoursDistributionDto;
 }
+/** Academic activity data transfer object. */
 export interface AcademicActivityDto  {
+  /** Unique identifier. */
   id: number;
+  /** Full name of the academic activity. */
   name: string;
+  /** Short name of the academic activity. */
   shortName: string;
+  /** Flag indicating if the academic activity is countable. Used in getCountableHours() function. */
   isCountable: boolean;
+  /** Flag indicating if the academic activity is included in the final documentation. */
   isIncludedInDocumentation: boolean;
+  /** Formula used to calculate the academic activity hours. */
   formula?: string | null;
-  formulaName?: string;
+  /** Name of the formula used to calculate the academic activity hours. */
+  formulaName: string;
 }
 export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
   const data = JSON.parse(json) as AcademicActivityDto;
@@ -582,6 +593,7 @@ export function prepareSerializeCurriculumSettingsDto(_data: CurriculumSettingsD
   const data: Record<string, any> = { ..._data };
   return data as CurriculumSettingsDto;
 }
+/** Competence distribution type. Indicates how atoms' competences are distributed. */
 export enum CompetenceDistributionType {
     Competence = "Competence",
     CompetenceIndicator = "CompetenceIndicator",
@@ -689,7 +701,6 @@ export function prepareSerializeCreditPerSemesterDto(_data: CreditPerSemesterDto
   return data as CreditPerSemesterDto;
 }
 export interface CreateUpdateSelectionDto  {
-  name?: string | null;
   semesters?: CreditPerSemesterDto[] | null;
 }
 export function deserializeCreateUpdateSelectionDto(json: string): CreateUpdateSelectionDto {
@@ -910,6 +921,7 @@ export function prepareSerializeAtomDto(_data: AtomDto): AtomDto {
   data["department"] = _data.department && prepareSerializeDepartmentDto(_data.department);
   return data as AtomDto;
 }
+/** Type of the atom. */
 export enum AtomType {
     Subject = "Subject",
     Practice = "Practice",
@@ -1113,6 +1125,7 @@ export function prepareSerializeCompetenceDto(_data: CompetenceDto): CompetenceD
   }
   return data as CompetenceDto;
 }
+/** Competence type. */
 export enum CompetenceType {
     Basic = "Basic",
     Universal = "Universal",
@@ -1412,12 +1425,19 @@ export function prepareSerializeSetAtomCreditDto(_data: SetAtomCreditDto): SetAt
   const data: Record<string, any> = { ..._data };
   return data as SetAtomCreditDto;
 }
+/** Data transfer object used to create an academic activity. */
 export interface CreateAcademicActivityDto  {
+  /** Full name of the academic activity. */
   name: string;
+  /** Short name of the academic activity. */
   shortName: string;
+  /** Flag indicating if the academic activity is countable. Used in getCountableHours() function. */
   isCountable: boolean;
+  /** Flag indicating if the academic activity is included in the final documentation. */
   isIncludedInDocumentation: boolean;
+  /** Formula used to calculate the academic activity hours. */
   formula?: string | null;
+  /** Name of the formula used to calculate the academic activity hours. */
   formulaName?: string | null;
 }
 export function deserializeCreateAcademicActivityDto(json: string): CreateAcademicActivityDto {
@@ -1442,6 +1462,8 @@ export interface UpdateAcademicActivityDto  {
   name?: string | null;
   shortName?: string | null;
   order?: number | null;
+  isCountable?: boolean | null;
+  isIncludedInDocumentation?: boolean | null;
   formula?: string | null;
   formulaName?: string | null;
 }

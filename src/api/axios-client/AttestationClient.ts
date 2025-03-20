@@ -17,7 +17,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * Get all attestations
  */
 export function searchAttestations(config?: AxiosRequestConfig | undefined): Promise<Types.AttestationDto[]> {
-    let url_ = getBaseUrl() + "/attestation";
+    let url_ = getBaseUrl() + "/api/attestation";
       url_ = url_.replace(/[?&]$/, "");
 
     let options_: AxiosRequestConfig = {
@@ -74,7 +74,7 @@ function processSearchAttestations(response: AxiosResponse): Promise<Types.Attes
  * Set attestations for a component in semester
  */
 export function setAttestation(setAttestationDto: Types.SetAttestationDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/attestation";
+    let url_ = getBaseUrl() + "/api/attestation";
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeSetAttestationDto(setAttestationDto);

@@ -32,7 +32,7 @@ export type SetCurriculumSettingsCurriculumQueryParameters = {
 }
 
 export function createCurriculumUrl(): string {
-  let url_ = getBaseUrl() + "/curriculum";
+  let url_ = getBaseUrl() + "/api/curriculum";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -58,7 +58,7 @@ export function useCreateCurriculumMutation<TContext>(options?: Omit<UseMutation
 }
   
 export function searchCurriculumsUrl(): string {
-  let url_ = getBaseUrl() + "/curriculum";
+  let url_ = getBaseUrl() + "/api/curriculum";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -115,7 +115,7 @@ export function setSearchCurriculumsDataByQueryId(queryClient: QueryClient, quer
 }
     
 export function getCurriculumUrl(id: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{id}";
+  let url_ = getBaseUrl() + "/api/curriculum/{id}";
 if (id === undefined || id === null)
   throw new Error("The parameter 'id' must be defined.");
 url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -195,7 +195,7 @@ export function setGetCurriculumDataByQueryId(queryClient: QueryClient, queryKey
 }
     
 export function deleteCurriculumUrl(id: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{id}";
+  let url_ = getBaseUrl() + "/api/curriculum/{id}";
 if (id === undefined || id === null)
   throw new Error("The parameter 'id' must be defined.");
 url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -240,7 +240,7 @@ return useMutation({
 }
   
 export function setCurriculumSettingsUrl(id: number): string {
-  let url_ = getBaseUrl() + "/curriculum/{id}/settings";
+  let url_ = getBaseUrl() + "/api/curriculum/{id}/settings";
 if (id === undefined || id === null)
   throw new Error("The parameter 'id' must be defined.");
 url_ = url_.replace("{id}", encodeURIComponent("" + id));

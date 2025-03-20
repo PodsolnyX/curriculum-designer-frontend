@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto[]> {
-    let url_ = getBaseUrl() + "/competence/{curriculumId}";
+    let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -71,7 +71,7 @@ function processGetCompetences(response: AxiosResponse): Promise<Types.Competenc
 }
 
 export function createCompetence(curriculumId: number, createCompetenceDto: Types.CreateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
-    let url_ = getBaseUrl() + "/competence/{curriculumId}";
+    let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -128,7 +128,7 @@ function processCreateCompetence(response: AxiosResponse): Promise<Types.Compete
 }
 
 export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceIndicatorDto[]> {
-    let url_ = getBaseUrl() + "/competence/{curriculumId}/indicator";
+    let url_ = getBaseUrl() + "/api/competence/{curriculumId}/indicator";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -185,7 +185,7 @@ function processGetCompetenceIndicators(response: AxiosResponse): Promise<Types.
 }
 
 export function updateCompetence(competenceId: number, updateCompetenceDto: Types.UpdateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
-    let url_ = getBaseUrl() + "/competence/{competenceId}";
+    let url_ = getBaseUrl() + "/api/competence/{competenceId}";
     if (competenceId === undefined || competenceId === null)
       throw new Error("The parameter 'competenceId' must be defined.");
     url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -242,7 +242,7 @@ function processUpdateCompetence(response: AxiosResponse): Promise<Types.Compete
 }
 
 export function deleteCompetence(competenceId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/{competenceId}";
+    let url_ = getBaseUrl() + "/api/competence/{competenceId}";
     if (competenceId === undefined || competenceId === null)
       throw new Error("The parameter 'competenceId' must be defined.");
     url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -291,7 +291,7 @@ function processDeleteCompetence(response: AxiosResponse): Promise<void> {
 }
 
 export function createIndicator(competenceId: number, createIndicatorDto: Types.CreateCompetenceIndicatorDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/{competenceId}/indicator";
+    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator";
     if (competenceId === undefined || competenceId === null)
       throw new Error("The parameter 'competenceId' must be defined.");
     url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -344,7 +344,7 @@ function processCreateIndicator(response: AxiosResponse): Promise<void> {
 }
 
 export function updateIndicator(indicatorId: number, updateIndicatorDto: Types.UpdateCompetenceIndicatorDto, competenceId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/{competenceId}/indicator/{indicatorId}";
+    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
     if (indicatorId === undefined || indicatorId === null)
       throw new Error("The parameter 'indicatorId' must be defined.");
     url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
@@ -400,7 +400,7 @@ function processUpdateIndicator(response: AxiosResponse): Promise<void> {
 }
 
 export function deleteIndicator(indicatorId: number, competenceId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/{competenceId}/indicator/{indicatorId}";
+    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
     if (indicatorId === undefined || indicatorId === null)
       throw new Error("The parameter 'indicatorId' must be defined.");
     url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));

@@ -20,7 +20,7 @@ import type { AxiosRequestConfig } from 'axios';
 
 
 export function searchAttestationsUrl(): string {
-  let url_ = getBaseUrl() + "/attestation";
+  let url_ = getBaseUrl() + "/api/attestation";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -85,7 +85,7 @@ export function setSearchAttestationsDataByQueryId(queryClient: QueryClient, que
 }
     
 export function setAttestationUrl(): string {
-  let url_ = getBaseUrl() + "/attestation";
+  let url_ = getBaseUrl() + "/api/attestation";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }

@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function createAtomInSemester(atomId: number, semesterId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -66,7 +66,7 @@ function processCreateAtomInSemester(response: AxiosResponse): Promise<void> {
 }
 
 export function deleteAtomInSemester(atomId: number, semesterId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -118,7 +118,7 @@ function processDeleteAtomInSemester(response: AxiosResponse): Promise<void> {
 }
 
 export function setAtomCredit(atomId: number, semesterId: number, dto: Types.SetAtomCreditDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}/credit";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}/credit";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));

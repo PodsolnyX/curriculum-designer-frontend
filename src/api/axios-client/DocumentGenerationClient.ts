@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function generatePdf(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/pdf";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/pdf";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -72,7 +72,7 @@ function processGeneratePdf(response: AxiosResponse): Promise<Types.FileResponse
 }
 
 export function generateExcel(curriculumId: number, tableType?: Types.TableType | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/excel?";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/excel?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -134,7 +134,7 @@ function processGenerateExcel(response: AxiosResponse): Promise<Types.FileRespon
 }
 
 export function generateTxt(curriculumId: number, tableType?: Types.TableType | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.FileResponse> {
-    let url_ = getBaseUrl() + "/curriculum/{curriculumId}/document/txt?";
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/txt?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

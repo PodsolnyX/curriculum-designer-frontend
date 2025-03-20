@@ -17,7 +17,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * Creates new or updates existing selection for a module.
  */
 export function createUpdateSelection(moduleId: number, createUpdateSelectionDto: Types.CreateUpdateSelectionDto, config?: AxiosRequestConfig | undefined): Promise<Types.SelectionDto> {
-    let url_ = getBaseUrl() + "/module/{moduleId}/selection";
+    let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
     url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
@@ -77,7 +77,7 @@ function processCreateUpdateSelection(response: AxiosResponse): Promise<Types.Se
  * Removes selection from a module.
  */
 export function deleteSelection(moduleId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/module/{moduleId}/selection";
+    let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
     if (moduleId === undefined || moduleId === null)
       throw new Error("The parameter 'moduleId' must be defined.");
     url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));

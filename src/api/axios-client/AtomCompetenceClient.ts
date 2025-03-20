@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function setAtomCompetences(atomId: number, setAtomCompetencesDto: Types.SetAtomCompetencesDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/atom/{atomId}/competence";
+    let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -67,7 +67,7 @@ function processSetAtomCompetences(response: AxiosResponse): Promise<void> {
 }
 
 export function setAtomCompetenceIndicators(atomId: number, setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/competence/atom/{atomId}/competence-indicator";
+    let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence-indicator";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));

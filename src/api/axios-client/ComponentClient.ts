@@ -14,7 +14,7 @@ import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
 export function getIndexes(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.TupleOfIntegerAndString[]> {
-    let url_ = getBaseUrl() + "/component/index/{curriculumId}";
+    let url_ = getBaseUrl() + "/api/component/index/{curriculumId}";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

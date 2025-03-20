@@ -34,7 +34,7 @@ export type SetAtomCreditAtomInSemesterQueryParameters = {
 }
 
 export function createAtomInSemesterUrl(atomId: number, semesterId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -83,7 +83,7 @@ return useMutation({
 }
   
 export function deleteAtomInSemesterUrl(atomId: number, semesterId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -132,7 +132,7 @@ return useMutation({
 }
   
 export function setAtomCreditUrl(atomId: number, semesterId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}/semester/{semesterId}/credit";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}/credit";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));

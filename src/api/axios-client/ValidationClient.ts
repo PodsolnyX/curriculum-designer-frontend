@@ -18,7 +18,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * @return List of validation errors
  */
 export function getValidationErrors(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ValidationError[]> {
-    let url_ = getBaseUrl() + "/validation/{curriculumId}/error";
+    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/error";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -78,7 +78,7 @@ function processGetValidationErrors(response: AxiosResponse): Promise<Types.Vali
  * Get custom and structural validators for a curriculum
  */
 export function getValidators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ValidatorsDto> {
-    let url_ = getBaseUrl() + "/validation/{curriculumId}/validator";
+    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -134,7 +134,7 @@ function processGetValidators(response: AxiosResponse): Promise<Types.Validators
  * Create a custom validator for a curriculum
  */
 export function createCustomValidator(curriculumId: number, dto: Types.CreateCustomValidatorDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/validation/{curriculumId}/validator";
+    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -190,7 +190,7 @@ function processCreateCustomValidator(response: AxiosResponse): Promise<void> {
  * Update a custom validator
  */
 export function updateCustomValidator(validatorId: number, dto: Types.UpdateCustomValidatorDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/validation/{curriculumId}/validator/{validatorId}/custom";
+    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/custom";
     if (validatorId === undefined || validatorId === null)
       throw new Error("The parameter 'validatorId' must be defined.");
     url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
@@ -249,7 +249,7 @@ function processUpdateCustomValidator(response: AxiosResponse): Promise<void> {
  * Update a structural validator
  */
 export function updateStructuralValidator(validatorId: number, dto: Types.UpdateStructuralValidatorDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/validation/{curriculumId}/validator/{validatorId}/structural";
+    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/structural";
     if (validatorId === undefined || validatorId === null)
       throw new Error("The parameter 'validatorId' must be defined.");
     url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));

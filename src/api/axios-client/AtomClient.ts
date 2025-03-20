@@ -17,7 +17,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * Create atom
  */
 export function createAtom(createAtomDto: Types.CreateAtomDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/atom";
+    let url_ = getBaseUrl() + "/api/atom";
       url_ = url_.replace(/[?&]$/, "");
 
     const content_ = Types.serializeCreateAtomDto(createAtomDto);
@@ -76,7 +76,7 @@ function processCreateAtom(response: AxiosResponse): Promise<number> {
  * Update atom
  */
 export function updateAtom(atomId: number, updateAtomDto: Types.UpdateAtomDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{atomId}";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -132,7 +132,7 @@ function processUpdateAtom(response: AxiosResponse): Promise<void> {
  * Delete atom
  */
 export function deleteAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/atom/{atomId}";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -184,7 +184,7 @@ function processDeleteAtom(response: AxiosResponse): Promise<void> {
  * Get atom by id
  */
 export function getAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto> {
-    let url_ = getBaseUrl() + "/atom/{atomId}";
+    let url_ = getBaseUrl() + "/api/atom/{atomId}";
     if (atomId === undefined || atomId === null)
       throw new Error("The parameter 'atomId' must be defined.");
     url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -241,7 +241,7 @@ function processGetAtom(response: AxiosResponse): Promise<Types.AtomDto> {
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
 export function getAtomsByCurriculum(curriculumId: number, hasNoParentModule?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto[]> {
-    let url_ = getBaseUrl() + "/atom/by-curriculum/{curriculumId}?";
+    let url_ = getBaseUrl() + "/api/atom/by-curriculum/{curriculumId}?";
     if (curriculumId === undefined || curriculumId === null)
       throw new Error("The parameter 'curriculumId' must be defined.");
     url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

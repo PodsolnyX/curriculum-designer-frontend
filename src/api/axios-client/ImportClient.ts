@@ -19,7 +19,7 @@ import { getAxios, getBaseUrl } from './helpers';
  * @param file (optional) 
  */
 export function import_(curriculumId?: number | undefined, file?: Types.FileParameter | null | undefined, config?: AxiosRequestConfig | undefined): Promise<string> {
-    let url_ = getBaseUrl() + "/import?";
+    let url_ = getBaseUrl() + "/api/import?";
     if (curriculumId === null)
         throw new Error("The parameter 'curriculumId' cannot be null.");
     else if (curriculumId !== undefined)

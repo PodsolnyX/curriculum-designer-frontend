@@ -36,7 +36,7 @@ export type GetAtomsByCurriculumAtomQueryParameters = {
 }
 
 export function createAtomUrl(): string {
-  let url_ = getBaseUrl() + "/atom";
+  let url_ = getBaseUrl() + "/api/atom";
   url_ = url_.replace(/[?&]$/, "");
   return url_;
 }
@@ -65,7 +65,7 @@ export function useCreateAtomMutation<TContext>(options?: Omit<UseMutationOption
 }
   
 export function updateAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -118,7 +118,7 @@ return useMutation({
 }
   
 export function deleteAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -169,7 +169,7 @@ return useMutation({
 }
   
 export function getAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/atom/{atomId}";
+  let url_ = getBaseUrl() + "/api/atom/{atomId}";
 if (atomId === undefined || atomId === null)
   throw new Error("The parameter 'atomId' must be defined.");
 url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
@@ -256,7 +256,7 @@ export function setGetAtomDataByQueryId(queryClient: QueryClient, queryKey: Quer
 }
     
 export function getAtomsByCurriculumUrl(curriculumId: number, hasNoParentModule?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/atom/by-curriculum/{curriculumId}?";
+  let url_ = getBaseUrl() + "/api/atom/by-curriculum/{curriculumId}?";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));

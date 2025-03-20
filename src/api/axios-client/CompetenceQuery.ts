@@ -53,7 +53,7 @@ export type DeleteIndicatorCompetenceQueryParameters = {
 }
 
 export function getCompetencesUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/competence/{curriculumId}";
+  let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -133,7 +133,7 @@ export function setGetCompetencesDataByQueryId(queryClient: QueryClient, queryKe
 }
     
 export function createCompetenceUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/competence/{curriculumId}";
+  let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -180,7 +180,7 @@ return useMutation({
 }
   
 export function getCompetenceIndicatorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/competence/{curriculumId}/indicator";
+  let url_ = getBaseUrl() + "/api/competence/{curriculumId}/indicator";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -260,7 +260,7 @@ export function setGetCompetenceIndicatorsDataByQueryId(queryClient: QueryClient
 }
     
 export function updateCompetenceUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/competence/{competenceId}";
+  let url_ = getBaseUrl() + "/api/competence/{competenceId}";
 if (competenceId === undefined || competenceId === null)
   throw new Error("The parameter 'competenceId' must be defined.");
 url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -307,7 +307,7 @@ return useMutation({
 }
   
 export function deleteCompetenceUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/competence/{competenceId}";
+  let url_ = getBaseUrl() + "/api/competence/{competenceId}";
 if (competenceId === undefined || competenceId === null)
   throw new Error("The parameter 'competenceId' must be defined.");
 url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -352,7 +352,7 @@ return useMutation({
 }
   
 export function createIndicatorUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/competence/{competenceId}/indicator";
+  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator";
 if (competenceId === undefined || competenceId === null)
   throw new Error("The parameter 'competenceId' must be defined.");
 url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
@@ -399,7 +399,7 @@ return useMutation({
 }
   
 export function updateIndicatorUrl(indicatorId: number, competenceId: string): string {
-  let url_ = getBaseUrl() + "/competence/{competenceId}/indicator/{indicatorId}";
+  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
 if (indicatorId === undefined || indicatorId === null)
   throw new Error("The parameter 'indicatorId' must be defined.");
 url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
@@ -450,7 +450,7 @@ return useMutation({
 }
   
 export function deleteIndicatorUrl(indicatorId: number, competenceId: string): string {
-  let url_ = getBaseUrl() + "/competence/{competenceId}/indicator/{indicatorId}";
+  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
 if (indicatorId === undefined || indicatorId === null)
   throw new Error("The parameter 'indicatorId' must be defined.");
 url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));

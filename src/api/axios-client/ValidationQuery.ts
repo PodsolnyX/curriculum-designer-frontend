@@ -41,7 +41,7 @@ export type UpdateStructuralValidatorValidationQueryParameters = {
 }
 
 export function getValidationErrorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/validation/{curriculumId}/error";
+  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/error";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -131,7 +131,7 @@ export function setGetValidationErrorsDataByQueryId(queryClient: QueryClient, qu
 }
     
 export function getValidatorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/validation/{curriculumId}/validator";
+  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -218,7 +218,7 @@ export function setGetValidatorsDataByQueryId(queryClient: QueryClient, queryKey
 }
     
 export function createCustomValidatorUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/validation/{curriculumId}/validator";
+  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
 if (curriculumId === undefined || curriculumId === null)
   throw new Error("The parameter 'curriculumId' must be defined.");
 url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
@@ -271,7 +271,7 @@ return useMutation({
 }
   
 export function updateCustomValidatorUrl(validatorId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/validation/{curriculumId}/validator/{validatorId}/custom";
+  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/custom";
 if (validatorId === undefined || validatorId === null)
   throw new Error("The parameter 'validatorId' must be defined.");
 url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
@@ -328,7 +328,7 @@ return useMutation({
 }
   
 export function updateStructuralValidatorUrl(validatorId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/validation/{curriculumId}/validator/{validatorId}/structural";
+  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/structural";
 if (validatorId === undefined || validatorId === null)
   throw new Error("The parameter 'validatorId' must be defined.");
 url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
