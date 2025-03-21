@@ -31,8 +31,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
         setAccessToken(accessToken);
         if (rememberMe) setRefreshToken(refreshToken);
         else {
-            setRefreshToken("");
-            setSessionToken(refreshToken);
+            // setRefreshToken("");
+            setRefreshToken(refreshToken);
         }
         setAuthHeaderToInstance(accessToken);
         setIsAuth(true);

@@ -48,7 +48,6 @@ export const queryClient = new QueryClient({
             },
         },
         mutations: {
-            retry: 4,
             onError: () => {
                 message.error("Не удалось выполнить операцию")
             }
