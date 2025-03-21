@@ -23,28 +23,38 @@ function useStorage<T>(
     defaultValue: T,
 ): [value: T, setValue: (newValue: T) => void] {
     const [value, setValueLocally] = useState<T>(() => {
-        const item = storage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
+        try {
+            const item = storage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch {
+            return defaultValue;
+        }
     });
 
     const setValue = useCallback(
         (newValue: T) => {
-            storage.setItem(key, JSON.stringify(newValue));
-            window.dispatchEvent(new StorageEvent(LS_EVENT_NAME, { key: key }));
+            try {
+                storage.setItem(key, JSON.stringify(newValue));
+                window.dispatchEvent(new StorageEvent(LS_EVENT_NAME, { key }));
+            } catch (error) {
+                console.error("Failed to save to storage:", error);
+            }
         },
         [key],
     );
 
     const handler = useCallback(
         (e: StorageEvent) => {
-            if (e.key != key) return;
-            const item = storage.getItem(key);
-            setValueLocally(item ? JSON.parse(item) : defaultValue);
+            if (e.key !== key) return;
+            try {
+                const item = storage.getItem(key);
+                setValueLocally(item ? JSON.parse(item) : defaultValue);
+            } catch {
+                setValueLocally(defaultValue);
+            }
         },
         [key, defaultValue],
     );
-
-
 
     useEffect(() => {
         window.addEventListener(LS_EVENT_NAME, handler);

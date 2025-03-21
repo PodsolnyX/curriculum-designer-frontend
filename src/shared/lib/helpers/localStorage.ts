@@ -2,15 +2,30 @@ import {LS_KEY_ACCESS_TOKEN, LS_KEY_REFRESH_TOKEN, LS_KEY_SESSION_TOKEN} from "@
 import {LS_EVENT_NAME} from "@/shared/lib/hooks/useStorage.ts";
 
 export function getAccessToken(): string | null {
-    return JSON.parse(localStorage.getItem(LS_KEY_ACCESS_TOKEN));
+    try {
+        const token = localStorage.getItem(LS_KEY_ACCESS_TOKEN);
+        return token ? JSON.parse(token) : "";
+    } catch {
+        return "";
+    }
 }
 
 export function getRefreshToken(): string | null {
-    return JSON.parse(localStorage.getItem(LS_KEY_REFRESH_TOKEN));
+    try {
+        const token = localStorage.getItem(LS_KEY_REFRESH_TOKEN);
+        return token ? JSON.parse(token) : "";
+    } catch {
+        return "";
+    }
 }
 
 export function getSessionToken(): string | null {
-    return JSON.parse(sessionStorage.getItem(LS_KEY_SESSION_TOKEN));
+    try {
+        const token = sessionStorage.getItem(LS_KEY_SESSION_TOKEN);
+        return token ? JSON.parse(token) : "";
+    } catch {
+        return "";
+    }
 }
 
 export function removeAccessToken(): void {
