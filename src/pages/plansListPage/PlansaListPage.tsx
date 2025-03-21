@@ -13,7 +13,6 @@ import {useQueryClient} from "@tanstack/react-query";
 import {CurriculumShortDto} from "@/api/axios-client.types.ts";
 import PlanPageLayout from "@/widgets/PlanPageLayout/PlanPageLayout.tsx";
 import TracksIcon from "@/shared/assets/icons/tracks.svg?react";
-import {removeAccessToken} from "@/shared/lib/helpers/localStorage.ts";
 
 const PlansListPage = () => {
 
@@ -24,7 +23,6 @@ const PlansListPage = () => {
         return (
             <>
                 <Typography className={"text-2xl"}>{"Учебные планы"}</Typography>
-                <Button onClick={() => removeAccessToken()} n>проверка LS</Button>
                 <Button
                     type={"primary"}
                     shape={"round"}
