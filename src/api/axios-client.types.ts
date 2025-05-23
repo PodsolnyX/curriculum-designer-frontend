@@ -289,6 +289,110 @@ export function prepareSerializeUpdateStructuralValidatorDto(_data: UpdateStruct
   const data: Record<string, any> = { ..._data };
   return data as UpdateStructuralValidatorDto;
 }
+export interface StatisticsDto  {
+  academicActivities?: AcademicActivityStatisticsDto[];
+  summary?: AcademicActivityStatisticsDto;
+  pps?: number;
+}
+export function deserializeStatisticsDto(json: string): StatisticsDto {
+  const data = JSON.parse(json) as StatisticsDto;
+  initStatisticsDto(data);
+  return data;
+}
+export function initStatisticsDto(_data: StatisticsDto) {
+  if (_data) {
+    if (Array.isArray(_data["academicActivities"])) {
+      _data.academicActivities = _data["academicActivities"].map(item => 
+        initAcademicActivityStatisticsDto(item)
+      );
+    }
+    _data.summary = _data["summary"] && initAcademicActivityStatisticsDto(_data["summary"]);
+  }
+  return _data;
+}
+export function serializeStatisticsDto(_data: StatisticsDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeStatisticsDto(_data as StatisticsDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeStatisticsDto(_data: StatisticsDto): StatisticsDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.academicActivities)) {
+    data["academicActivities"] = _data.academicActivities.map(item => 
+        prepareSerializeAcademicActivityStatisticsDto(item)
+    );
+  }
+  data["summary"] = _data.summary && prepareSerializeAcademicActivityStatisticsDto(_data.summary);
+  return data as StatisticsDto;
+}
+export interface AcademicActivityStatisticsDto  {
+  /** Academic activity. */
+  academicActivity?: AcademicActivityDto;
+  /** Raw hours for the academic activity */
+  rawHours?: number;
+  /** Hours for specified student's amount */
+  studentHours?: number;
+  /** StudentHours divided by 900 */
+  resultHours?: number;
+}
+export function deserializeAcademicActivityStatisticsDto(json: string): AcademicActivityStatisticsDto {
+  const data = JSON.parse(json) as AcademicActivityStatisticsDto;
+  initAcademicActivityStatisticsDto(data);
+  return data;
+}
+export function initAcademicActivityStatisticsDto(_data: AcademicActivityStatisticsDto) {
+  if (_data) {
+    _data.academicActivity = _data["academicActivity"] && initAcademicActivityDto(_data["academicActivity"]);
+  }
+  return _data;
+}
+export function serializeAcademicActivityStatisticsDto(_data: AcademicActivityStatisticsDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeAcademicActivityStatisticsDto(_data as AcademicActivityStatisticsDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeAcademicActivityStatisticsDto(_data: AcademicActivityStatisticsDto): AcademicActivityStatisticsDto {
+  const data: Record<string, any> = { ..._data };
+  data["academicActivity"] = _data.academicActivity && prepareSerializeAcademicActivityDto(_data.academicActivity);
+  return data as AcademicActivityStatisticsDto;
+}
+/** Academic activity data transfer object. */
+export interface AcademicActivityDto  {
+  /** Unique identifier. */
+  id: number;
+  /** Full name of the academic activity. */
+  name: string;
+  /** Short name of the academic activity. */
+  shortName: string;
+  /** Flag indicating if the academic activity is countable. Used in getCountableHours() function. */
+  isCountable: boolean;
+  /** Flag indicating if the academic activity is included in the final documentation. */
+  isIncludedInDocumentation: boolean;
+  /** Formula used to calculate the academic activity hours. */
+  formula?: string | null;
+  /** Name of the formula used to calculate the academic activity hours. */
+  formulaName: string;
+}
+export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
+  const data = JSON.parse(json) as AcademicActivityDto;
+  initAcademicActivityDto(data);
+  return data;
+}
+export function initAcademicActivityDto(_data: AcademicActivityDto) {
+    return _data;
+}
+export function serializeAcademicActivityDto(_data: AcademicActivityDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeAcademicActivityDto(_data as AcademicActivityDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto): AcademicActivityDto {
+  const data: Record<string, any> = { ..._data };
+  return data as AcademicActivityDto;
+}
 export interface RefModuleSemesterDto  {
   semester: SemesterDto;
   nonElective: ComponentSemesterDto;
@@ -445,41 +549,6 @@ export function prepareSerializeHoursDistributionDto(_data: HoursDistributionDto
   const data: Record<string, any> = { ..._data };
   data["academicActivity"] = _data.academicActivity && prepareSerializeAcademicActivityDto(_data.academicActivity);
   return data as HoursDistributionDto;
-}
-/** Academic activity data transfer object. */
-export interface AcademicActivityDto  {
-  /** Unique identifier. */
-  id: number;
-  /** Full name of the academic activity. */
-  name: string;
-  /** Short name of the academic activity. */
-  shortName: string;
-  /** Flag indicating if the academic activity is countable. Used in getCountableHours() function. */
-  isCountable: boolean;
-  /** Flag indicating if the academic activity is included in the final documentation. */
-  isIncludedInDocumentation: boolean;
-  /** Formula used to calculate the academic activity hours. */
-  formula?: string | null;
-  /** Name of the formula used to calculate the academic activity hours. */
-  formulaName: string;
-}
-export function deserializeAcademicActivityDto(json: string): AcademicActivityDto {
-  const data = JSON.parse(json) as AcademicActivityDto;
-  initAcademicActivityDto(data);
-  return data;
-}
-export function initAcademicActivityDto(_data: AcademicActivityDto) {
-    return _data;
-}
-export function serializeAcademicActivityDto(_data: AcademicActivityDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeAcademicActivityDto(_data as AcademicActivityDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeAcademicActivityDto(_data: AcademicActivityDto): AcademicActivityDto {
-  const data: Record<string, any> = { ..._data };
-  return data as AcademicActivityDto;
 }
 export enum TableType {
     Summary = "Summary",

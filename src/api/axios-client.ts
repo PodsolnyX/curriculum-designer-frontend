@@ -20,6 +20,12 @@ export * as ValidationQuery from './axios-client/ValidationQuery';
 
 
 
+export * as StatisticsClient from './axios-client/StatisticsClient';
+
+export * as StatisticsQuery from './axios-client/StatisticsQuery';
+
+
+
 export * as SemestersClient from './axios-client/SemestersClient';
 
 export * as SemestersQuery from './axios-client/SemestersQuery';
@@ -209,6 +215,9 @@ export function initPersister() {
   
   addResultTypeFactory('ValidationClient___getValidationErrors', (data: any) => Types.initValidationError(data));
   addResultTypeFactory('ValidationClient___getValidators', (data: any) => Types.initValidatorsDto(data));
+
+
+  addResultTypeFactory('StatisticsClient___getStatistics', (data: any) => Types.initStatisticsDto(data));
 
 
   addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));

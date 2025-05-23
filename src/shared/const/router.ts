@@ -8,6 +8,7 @@ export enum AppRoutes {
     COMPETENCIES = 'competencies',
     SETTINGS = 'settings',
     DEPARTMENTS = 'departments',
+    ANALYTICS = 'analytics',
     NOT_FOUND = 'not_found'
 }
 
@@ -28,6 +29,8 @@ export const getRoutePlanSettings = (id: string | number) => `/curriculum/${id}/
 export const getRoutePlanCompetencies = (id: string | number) => `/curriculum/${id}/competencies`;
 
 export const getRoutePlanDepartments = (id: string | number) => `/curriculum/${id}/departments`;
+
+export const getRoutePlanAnalytics = (id: string | number) => `/curriculum/${id}/analytics`;
 
 export const AppRouteByPathPattern: Record<string, AppRoutes> = {
     [getRouteMain()]: AppRoutes.MAIN,

@@ -2,7 +2,7 @@ import {
     AppRoutes,
     getRouteLogin,
     getRouteMain,
-    getRoutePlan,
+    getRoutePlan, getRoutePlanAnalytics,
     getRoutePlanCompetencies,
     getRoutePlanDepartments,
     getRoutePlanSettings,
@@ -20,6 +20,7 @@ import PlanDepartmentPage from "@/pages/planDepartmentPage/PlanDepartmentPage.ts
 import LoginPage from "@/pages/loginPage/LoginPage.tsx";
 import NotFound from "@/pages/notFound/NotFound.tsx";
 import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
+import PlanAnalyticsPage from "@/pages/planAnalyticsPage/PlanAnalyticsPage.tsx";
 
 export const routeConfig = (isAuth: boolean): Record<AppRoutes, AppRoutesProps> => {
     return ({
@@ -55,6 +56,11 @@ export const routeConfig = (isAuth: boolean): Record<AppRoutes, AppRoutesProps> 
         [AppRoutes.SETTINGS]: {
             path: getRoutePlanSettings(":id"),
             element: <PlanSettingsPage/>,
+            authOnly: true
+        },
+        [AppRoutes.ANALYTICS]: {
+            path: getRoutePlanAnalytics(":id"),
+            element: <PlanAnalyticsPage/>,
             authOnly: true
         },
         [AppRoutes.COMPETENCIES]: {
