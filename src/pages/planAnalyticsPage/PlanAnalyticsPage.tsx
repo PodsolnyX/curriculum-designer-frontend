@@ -82,7 +82,7 @@ const PlanAnalyticsPage = () => {
                     </div>
                     <div className={"flex flex-col align-center justify-center gap-2 shadow w-max p-3 px-8 rounded-lg"}>
                         <Typography.Text type={"secondary"}>ППС ставки</Typography.Text>
-                        <Typography.Text className={"text-3xl"}>{statistic?.pps?.toFixed(3) * 4 || 0}</Typography.Text>
+                        <Typography.Text className={"text-3xl"}>{statistic?.pps?.toFixed(3) || 0}</Typography.Text>
                     </div>
                 </div>
                 <Table
