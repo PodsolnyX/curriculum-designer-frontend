@@ -255,6 +255,35 @@ export function setGetAtomDataByQueryId(queryClient: QueryClient, queryKey: Quer
   queryClient.setQueryData(queryKey, updater);
 }
     
+export function bulkUpdateAtomUrl(): string {
+  let url_ = getBaseUrl() + "/api/atom/bulk";
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function bulkUpdateAtomMutationKey(): MutationKey {
+  return trimArrayEnd([
+      'AtomClient',
+      'bulkUpdateAtom',
+    ]);
+}
+
+/**
+ * Bulk update atom
+ */
+export function useBulkUpdateAtomMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, Types.BulkUpdateAtomsDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.BulkUpdateAtomsDto, TContext> {
+  const key = bulkUpdateAtomMutationKey();
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto) => Client.bulkUpdateAtom(bulkUpdateAtomsDto),
+    mutationKey: key,
+  });
+}
+  
 export function getAtomsByCurriculumUrl(curriculumId: number, hasNoParentModule?: boolean | undefined): string {
   let url_ = getBaseUrl() + "/api/atom/by-curriculum/{curriculumId}?";
 if (curriculumId === undefined || curriculumId === null)

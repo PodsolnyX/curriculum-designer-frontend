@@ -13,7 +13,7 @@ export function roundNumberToPlaces(value: number | undefined, decimalPlaces: nu
 export function byteToSize(bytes: number): string {
     if (bytes === 0) return '0 B';
     const k = 1024;
-    let units = ['B', 'KB', 'MB', 'GB'];
-    let digit = Math.floor(Math.log(bytes) / Math.log(k));
+    const units = ['B', 'KB', 'MB', 'GB'];
+    const digit = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, digit)).toFixed(2)) + ' ' + units[digit];
 }

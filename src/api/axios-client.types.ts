@@ -599,11 +599,73 @@ export function prepareSerializeCreateCurriculumDto(_data: CreateCurriculumDto):
   const data: Record<string, any> = { ..._data };
   return data as CreateCurriculumDto;
 }
+export interface CurriculumShortDto  {
+  id: number;
+  name: string;
+  status: CurriculumStatusType;
+}
+export function deserializeCurriculumShortDto(json: string): CurriculumShortDto {
+  const data = JSON.parse(json) as CurriculumShortDto;
+  initCurriculumShortDto(data);
+  return data;
+}
+export function initCurriculumShortDto(_data: CurriculumShortDto) {
+  if (_data) {
+    _data.status = _data["status"];
+  }
+  return _data;
+}
+export function serializeCurriculumShortDto(_data: CurriculumShortDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeCurriculumShortDto(_data as CurriculumShortDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCurriculumShortDto(_data: CurriculumShortDto): CurriculumShortDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CurriculumShortDto;
+}
+/** Status of a curriculum. */
+export enum CurriculumStatusType {
+    Draft = "Draft",
+    ForApproval = "ForApproval",
+    Approved = "Approved",
+    ActualForRecruitment = "ActualForRecruitment",
+    ActualWithoutRecruitment = "ActualWithoutRecruitment",
+    Completed = "Completed",
+    Archived = "Archived",
+}
+export interface UpdateCurriculumDto  {
+  name?: string | null;
+  status?: CurriculumStatusType | null;
+}
+export function deserializeUpdateCurriculumDto(json: string): UpdateCurriculumDto {
+  const data = JSON.parse(json) as UpdateCurriculumDto;
+  initUpdateCurriculumDto(data);
+  return data;
+}
+export function initUpdateCurriculumDto(_data: UpdateCurriculumDto) {
+  if (_data) {
+    _data.status = _data["status"];
+  }
+  return _data;
+}
+export function serializeUpdateCurriculumDto(_data: UpdateCurriculumDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeUpdateCurriculumDto(_data as UpdateCurriculumDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeUpdateCurriculumDto(_data: UpdateCurriculumDto): UpdateCurriculumDto {
+  const data: Record<string, any> = { ..._data };
+  return data as UpdateCurriculumDto;
+}
 export interface CurriculumDto  {
   id: number;
   name: string;
   semesters: SemesterDto[];
   settings: CurriculumSettingsDto;
+  status: CurriculumStatusType;
 }
 export function deserializeCurriculumDto(json: string): CurriculumDto {
   const data = JSON.parse(json) as CurriculumDto;
@@ -618,6 +680,7 @@ export function initCurriculumDto(_data: CurriculumDto) {
       );
     }
     _data.settings = _data["settings"] && initCurriculumSettingsDto(_data["settings"]);
+    _data.status = _data["status"];
   }
   return _data;
 }
@@ -666,28 +729,6 @@ export function prepareSerializeCurriculumSettingsDto(_data: CurriculumSettingsD
 export enum CompetenceDistributionType {
     Competence = "Competence",
     CompetenceIndicator = "CompetenceIndicator",
-}
-export interface CurriculumShortDto  {
-  id: number;
-  name: string;
-}
-export function deserializeCurriculumShortDto(json: string): CurriculumShortDto {
-  const data = JSON.parse(json) as CurriculumShortDto;
-  initCurriculumShortDto(data);
-  return data;
-}
-export function initCurriculumShortDto(_data: CurriculumShortDto) {
-    return _data;
-}
-export function serializeCurriculumShortDto(_data: CurriculumShortDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeCurriculumShortDto(_data as CurriculumShortDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeCurriculumShortDto(_data: CurriculumShortDto): CurriculumShortDto {
-  const data: Record<string, any> = { ..._data };
-  return data as CurriculumShortDto;
 }
 export interface SetCurriculumSettingsDto  {
   competenceDistributionType: CompetenceDistributionType;
@@ -1107,6 +1148,33 @@ export function serializeUpdateAtomDto(_data: UpdateAtomDto | undefined) {
 export function prepareSerializeUpdateAtomDto(_data: UpdateAtomDto): UpdateAtomDto {
   const data: Record<string, any> = { ..._data };
   return data as UpdateAtomDto;
+}
+/** Dto for multiple atoms update */
+export interface BulkUpdateAtomsDto  {
+  updateAtomDtos?: { [key: string]: UpdateAtomDto; };
+}
+export function deserializeBulkUpdateAtomsDto(json: string): BulkUpdateAtomsDto {
+  const data = JSON.parse(json) as BulkUpdateAtomsDto;
+  initBulkUpdateAtomsDto(data);
+  return data;
+}
+export function initBulkUpdateAtomsDto(_data: BulkUpdateAtomsDto) {
+    return _data;
+}
+export function serializeBulkUpdateAtomsDto(_data: BulkUpdateAtomsDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeBulkUpdateAtomsDto(_data as BulkUpdateAtomsDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeBulkUpdateAtomsDto(_data: BulkUpdateAtomsDto): BulkUpdateAtomsDto {
+  const data: Record<string, any> = { ..._data };
+  if (_data.updateAtomDtos) {
+    for (let key in _data.updateAtomDtos) {
+            (<any>data["updateAtomDtos"])[key] = _data.updateAtomDtos[key] && prepareSerializeUpdateAtomDto(_data.updateAtomDtos[key]);
+    }
+}
+  return data as BulkUpdateAtomsDto;
 }
 export interface SetAtomCompetencesDto  {
   competenceIds: number[];

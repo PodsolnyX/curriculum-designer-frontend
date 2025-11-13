@@ -123,6 +123,63 @@ function processSearchCurriculums(response: AxiosResponse): Promise<Types.Curric
     return Promise.resolve<Types.CurriculumShortDto[]>(null as any);
 }
 
+export function updateCurriculum(curriculumId: number, updateCurriculumDto: Types.UpdateCurriculumDto, config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumShortDto> {
+    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}";
+    if (curriculumId === undefined || curriculumId === null)
+      throw new Error("The parameter 'curriculumId' must be defined.");
+    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeUpdateCurriculumDto(updateCurriculumDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigUpdateCurriculum,
+        ...config,
+        data: content_,
+        method: "PATCH",
+        url: url_,
+        headers: {
+            ..._requestConfigUpdateCurriculum?.headers,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processUpdateCurriculum(_response);
+    });
+}
+
+function processUpdateCurriculum(response: AxiosResponse): Promise<Types.CurriculumShortDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        let result200: any = null;
+        let resultData200  = _responseText;
+        result200 = Types.initCurriculumShortDto(resultData200);
+        return Promise.resolve<Types.CurriculumShortDto>(result200);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<Types.CurriculumShortDto>(null as any);
+}
+
 export function getCurriculum(id: number, config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumDto> {
     let url_ = getBaseUrl() + "/api/curriculum/{id}";
     if (id === undefined || id === null)
@@ -297,6 +354,17 @@ export function setSearchCurriculumsRequestConfig(value: Partial<AxiosRequestCon
 }
 export function patchSearchCurriculumsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigSearchCurriculums = patch(_requestConfigSearchCurriculums ?? {});
+}
+
+let _requestConfigUpdateCurriculum: Partial<AxiosRequestConfig> | null;
+export function getUpdateCurriculumRequestConfig() {
+  return _requestConfigUpdateCurriculum;
+}
+export function setUpdateCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigUpdateCurriculum = value;
+}
+export function patchUpdateCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigUpdateCurriculum = patch(_requestConfigUpdateCurriculum ?? {});
 }
 
 let _requestConfigGetCurriculum: Partial<AxiosRequestConfig> | null;

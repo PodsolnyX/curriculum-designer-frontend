@@ -19,6 +19,10 @@ export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 
+export type UpdateCurriculumCurriculumQueryParameters = {
+  curriculumId: number ;
+}
+
 export type GetCurriculumCurriculumQueryParameters = {
   id: number ;
 }
@@ -114,6 +118,53 @@ export function setSearchCurriculumsDataByQueryId(queryClient: QueryClient, quer
   queryClient.setQueryData(queryKey, updater);
 }
     
+export function updateCurriculumUrl(curriculumId: number): string {
+  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}";
+if (curriculumId === undefined || curriculumId === null)
+  throw new Error("The parameter 'curriculumId' must be defined.");
+url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
+  url_ = url_.replace(/[?&]$/, "");
+  return url_;
+}
+
+export function updateCurriculumMutationKey(curriculumId: number): MutationKey {
+  return trimArrayEnd([
+      'CurriculumClient',
+      'updateCurriculum',
+      curriculumId as any,
+    ]);
+}
+
+export function useUpdateCurriculumMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<Types.CurriculumShortDto, unknown, Types.UpdateCurriculumDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.CurriculumShortDto, unknown, Types.UpdateCurriculumDto, TContext> {
+  const key = updateCurriculumMutationKey(curriculumId);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+  return useMutation({
+    ...options,
+    mutationFn: (updateCurriculumDto: Types.UpdateCurriculumDto) => Client.updateCurriculum(curriculumId, updateCurriculumDto),
+    mutationKey: key,
+  });
+}
+  
+type UpdateCurriculum__MutationParameters = UpdateCurriculumCurriculumQueryParameters & {
+  updateCurriculumDto: Types.UpdateCurriculumDto;
+}
+
+export function useUpdateCurriculumMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.CurriculumShortDto, unknown, UpdateCurriculum__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateCurriculumCurriculumQueryParameters}): UseMutationResult<Types.CurriculumShortDto, unknown, UpdateCurriculum__MutationParameters, TContext> {
+  const key = updateCurriculumMutationKey(options?.parameters?.curriculumId!);
+  
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+  
+return useMutation({
+  ...options, 
+  mutationFn: (data: UpdateCurriculum__MutationParameters) => Client.updateCurriculum(data.curriculumId ?? options?.parameters?.curriculumId!, data.updateCurriculumDto),
+  mutationKey: key,
+});
+}
+  
 export function getCurriculumUrl(id: number): string {
   let url_ = getBaseUrl() + "/api/curriculum/{id}";
 if (id === undefined || id === null)

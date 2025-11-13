@@ -50,8 +50,7 @@ export const setupRefreshInterceptor = (
 };
 
 const instance = axios.create({
-    // baseURL: `${import.meta.env.VITE_API_URL}/`,
-    baseURL: `${window.location.origin}/`,
+    baseURL: `${import.meta.env.VITE_API_URL ?? window.location.origin}/`,
     headers: {'Authorization': `Bearer ${getAccessToken()}`}
 });
 

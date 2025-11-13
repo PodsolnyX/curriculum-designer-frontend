@@ -4,9 +4,9 @@ import {Menu, MenuProps, Typography} from "antd";
 import {useGetCurriculumQuery} from "@/api/axios-client/CurriculumQuery.ts";
 import {useParams} from "react-router-dom";
 import React, {useState} from "react";
-import ActivityTab from "@/pages/planSettings/ActivityTab.tsx";
-import CommonSettingTab from "@/pages/planSettings/CommonSettingTab.tsx";
-import ValidationTab from "@/pages/planSettings/ValidationTab.tsx";
+import ActivityTab from "@/pages/PlanSettings/ui/ActivityTab/ActivityTab.tsx";
+import CommonSettingsTab from "@/pages/PlanSettings/ui/CommonSettingsTab/CommonSettingsTab.tsx";
+import ValidationTab from "@/pages/PlanSettings/ui/ValidationTab/ValidationTab.tsx";
 
 const PlanSettingsPage = () => {
 
@@ -38,7 +38,7 @@ const PlanSettingsPage = () => {
     }
 
     const Tabs: Record<SettingsTab, React.ReactNode> = {
-        [SettingsTab.Common]: <CommonSettingTab/>,
+        [SettingsTab.Common]: <CommonSettingsTab/>,
         [SettingsTab.Activity]: <ActivityTab/>,
         [SettingsTab.Validation]: <ValidationTab/>
     }

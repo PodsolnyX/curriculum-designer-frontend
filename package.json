@@ -4,12 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "local": "cross-env VITE_API_URL=http://localhost:5059 vite",
+    "start:local": "vite",
+    "start:remote": "cross-env VITE_API_URL=https://curriculum-designer.markridge.ru vite",
+    "typecheck:local": "tsc && eslint .",
+    "typecheck:ci": "tsc && eslint . --format=@gitlab-formatters/gitlab --output-file=gl-codequality.json",
     "build": "vite build && npx import-meta-env -x .env.example -p ./dist/*",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api-client": "react-query-swagger openapi2tsclient /tanstack /input:http://45.142.122.53/swagger/v1/swagger.json /output:src/api/axios-client.ts /template:Axios /serviceHost:. /minimal"
+    "generate-api-client:remote": "react-query-swagger openapi2tsclient /tanstack /input:https://curriculum-designer.markridge.ru/swagger/v1/swagger.json /output:src/api/axios-client.ts /template:Axios /serviceHost:. /minimal",
+    "generate-api-client:local": "react-query-swagger openapi2tsclient /tanstack /input:https://localhost:42360/swagger/v1/swagger.json /output:src/api/axios-client.ts /template:Axios /serviceHost:. /minimal"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
@@ -34,22 +37,27 @@
     "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^7.0.1",
     "react-zoom-pan-pinch": "^3.6.1",
-    "recharts": "^2.15.3"
+    "recharts": "^2.15.3",
+    "vite-plugin-mkcert": "^1.17.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@gitlab-formatters/eslint-formatter-gitlab": "^1.0.1",
     "@import-meta-env/cli": "^0.6.8",
     "@import-meta-env/unplugin": "^0.5.1",
+    "@types/node": "^24.5.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
+    "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "^9.13.0",
+    "eslint": "^9.35.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "postcss": "^8.4.49",
+    "prettier": "^3.6.2",
     "react-query-swagger": "^15.12.3",
     "sass": "^1.81.0",
     "tailwindcss": "^3.4.15",

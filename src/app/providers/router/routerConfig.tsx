@@ -10,17 +10,17 @@ import {
     getRoutePlanTitle, getRouteRegister
 } from "@/shared/const/router";
 import {AppRoutesProps} from "@/app/providers/router/AppRouter.tsx";
-import PlanPage from "@/pages/planPage/PlanPage.tsx";
-import PlansListPage from "@/pages/plansListPage/PlansaListPage.tsx";
-import PlanTitlePage from "@/pages/planTitlePage/PlanTitlePage.tsx";
-import PlanCompetenciesPage from "@/pages/planCompetenciesPage/PlanCompetenciesPage.tsx";
-import PlanSettingsPage from "@/pages/planSettings/PlanSettingsPage.tsx";
-import PlanTablePage from "@/pages/planTablePage/PlanTablePage.tsx";
-import PlanDepartmentPage from "@/pages/planDepartmentPage/PlanDepartmentPage.tsx";
-import LoginPage from "@/pages/loginPage/LoginPage.tsx";
-import NotFound from "@/pages/notFound/NotFound.tsx";
-import RegisterPage from "@/pages/registerPage/RegisterPage.tsx";
-import PlanAnalyticsPage from "@/pages/planAnalyticsPage/PlanAnalyticsPage.tsx";
+import PlanViewPage from "@/pages/PlanView/PlanViewPage.tsx";
+import PlansListPage from "@/pages/PlansList/PlansListPage.tsx";
+import PlanTitlePage from "@/pages/PlanTitle/PlanTitlePage.tsx";
+import PlanCompetenciesPage from "@/pages/PlanCompetencies/PlanCompetenciesPage.tsx";
+import PlanSettingsPage from "@/pages/PlanSettings/PlanSettingsPage.tsx";
+import PlanTablePage from "@/pages/PlanTableView/PlanTablePage.tsx";
+import PlanDepartmentsPage from "@/pages/PlanDepartments/PlanDepartmentsPage.tsx";
+import LoginPage from "@/pages/Login/LoginPage.tsx";
+import NotFound from "@/pages/NotFound/NotFound.tsx";
+import RegisterPage from "@/pages/Register/RegisterPage.tsx";
+import PlanAnalyticsPage from "@/pages/PlanAnalytics/PlanAnalyticsPage.tsx";
 
 export const routeConfig = (isAuth: boolean): Record<AppRoutes, AppRoutesProps> => {
     return ({
@@ -40,7 +40,7 @@ export const routeConfig = (isAuth: boolean): Record<AppRoutes, AppRoutesProps> 
         },
         [AppRoutes.PLAN]: {
             path: getRoutePlan(":id"),
-            element: <PlanPage/>,
+            element: <PlanViewPage/>,
             authOnly: true
         },
         [AppRoutes.PLAN_TABLE]: {
@@ -70,7 +70,7 @@ export const routeConfig = (isAuth: boolean): Record<AppRoutes, AppRoutesProps> 
         },
         [AppRoutes.DEPARTMENTS]: {
             path: getRoutePlanDepartments(":id"),
-            element: <PlanDepartmentPage/>,
+            element: <PlanDepartmentsPage/>,
             authOnly: true
         },
         [AppRoutes.NOT_FOUND]: {

@@ -237,6 +237,59 @@ function processGetAtom(response: AxiosResponse): Promise<Types.AtomDto> {
 }
 
 /**
+ * Bulk update atom
+ */
+export function bulkUpdateAtom(bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
+    let url_ = getBaseUrl() + "/api/atom/bulk";
+      url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = Types.serializeBulkUpdateAtomsDto(bulkUpdateAtomsDto);
+
+    let options_: AxiosRequestConfig = {
+        ..._requestConfigBulkUpdateAtom,
+        ...config,
+        data: content_,
+        method: "PATCH",
+        url: url_,
+        headers: {
+            ..._requestConfigBulkUpdateAtom?.headers,
+            "Content-Type": "application/json",
+        }
+    };
+
+    return getAxios().request(options_).catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+            return _error.response;
+        } else {
+            throw _error;
+        }
+    }).then((_response: AxiosResponse) => {
+        return processBulkUpdateAtom(_response);
+    });
+}
+
+function processBulkUpdateAtom(response: AxiosResponse): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === "object") {
+        for (let k in response.headers) {
+            if (response.headers.hasOwnProperty(k)) {
+                _headers[k] = response.headers[k];
+            }
+        }
+    }
+    if (status === 200) {
+        const _responseText = response.data;
+        return Promise.resolve<void>(null as any);
+
+    } else if (status !== 200 && status !== 204) {
+        const _responseText = response.data;
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+    }
+    return Promise.resolve<void>(null as any);
+}
+
+/**
  * Get atoms of a curriculum
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
@@ -342,6 +395,17 @@ export function setGetAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
 }
 export function patchGetAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
   _requestConfigGetAtom = patch(_requestConfigGetAtom ?? {});
+}
+
+let _requestConfigBulkUpdateAtom: Partial<AxiosRequestConfig> | null;
+export function getBulkUpdateAtomRequestConfig() {
+  return _requestConfigBulkUpdateAtom;
+}
+export function setBulkUpdateAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
+  _requestConfigBulkUpdateAtom = value;
+}
+export function patchBulkUpdateAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+  _requestConfigBulkUpdateAtom = patch(_requestConfigBulkUpdateAtom ?? {});
 }
 
 let _requestConfigGetAtomsByCurriculum: Partial<AxiosRequestConfig> | null;

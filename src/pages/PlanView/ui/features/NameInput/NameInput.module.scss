@@ -1,0 +1,23 @@
+
+.InputContainer {
+  position: relative;
+}
+
+.FloatingInput {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-height: 80px;
+  height: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  resize: none;
+  outline: none;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2);
+  border: 1px solid #ececec;
+  background: white;
+  font-size: 12px;
+  z-index: 100;
+  color: black;
+}
