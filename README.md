@@ -1,50 +1,10 @@
-# React + TypeScript + Vite
+## Конструктор учебных планов
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Предназначен для создания учебных планов университета в более современной и удобной форме в отличие от своих аналогов с табличным представлением.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+<img width="1917" height="939" alt="image" src="https://github.com/user-attachments/assets/84b3d7fc-5de1-4655-8156-3246c3265469" />
+<img width="1918" height="937" alt="image" src="https://github.com/user-attachments/assets/5737bb19-efaf-4f90-a1c3-3018bcfb7b1e" />
+<img width="1917" height="936" alt="image" src="https://github.com/user-attachments/assets/4f7c7af4-776a-4d84-bf36-a5655f62008c" />
+<img width="1917" height="936" alt="image" src="https://github.com/user-attachments/assets/69a6b797-92d2-4c86-a11e-f7a0bcdb5c02" />
+<img width="1916" height="940" alt="image" src="https://github.com/user-attachments/assets/12c37683-ce24-474e-b5da-ca3d1dc99747" />
+<img width="1919" height="941" alt="image" src="https://github.com/user-attachments/assets/9c31baef-9c0b-4dcc-b6fe-9ee3cafc81a7" />
