@@ -13,312 +13,368 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function register(registerDto: Types.RegisterDto, config?: AxiosRequestConfig | undefined): Promise<Types.TokenDto> {
-    let url_ = getBaseUrl() + "/api/auth/register";
-      url_ = url_.replace(/[?&]$/, "");
+export function register(
+  registerDto: Types.RegisterDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.TokenDto> {
+  let url_ = getBaseUrl() + '/api/auth/register';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeRegisterDto(registerDto);
+  const content_ = Types.serializeRegisterDto(registerDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigRegister,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigRegister?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigRegister,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigRegister?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processRegister(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processRegister(_response);
     });
 }
 
 function processRegister(response: AxiosResponse): Promise<Types.TokenDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initTokenDto(resultData200);
-        return Promise.resolve<Types.TokenDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.TokenDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initTokenDto(resultData200);
+    return Promise.resolve<Types.TokenDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.TokenDto>(null as any);
 }
 
-export function login(loginDto: Types.LoginDto, config?: AxiosRequestConfig | undefined): Promise<Types.TokenDto> {
-    let url_ = getBaseUrl() + "/api/auth/login";
-      url_ = url_.replace(/[?&]$/, "");
+export function login(
+  loginDto: Types.LoginDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.TokenDto> {
+  let url_ = getBaseUrl() + '/api/auth/login';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeLoginDto(loginDto);
+  const content_ = Types.serializeLoginDto(loginDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigLogin,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigLogin?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigLogin,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigLogin?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processLogin(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processLogin(_response);
     });
 }
 
 function processLogin(response: AxiosResponse): Promise<Types.TokenDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initTokenDto(resultData200);
-        return Promise.resolve<Types.TokenDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.TokenDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initTokenDto(resultData200);
+    return Promise.resolve<Types.TokenDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.TokenDto>(null as any);
 }
 
-export function refresh(tokenDto: Types.TokenDto, config?: AxiosRequestConfig | undefined): Promise<Types.TokenDto> {
-    let url_ = getBaseUrl() + "/api/auth/refresh";
-      url_ = url_.replace(/[?&]$/, "");
+export function refresh(
+  tokenDto: Types.TokenDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.TokenDto> {
+  let url_ = getBaseUrl() + '/api/auth/refresh';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeTokenDto(tokenDto);
+  const content_ = Types.serializeTokenDto(tokenDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigRefresh,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigRefresh?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigRefresh,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigRefresh?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processRefresh(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processRefresh(_response);
     });
 }
 
 function processRefresh(response: AxiosResponse): Promise<Types.TokenDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initTokenDto(resultData200);
-        return Promise.resolve<Types.TokenDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.TokenDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initTokenDto(resultData200);
+    return Promise.resolve<Types.TokenDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.TokenDto>(null as any);
 }
 
 export function logout(config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/auth/logout";
-      url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/logout';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigLogout,
-        ...config,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigLogout?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigLogout,
+    ...config,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigLogout?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processLogout(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processLogout(_response);
     });
 }
 
 function processLogout(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function changePassword(changePasswordDto: Types.ChangePasswordDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/auth/change-password";
-      url_ = url_.replace(/[?&]$/, "");
+export function changePassword(
+  changePasswordDto: Types.ChangePasswordDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/auth/change-password';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeChangePasswordDto(changePasswordDto);
+  const content_ = Types.serializeChangePasswordDto(changePasswordDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigChangePassword,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigChangePassword?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigChangePassword,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigChangePassword?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processChangePassword(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processChangePassword(_response);
     });
 }
 
 function processChangePassword(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function getUser(config?: AxiosRequestConfig | undefined): Promise<Types.UserDto> {
-    let url_ = getBaseUrl() + "/api/auth/profile";
-      url_ = url_.replace(/[?&]$/, "");
+export function getUser(
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.UserDto> {
+  let url_ = getBaseUrl() + '/api/auth/profile';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetUser,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetUser?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetUser,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetUser?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetUser(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetUser(_response);
     });
 }
 
 function processGetUser(response: AxiosResponse): Promise<Types.UserDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initUserDto(resultData200);
-        return Promise.resolve<Types.UserDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.UserDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initUserDto(resultData200);
+    return Promise.resolve<Types.UserDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.UserDto>(null as any);
 }
 let _requestConfigRegister: Partial<AxiosRequestConfig> | null;
 export function getRegisterRequestConfig() {
@@ -327,7 +383,9 @@ export function getRegisterRequestConfig() {
 export function setRegisterRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigRegister = value;
 }
-export function patchRegisterRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchRegisterRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigRegister = patch(_requestConfigRegister ?? {});
 }
 
@@ -338,7 +396,9 @@ export function getLoginRequestConfig() {
 export function setLoginRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigLogin = value;
 }
-export function patchLoginRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchLoginRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigLogin = patch(_requestConfigLogin ?? {});
 }
 
@@ -349,7 +409,9 @@ export function getRefreshRequestConfig() {
 export function setRefreshRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigRefresh = value;
 }
-export function patchRefreshRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchRefreshRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigRefresh = patch(_requestConfigRefresh ?? {});
 }
 
@@ -360,7 +422,9 @@ export function getLogoutRequestConfig() {
 export function setLogoutRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigLogout = value;
 }
-export function patchLogoutRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchLogoutRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigLogout = patch(_requestConfigLogout ?? {});
 }
 
@@ -368,10 +432,14 @@ let _requestConfigChangePassword: Partial<AxiosRequestConfig> | null;
 export function getChangePasswordRequestConfig() {
   return _requestConfigChangePassword;
 }
-export function setChangePasswordRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setChangePasswordRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigChangePassword = value;
 }
-export function patchChangePasswordRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchChangePasswordRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigChangePassword = patch(_requestConfigChangePassword ?? {});
 }
 
@@ -382,6 +450,8 @@ export function getGetUserRequestConfig() {
 export function setGetUserRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigGetUser = value;
 }
-export function patchGetUserRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetUserRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetUser = patch(_requestConfigGetUser ?? {});
 }

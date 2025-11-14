@@ -16,342 +16,405 @@ import { getAxios, getBaseUrl } from './helpers';
 /**
  * Create atom
  */
-export function createAtom(createAtomDto: Types.CreateAtomDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/api/atom";
-      url_ = url_.replace(/[?&]$/, "");
+export function createAtom(
+  createAtomDto: Types.CreateAtomDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<number> {
+  let url_ = getBaseUrl() + '/api/atom';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateAtomDto(createAtomDto);
+  const content_ = Types.serializeCreateAtomDto(createAtomDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateAtom,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateAtom?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateAtom,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateAtom?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateAtom(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateAtom(_response);
     });
 }
 
 function processCreateAtom(response: AxiosResponse): Promise<number> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-    
-        result200 = resultData200;
-    
-        return Promise.resolve<number>(result200);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
 
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<number>(null as any);
+    result200 = resultData200;
+
+    return Promise.resolve<number>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<number>(null as any);
 }
 
 /**
  * Update atom
  */
-export function updateAtom(atomId: number, updateAtomDto: Types.UpdateAtomDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateAtom(
+  atomId: number,
+  updateAtomDto: Types.UpdateAtomDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateAtomDto(updateAtomDto);
+  const content_ = Types.serializeUpdateAtomDto(updateAtomDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateAtom,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateAtom?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateAtom,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateAtom?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateAtom(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateAtom(_response);
     });
 }
 
 function processUpdateAtom(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
  * Delete atom
  */
-export function deleteAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteAtom(
+  atomId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteAtom,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteAtom?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteAtom,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteAtom?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteAtom(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteAtom(_response);
     });
 }
 
 function processDeleteAtom(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
  * Get atom by id
  */
-export function getAtom(atomId: number, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getAtom(
+  atomId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.AtomDto> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetAtom,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetAtom?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetAtom,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetAtom?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetAtom(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetAtom(_response);
     });
 }
 
 function processGetAtom(response: AxiosResponse): Promise<Types.AtomDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initAtomDto(resultData200);
-        return Promise.resolve<Types.AtomDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.AtomDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initAtomDto(resultData200);
+    return Promise.resolve<Types.AtomDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.AtomDto>(null as any);
 }
 
 /**
  * Bulk update atom
  */
-export function bulkUpdateAtom(bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/bulk";
-      url_ = url_.replace(/[?&]$/, "");
+export function bulkUpdateAtom(
+  bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/bulk';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeBulkUpdateAtomsDto(bulkUpdateAtomsDto);
+  const content_ = Types.serializeBulkUpdateAtomsDto(bulkUpdateAtomsDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigBulkUpdateAtom,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigBulkUpdateAtom?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigBulkUpdateAtom,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigBulkUpdateAtom?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processBulkUpdateAtom(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processBulkUpdateAtom(_response);
     });
 }
 
 function processBulkUpdateAtom(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
  * Get atoms of a curriculum
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
-export function getAtomsByCurriculum(curriculumId: number, hasNoParentModule?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.AtomDto[]> {
-    let url_ = getBaseUrl() + "/api/atom/by-curriculum/{curriculumId}?";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-    if (hasNoParentModule === null)
-        throw new Error("The parameter 'hasNoParentModule' cannot be null.");
-    else if (hasNoParentModule !== undefined)
-        url_ += "hasNoParentModule=" + encodeURIComponent("" + hasNoParentModule) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function getAtomsByCurriculum(
+  curriculumId: number,
+  hasNoParentModule?: boolean | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.AtomDto[]> {
+  let url_ = getBaseUrl() + '/api/atom/by-curriculum/{curriculumId}?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (hasNoParentModule === null)
+    throw new Error("The parameter 'hasNoParentModule' cannot be null.");
+  else if (hasNoParentModule !== undefined)
+    url_ +=
+      'hasNoParentModule=' + encodeURIComponent('' + hasNoParentModule) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetAtomsByCurriculum,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetAtomsByCurriculum?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetAtomsByCurriculum,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetAtomsByCurriculum?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetAtomsByCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetAtomsByCurriculum(_response);
     });
 }
 
-function processGetAtomsByCurriculum(response: AxiosResponse): Promise<Types.AtomDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetAtomsByCurriculum(
+  response: AxiosResponse,
+): Promise<Types.AtomDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initAtomDto(item)
-              );
-            }
-        return Promise.resolve<Types.AtomDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) => Types.initAtomDto(item));
     }
-    return Promise.resolve<Types.AtomDto[]>(null as any);
+    return Promise.resolve<Types.AtomDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.AtomDto[]>(null as any);
 }
 let _requestConfigCreateAtom: Partial<AxiosRequestConfig> | null;
 export function getCreateAtomRequestConfig() {
@@ -360,7 +423,9 @@ export function getCreateAtomRequestConfig() {
 export function setCreateAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigCreateAtom = value;
 }
-export function patchCreateAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchCreateAtomRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateAtom = patch(_requestConfigCreateAtom ?? {});
 }
 
@@ -371,7 +436,9 @@ export function getUpdateAtomRequestConfig() {
 export function setUpdateAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigUpdateAtom = value;
 }
-export function patchUpdateAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchUpdateAtomRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateAtom = patch(_requestConfigUpdateAtom ?? {});
 }
 
@@ -382,7 +449,9 @@ export function getDeleteAtomRequestConfig() {
 export function setDeleteAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigDeleteAtom = value;
 }
-export function patchDeleteAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteAtomRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteAtom = patch(_requestConfigDeleteAtom ?? {});
 }
 
@@ -393,7 +462,9 @@ export function getGetAtomRequestConfig() {
 export function setGetAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigGetAtom = value;
 }
-export function patchGetAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetAtomRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetAtom = patch(_requestConfigGetAtom ?? {});
 }
 
@@ -401,10 +472,14 @@ let _requestConfigBulkUpdateAtom: Partial<AxiosRequestConfig> | null;
 export function getBulkUpdateAtomRequestConfig() {
   return _requestConfigBulkUpdateAtom;
 }
-export function setBulkUpdateAtomRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setBulkUpdateAtomRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigBulkUpdateAtom = value;
 }
-export function patchBulkUpdateAtomRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchBulkUpdateAtomRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigBulkUpdateAtom = patch(_requestConfigBulkUpdateAtom ?? {});
 }
 
@@ -412,9 +487,15 @@ let _requestConfigGetAtomsByCurriculum: Partial<AxiosRequestConfig> | null;
 export function getGetAtomsByCurriculumRequestConfig() {
   return _requestConfigGetAtomsByCurriculum;
 }
-export function setGetAtomsByCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetAtomsByCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetAtomsByCurriculum = value;
 }
-export function patchGetAtomsByCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigGetAtomsByCurriculum = patch(_requestConfigGetAtomsByCurriculum ?? {});
+export function patchGetAtomsByCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetAtomsByCurriculum = patch(
+    _requestConfigGetAtomsByCurriculum ?? {},
+  );
 }

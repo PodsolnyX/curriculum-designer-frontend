@@ -13,451 +13,551 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getCompetences(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto[]> {
-    let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getCompetences(
+  curriculumId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CompetenceDto[]> {
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetCompetences,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetCompetences?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetCompetences,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetCompetences?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetCompetences(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetCompetences(_response);
     });
 }
 
-function processGetCompetences(response: AxiosResponse): Promise<Types.CompetenceDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetCompetences(
+  response: AxiosResponse,
+): Promise<Types.CompetenceDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initCompetenceDto(item)
-              );
-            }
-        return Promise.resolve<Types.CompetenceDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) => Types.initCompetenceDto(item));
     }
-    return Promise.resolve<Types.CompetenceDto[]>(null as any);
+    return Promise.resolve<Types.CompetenceDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CompetenceDto[]>(null as any);
 }
 
-export function createCompetence(curriculumId: number, createCompetenceDto: Types.CreateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
-    let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function createCompetence(
+  curriculumId: number,
+  createCompetenceDto: Types.CreateCompetenceDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CompetenceDto> {
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateCompetenceDto(createCompetenceDto);
+  const content_ = Types.serializeCreateCompetenceDto(createCompetenceDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateCompetence,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateCompetence?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateCompetence,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateCompetence?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateCompetence(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateCompetence(_response);
     });
 }
 
-function processCreateCompetence(response: AxiosResponse): Promise<Types.CompetenceDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processCreateCompetence(
+  response: AxiosResponse,
+): Promise<Types.CompetenceDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initCompetenceDto(resultData200);
-        return Promise.resolve<Types.CompetenceDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.CompetenceDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initCompetenceDto(resultData200);
+    return Promise.resolve<Types.CompetenceDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CompetenceDto>(null as any);
 }
 
-export function getCompetenceIndicators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceIndicatorDto[]> {
-    let url_ = getBaseUrl() + "/api/competence/{curriculumId}/indicator";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getCompetenceIndicators(
+  curriculumId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CompetenceIndicatorDto[]> {
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}/indicator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetCompetenceIndicators,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetCompetenceIndicators?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetCompetenceIndicators,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetCompetenceIndicators?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetCompetenceIndicators(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetCompetenceIndicators(_response);
     });
 }
 
-function processGetCompetenceIndicators(response: AxiosResponse): Promise<Types.CompetenceIndicatorDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetCompetenceIndicators(
+  response: AxiosResponse,
+): Promise<Types.CompetenceIndicatorDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initCompetenceIndicatorDto(item)
-              );
-            }
-        return Promise.resolve<Types.CompetenceIndicatorDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) =>
+        Types.initCompetenceIndicatorDto(item),
+      );
     }
-    return Promise.resolve<Types.CompetenceIndicatorDto[]>(null as any);
+    return Promise.resolve<Types.CompetenceIndicatorDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CompetenceIndicatorDto[]>(null as any);
 }
 
-export function updateCompetence(competenceId: number, updateCompetenceDto: Types.UpdateCompetenceDto, config?: AxiosRequestConfig | undefined): Promise<Types.CompetenceDto> {
-    let url_ = getBaseUrl() + "/api/competence/{competenceId}";
-    if (competenceId === undefined || competenceId === null)
-      throw new Error("The parameter 'competenceId' must be defined.");
-    url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateCompetence(
+  competenceId: number,
+  updateCompetenceDto: Types.UpdateCompetenceDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CompetenceDto> {
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateCompetenceDto(updateCompetenceDto);
+  const content_ = Types.serializeUpdateCompetenceDto(updateCompetenceDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateCompetence,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateCompetence?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateCompetence,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateCompetence?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateCompetence(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateCompetence(_response);
     });
 }
 
-function processUpdateCompetence(response: AxiosResponse): Promise<Types.CompetenceDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processUpdateCompetence(
+  response: AxiosResponse,
+): Promise<Types.CompetenceDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initCompetenceDto(resultData200);
-        return Promise.resolve<Types.CompetenceDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.CompetenceDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initCompetenceDto(resultData200);
+    return Promise.resolve<Types.CompetenceDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CompetenceDto>(null as any);
 }
 
-export function deleteCompetence(competenceId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/{competenceId}";
-    if (competenceId === undefined || competenceId === null)
-      throw new Error("The parameter 'competenceId' must be defined.");
-    url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteCompetence(
+  competenceId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteCompetence,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteCompetence?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteCompetence,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteCompetence?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteCompetence(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteCompetence(_response);
     });
 }
 
 function processDeleteCompetence(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function createIndicator(competenceId: number, createIndicatorDto: Types.CreateCompetenceIndicatorDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator";
-    if (competenceId === undefined || competenceId === null)
-      throw new Error("The parameter 'competenceId' must be defined.");
-    url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-      url_ = url_.replace(/[?&]$/, "");
+export function createIndicator(
+  competenceId: number,
+  createIndicatorDto: Types.CreateCompetenceIndicatorDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}/indicator';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateCompetenceIndicatorDto(createIndicatorDto);
+  const content_ =
+    Types.serializeCreateCompetenceIndicatorDto(createIndicatorDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateIndicator,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateIndicator?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateIndicator,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateIndicator?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateIndicator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateIndicator(_response);
     });
 }
 
 function processCreateIndicator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function updateIndicator(indicatorId: number, updateIndicatorDto: Types.UpdateCompetenceIndicatorDto, competenceId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
-    if (indicatorId === undefined || indicatorId === null)
-      throw new Error("The parameter 'indicatorId' must be defined.");
-    url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
-    if (competenceId === undefined || competenceId === null)
-      throw new Error("The parameter 'competenceId' must be defined.");
-    url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateIndicator(
+  indicatorId: number,
+  updateIndicatorDto: Types.UpdateCompetenceIndicatorDto,
+  competenceId: string,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() + '/api/competence/{competenceId}/indicator/{indicatorId}';
+  if (indicatorId === undefined || indicatorId === null)
+    throw new Error("The parameter 'indicatorId' must be defined.");
+  url_ = url_.replace('{indicatorId}', encodeURIComponent('' + indicatorId));
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateCompetenceIndicatorDto(updateIndicatorDto);
+  const content_ =
+    Types.serializeUpdateCompetenceIndicatorDto(updateIndicatorDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateIndicator,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateIndicator?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateIndicator,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateIndicator?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateIndicator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateIndicator(_response);
     });
 }
 
 function processUpdateIndicator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function deleteIndicator(indicatorId: number, competenceId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
-    if (indicatorId === undefined || indicatorId === null)
-      throw new Error("The parameter 'indicatorId' must be defined.");
-    url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
-    if (competenceId === undefined || competenceId === null)
-      throw new Error("The parameter 'competenceId' must be defined.");
-    url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteIndicator(
+  indicatorId: number,
+  competenceId: string,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() + '/api/competence/{competenceId}/indicator/{indicatorId}';
+  if (indicatorId === undefined || indicatorId === null)
+    throw new Error("The parameter 'indicatorId' must be defined.");
+  url_ = url_.replace('{indicatorId}', encodeURIComponent('' + indicatorId));
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteIndicator,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteIndicator?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteIndicator,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteIndicator?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteIndicator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteIndicator(_response);
     });
 }
 
 function processDeleteIndicator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigGetCompetences: Partial<AxiosRequestConfig> | null;
 export function getGetCompetencesRequestConfig() {
   return _requestConfigGetCompetences;
 }
-export function setGetCompetencesRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetCompetencesRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetCompetences = value;
 }
-export function patchGetCompetencesRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetCompetencesRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetCompetences = patch(_requestConfigGetCompetences ?? {});
 }
 
@@ -465,10 +565,14 @@ let _requestConfigCreateCompetence: Partial<AxiosRequestConfig> | null;
 export function getCreateCompetenceRequestConfig() {
   return _requestConfigCreateCompetence;
 }
-export function setCreateCompetenceRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateCompetenceRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateCompetence = value;
 }
-export function patchCreateCompetenceRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchCreateCompetenceRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateCompetence = patch(_requestConfigCreateCompetence ?? {});
 }
 
@@ -476,21 +580,31 @@ let _requestConfigGetCompetenceIndicators: Partial<AxiosRequestConfig> | null;
 export function getGetCompetenceIndicatorsRequestConfig() {
   return _requestConfigGetCompetenceIndicators;
 }
-export function setGetCompetenceIndicatorsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetCompetenceIndicatorsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetCompetenceIndicators = value;
 }
-export function patchGetCompetenceIndicatorsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigGetCompetenceIndicators = patch(_requestConfigGetCompetenceIndicators ?? {});
+export function patchGetCompetenceIndicatorsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetCompetenceIndicators = patch(
+    _requestConfigGetCompetenceIndicators ?? {},
+  );
 }
 
 let _requestConfigUpdateCompetence: Partial<AxiosRequestConfig> | null;
 export function getUpdateCompetenceRequestConfig() {
   return _requestConfigUpdateCompetence;
 }
-export function setUpdateCompetenceRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateCompetenceRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateCompetence = value;
 }
-export function patchUpdateCompetenceRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchUpdateCompetenceRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateCompetence = patch(_requestConfigUpdateCompetence ?? {});
 }
 
@@ -498,10 +612,14 @@ let _requestConfigDeleteCompetence: Partial<AxiosRequestConfig> | null;
 export function getDeleteCompetenceRequestConfig() {
   return _requestConfigDeleteCompetence;
 }
-export function setDeleteCompetenceRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteCompetenceRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteCompetence = value;
 }
-export function patchDeleteCompetenceRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteCompetenceRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteCompetence = patch(_requestConfigDeleteCompetence ?? {});
 }
 
@@ -509,10 +627,14 @@ let _requestConfigCreateIndicator: Partial<AxiosRequestConfig> | null;
 export function getCreateIndicatorRequestConfig() {
   return _requestConfigCreateIndicator;
 }
-export function setCreateIndicatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateIndicatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateIndicator = value;
 }
-export function patchCreateIndicatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchCreateIndicatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateIndicator = patch(_requestConfigCreateIndicator ?? {});
 }
 
@@ -520,10 +642,14 @@ let _requestConfigUpdateIndicator: Partial<AxiosRequestConfig> | null;
 export function getUpdateIndicatorRequestConfig() {
   return _requestConfigUpdateIndicator;
 }
-export function setUpdateIndicatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateIndicatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateIndicator = value;
 }
-export function patchUpdateIndicatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchUpdateIndicatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateIndicator = patch(_requestConfigUpdateIndicator ?? {});
 }
 
@@ -531,9 +657,13 @@ let _requestConfigDeleteIndicator: Partial<AxiosRequestConfig> | null;
 export function getDeleteIndicatorRequestConfig() {
   return _requestConfigDeleteIndicator;
 }
-export function setDeleteIndicatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteIndicatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteIndicator = value;
 }
-export function patchDeleteIndicatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteIndicatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteIndicator = patch(_requestConfigDeleteIndicator ?? {});
 }

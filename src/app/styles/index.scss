@@ -1,14 +1,14 @@
-@use "themes/light";
-@use "variables";
-@use "reset";
-@use "tailwindcss/base";
-@use "tailwindcss/components";
-@use "tailwindcss/utilities";
-@use "tailwindUtilities";
+@use 'themes/light';
+@use 'variables';
+@use 'reset';
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
+@use 'tailwindcss/utilities';
+@use 'tailwindUtilities';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 * {
-  font-family: "Inter", sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   //scrollbar-color: var(--color-bg-secondary) var(--color-bg-primary);
   //scrollbar-width: thin;
@@ -26,4 +26,3 @@ input {
   -webkit-appearance: none;
   color: var(--color-text-primary);
 }
-

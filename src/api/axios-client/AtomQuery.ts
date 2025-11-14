@@ -9,219 +9,276 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './AtomClient'
+import * as Client from './AtomClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type UpdateAtomAtomQueryParameters = {
-  atomId: number ;
-}
+  atomId: number;
+};
 
 export type DeleteAtomAtomQueryParameters = {
-  atomId: number ;
-}
+  atomId: number;
+};
 
 export type GetAtomAtomQueryParameters = {
-  atomId: number ;
-}
+  atomId: number;
+};
 
 export type GetAtomsByCurriculumAtomQueryParameters = {
-  curriculumId: number ;
-  hasNoParentModule?: boolean | undefined ;
-}
+  curriculumId: number;
+  hasNoParentModule?: boolean | undefined;
+};
 
 export function createAtomUrl(): string {
-  let url_ = getBaseUrl() + "/api/atom";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/atom';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function createAtomMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AtomClient',
-      'createAtom',
-    ]);
+  return trimArrayEnd(['AtomClient', 'createAtom']);
 }
 
 /**
  * Create atom
  */
-export function useCreateAtomMutation<TContext>(options?: Omit<UseMutationOptions<number, unknown, Types.CreateAtomDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<number, unknown, Types.CreateAtomDto, TContext> {
+export function useCreateAtomMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<number, unknown, Types.CreateAtomDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<number, unknown, Types.CreateAtomDto, TContext> {
   const key = createAtomMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createAtomDto: Types.CreateAtomDto) => Client.createAtom(createAtomDto),
+    mutationFn: (createAtomDto: Types.CreateAtomDto) =>
+      Client.createAtom(createAtomDto),
     mutationKey: key,
   });
 }
-  
+
 export function updateAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/api/atom/{atomId}";
-if (atomId === undefined || atomId === null)
-  throw new Error("The parameter 'atomId' must be defined.");
-url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function updateAtomMutationKey(atomId: number): MutationKey {
-  return trimArrayEnd([
-      'AtomClient',
-      'updateAtom',
-      atomId as any,
-    ]);
+  return trimArrayEnd(['AtomClient', 'updateAtom', atomId as any]);
 }
 
 /**
  * Update atom
  */
-export function useUpdateAtomMutation<TContext>(atomId: number, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateAtomDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateAtomDto, TContext> {
+export function useUpdateAtomMutation<TContext>(
+  atomId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.UpdateAtomDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.UpdateAtomDto, TContext> {
   const key = updateAtomMutationKey(atomId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (updateAtomDto: Types.UpdateAtomDto) => Client.updateAtom(atomId, updateAtomDto),
+    mutationFn: (updateAtomDto: Types.UpdateAtomDto) =>
+      Client.updateAtom(atomId, updateAtomDto),
     mutationKey: key,
   });
 }
-  
+
 type UpdateAtom__MutationParameters = UpdateAtomAtomQueryParameters & {
   updateAtomDto: Types.UpdateAtomDto;
-}
+};
 
 /**
  * Update atom
  */
-export function useUpdateAtomMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateAtom__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateAtomAtomQueryParameters}): UseMutationResult<void, unknown, UpdateAtom__MutationParameters, TContext> {
+export function useUpdateAtomMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, UpdateAtom__MutationParameters, TContext>,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateAtomAtomQueryParameters },
+): UseMutationResult<void, unknown, UpdateAtom__MutationParameters, TContext> {
   const key = updateAtomMutationKey(options?.parameters?.atomId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateAtom__MutationParameters) => Client.updateAtom(data.atomId ?? options?.parameters?.atomId!, data.updateAtomDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: UpdateAtom__MutationParameters) =>
+      Client.updateAtom(
+        data.atomId ?? options?.parameters?.atomId!,
+        data.updateAtomDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function deleteAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/api/atom/{atomId}";
-if (atomId === undefined || atomId === null)
-  throw new Error("The parameter 'atomId' must be defined.");
-url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function deleteAtomMutationKey(atomId: number): MutationKey {
-  return trimArrayEnd([
-      'AtomClient',
-      'deleteAtom',
-      atomId as any,
-    ]);
+  return trimArrayEnd(['AtomClient', 'deleteAtom', atomId as any]);
 }
 
 /**
  * Delete atom
  */
-export function useDeleteAtomMutation<TContext>(atomId: number, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+export function useDeleteAtomMutation<TContext>(
+  atomId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
   const key = deleteAtomMutationKey(atomId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.deleteAtom(atomId),
     mutationKey: key,
   });
 }
-  
-type DeleteAtom__MutationParameters = DeleteAtomAtomQueryParameters
+
+type DeleteAtom__MutationParameters = DeleteAtomAtomQueryParameters;
 
 /**
  * Delete atom
  */
-export function useDeleteAtomMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteAtom__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteAtomAtomQueryParameters}): UseMutationResult<void, unknown, DeleteAtom__MutationParameters, TContext> {
+export function useDeleteAtomMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, DeleteAtom__MutationParameters, TContext>,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: DeleteAtomAtomQueryParameters },
+): UseMutationResult<void, unknown, DeleteAtom__MutationParameters, TContext> {
   const key = deleteAtomMutationKey(options?.parameters?.atomId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: DeleteAtom__MutationParameters) => Client.deleteAtom(data.atomId ?? options?.parameters?.atomId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: DeleteAtom__MutationParameters) =>
+      Client.deleteAtom(data.atomId ?? options?.parameters?.atomId!),
+    mutationKey: key,
+  });
 }
-  
+
 export function getAtomUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/api/atom/{atomId}";
-if (atomId === undefined || atomId === null)
-  throw new Error("The parameter 'atomId' must be defined.");
-url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/atom/{atomId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getAtomDefaultOptions: Omit<UseQueryOptions<Types.AtomDto, unknown, Types.AtomDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.AtomDto, unknown, Types.AtomDto>, 'queryFn'>> = {
-};
+let getAtomDefaultOptions: Omit<
+  UseQueryOptions<Types.AtomDto, unknown, Types.AtomDto>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<UseQueryOptions<Types.AtomDto, unknown, Types.AtomDto>, 'queryFn'>
+  > = {};
 export function getGetAtomDefaultOptions() {
   return getAtomDefaultOptions;
-};
-export function setGetAtomDefaultOptions(options: typeof getAtomDefaultOptions) {
+}
+export function setGetAtomDefaultOptions(
+  options: typeof getAtomDefaultOptions,
+) {
   getAtomDefaultOptions = options;
 }
 
 export function getAtomQueryKey(atomId: number): QueryKey;
 export function getAtomQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { atomId,  } = params[0] as GetAtomAtomQueryParameters;
+    const { atomId } = params[0] as GetAtomAtomQueryParameters;
 
-    return trimArrayEnd([
-        'AtomClient',
-        'getAtom',
-        atomId as any,
-      ]);
+    return trimArrayEnd(['AtomClient', 'getAtom', atomId as any]);
   } else {
-    return trimArrayEnd([
-        'AtomClient',
-        'getAtom',
-        ...params
-      ]);
+    return trimArrayEnd(['AtomClient', 'getAtom', ...params]);
   }
 }
-export function __getAtom(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getAtom(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getAtom(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getAtom(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(dto: GetAtomAtomQueryParameters, options?: Omit<UseQueryOptions<Types.AtomDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(
+  dto: GetAtomAtomQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.AtomDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 /**
  * Get atom by id
  */
-export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(atomId: number, options?: Omit<UseQueryOptions<Types.AtomDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.AtomDto, TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(
+  atomId: number,
+  options?: Omit<
+    UseQueryOptions<Types.AtomDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(
+  ...params: any[]
+): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.AtomDto, TError, TSelectData> | undefined =
+    undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let atomId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ atomId,  } = params[0] as GetAtomAtomQueryParameters);
+      ({ atomId } = params[0] as GetAtomAtomQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -233,119 +290,179 @@ export function useGetAtomQuery<TSelectData = Types.AtomDto, TError = unknown>(.
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.AtomDto, TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getAtom(context, axiosConfig) : __getAtom,
+    queryFn: axiosConfig
+      ? (context) => __getAtom(context, axiosConfig)
+      : __getAtom,
     queryKey: getAtomQueryKey(atomId),
-    ...getAtomDefaultOptions as unknown as Omit<UseQueryOptions<Types.AtomDto, TError, TSelectData>, 'queryKey'>,
+    ...(getAtomDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.AtomDto, TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 /**
  * Get atom by id
  */
-export function setGetAtomData(queryClient: QueryClient, updater: (data: Types.AtomDto | undefined) => Types.AtomDto, atomId: number) {
-  queryClient.setQueryData(getAtomQueryKey(atomId),
-    updater
-  );
+export function setGetAtomData(
+  queryClient: QueryClient,
+  updater: (data: Types.AtomDto | undefined) => Types.AtomDto,
+  atomId: number,
+) {
+  queryClient.setQueryData(getAtomQueryKey(atomId), updater);
 }
 
 /**
  * Get atom by id
  */
-export function setGetAtomDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AtomDto | undefined) => Types.AtomDto) {
+export function setGetAtomDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.AtomDto | undefined) => Types.AtomDto,
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function bulkUpdateAtomUrl(): string {
-  let url_ = getBaseUrl() + "/api/atom/bulk";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/atom/bulk';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function bulkUpdateAtomMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AtomClient',
-      'bulkUpdateAtom',
-    ]);
+  return trimArrayEnd(['AtomClient', 'bulkUpdateAtom']);
 }
 
 /**
  * Bulk update atom
  */
-export function useBulkUpdateAtomMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, Types.BulkUpdateAtomsDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.BulkUpdateAtomsDto, TContext> {
+export function useBulkUpdateAtomMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.BulkUpdateAtomsDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.BulkUpdateAtomsDto, TContext> {
   const key = bulkUpdateAtomMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto) => Client.bulkUpdateAtom(bulkUpdateAtomsDto),
+    mutationFn: (bulkUpdateAtomsDto: Types.BulkUpdateAtomsDto) =>
+      Client.bulkUpdateAtom(bulkUpdateAtomsDto),
     mutationKey: key,
   });
 }
-  
-export function getAtomsByCurriculumUrl(curriculumId: number, hasNoParentModule?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/api/atom/by-curriculum/{curriculumId}?";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-if (hasNoParentModule === null)
+
+export function getAtomsByCurriculumUrl(
+  curriculumId: number,
+  hasNoParentModule?: boolean | undefined,
+): string {
+  let url_ = getBaseUrl() + '/api/atom/by-curriculum/{curriculumId}?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (hasNoParentModule === null)
     throw new Error("The parameter 'hasNoParentModule' cannot be null.");
-else if (hasNoParentModule !== undefined)
-    url_ += "hasNoParentModule=" + encodeURIComponent("" + hasNoParentModule) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (hasNoParentModule !== undefined)
+    url_ +=
+      'hasNoParentModule=' + encodeURIComponent('' + hasNoParentModule) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getAtomsByCurriculumDefaultOptions: Omit<UseQueryOptions<Types.AtomDto[], unknown, Types.AtomDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.AtomDto[], unknown, Types.AtomDto[]>, 'queryFn'>> = {
-};
+let getAtomsByCurriculumDefaultOptions: Omit<
+  UseQueryOptions<Types.AtomDto[], unknown, Types.AtomDto[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<UseQueryOptions<Types.AtomDto[], unknown, Types.AtomDto[]>, 'queryFn'>
+  > = {};
 export function getGetAtomsByCurriculumDefaultOptions() {
   return getAtomsByCurriculumDefaultOptions;
-};
-export function setGetAtomsByCurriculumDefaultOptions(options: typeof getAtomsByCurriculumDefaultOptions) {
+}
+export function setGetAtomsByCurriculumDefaultOptions(
+  options: typeof getAtomsByCurriculumDefaultOptions,
+) {
   getAtomsByCurriculumDefaultOptions = options;
 }
 
-export function getAtomsByCurriculumQueryKey(dto: GetAtomsByCurriculumAtomQueryParameters): QueryKey;
-export function getAtomsByCurriculumQueryKey(curriculumId: number, hasNoParentModule?: boolean | undefined): QueryKey;
+export function getAtomsByCurriculumQueryKey(
+  dto: GetAtomsByCurriculumAtomQueryParameters,
+): QueryKey;
+export function getAtomsByCurriculumQueryKey(
+  curriculumId: number,
+  hasNoParentModule?: boolean | undefined,
+): QueryKey;
 export function getAtomsByCurriculumQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId, hasNoParentModule,  } = params[0] as GetAtomsByCurriculumAtomQueryParameters;
+    const { curriculumId, hasNoParentModule } =
+      params[0] as GetAtomsByCurriculumAtomQueryParameters;
 
     return trimArrayEnd([
-        'AtomClient',
-        'getAtomsByCurriculum',
-        curriculumId as any,
-        hasNoParentModule as any,
-      ]);
+      'AtomClient',
+      'getAtomsByCurriculum',
+      curriculumId as any,
+      hasNoParentModule as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'AtomClient',
-        'getAtomsByCurriculum',
-        ...params
-      ]);
+    return trimArrayEnd(['AtomClient', 'getAtomsByCurriculum', ...params]);
   }
 }
-export function __getAtomsByCurriculum(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+export function __getAtomsByCurriculum(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
   return Client.getAtomsByCurriculum(
-      context.queryKey[2] as number,       context.queryKey[3] as boolean | undefined,axiosConfig    );
+    context.queryKey[2] as number,
+    context.queryKey[3] as boolean | undefined,
+    axiosConfig,
+  );
 }
 
-export function useGetAtomsByCurriculumQuery<TSelectData = Types.AtomDto[], TError = unknown>(dto: GetAtomsByCurriculumAtomQueryParameters, options?: Omit<UseQueryOptions<Types.AtomDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetAtomsByCurriculumQuery<
+  TSelectData = Types.AtomDto[],
+  TError = unknown,
+>(
+  dto: GetAtomsByCurriculumAtomQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.AtomDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 /**
  * Get atoms of a curriculum
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
-export function useGetAtomsByCurriculumQuery<TSelectData = Types.AtomDto[], TError = unknown>(curriculumId: number, hasNoParentModule?: boolean | undefined, options?: Omit<UseQueryOptions<Types.AtomDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetAtomsByCurriculumQuery<TSelectData = Types.AtomDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.AtomDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetAtomsByCurriculumQuery<
+  TSelectData = Types.AtomDto[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  hasNoParentModule?: boolean | undefined,
+  options?: Omit<
+    UseQueryOptions<Types.AtomDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetAtomsByCurriculumQuery<
+  TSelectData = Types.AtomDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.AtomDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
   let hasNoParentModule: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId, hasNoParentModule,  } = params[0] as GetAtomsByCurriculumAtomQueryParameters);
+      ({ curriculumId, hasNoParentModule } =
+        params[0] as GetAtomsByCurriculumAtomQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -357,9 +474,14 @@ export function useGetAtomsByCurriculumQuery<TSelectData = Types.AtomDto[], TErr
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.AtomDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getAtomsByCurriculum(context, axiosConfig) : __getAtomsByCurriculum,
+    queryFn: axiosConfig
+      ? (context) => __getAtomsByCurriculum(context, axiosConfig)
+      : __getAtomsByCurriculum,
     queryKey: getAtomsByCurriculumQueryKey(curriculumId, hasNoParentModule),
-    ...getAtomsByCurriculumDefaultOptions as unknown as Omit<UseQueryOptions<Types.AtomDto[], TError, TSelectData>, 'queryKey'>,
+    ...(getAtomsByCurriculumDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.AtomDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
@@ -367,9 +489,15 @@ export function useGetAtomsByCurriculumQuery<TSelectData = Types.AtomDto[], TErr
  * Get atoms of a curriculum
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
-export function setGetAtomsByCurriculumData(queryClient: QueryClient, updater: (data: Types.AtomDto[] | undefined) => Types.AtomDto[], curriculumId: number, hasNoParentModule?: boolean | undefined) {
-  queryClient.setQueryData(getAtomsByCurriculumQueryKey(curriculumId, hasNoParentModule),
-    updater
+export function setGetAtomsByCurriculumData(
+  queryClient: QueryClient,
+  updater: (data: Types.AtomDto[] | undefined) => Types.AtomDto[],
+  curriculumId: number,
+  hasNoParentModule?: boolean | undefined,
+) {
+  queryClient.setQueryData(
+    getAtomsByCurriculumQueryKey(curriculumId, hasNoParentModule),
+    updater,
   );
 }
 
@@ -377,6 +505,10 @@ export function setGetAtomsByCurriculumData(queryClient: QueryClient, updater: (
  * Get atoms of a curriculum
  * @param hasNoParentModule (optional) If true, returns atoms without parents. Else, returns all atoms
  */
-export function setGetAtomsByCurriculumDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AtomDto[] | undefined) => Types.AtomDto[]) {
+export function setGetAtomsByCurriculumDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.AtomDto[] | undefined) => Types.AtomDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }

@@ -13,194 +13,244 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function createAtomInSemester(atomId: number, semesterId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-    if (semesterId === undefined || semesterId === null)
-      throw new Error("The parameter 'semesterId' must be defined.");
-    url_ = url_.replace("{semesterId}", encodeURIComponent("" + semesterId));
-      url_ = url_.replace(/[?&]$/, "");
+export function createAtomInSemester(
+  atomId: number,
+  semesterId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}/semester/{semesterId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  if (semesterId === undefined || semesterId === null)
+    throw new Error("The parameter 'semesterId' must be defined.");
+  url_ = url_.replace('{semesterId}', encodeURIComponent('' + semesterId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateAtomInSemester,
-        ...config,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateAtomInSemester?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateAtomInSemester,
+    ...config,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateAtomInSemester?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateAtomInSemester(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateAtomInSemester(_response);
     });
 }
 
 function processCreateAtomInSemester(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function deleteAtomInSemester(atomId: number, semesterId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-    if (semesterId === undefined || semesterId === null)
-      throw new Error("The parameter 'semesterId' must be defined.");
-    url_ = url_.replace("{semesterId}", encodeURIComponent("" + semesterId));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteAtomInSemester(
+  atomId: number,
+  semesterId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}/semester/{semesterId}';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  if (semesterId === undefined || semesterId === null)
+    throw new Error("The parameter 'semesterId' must be defined.");
+  url_ = url_.replace('{semesterId}', encodeURIComponent('' + semesterId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteAtomInSemester,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteAtomInSemester?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteAtomInSemester,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteAtomInSemester?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteAtomInSemester(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteAtomInSemester(_response);
     });
 }
 
 function processDeleteAtomInSemester(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function setAtomCredit(atomId: number, semesterId: number, dto: Types.SetAtomCreditDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/atom/{atomId}/semester/{semesterId}/credit";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-    if (semesterId === undefined || semesterId === null)
-      throw new Error("The parameter 'semesterId' must be defined.");
-    url_ = url_.replace("{semesterId}", encodeURIComponent("" + semesterId));
-      url_ = url_.replace(/[?&]$/, "");
+export function setAtomCredit(
+  atomId: number,
+  semesterId: number,
+  dto: Types.SetAtomCreditDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/atom/{atomId}/semester/{semesterId}/credit';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  if (semesterId === undefined || semesterId === null)
+    throw new Error("The parameter 'semesterId' must be defined.");
+  url_ = url_.replace('{semesterId}', encodeURIComponent('' + semesterId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeSetAtomCreditDto(dto);
+  const content_ = Types.serializeSetAtomCreditDto(dto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigSetAtomCredit,
-        ...config,
-        data: content_,
-        method: "PUT",
-        url: url_,
-        headers: {
-            ..._requestConfigSetAtomCredit?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigSetAtomCredit,
+    ...config,
+    data: content_,
+    method: 'PUT',
+    url: url_,
+    headers: {
+      ..._requestConfigSetAtomCredit?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processSetAtomCredit(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processSetAtomCredit(_response);
     });
 }
 
 function processSetAtomCredit(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigCreateAtomInSemester: Partial<AxiosRequestConfig> | null;
 export function getCreateAtomInSemesterRequestConfig() {
   return _requestConfigCreateAtomInSemester;
 }
-export function setCreateAtomInSemesterRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateAtomInSemesterRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateAtomInSemester = value;
 }
-export function patchCreateAtomInSemesterRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateAtomInSemester = patch(_requestConfigCreateAtomInSemester ?? {});
+export function patchCreateAtomInSemesterRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigCreateAtomInSemester = patch(
+    _requestConfigCreateAtomInSemester ?? {},
+  );
 }
 
 let _requestConfigDeleteAtomInSemester: Partial<AxiosRequestConfig> | null;
 export function getDeleteAtomInSemesterRequestConfig() {
   return _requestConfigDeleteAtomInSemester;
 }
-export function setDeleteAtomInSemesterRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteAtomInSemesterRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteAtomInSemester = value;
 }
-export function patchDeleteAtomInSemesterRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigDeleteAtomInSemester = patch(_requestConfigDeleteAtomInSemester ?? {});
+export function patchDeleteAtomInSemesterRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigDeleteAtomInSemester = patch(
+    _requestConfigDeleteAtomInSemester ?? {},
+  );
 }
 
 let _requestConfigSetAtomCredit: Partial<AxiosRequestConfig> | null;
 export function getSetAtomCreditRequestConfig() {
   return _requestConfigSetAtomCredit;
 }
-export function setSetAtomCreditRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setSetAtomCreditRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigSetAtomCredit = value;
 }
-export function patchSetAtomCreditRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchSetAtomCreditRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigSetAtomCredit = patch(_requestConfigSetAtomCredit ?? {});
 }

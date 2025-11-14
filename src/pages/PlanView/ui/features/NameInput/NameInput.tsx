@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import cls from "./NameInput.module.scss";
-import { useOutsideClick } from "@/shared/lib/hooks/useOutsideClick.ts";
+import React, { useState, useRef, useEffect } from 'react';
+import cls from './NameInput.module.scss';
+import { useOutsideClick } from '@/shared/lib/hooks/useOutsideClick.ts';
 
 interface NameInputProps {
   value?: string;
@@ -9,8 +9,7 @@ interface NameInputProps {
 }
 
 export const NameInput = (props: NameInputProps) => {
-
-  const { value = "", children, onChange } = props;
+  const { value = '', children, onChange } = props;
   const [edit, setEdit] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -30,13 +29,12 @@ export const NameInput = (props: NameInputProps) => {
 
   useEffect(() => {
     if (edit && textareaRef.current) {
-      if ("focus" in textareaRef.current) {
+      if ('focus' in textareaRef.current) {
         textareaRef.current.focus();
       }
       const length = textareaRef.current?.value.length as number;
       textareaRef.current?.setSelectionRange(length, length);
-    }
-    else if (!edit) {
+    } else if (!edit) {
       setLocalValue(value);
     }
   }, [edit]);

@@ -9,123 +9,197 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './SelectionClient'
+import * as Client from './SelectionClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type CreateUpdateSelectionSelectionQueryParameters = {
-  moduleId: number ;
-}
+  moduleId: number;
+};
 
 export type DeleteSelectionSelectionQueryParameters = {
-  moduleId: number ;
-}
+  moduleId: number;
+};
 
 export function createUpdateSelectionUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
-if (moduleId === undefined || moduleId === null)
-  throw new Error("The parameter 'moduleId' must be defined.");
-url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module/{moduleId}/selection';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function createUpdateSelectionMutationKey(moduleId: number): MutationKey {
+export function createUpdateSelectionMutationKey(
+  moduleId: number,
+): MutationKey {
   return trimArrayEnd([
-      'SelectionClient',
-      'createUpdateSelection',
-      moduleId as any,
-    ]);
+    'SelectionClient',
+    'createUpdateSelection',
+    moduleId as any,
+  ]);
 }
 
 /**
  * Creates new or updates existing selection for a module.
  */
-export function useCreateUpdateSelectionMutation<TContext>(moduleId: number, options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.SelectionDto, unknown, Types.CreateUpdateSelectionDto, TContext> {
+export function useCreateUpdateSelectionMutation<TContext>(
+  moduleId: number,
+  options?: Omit<
+    UseMutationOptions<
+      Types.SelectionDto,
+      unknown,
+      Types.CreateUpdateSelectionDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  Types.SelectionDto,
+  unknown,
+  Types.CreateUpdateSelectionDto,
+  TContext
+> {
   const key = createUpdateSelectionMutationKey(moduleId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createUpdateSelectionDto: Types.CreateUpdateSelectionDto) => Client.createUpdateSelection(moduleId, createUpdateSelectionDto),
+    mutationFn: (createUpdateSelectionDto: Types.CreateUpdateSelectionDto) =>
+      Client.createUpdateSelection(moduleId, createUpdateSelectionDto),
     mutationKey: key,
   });
 }
-  
-type CreateUpdateSelection__MutationParameters = CreateUpdateSelectionSelectionQueryParameters & {
-  createUpdateSelectionDto: Types.CreateUpdateSelectionDto;
-}
+
+type CreateUpdateSelection__MutationParameters =
+  CreateUpdateSelectionSelectionQueryParameters & {
+    createUpdateSelectionDto: Types.CreateUpdateSelectionDto;
+  };
 
 /**
  * Creates new or updates existing selection for a module.
  */
-export function useCreateUpdateSelectionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.SelectionDto, unknown, CreateUpdateSelection__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateUpdateSelectionSelectionQueryParameters}): UseMutationResult<Types.SelectionDto, unknown, CreateUpdateSelection__MutationParameters, TContext> {
+export function useCreateUpdateSelectionMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.SelectionDto,
+      unknown,
+      CreateUpdateSelection__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: CreateUpdateSelectionSelectionQueryParameters },
+): UseMutationResult<
+  Types.SelectionDto,
+  unknown,
+  CreateUpdateSelection__MutationParameters,
+  TContext
+> {
   const key = createUpdateSelectionMutationKey(options?.parameters?.moduleId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: CreateUpdateSelection__MutationParameters) => Client.createUpdateSelection(data.moduleId ?? options?.parameters?.moduleId!, data.createUpdateSelectionDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: CreateUpdateSelection__MutationParameters) =>
+      Client.createUpdateSelection(
+        data.moduleId ?? options?.parameters?.moduleId!,
+        data.createUpdateSelectionDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function deleteSelectionUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
-if (moduleId === undefined || moduleId === null)
-  throw new Error("The parameter 'moduleId' must be defined.");
-url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module/{moduleId}/selection';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function deleteSelectionMutationKey(moduleId: number): MutationKey {
-  return trimArrayEnd([
-      'SelectionClient',
-      'deleteSelection',
-      moduleId as any,
-    ]);
+  return trimArrayEnd(['SelectionClient', 'deleteSelection', moduleId as any]);
 }
 
 /**
  * Removes selection from a module.
  */
-export function useDeleteSelectionMutation<TContext>(moduleId: number, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+export function useDeleteSelectionMutation<TContext>(
+  moduleId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
   const key = deleteSelectionMutationKey(moduleId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.deleteSelection(moduleId),
     mutationKey: key,
   });
 }
-  
-type DeleteSelection__MutationParameters = DeleteSelectionSelectionQueryParameters
+
+type DeleteSelection__MutationParameters =
+  DeleteSelectionSelectionQueryParameters;
 
 /**
  * Removes selection from a module.
  */
-export function useDeleteSelectionMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteSelection__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteSelectionSelectionQueryParameters}): UseMutationResult<void, unknown, DeleteSelection__MutationParameters, TContext> {
+export function useDeleteSelectionMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      DeleteSelection__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: DeleteSelectionSelectionQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  DeleteSelection__MutationParameters,
+  TContext
+> {
   const key = deleteSelectionMutationKey(options?.parameters?.moduleId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: DeleteSelection__MutationParameters) => Client.deleteSelection(data.moduleId ?? options?.parameters?.moduleId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: DeleteSelection__MutationParameters) =>
+      Client.deleteSelection(data.moduleId ?? options?.parameters?.moduleId!),
+    mutationKey: key,
+  });
 }

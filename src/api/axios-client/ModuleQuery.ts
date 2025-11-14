@@ -9,138 +9,196 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './ModuleClient'
+import * as Client from './ModuleClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-
 export type GetModuleModuleQueryParameters = {
-  moduleId: number ;
-}
+  moduleId: number;
+};
 
 export type UpdateModuleModuleQueryParameters = {
-  moduleId: number ;
-}
+  moduleId: number;
+};
 
 export type DeleteModuleModuleQueryParameters = {
-  moduleId: number ;
-  deleteChildren?: boolean | undefined ;
-}
+  moduleId: number;
+  deleteChildren?: boolean | undefined;
+};
 
 export type GetModulesByCurriculumModuleQueryParameters = {
-  curriculumId: number ;
-  plainList?: boolean | undefined ;
-}
+  curriculumId: number;
+  plainList?: boolean | undefined;
+};
 
 export function createModuleUrl(): string {
-  let url_ = getBaseUrl() + "/api/module";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function createModuleMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'ModuleClient',
-      'createModule',
-    ]);
+  return trimArrayEnd(['ModuleClient', 'createModule']);
 }
 
-export function useCreateModuleMutation<TContext>(options?: Omit<UseMutationOptions<number, unknown, Types.CreateModuleDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<number, unknown, Types.CreateModuleDto, TContext> {
+export function useCreateModuleMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<number, unknown, Types.CreateModuleDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<number, unknown, Types.CreateModuleDto, TContext> {
   const key = createModuleMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createModuleDto: Types.CreateModuleDto) => Client.createModule(createModuleDto),
+    mutationFn: (createModuleDto: Types.CreateModuleDto) =>
+      Client.createModule(createModuleDto),
     mutationKey: key,
   });
 }
-  
+
 export function createModuleWithSelectionUrl(): string {
-  let url_ = getBaseUrl() + "/api/module/with-selection";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module/with-selection';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function createModuleWithSelectionMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'ModuleClient',
-      'createModuleWithSelection',
-    ]);
+  return trimArrayEnd(['ModuleClient', 'createModuleWithSelection']);
 }
 
-export function useCreateModuleWithSelectionMutation<TContext>(options?: Omit<UseMutationOptions<number, unknown, Types.CreateModuleWithSelectionDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<number, unknown, Types.CreateModuleWithSelectionDto, TContext> {
+export function useCreateModuleWithSelectionMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      number,
+      unknown,
+      Types.CreateModuleWithSelectionDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  number,
+  unknown,
+  Types.CreateModuleWithSelectionDto,
+  TContext
+> {
   const key = createModuleWithSelectionMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto) => Client.createModuleWithSelection(createModuleWithSelectionDto),
+    mutationFn: (
+      createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto,
+    ) => Client.createModuleWithSelection(createModuleWithSelectionDto),
     mutationKey: key,
   });
 }
-  
+
 export function getModuleUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/api/module/{moduleId}";
-if (moduleId === undefined || moduleId === null)
-  throw new Error("The parameter 'moduleId' must be defined.");
-url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module/{moduleId}';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getModuleDefaultOptions: Omit<UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>, 'queryFn'>> = {
-};
+let getModuleDefaultOptions: Omit<
+  UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<UseQueryOptions<Types.ModuleDto, unknown, Types.ModuleDto>, 'queryFn'>
+  > = {};
 export function getGetModuleDefaultOptions() {
   return getModuleDefaultOptions;
-};
-export function setGetModuleDefaultOptions(options: typeof getModuleDefaultOptions) {
+}
+export function setGetModuleDefaultOptions(
+  options: typeof getModuleDefaultOptions,
+) {
   getModuleDefaultOptions = options;
 }
 
 export function getModuleQueryKey(moduleId: number): QueryKey;
 export function getModuleQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { moduleId,  } = params[0] as GetModuleModuleQueryParameters;
+    const { moduleId } = params[0] as GetModuleModuleQueryParameters;
 
-    return trimArrayEnd([
-        'ModuleClient',
-        'getModule',
-        moduleId as any,
-      ]);
+    return trimArrayEnd(['ModuleClient', 'getModule', moduleId as any]);
   } else {
-    return trimArrayEnd([
-        'ModuleClient',
-        'getModule',
-        ...params
-      ]);
+    return trimArrayEnd(['ModuleClient', 'getModule', ...params]);
   }
 }
-export function __getModule(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getModule(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getModule(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getModule(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(dto: GetModuleModuleQueryParameters, options?: Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetModuleQuery<
+  TSelectData = Types.ModuleDto,
+  TError = unknown,
+>(
+  dto: GetModuleModuleQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.ModuleDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(moduleId: number, options?: Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.ModuleDto, TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetModuleQuery<
+  TSelectData = Types.ModuleDto,
+  TError = unknown,
+>(
+  moduleId: number,
+  options?: Omit<
+    UseQueryOptions<Types.ModuleDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetModuleQuery<
+  TSelectData = Types.ModuleDto,
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.ModuleDto, TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let moduleId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ moduleId,  } = params[0] as GetModuleModuleQueryParameters);
+      ({ moduleId } = params[0] as GetModuleModuleQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -152,90 +210,129 @@ export function useGetModuleQuery<TSelectData = Types.ModuleDto, TError = unknow
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.ModuleDto, TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getModule(context, axiosConfig) : __getModule,
+    queryFn: axiosConfig
+      ? (context) => __getModule(context, axiosConfig)
+      : __getModule,
     queryKey: getModuleQueryKey(moduleId),
-    ...getModuleDefaultOptions as unknown as Omit<UseQueryOptions<Types.ModuleDto, TError, TSelectData>, 'queryKey'>,
+    ...(getModuleDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.ModuleDto, TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetModuleData(queryClient: QueryClient, updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto, moduleId: number) {
-  queryClient.setQueryData(getModuleQueryKey(moduleId),
-    updater
-  );
+export function setGetModuleData(
+  queryClient: QueryClient,
+  updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto,
+  moduleId: number,
+) {
+  queryClient.setQueryData(getModuleQueryKey(moduleId), updater);
 }
 
-export function setGetModuleDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto) {
+export function setGetModuleDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.ModuleDto | undefined) => Types.ModuleDto,
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function updateModuleUrl(moduleId: number): string {
-  let url_ = getBaseUrl() + "/api/module/{moduleId}";
-if (moduleId === undefined || moduleId === null)
-  throw new Error("The parameter 'moduleId' must be defined.");
-url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/module/{moduleId}';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function updateModuleMutationKey(moduleId: number): MutationKey {
-  return trimArrayEnd([
-      'ModuleClient',
-      'updateModule',
-      moduleId as any,
-    ]);
+  return trimArrayEnd(['ModuleClient', 'updateModule', moduleId as any]);
 }
 
-export function useUpdateModuleMutation<TContext>(moduleId: number, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateModuleDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateModuleDto, TContext> {
+export function useUpdateModuleMutation<TContext>(
+  moduleId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.UpdateModuleDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.UpdateModuleDto, TContext> {
   const key = updateModuleMutationKey(moduleId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (updateModuleDto: Types.UpdateModuleDto) => Client.updateModule(moduleId, updateModuleDto),
+    mutationFn: (updateModuleDto: Types.UpdateModuleDto) =>
+      Client.updateModule(moduleId, updateModuleDto),
     mutationKey: key,
   });
 }
-  
+
 type UpdateModule__MutationParameters = UpdateModuleModuleQueryParameters & {
   updateModuleDto: Types.UpdateModuleDto;
-}
+};
 
-export function useUpdateModuleMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateModule__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateModuleModuleQueryParameters}): UseMutationResult<void, unknown, UpdateModule__MutationParameters, TContext> {
+export function useUpdateModuleMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      UpdateModule__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateModuleModuleQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  UpdateModule__MutationParameters,
+  TContext
+> {
   const key = updateModuleMutationKey(options?.parameters?.moduleId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateModule__MutationParameters) => Client.updateModule(data.moduleId ?? options?.parameters?.moduleId!, data.updateModuleDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: UpdateModule__MutationParameters) =>
+      Client.updateModule(
+        data.moduleId ?? options?.parameters?.moduleId!,
+        data.updateModuleDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
-export function deleteModuleUrl(moduleId: number, deleteChildren?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/api/module/{moduleId}?";
-if (moduleId === undefined || moduleId === null)
-  throw new Error("The parameter 'moduleId' must be defined.");
-url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-if (deleteChildren === null)
+
+export function deleteModuleUrl(
+  moduleId: number,
+  deleteChildren?: boolean | undefined,
+): string {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}?';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  if (deleteChildren === null)
     throw new Error("The parameter 'deleteChildren' cannot be null.");
-else if (deleteChildren !== undefined)
-    url_ += "deleteChildren=" + encodeURIComponent("" + deleteChildren) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (deleteChildren !== undefined)
+    url_ += 'deleteChildren=' + encodeURIComponent('' + deleteChildren) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function deleteModuleMutationKey(moduleId: number, deleteChildren?: boolean | undefined): MutationKey {
+export function deleteModuleMutationKey(
+  moduleId: number,
+  deleteChildren?: boolean | undefined,
+): MutationKey {
   return trimArrayEnd([
-      'ModuleClient',
-      'deleteModule',
-      moduleId as any,
-      deleteChildren as any,
-    ]);
+    'ModuleClient',
+    'deleteModule',
+    moduleId as any,
+    deleteChildren as any,
+  ]);
 }
 
 /**
@@ -244,20 +341,27 @@ export function deleteModuleMutationKey(moduleId: number, deleteChildren?: boole
  * @param deleteChildren (optional) If true, deletes all children of the module (modules and atoms).
             Else, only deletes the module, moving its children to the parent module.
  */
-export function useDeleteModuleMutation<TContext>(moduleId: number, deleteChildren?: boolean | undefined, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+export function useDeleteModuleMutation<TContext>(
+  moduleId: number,
+  deleteChildren?: boolean | undefined,
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
   const key = deleteModuleMutationKey(moduleId, deleteChildren);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.deleteModule(moduleId, deleteChildren),
     mutationKey: key,
   });
 }
-  
-type DeleteModule__MutationParameters = DeleteModuleModuleQueryParameters
+
+type DeleteModule__MutationParameters = DeleteModuleModuleQueryParameters;
 
 /**
  * Delete module
@@ -265,82 +369,152 @@ type DeleteModule__MutationParameters = DeleteModuleModuleQueryParameters
  * @param deleteChildren (optional) If true, deletes all children of the module (modules and atoms).
             Else, only deletes the module, moving its children to the parent module.
  */
-export function useDeleteModuleMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteModule__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteModuleModuleQueryParameters}): UseMutationResult<void, unknown, DeleteModule__MutationParameters, TContext> {
-  const key = deleteModuleMutationKey(options?.parameters?.moduleId!, options?.parameters?.deleteChildren!);
-  
+export function useDeleteModuleMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      DeleteModule__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: DeleteModuleModuleQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  DeleteModule__MutationParameters,
+  TContext
+> {
+  const key = deleteModuleMutationKey(
+    options?.parameters?.moduleId!,
+    options?.parameters?.deleteChildren!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: DeleteModule__MutationParameters) => Client.deleteModule(data.moduleId ?? options?.parameters?.moduleId!, data.deleteChildren ?? options?.parameters?.deleteChildren!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: DeleteModule__MutationParameters) =>
+      Client.deleteModule(
+        data.moduleId ?? options?.parameters?.moduleId!,
+        data.deleteChildren ?? options?.parameters?.deleteChildren!,
+      ),
+    mutationKey: key,
+  });
 }
-  
-export function getModulesByCurriculumUrl(curriculumId: number, plainList?: boolean | undefined): string {
-  let url_ = getBaseUrl() + "/api/module/curriculum/{curriculumId}?";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-if (plainList === null)
+
+export function getModulesByCurriculumUrl(
+  curriculumId: number,
+  plainList?: boolean | undefined,
+): string {
+  let url_ = getBaseUrl() + '/api/module/curriculum/{curriculumId}?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (plainList === null)
     throw new Error("The parameter 'plainList' cannot be null.");
-else if (plainList !== undefined)
-    url_ += "plainList=" + encodeURIComponent("" + plainList) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (plainList !== undefined)
+    url_ += 'plainList=' + encodeURIComponent('' + plainList) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getModulesByCurriculumDefaultOptions: Omit<UseQueryOptions<Types.ModuleDto[], unknown, Types.ModuleDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ModuleDto[], unknown, Types.ModuleDto[]>, 'queryFn'>> = {
-};
+let getModulesByCurriculumDefaultOptions: Omit<
+  UseQueryOptions<Types.ModuleDto[], unknown, Types.ModuleDto[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.ModuleDto[], unknown, Types.ModuleDto[]>,
+      'queryFn'
+    >
+  > = {};
 export function getGetModulesByCurriculumDefaultOptions() {
   return getModulesByCurriculumDefaultOptions;
-};
-export function setGetModulesByCurriculumDefaultOptions(options: typeof getModulesByCurriculumDefaultOptions) {
+}
+export function setGetModulesByCurriculumDefaultOptions(
+  options: typeof getModulesByCurriculumDefaultOptions,
+) {
   getModulesByCurriculumDefaultOptions = options;
 }
 
-export function getModulesByCurriculumQueryKey(dto: GetModulesByCurriculumModuleQueryParameters): QueryKey;
-export function getModulesByCurriculumQueryKey(curriculumId: number, plainList?: boolean | undefined): QueryKey;
+export function getModulesByCurriculumQueryKey(
+  dto: GetModulesByCurriculumModuleQueryParameters,
+): QueryKey;
+export function getModulesByCurriculumQueryKey(
+  curriculumId: number,
+  plainList?: boolean | undefined,
+): QueryKey;
 export function getModulesByCurriculumQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId, plainList,  } = params[0] as GetModulesByCurriculumModuleQueryParameters;
+    const { curriculumId, plainList } =
+      params[0] as GetModulesByCurriculumModuleQueryParameters;
 
     return trimArrayEnd([
-        'ModuleClient',
-        'getModulesByCurriculum',
-        curriculumId as any,
-        plainList as any,
-      ]);
+      'ModuleClient',
+      'getModulesByCurriculum',
+      curriculumId as any,
+      plainList as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'ModuleClient',
-        'getModulesByCurriculum',
-        ...params
-      ]);
+    return trimArrayEnd(['ModuleClient', 'getModulesByCurriculum', ...params]);
   }
 }
-export function __getModulesByCurriculum(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+export function __getModulesByCurriculum(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
   return Client.getModulesByCurriculum(
-      context.queryKey[2] as number,       context.queryKey[3] as boolean | undefined,axiosConfig    );
+    context.queryKey[2] as number,
+    context.queryKey[3] as boolean | undefined,
+    axiosConfig,
+  );
 }
 
-export function useGetModulesByCurriculumQuery<TSelectData = Types.ModuleDto[], TError = unknown>(dto: GetModulesByCurriculumModuleQueryParameters, options?: Omit<UseQueryOptions<Types.ModuleDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetModulesByCurriculumQuery<
+  TSelectData = Types.ModuleDto[],
+  TError = unknown,
+>(
+  dto: GetModulesByCurriculumModuleQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.ModuleDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 /**
  * Get modules by curriculum
  * @param curriculumId Curriculum id
  * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
  */
-export function useGetModulesByCurriculumQuery<TSelectData = Types.ModuleDto[], TError = unknown>(curriculumId: number, plainList?: boolean | undefined, options?: Omit<UseQueryOptions<Types.ModuleDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetModulesByCurriculumQuery<TSelectData = Types.ModuleDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.ModuleDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetModulesByCurriculumQuery<
+  TSelectData = Types.ModuleDto[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  plainList?: boolean | undefined,
+  options?: Omit<
+    UseQueryOptions<Types.ModuleDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetModulesByCurriculumQuery<
+  TSelectData = Types.ModuleDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.ModuleDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
   let plainList: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId, plainList,  } = params[0] as GetModulesByCurriculumModuleQueryParameters);
+      ({ curriculumId, plainList } =
+        params[0] as GetModulesByCurriculumModuleQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -352,9 +526,14 @@ export function useGetModulesByCurriculumQuery<TSelectData = Types.ModuleDto[], 
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.ModuleDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getModulesByCurriculum(context, axiosConfig) : __getModulesByCurriculum,
+    queryFn: axiosConfig
+      ? (context) => __getModulesByCurriculum(context, axiosConfig)
+      : __getModulesByCurriculum,
     queryKey: getModulesByCurriculumQueryKey(curriculumId, plainList),
-    ...getModulesByCurriculumDefaultOptions as unknown as Omit<UseQueryOptions<Types.ModuleDto[], TError, TSelectData>, 'queryKey'>,
+    ...(getModulesByCurriculumDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.ModuleDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
@@ -363,9 +542,15 @@ export function useGetModulesByCurriculumQuery<TSelectData = Types.ModuleDto[], 
  * @param curriculumId Curriculum id
  * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
  */
-export function setGetModulesByCurriculumData(queryClient: QueryClient, updater: (data: Types.ModuleDto[] | undefined) => Types.ModuleDto[], curriculumId: number, plainList?: boolean | undefined) {
-  queryClient.setQueryData(getModulesByCurriculumQueryKey(curriculumId, plainList),
-    updater
+export function setGetModulesByCurriculumData(
+  queryClient: QueryClient,
+  updater: (data: Types.ModuleDto[] | undefined) => Types.ModuleDto[],
+  curriculumId: number,
+  plainList?: boolean | undefined,
+) {
+  queryClient.setQueryData(
+    getModulesByCurriculumQueryKey(curriculumId, plainList),
+    updater,
   );
 }
 
@@ -374,6 +559,10 @@ export function setGetModulesByCurriculumData(queryClient: QueryClient, updater:
  * @param curriculumId Curriculum id
  * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
  */
-export function setGetModulesByCurriculumDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ModuleDto[] | undefined) => Types.ModuleDto[]) {
+export function setGetModulesByCurriculumDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.ModuleDto[] | undefined) => Types.ModuleDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }

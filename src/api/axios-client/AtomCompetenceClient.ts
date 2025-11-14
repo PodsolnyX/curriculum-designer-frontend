@@ -13,129 +13,168 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function setAtomCompetences(atomId: number, setAtomCompetencesDto: Types.SetAtomCompetencesDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-      url_ = url_.replace(/[?&]$/, "");
+export function setAtomCompetences(
+  atomId: number,
+  setAtomCompetencesDto: Types.SetAtomCompetencesDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/competence/atom/{atomId}/competence';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeSetAtomCompetencesDto(setAtomCompetencesDto);
+  const content_ = Types.serializeSetAtomCompetencesDto(setAtomCompetencesDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigSetAtomCompetences,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigSetAtomCompetences?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigSetAtomCompetences,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigSetAtomCompetences?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processSetAtomCompetences(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processSetAtomCompetences(_response);
     });
 }
 
 function processSetAtomCompetences(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function setAtomCompetenceIndicators(atomId: number, setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence-indicator";
-    if (atomId === undefined || atomId === null)
-      throw new Error("The parameter 'atomId' must be defined.");
-    url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-      url_ = url_.replace(/[?&]$/, "");
+export function setAtomCompetenceIndicators(
+  atomId: number,
+  setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() + '/api/competence/atom/{atomId}/competence-indicator';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeSetAtomCompetenceIndicatorsDto(setAtomCompetenceIndicatorsDto);
+  const content_ = Types.serializeSetAtomCompetenceIndicatorsDto(
+    setAtomCompetenceIndicatorsDto,
+  );
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigSetAtomCompetenceIndicators,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigSetAtomCompetenceIndicators?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigSetAtomCompetenceIndicators,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigSetAtomCompetenceIndicators?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processSetAtomCompetenceIndicators(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processSetAtomCompetenceIndicators(_response);
     });
 }
 
-function processSetAtomCompetenceIndicators(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processSetAtomCompetenceIndicators(
+  response: AxiosResponse,
+): Promise<void> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigSetAtomCompetences: Partial<AxiosRequestConfig> | null;
 export function getSetAtomCompetencesRequestConfig() {
   return _requestConfigSetAtomCompetences;
 }
-export function setSetAtomCompetencesRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setSetAtomCompetencesRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigSetAtomCompetences = value;
 }
-export function patchSetAtomCompetencesRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigSetAtomCompetences = patch(_requestConfigSetAtomCompetences ?? {});
+export function patchSetAtomCompetencesRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigSetAtomCompetences = patch(
+    _requestConfigSetAtomCompetences ?? {},
+  );
 }
 
 let _requestConfigSetAtomCompetenceIndicators: Partial<AxiosRequestConfig> | null;
 export function getSetAtomCompetenceIndicatorsRequestConfig() {
   return _requestConfigSetAtomCompetenceIndicators;
 }
-export function setSetAtomCompetenceIndicatorsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setSetAtomCompetenceIndicatorsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigSetAtomCompetenceIndicators = value;
 }
-export function patchSetAtomCompetenceIndicatorsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigSetAtomCompetenceIndicators = patch(_requestConfigSetAtomCompetenceIndicators ?? {});
+export function patchSetAtomCompetenceIndicatorsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigSetAtomCompetenceIndicators = patch(
+    _requestConfigSetAtomCompetenceIndicators ?? {},
+  );
 }

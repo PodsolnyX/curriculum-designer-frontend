@@ -1,63 +1,80 @@
-import {getIdFromPrefix} from "@/pages/PlanView/lib/helpers/prefixIdHelpers.ts";
-import {Tag} from "antd";
-import AcademicHoursPanel from "@/pages/PlanView/ui/features/AcademicHoursPanel/AcademicHoursPanel.tsx";
-import React from "react";
-import {observer} from "mobx-react-lite";
-import {optionsStore} from "@/pages/PlanView/lib/stores/optionsStore.ts";
-import {componentsStore} from "@/pages/PlanView/lib/stores/componentsStore/componentsStore.ts";
+import { getIdFromPrefix } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
+import { Tag } from 'antd';
+import AcademicHoursPanel from '@/pages/PlanView/ui/features/AcademicHoursPanel/AcademicHoursPanel.tsx';
+import React from 'react';
+import { observer } from 'mobx-react-lite';
+import { optionsStore } from '@/pages/PlanView/stores/optionsStore.ts';
+import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 
 interface SemesterHeaderProps {
-    semesterId: string;
+  semesterId: string;
 }
 
-const SemesterHeader = observer(({semesterId}: SemesterHeaderProps) => {
+const SemesterHeader = observer(({ semesterId }: SemesterHeaderProps) => {
+  const info = componentsStore.semestersActivity?.find(
+    (semester) => semester.semester.id === Number(getIdFromPrefix(semesterId)),
+  );
 
-    const info = componentsStore.semestersActivity?.find(semester => semester.semester.id === Number(getIdFromPrefix(semesterId)));
+  if (!info) return null;
 
-    if (!info) return null;
+  const { semester, nonElective, elective } = info;
 
-    const {
-        semester,
-        nonElective,
-        elective
-    } = info;
+  const examsCount: number = nonElective.attestations.reduce(
+    (sum, attestation) => sum + (attestation.shortName === 'Эк' ? 1 : 0),
+    0,
+  );
 
-    const examsCount: number = nonElective.attestations.reduce((sum, attestation) => sum + (attestation.shortName === "Эк" ? 1 : 0), 0);
-
-    return (
-        <div className={"absolute top-5 h-full w-full"}>
-            <div className={`sticky top-7 bottom-4 left-8 z-10 w-max flex gap-2`}>
-                <div className={"flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md"}>
-                    <span className={"text-[14px] text-blue-400 font-bold"}>Семестр: {semester.number}</span>
-                    <div className={"flex gap-1"}>
-                        <Tag color={nonElective.credit > 30 ? "red" : nonElective.credit < 30 ? "default" : "green"} className={"m-0"} bordered={false}>{`${nonElective.credit} / 30 ЗЕТ`}</Tag>
-                        <Tag
-                            color={examsCount >= 3 ? "green" : "default"}
-                            className={"m-0"}
-                            bordered={false}
-                        >{`${examsCount} / 3 Эк`}</Tag>
-                        {
-                            (elective.credit) ?
-                                <Tag color={"purple"} className={"m-0"} bordered={false}>{`${elective.credit} ЗЕТ`}</Tag>
-                                : null
-                        }
-                    </div>
-                </div>
-                {
-                    optionsStore.displaySettings.academicHours &&
-                    <div className={"rounded-lg px-3 py-2 bg-white shadow-md"}>
-                        <AcademicHoursPanel
-                            credits={nonElective.credit}
-                            academicHours={nonElective.academicActivityHours}
-                            layout={"horizontal"}
-                            size={"large"}
-                            showAllActivities={true}
-                        />
-                    </div>
-                }
-            </div>
+  return (
+    <div className={'absolute top-5 h-full w-full'}>
+      <div className={`sticky top-7 bottom-4 left-8 z-10 w-max flex gap-2`}>
+        <div
+          className={
+            'flex gap-5 items-center rounded-lg px-3 py-2 bg-white shadow-md'
+          }
+        >
+          <span className={'text-[14px] text-blue-400 font-bold'}>
+            Семестр: {semester.number}
+          </span>
+          <div className={'flex gap-1'}>
+            <Tag
+              color={
+                nonElective.credit > 30
+                  ? 'red'
+                  : nonElective.credit < 30
+                    ? 'default'
+                    : 'green'
+              }
+              className={'m-0'}
+              bordered={false}
+            >{`${nonElective.credit} / 30 ЗЕТ`}</Tag>
+            <Tag
+              color={examsCount >= 3 ? 'green' : 'default'}
+              className={'m-0'}
+              bordered={false}
+            >{`${examsCount} / 3 Эк`}</Tag>
+            {elective.credit ? (
+              <Tag
+                color={'purple'}
+                className={'m-0'}
+                bordered={false}
+              >{`${elective.credit} ЗЕТ`}</Tag>
+            ) : null}
+          </div>
         </div>
-    )
-})
+        {optionsStore.displaySettings.academicHours && (
+          <div className={'rounded-lg px-3 py-2 bg-white shadow-md'}>
+            <AcademicHoursPanel
+              credits={nonElective.credit}
+              academicHours={nonElective.academicActivityHours}
+              layout={'horizontal'}
+              size={'large'}
+              showAllActivities={true}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
 
 export default SemesterHeader;

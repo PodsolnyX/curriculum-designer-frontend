@@ -16,67 +16,78 @@ import { getAxios, getBaseUrl } from './helpers';
 /**
  * Import a curriculum from a file
  * @param curriculumId (optional) Curriculum Id
- * @param file (optional) 
+ * @param file (optional)
  */
-export function import_(curriculumId?: number | undefined, file?: Types.FileParameter | null | undefined, config?: AxiosRequestConfig | undefined): Promise<string> {
-    let url_ = getBaseUrl() + "/api/import?";
-    if (curriculumId === null)
-        throw new Error("The parameter 'curriculumId' cannot be null.");
-    else if (curriculumId !== undefined)
-        url_ += "curriculumId=" + encodeURIComponent("" + curriculumId) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function import_(
+  curriculumId?: number | undefined,
+  file?: Types.FileParameter | null | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<string> {
+  let url_ = getBaseUrl() + '/api/import?';
+  if (curriculumId === null)
+    throw new Error("The parameter 'curriculumId' cannot be null.");
+  else if (curriculumId !== undefined)
+    url_ += 'curriculumId=' + encodeURIComponent('' + curriculumId) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = new FormData();
-    if (file !== null && file !== undefined)
-        content_.append("file", file.data, file.fileName ? file.fileName : "file");
+  const content_ = new FormData();
+  if (file !== null && file !== undefined)
+    content_.append('file', file.data, file.fileName ? file.fileName : 'file');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigImport,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigImport?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigImport,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigImport?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processImport(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processImport(_response);
     });
 }
 
 function processImport(response: AxiosResponse): Promise<string> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-    
-        result200 = resultData200;
-    
-        return Promise.resolve<string>(result200);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
 
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<string>(null as any);
+    result200 = resultData200;
+
+    return Promise.resolve<string>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<string>(null as any);
 }
 let _requestConfigImport: Partial<AxiosRequestConfig> | null;
 export function getImportRequestConfig() {
@@ -85,6 +96,8 @@ export function getImportRequestConfig() {
 export function setImportRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigImport = value;
 }
-export function patchImportRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchImportRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigImport = patch(_requestConfigImport ?? {});
 }

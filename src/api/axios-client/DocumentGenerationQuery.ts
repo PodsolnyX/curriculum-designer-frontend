@@ -9,170 +9,283 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './DocumentGenerationClient'
+import * as Client from './DocumentGenerationClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GeneratePdfDocumentGenerationQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type GenerateExcelDocumentGenerationQueryParameters = {
-  curriculumId: number ;
-  tableType?: Types.TableType | undefined ;
-}
+  curriculumId: number;
+  tableType?: Types.TableType | undefined;
+};
 
 export type GenerateTxtDocumentGenerationQueryParameters = {
-  curriculumId: number ;
-  tableType?: Types.TableType | undefined ;
-}
+  curriculumId: number;
+  tableType?: Types.TableType | undefined;
+};
 
 export function generatePdfUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/pdf";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/curriculum/{curriculumId}/document/pdf';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function generatePdfMutationKey(curriculumId: number): MutationKey {
   return trimArrayEnd([
-      'DocumentGenerationClient',
-      'generatePdf',
-      curriculumId as any,
-    ]);
+    'DocumentGenerationClient',
+    'generatePdf',
+    curriculumId as any,
+  ]);
 }
 
-export function useGeneratePdfMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<Types.FileResponse, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
+export function useGeneratePdfMutation<TContext>(
+  curriculumId: number,
+  options?: Omit<
+    UseMutationOptions<Types.FileResponse, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
   const key = generatePdfMutationKey(curriculumId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.generatePdf(curriculumId),
     mutationKey: key,
   });
 }
-  
-type GeneratePdf__MutationParameters = GeneratePdfDocumentGenerationQueryParameters
 
-export function useGeneratePdfMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.FileResponse, unknown, GeneratePdf__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: GeneratePdfDocumentGenerationQueryParameters}): UseMutationResult<Types.FileResponse, unknown, GeneratePdf__MutationParameters, TContext> {
+type GeneratePdf__MutationParameters =
+  GeneratePdfDocumentGenerationQueryParameters;
+
+export function useGeneratePdfMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.FileResponse,
+      unknown,
+      GeneratePdf__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: GeneratePdfDocumentGenerationQueryParameters },
+): UseMutationResult<
+  Types.FileResponse,
+  unknown,
+  GeneratePdf__MutationParameters,
+  TContext
+> {
   const key = generatePdfMutationKey(options?.parameters?.curriculumId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: GeneratePdf__MutationParameters) => Client.generatePdf(data.curriculumId ?? options?.parameters?.curriculumId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: GeneratePdf__MutationParameters) =>
+      Client.generatePdf(
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+      ),
+    mutationKey: key,
+  });
 }
-  
-export function generateExcelUrl(curriculumId: number, tableType?: Types.TableType | undefined): string {
-  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/excel?";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-if (tableType === null)
+
+export function generateExcelUrl(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+): string {
+  let url_ = getBaseUrl() + '/api/curriculum/{curriculumId}/document/excel?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (tableType === null)
     throw new Error("The parameter 'tableType' cannot be null.");
-else if (tableType !== undefined)
-    url_ += "tableType=" + encodeURIComponent("" + tableType) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (tableType !== undefined)
+    url_ += 'tableType=' + encodeURIComponent('' + tableType) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function generateExcelMutationKey(curriculumId: number, tableType?: Types.TableType | undefined): MutationKey {
+export function generateExcelMutationKey(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+): MutationKey {
   return trimArrayEnd([
-      'DocumentGenerationClient',
-      'generateExcel',
-      curriculumId as any,
-      tableType as any,
-    ]);
+    'DocumentGenerationClient',
+    'generateExcel',
+    curriculumId as any,
+    tableType as any,
+  ]);
 }
 
-export function useGenerateExcelMutation<TContext>(curriculumId: number, tableType?: Types.TableType | undefined, options?: Omit<UseMutationOptions<Types.FileResponse, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
+export function useGenerateExcelMutation<TContext>(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+  options?: Omit<
+    UseMutationOptions<Types.FileResponse, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
   const key = generateExcelMutationKey(curriculumId, tableType);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.generateExcel(curriculumId, tableType),
     mutationKey: key,
   });
 }
-  
-type GenerateExcel__MutationParameters = GenerateExcelDocumentGenerationQueryParameters
 
-export function useGenerateExcelMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.FileResponse, unknown, GenerateExcel__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: GenerateExcelDocumentGenerationQueryParameters}): UseMutationResult<Types.FileResponse, unknown, GenerateExcel__MutationParameters, TContext> {
-  const key = generateExcelMutationKey(options?.parameters?.curriculumId!, options?.parameters?.tableType!);
-  
+type GenerateExcel__MutationParameters =
+  GenerateExcelDocumentGenerationQueryParameters;
+
+export function useGenerateExcelMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.FileResponse,
+      unknown,
+      GenerateExcel__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: GenerateExcelDocumentGenerationQueryParameters },
+): UseMutationResult<
+  Types.FileResponse,
+  unknown,
+  GenerateExcel__MutationParameters,
+  TContext
+> {
+  const key = generateExcelMutationKey(
+    options?.parameters?.curriculumId!,
+    options?.parameters?.tableType!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: GenerateExcel__MutationParameters) => Client.generateExcel(data.curriculumId ?? options?.parameters?.curriculumId!, data.tableType ?? options?.parameters?.tableType!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: GenerateExcel__MutationParameters) =>
+      Client.generateExcel(
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+        data.tableType ?? options?.parameters?.tableType!,
+      ),
+    mutationKey: key,
+  });
 }
-  
-export function generateTxtUrl(curriculumId: number, tableType?: Types.TableType | undefined): string {
-  let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/document/txt?";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-if (tableType === null)
+
+export function generateTxtUrl(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+): string {
+  let url_ = getBaseUrl() + '/api/curriculum/{curriculumId}/document/txt?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (tableType === null)
     throw new Error("The parameter 'tableType' cannot be null.");
-else if (tableType !== undefined)
-    url_ += "tableType=" + encodeURIComponent("" + tableType) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (tableType !== undefined)
+    url_ += 'tableType=' + encodeURIComponent('' + tableType) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function generateTxtMutationKey(curriculumId: number, tableType?: Types.TableType | undefined): MutationKey {
+export function generateTxtMutationKey(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+): MutationKey {
   return trimArrayEnd([
-      'DocumentGenerationClient',
-      'generateTxt',
-      curriculumId as any,
-      tableType as any,
-    ]);
+    'DocumentGenerationClient',
+    'generateTxt',
+    curriculumId as any,
+    tableType as any,
+  ]);
 }
 
-export function useGenerateTxtMutation<TContext>(curriculumId: number, tableType?: Types.TableType | undefined, options?: Omit<UseMutationOptions<Types.FileResponse, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
+export function useGenerateTxtMutation<TContext>(
+  curriculumId: number,
+  tableType?: Types.TableType | undefined,
+  options?: Omit<
+    UseMutationOptions<Types.FileResponse, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.FileResponse, unknown, void, TContext> {
   const key = generateTxtMutationKey(curriculumId, tableType);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.generateTxt(curriculumId, tableType),
     mutationKey: key,
   });
 }
-  
-type GenerateTxt__MutationParameters = GenerateTxtDocumentGenerationQueryParameters
 
-export function useGenerateTxtMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.FileResponse, unknown, GenerateTxt__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: GenerateTxtDocumentGenerationQueryParameters}): UseMutationResult<Types.FileResponse, unknown, GenerateTxt__MutationParameters, TContext> {
-  const key = generateTxtMutationKey(options?.parameters?.curriculumId!, options?.parameters?.tableType!);
-  
+type GenerateTxt__MutationParameters =
+  GenerateTxtDocumentGenerationQueryParameters;
+
+export function useGenerateTxtMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.FileResponse,
+      unknown,
+      GenerateTxt__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: GenerateTxtDocumentGenerationQueryParameters },
+): UseMutationResult<
+  Types.FileResponse,
+  unknown,
+  GenerateTxt__MutationParameters,
+  TContext
+> {
+  const key = generateTxtMutationKey(
+    options?.parameters?.curriculumId!,
+    options?.parameters?.tableType!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: GenerateTxt__MutationParameters) => Client.generateTxt(data.curriculumId ?? options?.parameters?.curriculumId!, data.tableType ?? options?.parameters?.tableType!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: GenerateTxt__MutationParameters) =>
+      Client.generateTxt(
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+        data.tableType ?? options?.parameters?.tableType!,
+      ),
+    mutationKey: key,
+  });
 }

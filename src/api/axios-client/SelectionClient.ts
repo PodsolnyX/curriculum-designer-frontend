@@ -16,132 +16,167 @@ import { getAxios, getBaseUrl } from './helpers';
 /**
  * Creates new or updates existing selection for a module.
  */
-export function createUpdateSelection(moduleId: number, createUpdateSelectionDto: Types.CreateUpdateSelectionDto, config?: AxiosRequestConfig | undefined): Promise<Types.SelectionDto> {
-    let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
-    if (moduleId === undefined || moduleId === null)
-      throw new Error("The parameter 'moduleId' must be defined.");
-    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-      url_ = url_.replace(/[?&]$/, "");
+export function createUpdateSelection(
+  moduleId: number,
+  createUpdateSelectionDto: Types.CreateUpdateSelectionDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.SelectionDto> {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}/selection';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateUpdateSelectionDto(createUpdateSelectionDto);
+  const content_ = Types.serializeCreateUpdateSelectionDto(
+    createUpdateSelectionDto,
+  );
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateUpdateSelection,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateUpdateSelection?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateUpdateSelection,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateUpdateSelection?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateUpdateSelection(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateUpdateSelection(_response);
     });
 }
 
-function processCreateUpdateSelection(response: AxiosResponse): Promise<Types.SelectionDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processCreateUpdateSelection(
+  response: AxiosResponse,
+): Promise<Types.SelectionDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initSelectionDto(resultData200);
-        return Promise.resolve<Types.SelectionDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.SelectionDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initSelectionDto(resultData200);
+    return Promise.resolve<Types.SelectionDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.SelectionDto>(null as any);
 }
 
 /**
  * Removes selection from a module.
  */
-export function deleteSelection(moduleId: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/module/{moduleId}/selection";
-    if (moduleId === undefined || moduleId === null)
-      throw new Error("The parameter 'moduleId' must be defined.");
-    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteSelection(
+  moduleId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}/selection';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteSelection,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteSelection?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteSelection,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteSelection?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteSelection(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteSelection(_response);
     });
 }
 
 function processDeleteSelection(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigCreateUpdateSelection: Partial<AxiosRequestConfig> | null;
 export function getCreateUpdateSelectionRequestConfig() {
   return _requestConfigCreateUpdateSelection;
 }
-export function setCreateUpdateSelectionRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateUpdateSelectionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateUpdateSelection = value;
 }
-export function patchCreateUpdateSelectionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateUpdateSelection = patch(_requestConfigCreateUpdateSelection ?? {});
+export function patchCreateUpdateSelectionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigCreateUpdateSelection = patch(
+    _requestConfigCreateUpdateSelection ?? {},
+  );
 }
 
 let _requestConfigDeleteSelection: Partial<AxiosRequestConfig> | null;
 export function getDeleteSelectionRequestConfig() {
   return _requestConfigDeleteSelection;
 }
-export function setDeleteSelectionRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteSelectionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteSelection = value;
 }
-export function patchDeleteSelectionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteSelectionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteSelection = patch(_requestConfigDeleteSelection ?? {});
 }

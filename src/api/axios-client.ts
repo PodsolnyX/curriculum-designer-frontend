@@ -12,126 +12,92 @@ export * from './axios-client.types';
 // ReSharper disable InconsistentNaming
 
 import type { AxiosError } from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
+import type {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  CancelToken,
+} from 'axios';
 
 export * as ValidationClient from './axios-client/ValidationClient';
 
 export * as ValidationQuery from './axios-client/ValidationQuery';
 
-
-
 export * as StatisticsClient from './axios-client/StatisticsClient';
 
 export * as StatisticsQuery from './axios-client/StatisticsQuery';
-
-
 
 export * as SemestersClient from './axios-client/SemestersClient';
 
 export * as SemestersQuery from './axios-client/SemestersQuery';
 
-
-
 export * as ImportClient from './axios-client/ImportClient';
 
 export * as ImportQuery from './axios-client/ImportQuery';
-
-
 
 export * as DocumentGenerationClient from './axios-client/DocumentGenerationClient';
 
 export * as DocumentGenerationQuery from './axios-client/DocumentGenerationQuery';
 
-
-
 export * as DepartmentClient from './axios-client/DepartmentClient';
 
 export * as DepartmentQuery from './axios-client/DepartmentQuery';
-
-
 
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
 
-
-
 export * as SelectionClient from './axios-client/SelectionClient';
 
 export * as SelectionQuery from './axios-client/SelectionQuery';
-
-
 
 export * as ComponentClient from './axios-client/ComponentClient';
 
 export * as ComponentQuery from './axios-client/ComponentQuery';
 
-
-
 export * as ModuleClient from './axios-client/ModuleClient';
 
 export * as ModuleQuery from './axios-client/ModuleQuery';
-
-
 
 export * as AtomClient from './axios-client/AtomClient';
 
 export * as AtomQuery from './axios-client/AtomQuery';
 
-
-
 export * as AtomCompetenceClient from './axios-client/AtomCompetenceClient';
 
 export * as AtomCompetenceQuery from './axios-client/AtomCompetenceQuery';
-
-
 
 export * as CompetenceClient from './axios-client/CompetenceClient';
 
 export * as CompetenceQuery from './axios-client/CompetenceQuery';
 
-
-
 export * as AuthClient from './axios-client/AuthClient';
 
 export * as AuthQuery from './axios-client/AuthQuery';
-
-
 
 export * as AttestationClient from './axios-client/AttestationClient';
 
 export * as AttestationQuery from './axios-client/AttestationQuery';
 
-
-
 export * as AtomInSemesterClient from './axios-client/AtomInSemesterClient';
 
 export * as AtomInSemesterQuery from './axios-client/AtomInSemesterQuery';
-
-
 
 export * as AcademicActivityClient from './axios-client/AcademicActivityClient';
 
 export * as AcademicActivityQuery from './axios-client/AcademicActivityQuery';
 
-
-
 export * as HoursDistributionClient from './axios-client/HoursDistributionClient';
 
 export * as HoursDistributionQuery from './axios-client/HoursDistributionQuery';
-
-
-
-
 
 import { addResultTypeFactory } from './axios-client/helpers';
 export { setBaseUrl, getBaseUrl } from './axios-client/helpers';
 export { setAxiosFactory, getAxios } from './axios-client/helpers';
 
-
 //-----PersistorHydrator.File-----
 import type { PersistedClient } from '@tanstack/react-query-persist-client';
-import type { DehydratedState, QueryKey } from '@tanstack/react-query'
+import type { DehydratedState, QueryKey } from '@tanstack/react-query';
 import { getResultTypeFactory } from './axios-client/helpers';
 
 /*
@@ -141,21 +107,23 @@ import { getResultTypeFactory } from './axios-client/helpers';
 export function deserializeDate(str: unknown) {
   if (!str || typeof str !== 'string') return str;
   if (!/^\d\d\d\d\-\d\d\-\d\d/.test(str)) return str;
-  
+
   const date = new Date(str);
   const isDate = date instanceof Date && !isNaN(date as any);
-  
+
   return isDate ? date : str;
 }
 
 export function deserializeDatesInQueryKeys(queryKey: QueryKey) {
-  return queryKey
-    // We need to replace `null` with `undefined` in query key, because
-    // `undefined` is serialized as `null`.
-    // And most probably if we have `null` in QueryKey it actually means `undefined`.
-    // We can't keep nulls, because they have a different meaning, and e.g. boolean parameters are not allowed to be null.
-    .map(x => (x === null ? undefined : x))
-    .map(x => deserializeDate(x));
+  return (
+    queryKey
+      // We need to replace `null` with `undefined` in query key, because
+      // `undefined` is serialized as `null`.
+      // And most probably if we have `null` in QueryKey it actually means `undefined`.
+      // We can't keep nulls, because they have a different meaning, and e.g. boolean parameters are not allowed to be null.
+      .map((x) => (x === null ? undefined : x))
+      .map((x) => deserializeDate(x))
+  );
 }
 
 export function deserializeClassesInQueryData(queryKey: QueryKey, data: any) {
@@ -163,11 +131,18 @@ export function deserializeClassesInQueryData(queryKey: QueryKey, data: any) {
     return data;
   } else if (typeof data !== 'object') {
     return data;
-  } else if ('pages' in data && 'pageParams' in data && Array.isArray(data.pages) && Array.isArray(data.pageParams)) {
+  } else if (
+    'pages' in data &&
+    'pageParams' in data &&
+    Array.isArray(data.pages) &&
+    Array.isArray(data.pageParams)
+  ) {
     // infinite query
-    data.pages = data.pages.map((page:any) => deserializeClassesInQueryData(queryKey, page));
+    data.pages = data.pages.map((page: any) =>
+      deserializeClassesInQueryData(queryKey, page),
+    );
   } else if (Array.isArray(data)) {
-    return data.map(elem => constructDtoClass(queryKey, elem));
+    return data.map((elem) => constructDtoClass(queryKey, elem));
   } else {
     return constructDtoClass(queryKey, data);
   }
@@ -180,7 +155,10 @@ export function deserializeClassesInQueryData(queryKey: QueryKey, data: any) {
 export function persisterDeserialize(cache: string): PersistedClient {
   const client: PersistedClient = JSON.parse(cache);
   client.clientState.queries.forEach((query) => {
-    query.state.data = deserializeClassesInQueryData(query.queryKey, query.state.data);
+    query.state.data = deserializeClassesInQueryData(
+      query.queryKey,
+      query.state.data,
+    );
     query.queryKey = deserializeDatesInQueryKeys(query.queryKey);
   });
 
@@ -191,8 +169,7 @@ export function constructDtoClass(queryKey: QueryKey, data: any): unknown {
   const resultTypeKey = getResultTypeClassKey(queryKey);
   const constructorFunction = getResultTypeFactory(resultTypeKey);
 
-  if (!data || !constructorFunction)
-    return data;
+  if (!data || !constructorFunction) return data;
 
   return constructorFunction(data);
 }
@@ -212,59 +189,69 @@ export function getResultTypeClassKey(queryKey: QueryKey): string {
 }
 
 export function initPersister() {
-  
-  addResultTypeFactory('ValidationClient___getValidationErrors', (data: any) => Types.initValidationError(data));
-  addResultTypeFactory('ValidationClient___getValidators', (data: any) => Types.initValidatorsDto(data));
+  addResultTypeFactory('ValidationClient___getValidationErrors', (data: any) =>
+    Types.initValidationError(data),
+  );
+  addResultTypeFactory('ValidationClient___getValidators', (data: any) =>
+    Types.initValidatorsDto(data),
+  );
 
+  addResultTypeFactory('StatisticsClient___getStatistics', (data: any) =>
+    Types.initStatisticsDto(data),
+  );
 
-  addResultTypeFactory('StatisticsClient___getStatistics', (data: any) => Types.initStatisticsDto(data));
+  addResultTypeFactory('SemestersClient___getSemesters', (data: any) =>
+    Types.initRefModuleSemesterDto(data),
+  );
 
+  addResultTypeFactory('DepartmentClient___getDepartments', (data: any) =>
+    Types.initDepartmentDto(data),
+  );
 
-  addResultTypeFactory('SemestersClient___getSemesters', (data: any) => Types.initRefModuleSemesterDto(data));
+  addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) =>
+    Types.initCurriculumShortDto(data),
+  );
+  addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) =>
+    Types.initCurriculumDto(data),
+  );
 
+  addResultTypeFactory('ComponentClient___getIndexes', (data: any) =>
+    Types.initTupleOfIntegerAndString(data),
+  );
 
+  addResultTypeFactory('ModuleClient___getModule', (data: any) =>
+    Types.initModuleDto(data),
+  );
+  addResultTypeFactory('ModuleClient___getModulesByCurriculum', (data: any) =>
+    Types.initModuleDto(data),
+  );
 
+  addResultTypeFactory('AtomClient___getAtom', (data: any) =>
+    Types.initAtomDto(data),
+  );
+  addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) =>
+    Types.initAtomDto(data),
+  );
 
+  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) =>
+    Types.initCompetenceDto(data),
+  );
+  addResultTypeFactory(
+    'CompetenceClient___getCompetenceIndicators',
+    (data: any) => Types.initCompetenceIndicatorDto(data),
+  );
 
+  addResultTypeFactory('AuthClient___getUser', (data: any) =>
+    Types.initUserDto(data),
+  );
 
-  addResultTypeFactory('DepartmentClient___getDepartments', (data: any) => Types.initDepartmentDto(data));
+  addResultTypeFactory('AttestationClient___searchAttestations', (data: any) =>
+    Types.initAttestationDto(data),
+  );
 
-
-  addResultTypeFactory('CurriculumClient___searchCurriculums', (data: any) => Types.initCurriculumShortDto(data));
-  addResultTypeFactory('CurriculumClient___getCurriculum', (data: any) => Types.initCurriculumDto(data));
-
-
-
-
-  addResultTypeFactory('ComponentClient___getIndexes', (data: any) => Types.initTupleOfIntegerAndString(data));
-
-
-  addResultTypeFactory('ModuleClient___getModule', (data: any) => Types.initModuleDto(data));
-  addResultTypeFactory('ModuleClient___getModulesByCurriculum', (data: any) => Types.initModuleDto(data));
-
-
-  addResultTypeFactory('AtomClient___getAtom', (data: any) => Types.initAtomDto(data));
-  addResultTypeFactory('AtomClient___getAtomsByCurriculum', (data: any) => Types.initAtomDto(data));
-
-
-
-
-  addResultTypeFactory('CompetenceClient___getCompetences', (data: any) => Types.initCompetenceDto(data));
-  addResultTypeFactory('CompetenceClient___getCompetenceIndicators', (data: any) => Types.initCompetenceIndicatorDto(data));
-
-
-  addResultTypeFactory('AuthClient___getUser', (data: any) => Types.initUserDto(data));
-
-
-  addResultTypeFactory('AttestationClient___searchAttestations', (data: any) => Types.initAttestationDto(data));
-
-
-
-
-  addResultTypeFactory('AcademicActivityClient___getAcademicActivities', (data: any) => Types.initAcademicActivityDto(data));
-
-
-
-
+  addResultTypeFactory(
+    'AcademicActivityClient___getAcademicActivities',
+    (data: any) => Types.initAcademicActivityDto(data),
+  );
 }
 //-----/PersistorHydrator.File----

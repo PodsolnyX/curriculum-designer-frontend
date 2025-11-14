@@ -9,113 +9,203 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './AtomCompetenceClient'
+import * as Client from './AtomCompetenceClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type SetAtomCompetencesAtomCompetenceQueryParameters = {
-  atomId: number ;
-}
+  atomId: number;
+};
 
 export type SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters = {
-  atomId: number ;
-}
+  atomId: number;
+};
 
 export function setAtomCompetencesUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence";
-if (atomId === undefined || atomId === null)
-  throw new Error("The parameter 'atomId' must be defined.");
-url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/atom/{atomId}/competence';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function setAtomCompetencesMutationKey(atomId: number): MutationKey {
   return trimArrayEnd([
-      'AtomCompetenceClient',
-      'setAtomCompetences',
-      atomId as any,
-    ]);
+    'AtomCompetenceClient',
+    'setAtomCompetences',
+    atomId as any,
+  ]);
 }
 
-export function useSetAtomCompetencesMutation<TContext>(atomId: number, options?: Omit<UseMutationOptions<void, unknown, Types.SetAtomCompetencesDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetAtomCompetencesDto, TContext> {
+export function useSetAtomCompetencesMutation<TContext>(
+  atomId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.SetAtomCompetencesDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.SetAtomCompetencesDto, TContext> {
   const key = setAtomCompetencesMutationKey(atomId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (setAtomCompetencesDto: Types.SetAtomCompetencesDto) => Client.setAtomCompetences(atomId, setAtomCompetencesDto),
+    mutationFn: (setAtomCompetencesDto: Types.SetAtomCompetencesDto) =>
+      Client.setAtomCompetences(atomId, setAtomCompetencesDto),
     mutationKey: key,
   });
 }
-  
-type SetAtomCompetences__MutationParameters = SetAtomCompetencesAtomCompetenceQueryParameters & {
-  setAtomCompetencesDto: Types.SetAtomCompetencesDto;
-}
 
-export function useSetAtomCompetencesMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, SetAtomCompetences__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: SetAtomCompetencesAtomCompetenceQueryParameters}): UseMutationResult<void, unknown, SetAtomCompetences__MutationParameters, TContext> {
+type SetAtomCompetences__MutationParameters =
+  SetAtomCompetencesAtomCompetenceQueryParameters & {
+    setAtomCompetencesDto: Types.SetAtomCompetencesDto;
+  };
+
+export function useSetAtomCompetencesMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      SetAtomCompetences__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: SetAtomCompetencesAtomCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  SetAtomCompetences__MutationParameters,
+  TContext
+> {
   const key = setAtomCompetencesMutationKey(options?.parameters?.atomId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: SetAtomCompetences__MutationParameters) => Client.setAtomCompetences(data.atomId ?? options?.parameters?.atomId!, data.setAtomCompetencesDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: SetAtomCompetences__MutationParameters) =>
+      Client.setAtomCompetences(
+        data.atomId ?? options?.parameters?.atomId!,
+        data.setAtomCompetencesDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function setAtomCompetenceIndicatorsUrl(atomId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/atom/{atomId}/competence-indicator";
-if (atomId === undefined || atomId === null)
-  throw new Error("The parameter 'atomId' must be defined.");
-url_ = url_.replace("{atomId}", encodeURIComponent("" + atomId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ =
+    getBaseUrl() + '/api/competence/atom/{atomId}/competence-indicator';
+  if (atomId === undefined || atomId === null)
+    throw new Error("The parameter 'atomId' must be defined.");
+  url_ = url_.replace('{atomId}', encodeURIComponent('' + atomId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function setAtomCompetenceIndicatorsMutationKey(atomId: number): MutationKey {
+export function setAtomCompetenceIndicatorsMutationKey(
+  atomId: number,
+): MutationKey {
   return trimArrayEnd([
-      'AtomCompetenceClient',
-      'setAtomCompetenceIndicators',
-      atomId as any,
-    ]);
+    'AtomCompetenceClient',
+    'setAtomCompetenceIndicators',
+    atomId as any,
+  ]);
 }
 
-export function useSetAtomCompetenceIndicatorsMutation<TContext>(atomId: number, options?: Omit<UseMutationOptions<void, unknown, Types.SetAtomCompetenceIndicatorsDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetAtomCompetenceIndicatorsDto, TContext> {
+export function useSetAtomCompetenceIndicatorsMutation<TContext>(
+  atomId: number,
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      Types.SetAtomCompetenceIndicatorsDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  void,
+  unknown,
+  Types.SetAtomCompetenceIndicatorsDto,
+  TContext
+> {
   const key = setAtomCompetenceIndicatorsMutationKey(atomId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto) => Client.setAtomCompetenceIndicators(atomId, setAtomCompetenceIndicatorsDto),
+    mutationFn: (
+      setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto,
+    ) =>
+      Client.setAtomCompetenceIndicators(
+        atomId,
+        setAtomCompetenceIndicatorsDto,
+      ),
     mutationKey: key,
   });
 }
-  
-type SetAtomCompetenceIndicators__MutationParameters = SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters & {
-  setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto;
-}
 
-export function useSetAtomCompetenceIndicatorsMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, SetAtomCompetenceIndicators__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters}): UseMutationResult<void, unknown, SetAtomCompetenceIndicators__MutationParameters, TContext> {
-  const key = setAtomCompetenceIndicatorsMutationKey(options?.parameters?.atomId!);
-  
+type SetAtomCompetenceIndicators__MutationParameters =
+  SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters & {
+    setAtomCompetenceIndicatorsDto: Types.SetAtomCompetenceIndicatorsDto;
+  };
+
+export function useSetAtomCompetenceIndicatorsMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      SetAtomCompetenceIndicators__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: SetAtomCompetenceIndicatorsAtomCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  SetAtomCompetenceIndicators__MutationParameters,
+  TContext
+> {
+  const key = setAtomCompetenceIndicatorsMutationKey(
+    options?.parameters?.atomId!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: SetAtomCompetenceIndicators__MutationParameters) => Client.setAtomCompetenceIndicators(data.atomId ?? options?.parameters?.atomId!, data.setAtomCompetenceIndicatorsDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: SetAtomCompetenceIndicators__MutationParameters) =>
+      Client.setAtomCompetenceIndicators(
+        data.atomId ?? options?.parameters?.atomId!,
+        data.setAtomCompetenceIndicatorsDto,
+      ),
+    mutationKey: key,
+  });
 }

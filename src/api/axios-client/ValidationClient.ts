@@ -17,311 +17,384 @@ import { getAxios, getBaseUrl } from './helpers';
  * Get all validation errors for a curriculum
  * @return List of validation errors
  */
-export function getValidationErrors(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ValidationError[]> {
-    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/error";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getValidationErrors(
+  curriculumId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.ValidationError[]> {
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/error';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetValidationErrors,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetValidationErrors?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetValidationErrors,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetValidationErrors?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetValidationErrors(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetValidationErrors(_response);
     });
 }
 
-function processGetValidationErrors(response: AxiosResponse): Promise<Types.ValidationError[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetValidationErrors(
+  response: AxiosResponse,
+): Promise<Types.ValidationError[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initValidationError(item)
-              );
-            }
-        return Promise.resolve<Types.ValidationError[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) => Types.initValidationError(item));
     }
-    return Promise.resolve<Types.ValidationError[]>(null as any);
+    return Promise.resolve<Types.ValidationError[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.ValidationError[]>(null as any);
 }
 
 /**
  * Get custom and structural validators for a curriculum
  */
-export function getValidators(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ValidatorsDto> {
-    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getValidators(
+  curriculumId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.ValidatorsDto> {
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/validator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetValidators,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetValidators?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetValidators,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetValidators?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetValidators(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetValidators(_response);
     });
 }
 
-function processGetValidators(response: AxiosResponse): Promise<Types.ValidatorsDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetValidators(
+  response: AxiosResponse,
+): Promise<Types.ValidatorsDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initValidatorsDto(resultData200);
-        return Promise.resolve<Types.ValidatorsDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.ValidatorsDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initValidatorsDto(resultData200);
+    return Promise.resolve<Types.ValidatorsDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.ValidatorsDto>(null as any);
 }
 
 /**
  * Create a custom validator for a curriculum
  */
-export function createCustomValidator(curriculumId: number, dto: Types.CreateCustomValidatorDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function createCustomValidator(
+  curriculumId: number,
+  dto: Types.CreateCustomValidatorDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/validator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateCustomValidatorDto(dto);
+  const content_ = Types.serializeCreateCustomValidatorDto(dto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateCustomValidator,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateCustomValidator?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateCustomValidator,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateCustomValidator?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateCustomValidator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateCustomValidator(_response);
     });
 }
 
 function processCreateCustomValidator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
  * Update a custom validator
  */
-export function updateCustomValidator(validatorId: number, dto: Types.UpdateCustomValidatorDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/custom";
-    if (validatorId === undefined || validatorId === null)
-      throw new Error("The parameter 'validatorId' must be defined.");
-    url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateCustomValidator(
+  validatorId: number,
+  dto: Types.UpdateCustomValidatorDto,
+  curriculumId: string,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() +
+    '/api/validation/{curriculumId}/validator/{validatorId}/custom';
+  if (validatorId === undefined || validatorId === null)
+    throw new Error("The parameter 'validatorId' must be defined.");
+  url_ = url_.replace('{validatorId}', encodeURIComponent('' + validatorId));
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateCustomValidatorDto(dto);
+  const content_ = Types.serializeUpdateCustomValidatorDto(dto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateCustomValidator,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateCustomValidator?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateCustomValidator,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateCustomValidator?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateCustomValidator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateCustomValidator(_response);
     });
 }
 
 function processUpdateCustomValidator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
  * Update a structural validator
  */
-export function updateStructuralValidator(validatorId: number, dto: Types.UpdateStructuralValidatorDto, curriculumId: string, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/structural";
-    if (validatorId === undefined || validatorId === null)
-      throw new Error("The parameter 'validatorId' must be defined.");
-    url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateStructuralValidator(
+  validatorId: number,
+  dto: Types.UpdateStructuralValidatorDto,
+  curriculumId: string,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() +
+    '/api/validation/{curriculumId}/validator/{validatorId}/structural';
+  if (validatorId === undefined || validatorId === null)
+    throw new Error("The parameter 'validatorId' must be defined.");
+  url_ = url_.replace('{validatorId}', encodeURIComponent('' + validatorId));
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateStructuralValidatorDto(dto);
+  const content_ = Types.serializeUpdateStructuralValidatorDto(dto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateStructuralValidator,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateStructuralValidator?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateStructuralValidator,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateStructuralValidator?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateStructuralValidator(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateStructuralValidator(_response);
     });
 }
 
-function processUpdateStructuralValidator(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processUpdateStructuralValidator(
+  response: AxiosResponse,
+): Promise<void> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigGetValidationErrors: Partial<AxiosRequestConfig> | null;
 export function getGetValidationErrorsRequestConfig() {
   return _requestConfigGetValidationErrors;
 }
-export function setGetValidationErrorsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetValidationErrorsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetValidationErrors = value;
 }
-export function patchGetValidationErrorsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigGetValidationErrors = patch(_requestConfigGetValidationErrors ?? {});
+export function patchGetValidationErrorsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetValidationErrors = patch(
+    _requestConfigGetValidationErrors ?? {},
+  );
 }
 
 let _requestConfigGetValidators: Partial<AxiosRequestConfig> | null;
 export function getGetValidatorsRequestConfig() {
   return _requestConfigGetValidators;
 }
-export function setGetValidatorsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetValidatorsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetValidators = value;
 }
-export function patchGetValidatorsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetValidatorsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetValidators = patch(_requestConfigGetValidators ?? {});
 }
 
@@ -329,31 +402,49 @@ let _requestConfigCreateCustomValidator: Partial<AxiosRequestConfig> | null;
 export function getCreateCustomValidatorRequestConfig() {
   return _requestConfigCreateCustomValidator;
 }
-export function setCreateCustomValidatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateCustomValidatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateCustomValidator = value;
 }
-export function patchCreateCustomValidatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateCustomValidator = patch(_requestConfigCreateCustomValidator ?? {});
+export function patchCreateCustomValidatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigCreateCustomValidator = patch(
+    _requestConfigCreateCustomValidator ?? {},
+  );
 }
 
 let _requestConfigUpdateCustomValidator: Partial<AxiosRequestConfig> | null;
 export function getUpdateCustomValidatorRequestConfig() {
   return _requestConfigUpdateCustomValidator;
 }
-export function setUpdateCustomValidatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateCustomValidatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateCustomValidator = value;
 }
-export function patchUpdateCustomValidatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigUpdateCustomValidator = patch(_requestConfigUpdateCustomValidator ?? {});
+export function patchUpdateCustomValidatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigUpdateCustomValidator = patch(
+    _requestConfigUpdateCustomValidator ?? {},
+  );
 }
 
 let _requestConfigUpdateStructuralValidator: Partial<AxiosRequestConfig> | null;
 export function getUpdateStructuralValidatorRequestConfig() {
   return _requestConfigUpdateStructuralValidator;
 }
-export function setUpdateStructuralValidatorRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateStructuralValidatorRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateStructuralValidator = value;
 }
-export function patchUpdateStructuralValidatorRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigUpdateStructuralValidator = patch(_requestConfigUpdateStructuralValidator ?? {});
+export function patchUpdateStructuralValidatorRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigUpdateStructuralValidator = patch(
+    _requestConfigUpdateStructuralValidator ?? {},
+  );
 }

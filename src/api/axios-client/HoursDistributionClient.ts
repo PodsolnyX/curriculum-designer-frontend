@@ -13,147 +13,202 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function createUpdateHoursDistribution(curriculumId: number, academicActivityId: number, createHoursDistribution: Types.CreateUpdateHoursDistributionDto, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-    if (academicActivityId === undefined || academicActivityId === null)
-      throw new Error("The parameter 'academicActivityId' must be defined.");
-    url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
-    if (semesterId === null)
-        throw new Error("The parameter 'semesterId' cannot be null.");
-    else if (semesterId !== undefined)
-        url_ += "semesterId=" + encodeURIComponent("" + semesterId) + "&";
-    if (atomId === null)
-        throw new Error("The parameter 'atomId' cannot be null.");
-    else if (atomId !== undefined)
-        url_ += "atomId=" + encodeURIComponent("" + atomId) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function createUpdateHoursDistribution(
+  curriculumId: number,
+  academicActivityId: number,
+  createHoursDistribution: Types.CreateUpdateHoursDistributionDto,
+  semesterId?: number | undefined,
+  atomId?: number | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() +
+    '/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (academicActivityId === undefined || academicActivityId === null)
+    throw new Error("The parameter 'academicActivityId' must be defined.");
+  url_ = url_.replace(
+    '{academicActivityId}',
+    encodeURIComponent('' + academicActivityId),
+  );
+  if (semesterId === null)
+    throw new Error("The parameter 'semesterId' cannot be null.");
+  else if (semesterId !== undefined)
+    url_ += 'semesterId=' + encodeURIComponent('' + semesterId) + '&';
+  if (atomId === null)
+    throw new Error("The parameter 'atomId' cannot be null.");
+  else if (atomId !== undefined)
+    url_ += 'atomId=' + encodeURIComponent('' + atomId) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateUpdateHoursDistributionDto(createHoursDistribution);
+  const content_ = Types.serializeCreateUpdateHoursDistributionDto(
+    createHoursDistribution,
+  );
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateUpdateHoursDistribution,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateUpdateHoursDistribution?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateUpdateHoursDistribution,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateUpdateHoursDistribution?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateUpdateHoursDistribution(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateUpdateHoursDistribution(_response);
     });
 }
 
-function processCreateUpdateHoursDistribution(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processCreateUpdateHoursDistribution(
+  response: AxiosResponse,
+): Promise<void> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function deleteHoursDistribution(curriculumId: number, academicActivityId: number, semesterId?: number | undefined, atomId?: number | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-    if (academicActivityId === undefined || academicActivityId === null)
-      throw new Error("The parameter 'academicActivityId' must be defined.");
-    url_ = url_.replace("{academicActivityId}", encodeURIComponent("" + academicActivityId));
-    if (semesterId === null)
-        throw new Error("The parameter 'semesterId' cannot be null.");
-    else if (semesterId !== undefined)
-        url_ += "semesterId=" + encodeURIComponent("" + semesterId) + "&";
-    if (atomId === null)
-        throw new Error("The parameter 'atomId' cannot be null.");
-    else if (atomId !== undefined)
-        url_ += "atomId=" + encodeURIComponent("" + atomId) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteHoursDistribution(
+  curriculumId: number,
+  academicActivityId: number,
+  semesterId?: number | undefined,
+  atomId?: number | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() +
+    '/api/curriculum/{curriculumId}/academic-activity/{academicActivityId}/hours-distribution?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (academicActivityId === undefined || academicActivityId === null)
+    throw new Error("The parameter 'academicActivityId' must be defined.");
+  url_ = url_.replace(
+    '{academicActivityId}',
+    encodeURIComponent('' + academicActivityId),
+  );
+  if (semesterId === null)
+    throw new Error("The parameter 'semesterId' cannot be null.");
+  else if (semesterId !== undefined)
+    url_ += 'semesterId=' + encodeURIComponent('' + semesterId) + '&';
+  if (atomId === null)
+    throw new Error("The parameter 'atomId' cannot be null.");
+  else if (atomId !== undefined)
+    url_ += 'atomId=' + encodeURIComponent('' + atomId) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteHoursDistribution,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteHoursDistribution?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteHoursDistribution,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteHoursDistribution?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteHoursDistribution(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteHoursDistribution(_response);
     });
 }
 
-function processDeleteHoursDistribution(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processDeleteHoursDistribution(
+  response: AxiosResponse,
+): Promise<void> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigCreateUpdateHoursDistribution: Partial<AxiosRequestConfig> | null;
 export function getCreateUpdateHoursDistributionRequestConfig() {
   return _requestConfigCreateUpdateHoursDistribution;
 }
-export function setCreateUpdateHoursDistributionRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateUpdateHoursDistributionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateUpdateHoursDistribution = value;
 }
-export function patchCreateUpdateHoursDistributionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateUpdateHoursDistribution = patch(_requestConfigCreateUpdateHoursDistribution ?? {});
+export function patchCreateUpdateHoursDistributionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigCreateUpdateHoursDistribution = patch(
+    _requestConfigCreateUpdateHoursDistribution ?? {},
+  );
 }
 
 let _requestConfigDeleteHoursDistribution: Partial<AxiosRequestConfig> | null;
 export function getDeleteHoursDistributionRequestConfig() {
   return _requestConfigDeleteHoursDistribution;
 }
-export function setDeleteHoursDistributionRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteHoursDistributionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteHoursDistribution = value;
 }
-export function patchDeleteHoursDistributionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigDeleteHoursDistribution = patch(_requestConfigDeleteHoursDistribution ?? {});
+export function patchDeleteHoursDistributionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigDeleteHoursDistribution = patch(
+    _requestConfigDeleteHoursDistribution ?? {},
+  );
 }

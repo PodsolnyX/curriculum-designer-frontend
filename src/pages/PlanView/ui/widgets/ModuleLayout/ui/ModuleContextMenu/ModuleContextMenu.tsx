@@ -2,15 +2,19 @@ import { Button, List, Popover } from 'antd';
 import Icon, {
   CaretRightOutlined,
   DeleteOutlined,
-  PlusOutlined, SwapOutlined
-} from "@ant-design/icons";
+  PlusOutlined,
+  SwapOutlined,
+} from '@ant-design/icons';
 import cls from './ModuleContextMenu.module.scss';
 import React from 'react';
-import { commonStore } from '@/pages/PlanView/lib/stores/commonStore.ts';
+import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
 import OptionIcon from '@/shared/assets/icons/more.svg?react';
-import clsx from "clsx";
-import { componentsStore } from "@/pages/PlanView/lib/stores/componentsStore/componentsStore.ts";
-import { getSemesterIdFromPrefix, setPrefixToId } from "@/pages/PlanView/lib/helpers/prefixIdHelpers.ts";
+import clsx from 'clsx';
+import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
+import {
+  getSemesterIdFromPrefix,
+  setPrefixToId,
+} from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 
 interface ModuleContextMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   moduleId: string;
@@ -18,21 +22,12 @@ interface ModuleContextMenuProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
-
-  const {
-    className,
-    moduleId,
-    isSelection,
-    ...rest
-  } = props;
+  const { className, moduleId, isSelection, ...rest } = props;
 
   const semesters = commonStore.curriculumData?.semesters || [];
 
   return (
-    <div
-      onClick={(event) => event.stopPropagation()}
-      {...rest}
-    >
+    <div onClick={(event) => event.stopPropagation()} {...rest}>
       <Popover
         trigger={'click'}
         placement={'right'}
@@ -53,17 +48,22 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
                     dataSource={semesters.map((semester) => ({
                       key: semester.id,
                       label: `Семестр ${semester.number}`,
-                      disabled: Number(getSemesterIdFromPrefix(moduleId)) === semester.id,
+                      disabled:
+                        Number(getSemesterIdFromPrefix(moduleId)) ===
+                        semester.id,
                     }))}
                     renderItem={(item) => (
                       <li className={'w-full'}>
                         <Button
                           type={'text'}
                           disabled={item?.disabled}
-                          onClick={() => componentsStore.moveModule(
-                            moduleId,
-                            setPrefixToId(item.key, "semesters")
-                          )}>
+                          onClick={() =>
+                            componentsStore.moveModule(
+                              moduleId,
+                              setPrefixToId(item.key, 'semesters'),
+                            )
+                          }
+                        >
                           {item.label}
                         </Button>
                       </li>
@@ -71,17 +71,25 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
                   />
                 ),
               },
-              ...(isSelection ? [{
-                key: 'transform_to_module',
-                label: 'Преобразовать в модуль',
-                icon: <SwapOutlined />,
-                onClick: () => componentsStore.transformSelectionToModule(moduleId),
-              }] : [{
-                key: 'transform_to_selection',
-                label: 'Преобразовать в выбор',
-                icon: <SwapOutlined />,
-                onClick: () => componentsStore.transformModuleToSelection(moduleId),
-              }]),
+              ...(isSelection
+                ? [
+                    {
+                      key: 'transform_to_module',
+                      label: 'Преобразовать в модуль',
+                      icon: <SwapOutlined />,
+                      onClick: () =>
+                        componentsStore.transformSelectionToModule(moduleId),
+                    },
+                  ]
+                : [
+                    {
+                      key: 'transform_to_selection',
+                      label: 'Преобразовать в выбор',
+                      icon: <SwapOutlined />,
+                      onClick: () =>
+                        componentsStore.transformModuleToSelection(moduleId),
+                    },
+                  ]),
               {
                 key: 'delete',
                 label: 'Удалить',

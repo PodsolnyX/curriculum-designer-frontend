@@ -9,71 +9,124 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './ComponentClient'
+import * as Client from './ComponentClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GetIndexesComponentQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export function getIndexesUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/component/index/{curriculumId}";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/component/index/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getIndexesDefaultOptions: Omit<UseQueryOptions<Types.TupleOfIntegerAndString[], unknown, Types.TupleOfIntegerAndString[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.TupleOfIntegerAndString[], unknown, Types.TupleOfIntegerAndString[]>, 'queryFn'>> = {
-};
+let getIndexesDefaultOptions: Omit<
+  UseQueryOptions<
+    Types.TupleOfIntegerAndString[],
+    unknown,
+    Types.TupleOfIntegerAndString[]
+  >,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<
+        Types.TupleOfIntegerAndString[],
+        unknown,
+        Types.TupleOfIntegerAndString[]
+      >,
+      'queryFn'
+    >
+  > = {};
 export function getGetIndexesDefaultOptions() {
   return getIndexesDefaultOptions;
-};
-export function setGetIndexesDefaultOptions(options: typeof getIndexesDefaultOptions) {
+}
+export function setGetIndexesDefaultOptions(
+  options: typeof getIndexesDefaultOptions,
+) {
   getIndexesDefaultOptions = options;
 }
 
 export function getIndexesQueryKey(curriculumId: number): QueryKey;
 export function getIndexesQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetIndexesComponentQueryParameters;
+    const { curriculumId } = params[0] as GetIndexesComponentQueryParameters;
 
-    return trimArrayEnd([
-        'ComponentClient',
-        'getIndexes',
-        curriculumId as any,
-      ]);
+    return trimArrayEnd(['ComponentClient', 'getIndexes', curriculumId as any]);
   } else {
-    return trimArrayEnd([
-        'ComponentClient',
-        'getIndexes',
-        ...params
-      ]);
+    return trimArrayEnd(['ComponentClient', 'getIndexes', ...params]);
   }
 }
-export function __getIndexes(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getIndexes(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getIndexes(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getIndexes(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetIndexesQuery<TSelectData = Types.TupleOfIntegerAndString[], TError = unknown>(dto: GetIndexesComponentQueryParameters, options?: Omit<UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetIndexesQuery<
+  TSelectData = Types.TupleOfIntegerAndString[],
+  TError = unknown,
+>(
+  dto: GetIndexesComponentQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetIndexesQuery<TSelectData = Types.TupleOfIntegerAndString[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetIndexesQuery<TSelectData = Types.TupleOfIntegerAndString[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetIndexesQuery<
+  TSelectData = Types.TupleOfIntegerAndString[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetIndexesQuery<
+  TSelectData = Types.TupleOfIntegerAndString[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetIndexesComponentQueryParameters);
+      ({ curriculumId } = params[0] as GetIndexesComponentQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -85,19 +138,34 @@ export function useGetIndexesQuery<TSelectData = Types.TupleOfIntegerAndString[]
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.TupleOfIntegerAndString[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getIndexes(context, axiosConfig) : __getIndexes,
+    queryFn: axiosConfig
+      ? (context) => __getIndexes(context, axiosConfig)
+      : __getIndexes,
     queryKey: getIndexesQueryKey(curriculumId),
-    ...getIndexesDefaultOptions as unknown as Omit<UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>, 'queryKey'>,
+    ...(getIndexesDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.TupleOfIntegerAndString[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetIndexesData(queryClient: QueryClient, updater: (data: Types.TupleOfIntegerAndString[] | undefined) => Types.TupleOfIntegerAndString[], curriculumId: number) {
-  queryClient.setQueryData(getIndexesQueryKey(curriculumId),
-    updater
-  );
+export function setGetIndexesData(
+  queryClient: QueryClient,
+  updater: (
+    data: Types.TupleOfIntegerAndString[] | undefined,
+  ) => Types.TupleOfIntegerAndString[],
+  curriculumId: number,
+) {
+  queryClient.setQueryData(getIndexesQueryKey(curriculumId), updater);
 }
 
-export function setGetIndexesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.TupleOfIntegerAndString[] | undefined) => Types.TupleOfIntegerAndString[]) {
+export function setGetIndexesDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (
+    data: Types.TupleOfIntegerAndString[] | undefined,
+  ) => Types.TupleOfIntegerAndString[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }

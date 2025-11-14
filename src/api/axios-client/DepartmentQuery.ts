@@ -9,71 +9,121 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './DepartmentClient'
+import * as Client from './DepartmentClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GetDepartmentsDepartmentQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export function getDepartmentsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/department/{curriculumId}";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/department/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getDepartmentsDefaultOptions: Omit<UseQueryOptions<Types.DepartmentDto[], unknown, Types.DepartmentDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.DepartmentDto[], unknown, Types.DepartmentDto[]>, 'queryFn'>> = {
-};
+let getDepartmentsDefaultOptions: Omit<
+  UseQueryOptions<Types.DepartmentDto[], unknown, Types.DepartmentDto[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.DepartmentDto[], unknown, Types.DepartmentDto[]>,
+      'queryFn'
+    >
+  > = {};
 export function getGetDepartmentsDefaultOptions() {
   return getDepartmentsDefaultOptions;
-};
-export function setGetDepartmentsDefaultOptions(options: typeof getDepartmentsDefaultOptions) {
+}
+export function setGetDepartmentsDefaultOptions(
+  options: typeof getDepartmentsDefaultOptions,
+) {
   getDepartmentsDefaultOptions = options;
 }
 
 export function getDepartmentsQueryKey(curriculumId: number): QueryKey;
 export function getDepartmentsQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetDepartmentsDepartmentQueryParameters;
+    const { curriculumId } =
+      params[0] as GetDepartmentsDepartmentQueryParameters;
 
     return trimArrayEnd([
-        'DepartmentClient',
-        'getDepartments',
-        curriculumId as any,
-      ]);
+      'DepartmentClient',
+      'getDepartments',
+      curriculumId as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'DepartmentClient',
-        'getDepartments',
-        ...params
-      ]);
+    return trimArrayEnd(['DepartmentClient', 'getDepartments', ...params]);
   }
 }
-export function __getDepartments(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getDepartments(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getDepartments(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getDepartments(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetDepartmentsQuery<TSelectData = Types.DepartmentDto[], TError = unknown>(dto: GetDepartmentsDepartmentQueryParameters, options?: Omit<UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetDepartmentsQuery<
+  TSelectData = Types.DepartmentDto[],
+  TError = unknown,
+>(
+  dto: GetDepartmentsDepartmentQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetDepartmentsQuery<TSelectData = Types.DepartmentDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetDepartmentsQuery<TSelectData = Types.DepartmentDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.DepartmentDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetDepartmentsQuery<
+  TSelectData = Types.DepartmentDto[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetDepartmentsQuery<
+  TSelectData = Types.DepartmentDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetDepartmentsDepartmentQueryParameters);
+      ({ curriculumId } = params[0] as GetDepartmentsDepartmentQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -85,19 +135,30 @@ export function useGetDepartmentsQuery<TSelectData = Types.DepartmentDto[], TErr
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.DepartmentDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getDepartments(context, axiosConfig) : __getDepartments,
+    queryFn: axiosConfig
+      ? (context) => __getDepartments(context, axiosConfig)
+      : __getDepartments,
     queryKey: getDepartmentsQueryKey(curriculumId),
-    ...getDepartmentsDefaultOptions as unknown as Omit<UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>, 'queryKey'>,
+    ...(getDepartmentsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.DepartmentDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetDepartmentsData(queryClient: QueryClient, updater: (data: Types.DepartmentDto[] | undefined) => Types.DepartmentDto[], curriculumId: number) {
-  queryClient.setQueryData(getDepartmentsQueryKey(curriculumId),
-    updater
-  );
+export function setGetDepartmentsData(
+  queryClient: QueryClient,
+  updater: (data: Types.DepartmentDto[] | undefined) => Types.DepartmentDto[],
+  curriculumId: number,
+) {
+  queryClient.setQueryData(getDepartmentsQueryKey(curriculumId), updater);
 }
 
-export function setGetDepartmentsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.DepartmentDto[] | undefined) => Types.DepartmentDto[]) {
+export function setGetDepartmentsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.DepartmentDto[] | undefined) => Types.DepartmentDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }

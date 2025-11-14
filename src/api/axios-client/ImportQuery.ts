@@ -9,78 +9,116 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './ImportClient'
+import * as Client from './ImportClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type ImportImportQueryParameters = {
-  curriculumId?: number | undefined ;
-  file?: Types.FileParameter | null | undefined ;
-}
+  curriculumId?: number | undefined;
+  file?: Types.FileParameter | null | undefined;
+};
 
 export type ImportImportMutationParameters = {
-  file?: Types.FileParameter | null | undefined ;
-}
+  file?: Types.FileParameter | null | undefined;
+};
 
 export function importUrl(curriculumId?: number | undefined): string {
-  let url_ = getBaseUrl() + "/api/import?";
-if (curriculumId === null)
+  let url_ = getBaseUrl() + '/api/import?';
+  if (curriculumId === null)
     throw new Error("The parameter 'curriculumId' cannot be null.");
-else if (curriculumId !== undefined)
-    url_ += "curriculumId=" + encodeURIComponent("" + curriculumId) + "&";
-  url_ = url_.replace(/[?&]$/, "");
+  else if (curriculumId !== undefined)
+    url_ += 'curriculumId=' + encodeURIComponent('' + curriculumId) + '&';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function importMutationKey(curriculumId?: number | undefined): MutationKey {
-  return trimArrayEnd([
-      'ImportClient',
-      'import',
-      curriculumId as any,
-    ]);
+export function importMutationKey(
+  curriculumId?: number | undefined,
+): MutationKey {
+  return trimArrayEnd(['ImportClient', 'import', curriculumId as any]);
 }
 
 /**
  * Import a curriculum from a file
  * @param curriculumId (optional) Curriculum Id
- * @param file (optional) 
+ * @param file (optional)
  */
-export function useImportMutation<TContext>(curriculumId?: number | undefined, options?: Omit<UseMutationOptions<string, unknown, ImportImportMutationParameters, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<string, unknown, ImportImportMutationParameters, TContext> {
+export function useImportMutation<TContext>(
+  curriculumId?: number | undefined,
+  options?: Omit<
+    UseMutationOptions<
+      string,
+      unknown,
+      ImportImportMutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  string,
+  unknown,
+  ImportImportMutationParameters,
+  TContext
+> {
   const key = importMutationKey(curriculumId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (importImportMutationParameters: ImportImportMutationParameters) => Client.import_(curriculumId, importImportMutationParameters.file),
+    mutationFn: (
+      importImportMutationParameters: ImportImportMutationParameters,
+    ) => Client.import_(curriculumId, importImportMutationParameters.file),
     mutationKey: key,
   });
 }
-  
+
 type Import__MutationParameters = ImportImportQueryParameters & {
   importImportMutationParameters: ImportImportMutationParameters;
-}
+};
 
 /**
  * Import a curriculum from a file
  * @param curriculumId (optional) Curriculum Id
- * @param file (optional) 
+ * @param file (optional)
  */
-export function useImportMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<string, unknown, Import__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: ImportImportQueryParameters}): UseMutationResult<string, unknown, Import__MutationParameters, TContext> {
+export function useImportMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<string, unknown, Import__MutationParameters, TContext>,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: ImportImportQueryParameters },
+): UseMutationResult<string, unknown, Import__MutationParameters, TContext> {
   const key = importMutationKey(options?.parameters?.curriculumId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
-    ...options, 
-    mutationFn: (data: Import__MutationParameters) => Client.import_(data.curriculumId, data.file),
+    ...options,
+    mutationFn: (data: Import__MutationParameters) =>
+      Client.import_(data.curriculumId, data.file),
     mutationKey: key,
   });
 }

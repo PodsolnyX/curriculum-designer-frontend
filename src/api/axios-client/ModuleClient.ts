@@ -13,222 +13,267 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function createModule(createModuleDto: Types.CreateModuleDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/api/module";
-      url_ = url_.replace(/[?&]$/, "");
+export function createModule(
+  createModuleDto: Types.CreateModuleDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<number> {
+  let url_ = getBaseUrl() + '/api/module';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateModuleDto(createModuleDto);
+  const content_ = Types.serializeCreateModuleDto(createModuleDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateModule,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateModule?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateModule,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateModule?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateModule(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateModule(_response);
     });
 }
 
 function processCreateModule(response: AxiosResponse): Promise<number> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-    
-        result200 = resultData200;
-    
-        return Promise.resolve<number>(result200);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
 
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<number>(null as any);
+    result200 = resultData200;
+
+    return Promise.resolve<number>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<number>(null as any);
 }
 
-export function createModuleWithSelection(createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/api/module/with-selection";
-      url_ = url_.replace(/[?&]$/, "");
+export function createModuleWithSelection(
+  createModuleWithSelectionDto: Types.CreateModuleWithSelectionDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<number> {
+  let url_ = getBaseUrl() + '/api/module/with-selection';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateModuleWithSelectionDto(createModuleWithSelectionDto);
+  const content_ = Types.serializeCreateModuleWithSelectionDto(
+    createModuleWithSelectionDto,
+  );
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateModuleWithSelection,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateModuleWithSelection?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateModuleWithSelection,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateModuleWithSelection?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateModuleWithSelection(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateModuleWithSelection(_response);
     });
 }
 
-function processCreateModuleWithSelection(response: AxiosResponse): Promise<number> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processCreateModuleWithSelection(
+  response: AxiosResponse,
+): Promise<number> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-    
-        result200 = resultData200;
-    
-        return Promise.resolve<number>(result200);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
 
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<number>(null as any);
+    result200 = resultData200;
+
+    return Promise.resolve<number>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<number>(null as any);
 }
 
-export function getModule(moduleId: number, config?: AxiosRequestConfig | undefined): Promise<Types.ModuleDto> {
-    let url_ = getBaseUrl() + "/api/module/{moduleId}";
-    if (moduleId === undefined || moduleId === null)
-      throw new Error("The parameter 'moduleId' must be defined.");
-    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getModule(
+  moduleId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.ModuleDto> {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetModule,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetModule?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetModule,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetModule?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetModule(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetModule(_response);
     });
 }
 
 function processGetModule(response: AxiosResponse): Promise<Types.ModuleDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initModuleDto(resultData200);
-        return Promise.resolve<Types.ModuleDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.ModuleDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initModuleDto(resultData200);
+    return Promise.resolve<Types.ModuleDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.ModuleDto>(null as any);
 }
 
-export function updateModule(moduleId: number, updateModuleDto: Types.UpdateModuleDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/module/{moduleId}";
-    if (moduleId === undefined || moduleId === null)
-      throw new Error("The parameter 'moduleId' must be defined.");
-    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateModule(
+  moduleId: number,
+  updateModuleDto: Types.UpdateModuleDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateModuleDto(updateModuleDto);
+  const content_ = Types.serializeUpdateModuleDto(updateModuleDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateModule,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateModule?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateModule,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateModule?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateModule(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateModule(_response);
     });
 }
 
 function processUpdateModule(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
@@ -237,57 +282,68 @@ function processUpdateModule(response: AxiosResponse): Promise<void> {
  * @param deleteChildren (optional) If true, deletes all children of the module (modules and atoms).
             Else, only deletes the module, moving its children to the parent module.
  */
-export function deleteModule(moduleId: number, deleteChildren?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/module/{moduleId}?";
-    if (moduleId === undefined || moduleId === null)
-      throw new Error("The parameter 'moduleId' must be defined.");
-    url_ = url_.replace("{moduleId}", encodeURIComponent("" + moduleId));
-    if (deleteChildren === null)
-        throw new Error("The parameter 'deleteChildren' cannot be null.");
-    else if (deleteChildren !== undefined)
-        url_ += "deleteChildren=" + encodeURIComponent("" + deleteChildren) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteModule(
+  moduleId: number,
+  deleteChildren?: boolean | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/module/{moduleId}?';
+  if (moduleId === undefined || moduleId === null)
+    throw new Error("The parameter 'moduleId' must be defined.");
+  url_ = url_.replace('{moduleId}', encodeURIComponent('' + moduleId));
+  if (deleteChildren === null)
+    throw new Error("The parameter 'deleteChildren' cannot be null.");
+  else if (deleteChildren !== undefined)
+    url_ += 'deleteChildren=' + encodeURIComponent('' + deleteChildren) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteModule,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteModule?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteModule,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteModule?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteModule(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteModule(_response);
     });
 }
 
 function processDeleteModule(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
 /**
@@ -295,74 +351,89 @@ function processDeleteModule(response: AxiosResponse): Promise<void> {
  * @param curriculumId Curriculum id
  * @param plainList (optional) If true, returns a plain list of modules. Else, returns a tree
  */
-export function getModulesByCurriculum(curriculumId: number, plainList?: boolean | undefined, config?: AxiosRequestConfig | undefined): Promise<Types.ModuleDto[]> {
-    let url_ = getBaseUrl() + "/api/module/curriculum/{curriculumId}?";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-    if (plainList === null)
-        throw new Error("The parameter 'plainList' cannot be null.");
-    else if (plainList !== undefined)
-        url_ += "plainList=" + encodeURIComponent("" + plainList) + "&";
-      url_ = url_.replace(/[?&]$/, "");
+export function getModulesByCurriculum(
+  curriculumId: number,
+  plainList?: boolean | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.ModuleDto[]> {
+  let url_ = getBaseUrl() + '/api/module/curriculum/{curriculumId}?';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (plainList === null)
+    throw new Error("The parameter 'plainList' cannot be null.");
+  else if (plainList !== undefined)
+    url_ += 'plainList=' + encodeURIComponent('' + plainList) + '&';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetModulesByCurriculum,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetModulesByCurriculum?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetModulesByCurriculum,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetModulesByCurriculum?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetModulesByCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetModulesByCurriculum(_response);
     });
 }
 
-function processGetModulesByCurriculum(response: AxiosResponse): Promise<Types.ModuleDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetModulesByCurriculum(
+  response: AxiosResponse,
+): Promise<Types.ModuleDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initModuleDto(item)
-              );
-            }
-        return Promise.resolve<Types.ModuleDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) => Types.initModuleDto(item));
     }
-    return Promise.resolve<Types.ModuleDto[]>(null as any);
+    return Promise.resolve<Types.ModuleDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.ModuleDto[]>(null as any);
 }
 let _requestConfigCreateModule: Partial<AxiosRequestConfig> | null;
 export function getCreateModuleRequestConfig() {
   return _requestConfigCreateModule;
 }
-export function setCreateModuleRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateModuleRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateModule = value;
 }
-export function patchCreateModuleRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchCreateModuleRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateModule = patch(_requestConfigCreateModule ?? {});
 }
 
@@ -370,11 +441,17 @@ let _requestConfigCreateModuleWithSelection: Partial<AxiosRequestConfig> | null;
 export function getCreateModuleWithSelectionRequestConfig() {
   return _requestConfigCreateModuleWithSelection;
 }
-export function setCreateModuleWithSelectionRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateModuleWithSelectionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateModuleWithSelection = value;
 }
-export function patchCreateModuleWithSelectionRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigCreateModuleWithSelection = patch(_requestConfigCreateModuleWithSelection ?? {});
+export function patchCreateModuleWithSelectionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigCreateModuleWithSelection = patch(
+    _requestConfigCreateModuleWithSelection ?? {},
+  );
 }
 
 let _requestConfigGetModule: Partial<AxiosRequestConfig> | null;
@@ -384,7 +461,9 @@ export function getGetModuleRequestConfig() {
 export function setGetModuleRequestConfig(value: Partial<AxiosRequestConfig>) {
   _requestConfigGetModule = value;
 }
-export function patchGetModuleRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetModuleRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetModule = patch(_requestConfigGetModule ?? {});
 }
 
@@ -392,10 +471,14 @@ let _requestConfigUpdateModule: Partial<AxiosRequestConfig> | null;
 export function getUpdateModuleRequestConfig() {
   return _requestConfigUpdateModule;
 }
-export function setUpdateModuleRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateModuleRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateModule = value;
 }
-export function patchUpdateModuleRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchUpdateModuleRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateModule = patch(_requestConfigUpdateModule ?? {});
 }
 
@@ -403,10 +486,14 @@ let _requestConfigDeleteModule: Partial<AxiosRequestConfig> | null;
 export function getDeleteModuleRequestConfig() {
   return _requestConfigDeleteModule;
 }
-export function setDeleteModuleRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteModuleRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteModule = value;
 }
-export function patchDeleteModuleRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteModuleRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteModule = patch(_requestConfigDeleteModule ?? {});
 }
 
@@ -414,9 +501,15 @@ let _requestConfigGetModulesByCurriculum: Partial<AxiosRequestConfig> | null;
 export function getGetModulesByCurriculumRequestConfig() {
   return _requestConfigGetModulesByCurriculum;
 }
-export function setGetModulesByCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetModulesByCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetModulesByCurriculum = value;
 }
-export function patchGetModulesByCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigGetModulesByCurriculum = patch(_requestConfigGetModulesByCurriculum ?? {});
+export function patchGetModulesByCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetModulesByCurriculum = patch(
+    _requestConfigGetModulesByCurriculum ?? {},
+  );
 }

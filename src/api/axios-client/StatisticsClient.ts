@@ -13,68 +13,85 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getStatistics(curriculumId: number, students: number, config?: AxiosRequestConfig | undefined): Promise<Types.StatisticsDto> {
-    let url_ = getBaseUrl() + "/api/statistics/{curriculumId}/{students}";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-    if (students === undefined || students === null)
-      throw new Error("The parameter 'students' must be defined.");
-    url_ = url_.replace("{students}", encodeURIComponent("" + students));
-      url_ = url_.replace(/[?&]$/, "");
+export function getStatistics(
+  curriculumId: number,
+  students: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.StatisticsDto> {
+  let url_ = getBaseUrl() + '/api/statistics/{curriculumId}/{students}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (students === undefined || students === null)
+    throw new Error("The parameter 'students' must be defined.");
+  url_ = url_.replace('{students}', encodeURIComponent('' + students));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetStatistics,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetStatistics?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetStatistics,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetStatistics?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetStatistics(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetStatistics(_response);
     });
 }
 
-function processGetStatistics(response: AxiosResponse): Promise<Types.StatisticsDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetStatistics(
+  response: AxiosResponse,
+): Promise<Types.StatisticsDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initStatisticsDto(resultData200);
-        return Promise.resolve<Types.StatisticsDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.StatisticsDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initStatisticsDto(resultData200);
+    return Promise.resolve<Types.StatisticsDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.StatisticsDto>(null as any);
 }
 let _requestConfigGetStatistics: Partial<AxiosRequestConfig> | null;
 export function getGetStatisticsRequestConfig() {
   return _requestConfigGetStatistics;
 }
-export function setGetStatisticsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetStatisticsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetStatistics = value;
 }
-export function patchGetStatisticsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetStatisticsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetStatistics = patch(_requestConfigGetStatistics ?? {});
 }

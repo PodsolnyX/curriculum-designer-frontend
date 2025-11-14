@@ -9,51 +9,88 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './AttestationClient'
+import * as Client from './AttestationClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-
 export function searchAttestationsUrl(): string {
-  let url_ = getBaseUrl() + "/api/attestation";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/attestation';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let searchAttestationsDefaultOptions: Omit<UseQueryOptions<Types.AttestationDto[], unknown, Types.AttestationDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.AttestationDto[], unknown, Types.AttestationDto[]>, 'queryFn'>> = {
-};
+let searchAttestationsDefaultOptions: Omit<
+  UseQueryOptions<Types.AttestationDto[], unknown, Types.AttestationDto[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.AttestationDto[], unknown, Types.AttestationDto[]>,
+      'queryFn'
+    >
+  > = {};
 export function getSearchAttestationsDefaultOptions() {
   return searchAttestationsDefaultOptions;
-};
-export function setSearchAttestationsDefaultOptions(options: typeof searchAttestationsDefaultOptions) {
+}
+export function setSearchAttestationsDefaultOptions(
+  options: typeof searchAttestationsDefaultOptions,
+) {
   searchAttestationsDefaultOptions = options;
 }
 
 export function searchAttestationsQueryKey(): QueryKey;
 export function searchAttestationsQueryKey(...params: any[]): QueryKey {
-  return trimArrayEnd([
-      'AttestationClient',
-      'searchAttestations',
-    ]);
+  return trimArrayEnd(['AttestationClient', 'searchAttestations']);
 }
-export function __searchAttestations(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.searchAttestations(
-axiosConfig    );
+export function __searchAttestations(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.searchAttestations(axiosConfig);
 }
 
 /**
  * Get all attestations
  */
-export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[], TError = unknown>(options?: Omit<UseQueryOptions<Types.AttestationDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.AttestationDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
-  
+export function useSearchAttestationsQuery<
+  TSelectData = Types.AttestationDto[],
+  TError = unknown,
+>(
+  options?: Omit<
+    UseQueryOptions<Types.AttestationDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useSearchAttestationsQuery<
+  TSelectData = Types.AttestationDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.AttestationDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
 
   options = params[0] as any;
   axiosConfig = params[1] as any;
@@ -62,53 +99,66 @@ export function useSearchAttestationsQuery<TSelectData = Types.AttestationDto[],
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.AttestationDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __searchAttestations(context, axiosConfig) : __searchAttestations,
+    queryFn: axiosConfig
+      ? (context) => __searchAttestations(context, axiosConfig)
+      : __searchAttestations,
     queryKey: searchAttestationsQueryKey(),
-    ...searchAttestationsDefaultOptions as unknown as Omit<UseQueryOptions<Types.AttestationDto[], TError, TSelectData>, 'queryKey'>,
+    ...(searchAttestationsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.AttestationDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 /**
  * Get all attestations
  */
-export function setSearchAttestationsData(queryClient: QueryClient, updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[], ) {
-  queryClient.setQueryData(searchAttestationsQueryKey(),
-    updater
-  );
+export function setSearchAttestationsData(
+  queryClient: QueryClient,
+  updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[],
+) {
+  queryClient.setQueryData(searchAttestationsQueryKey(), updater);
 }
 
 /**
  * Get all attestations
  */
-export function setSearchAttestationsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[]) {
+export function setSearchAttestationsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.AttestationDto[] | undefined) => Types.AttestationDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function setAttestationUrl(): string {
-  let url_ = getBaseUrl() + "/api/attestation";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/attestation';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function setAttestationMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AttestationClient',
-      'setAttestation',
-    ]);
+  return trimArrayEnd(['AttestationClient', 'setAttestation']);
 }
 
 /**
  * Set attestations for a component in semester
  */
-export function useSetAttestationMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, Types.SetAttestationDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.SetAttestationDto, TContext> {
+export function useSetAttestationMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.SetAttestationDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.SetAttestationDto, TContext> {
   const key = setAttestationMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (setAttestationDto: Types.SetAttestationDto) => Client.setAttestation(setAttestationDto),
+    mutationFn: (setAttestationDto: Types.SetAttestationDto) =>
+      Client.setAttestation(setAttestationDto),
     mutationKey: key,
   });
 }

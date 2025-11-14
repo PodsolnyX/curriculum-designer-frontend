@@ -5,7 +5,6 @@
   margin-bottom: 0.5rem;
 
   &.replaceMode {
-
     .subjectCard {
       cursor: grab;
       transform: rotate(-2deg);
@@ -21,17 +20,33 @@
     }
 
     @keyframes shake {
-      0% { transform: translateX(0) rotate(-3deg); }
-      20% { transform: translateX(-5px) rotate(-3deg); }
-      40% { transform: translateX(5px) rotate(-3deg); }
-      60% { transform: translateX(-5px) rotate(-3deg); }
-      80% { transform: translateX(5px) rotate(-3deg); }
-      100% { transform: translateX(0) rotate(-3deg); }
+      0% {
+        transform: translateX(0) rotate(-3deg);
+      }
+      20% {
+        transform: translateX(-5px) rotate(-3deg);
+      }
+      40% {
+        transform: translateX(5px) rotate(-3deg);
+      }
+      60% {
+        transform: translateX(-5px) rotate(-3deg);
+      }
+      80% {
+        transform: translateX(5px) rotate(-3deg);
+      }
+      100% {
+        transform: translateX(0) rotate(-3deg);
+      }
     }
 
     @keyframes rotation {
-      0% { transform: rotate(0deg); }
-      100% { transform: translateX(-5px) rotate(-3deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: translateX(-5px) rotate(-3deg);
+      }
     }
   }
 
@@ -96,7 +111,10 @@
   appearance: none;
   border-left: 4px solid transparent;
   touch-action: none;
-  transition: scale .2s, box-shadow .2s, background-color .2s;
+  transition:
+    scale 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
 
   &:focus-visible:not(.active &) {
     box-shadow: 0 0 0 2px #4c9ffe;
@@ -147,7 +165,7 @@
 
   .optionsIcon {
     opacity: 0;
-    transition: .3s;
+    transition: 0.3s;
 
     &:hover {
       * {
@@ -167,7 +185,7 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    transition: .3s;
+    transition: 0.3s;
     margin-left: auto;
 
     &:hover {
@@ -194,7 +212,7 @@
     top: 0;
     opacity: 0;
     font-size: 18px;
-    transition: .3s;
+    transition: 0.3s;
     cursor: pointer;
 
     &:hover {
@@ -203,7 +221,7 @@
 
     &_selected {
       opacity: 1;
-      color: #F90C0C;
+      color: #f90c0c;
     }
   }
 }
@@ -213,11 +231,11 @@
 }
 
 .Practice {
-  border-color: #FFCC00;
+  border-color: #ffcc00;
 }
 
 .Attestation {
-  border-color: #F90C0C;
+  border-color: #f90c0c;
 }
 
 .Elective {

@@ -9,179 +9,219 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './AuthClient'
+import * as Client from './AuthClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
-
-
 export function registerUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/register";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/register';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function registerMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'register',
-    ]);
+  return trimArrayEnd(['AuthClient', 'register']);
 }
 
-export function useRegisterMutation<TContext>(options?: Omit<UseMutationOptions<Types.TokenDto, unknown, Types.RegisterDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.TokenDto, unknown, Types.RegisterDto, TContext> {
+export function useRegisterMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<Types.TokenDto, unknown, Types.RegisterDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.TokenDto, unknown, Types.RegisterDto, TContext> {
   const key = registerMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (registerDto: Types.RegisterDto) => Client.register(registerDto),
+    mutationFn: (registerDto: Types.RegisterDto) =>
+      Client.register(registerDto),
     mutationKey: key,
   });
 }
-  
+
 export function loginUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/login";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/login';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function loginMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'login',
-    ]);
+  return trimArrayEnd(['AuthClient', 'login']);
 }
 
-export function useLoginMutation<TContext>(options?: Omit<UseMutationOptions<Types.TokenDto, unknown, Types.LoginDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.TokenDto, unknown, Types.LoginDto, TContext> {
+export function useLoginMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<Types.TokenDto, unknown, Types.LoginDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.TokenDto, unknown, Types.LoginDto, TContext> {
   const key = loginMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: (loginDto: Types.LoginDto) => Client.login(loginDto),
     mutationKey: key,
   });
 }
-  
+
 export function refreshUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/refresh";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/refresh';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function refreshMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'refresh',
-    ]);
+  return trimArrayEnd(['AuthClient', 'refresh']);
 }
 
-export function useRefreshMutation<TContext>(options?: Omit<UseMutationOptions<Types.TokenDto, unknown, Types.TokenDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.TokenDto, unknown, Types.TokenDto, TContext> {
+export function useRefreshMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<Types.TokenDto, unknown, Types.TokenDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<Types.TokenDto, unknown, Types.TokenDto, TContext> {
   const key = refreshMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: (tokenDto: Types.TokenDto) => Client.refresh(tokenDto),
     mutationKey: key,
   });
 }
-  
+
 export function logoutUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/logout";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/logout';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function logoutMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'logout',
-    ]);
+  return trimArrayEnd(['AuthClient', 'logout']);
 }
 
-export function useLogoutMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+export function useLogoutMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
   const key = logoutMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.logout(),
     mutationKey: key,
   });
 }
-  
+
 export function changePasswordUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/change-password";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/change-password';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function changePasswordMutationKey(): MutationKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'changePassword',
-    ]);
+  return trimArrayEnd(['AuthClient', 'changePassword']);
 }
 
-export function useChangePasswordMutation<TContext>(options?: Omit<UseMutationOptions<void, unknown, Types.ChangePasswordDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.ChangePasswordDto, TContext> {
+export function useChangePasswordMutation<TContext>(
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.ChangePasswordDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.ChangePasswordDto, TContext> {
   const key = changePasswordMutationKey();
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (changePasswordDto: Types.ChangePasswordDto) => Client.changePassword(changePasswordDto),
+    mutationFn: (changePasswordDto: Types.ChangePasswordDto) =>
+      Client.changePassword(changePasswordDto),
     mutationKey: key,
   });
 }
-  
+
 export function getUserUrl(): string {
-  let url_ = getBaseUrl() + "/api/auth/profile";
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/auth/profile';
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getUserDefaultOptions: Omit<UseQueryOptions<Types.UserDto, unknown, Types.UserDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.UserDto, unknown, Types.UserDto>, 'queryFn'>> = {
-};
+let getUserDefaultOptions: Omit<
+  UseQueryOptions<Types.UserDto, unknown, Types.UserDto>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<UseQueryOptions<Types.UserDto, unknown, Types.UserDto>, 'queryFn'>
+  > = {};
 export function getGetUserDefaultOptions() {
   return getUserDefaultOptions;
-};
-export function setGetUserDefaultOptions(options: typeof getUserDefaultOptions) {
+}
+export function setGetUserDefaultOptions(
+  options: typeof getUserDefaultOptions,
+) {
   getUserDefaultOptions = options;
 }
 
 export function getUserQueryKey(): QueryKey;
 export function getUserQueryKey(...params: any[]): QueryKey {
-  return trimArrayEnd([
-      'AuthClient',
-      'getUser',
-    ]);
+  return trimArrayEnd(['AuthClient', 'getUser']);
 }
-export function __getUser(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getUser(
-axiosConfig    );
+export function __getUser(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getUser(axiosConfig);
 }
 
-export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(options?: Omit<UseQueryOptions<Types.UserDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.UserDto, TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
-  
+export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(
+  options?: Omit<
+    UseQueryOptions<Types.UserDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(
+  ...params: any[]
+): UseQueryResult<TSelectData, TError> {
+  let options: UseQueryOptions<Types.UserDto, TError, TSelectData> | undefined =
+    undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
 
   options = params[0] as any;
   axiosConfig = params[1] as any;
@@ -190,19 +230,29 @@ export function useGetUserQuery<TSelectData = Types.UserDto, TError = unknown>(.
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.UserDto, TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getUser(context, axiosConfig) : __getUser,
+    queryFn: axiosConfig
+      ? (context) => __getUser(context, axiosConfig)
+      : __getUser,
     queryKey: getUserQueryKey(),
-    ...getUserDefaultOptions as unknown as Omit<UseQueryOptions<Types.UserDto, TError, TSelectData>, 'queryKey'>,
+    ...(getUserDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.UserDto, TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetUserData(queryClient: QueryClient, updater: (data: Types.UserDto | undefined) => Types.UserDto, ) {
-  queryClient.setQueryData(getUserQueryKey(),
-    updater
-  );
+export function setGetUserData(
+  queryClient: QueryClient,
+  updater: (data: Types.UserDto | undefined) => Types.UserDto,
+) {
+  queryClient.setQueryData(getUserQueryKey(), updater);
 }
 
-export function setGetUserDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.UserDto | undefined) => Types.UserDto) {
+export function setGetUserDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.UserDto | undefined) => Types.UserDto,
+) {
   queryClient.setQueryData(queryKey, updater);
 }

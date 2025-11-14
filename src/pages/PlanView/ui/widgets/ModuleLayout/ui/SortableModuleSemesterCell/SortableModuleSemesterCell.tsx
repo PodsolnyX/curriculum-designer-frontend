@@ -1,23 +1,24 @@
-import { observer } from "mobx-react-lite";
-import { componentsStore } from "@/pages/PlanView/lib/stores/componentsStore/componentsStore.ts";
-import { useDroppable } from "@dnd-kit/core";
-import React from "react";
+import { observer } from 'mobx-react-lite';
+import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
+import { useDroppable } from '@dnd-kit/core';
+import React from 'react';
 import {
   ModuleSemesterCell,
-  ModuleSemesterCellProps
-} from "../ModuleSemesterCell/ModuleSemesterCell.tsx";
+  ModuleSemesterCellProps,
+} from '../ModuleSemesterCell/ModuleSemesterCell.tsx';
 
-export const SortableModuleSemesterCell = observer((props: ModuleSemesterCellProps) => {
+export const SortableModuleSemesterCell = observer(
+  (props: ModuleSemesterCellProps) => {
+    const isOver = componentsStore.isOver(props.id);
 
-  const isOver = componentsStore.isOver(props.id);
+    const { setNodeRef } = useDroppable({
+      id: props.id,
+    });
 
-  const { setNodeRef } = useDroppable({
-    id: props.id
-  });
-
-  return (
-    <div ref={setNodeRef}>
-      <ModuleSemesterCell {...props} isOver={isOver}/>
-    </div>
-  )
-})
+    return (
+      <div ref={setNodeRef}>
+        <ModuleSemesterCell {...props} isOver={isOver} />
+      </div>
+    );
+  },
+);

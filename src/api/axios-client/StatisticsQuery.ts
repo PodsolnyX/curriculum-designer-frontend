@@ -9,78 +9,142 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './StatisticsClient'
+import * as Client from './StatisticsClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GetStatisticsStatisticsQueryParameters = {
-  curriculumId: number ;
-  students: number ;
-}
+  curriculumId: number;
+  students: number;
+};
 
-export function getStatisticsUrl(curriculumId: number, students: number): string {
-  let url_ = getBaseUrl() + "/api/statistics/{curriculumId}/{students}";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-if (students === undefined || students === null)
-  throw new Error("The parameter 'students' must be defined.");
-url_ = url_.replace("{students}", encodeURIComponent("" + students));
-  url_ = url_.replace(/[?&]$/, "");
+export function getStatisticsUrl(
+  curriculumId: number,
+  students: number,
+): string {
+  let url_ = getBaseUrl() + '/api/statistics/{curriculumId}/{students}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  if (students === undefined || students === null)
+    throw new Error("The parameter 'students' must be defined.");
+  url_ = url_.replace('{students}', encodeURIComponent('' + students));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getStatisticsDefaultOptions: Omit<UseQueryOptions<Types.StatisticsDto, unknown, Types.StatisticsDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.StatisticsDto, unknown, Types.StatisticsDto>, 'queryFn'>> = {
-};
+let getStatisticsDefaultOptions: Omit<
+  UseQueryOptions<Types.StatisticsDto, unknown, Types.StatisticsDto>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.StatisticsDto, unknown, Types.StatisticsDto>,
+      'queryFn'
+    >
+  > = {};
 export function getGetStatisticsDefaultOptions() {
   return getStatisticsDefaultOptions;
-};
-export function setGetStatisticsDefaultOptions(options: typeof getStatisticsDefaultOptions) {
+}
+export function setGetStatisticsDefaultOptions(
+  options: typeof getStatisticsDefaultOptions,
+) {
   getStatisticsDefaultOptions = options;
 }
 
-export function getStatisticsQueryKey(dto: GetStatisticsStatisticsQueryParameters): QueryKey;
-export function getStatisticsQueryKey(curriculumId: number, students: number): QueryKey;
+export function getStatisticsQueryKey(
+  dto: GetStatisticsStatisticsQueryParameters,
+): QueryKey;
+export function getStatisticsQueryKey(
+  curriculumId: number,
+  students: number,
+): QueryKey;
 export function getStatisticsQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId, students,  } = params[0] as GetStatisticsStatisticsQueryParameters;
+    const { curriculumId, students } =
+      params[0] as GetStatisticsStatisticsQueryParameters;
 
     return trimArrayEnd([
-        'StatisticsClient',
-        'getStatistics',
-        curriculumId as any,
-        students as any,
-      ]);
+      'StatisticsClient',
+      'getStatistics',
+      curriculumId as any,
+      students as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'StatisticsClient',
-        'getStatistics',
-        ...params
-      ]);
+    return trimArrayEnd(['StatisticsClient', 'getStatistics', ...params]);
   }
 }
-export function __getStatistics(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+export function __getStatistics(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
   return Client.getStatistics(
-      context.queryKey[2] as number,       context.queryKey[3] as number,axiosConfig    );
+    context.queryKey[2] as number,
+    context.queryKey[3] as number,
+    axiosConfig,
+  );
 }
 
-export function useGetStatisticsQuery<TSelectData = Types.StatisticsDto, TError = unknown>(dto: GetStatisticsStatisticsQueryParameters, options?: Omit<UseQueryOptions<Types.StatisticsDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetStatisticsQuery<
+  TSelectData = Types.StatisticsDto,
+  TError = unknown,
+>(
+  dto: GetStatisticsStatisticsQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.StatisticsDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetStatisticsQuery<TSelectData = Types.StatisticsDto, TError = unknown>(curriculumId: number, students: number, options?: Omit<UseQueryOptions<Types.StatisticsDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetStatisticsQuery<TSelectData = Types.StatisticsDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.StatisticsDto, TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetStatisticsQuery<
+  TSelectData = Types.StatisticsDto,
+  TError = unknown,
+>(
+  curriculumId: number,
+  students: number,
+  options?: Omit<
+    UseQueryOptions<Types.StatisticsDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetStatisticsQuery<
+  TSelectData = Types.StatisticsDto,
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.StatisticsDto, TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
   let students: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId, students,  } = params[0] as GetStatisticsStatisticsQueryParameters);
+      ({ curriculumId, students } =
+        params[0] as GetStatisticsStatisticsQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -92,19 +156,34 @@ export function useGetStatisticsQuery<TSelectData = Types.StatisticsDto, TError 
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.StatisticsDto, TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getStatistics(context, axiosConfig) : __getStatistics,
+    queryFn: axiosConfig
+      ? (context) => __getStatistics(context, axiosConfig)
+      : __getStatistics,
     queryKey: getStatisticsQueryKey(curriculumId, students),
-    ...getStatisticsDefaultOptions as unknown as Omit<UseQueryOptions<Types.StatisticsDto, TError, TSelectData>, 'queryKey'>,
+    ...(getStatisticsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.StatisticsDto, TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetStatisticsData(queryClient: QueryClient, updater: (data: Types.StatisticsDto | undefined) => Types.StatisticsDto, curriculumId: number, students: number) {
-  queryClient.setQueryData(getStatisticsQueryKey(curriculumId, students),
-    updater
+export function setGetStatisticsData(
+  queryClient: QueryClient,
+  updater: (data: Types.StatisticsDto | undefined) => Types.StatisticsDto,
+  curriculumId: number,
+  students: number,
+) {
+  queryClient.setQueryData(
+    getStatisticsQueryKey(curriculumId, students),
+    updater,
   );
 }
 
-export function setGetStatisticsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.StatisticsDto | undefined) => Types.StatisticsDto) {
+export function setGetStatisticsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.StatisticsDto | undefined) => Types.StatisticsDto,
+) {
   queryClient.setQueryData(queryKey, updater);
 }

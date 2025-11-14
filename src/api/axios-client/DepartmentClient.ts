@@ -13,69 +13,83 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function getDepartments(curriculumId: number, config?: AxiosRequestConfig | undefined): Promise<Types.DepartmentDto[]> {
-    let url_ = getBaseUrl() + "/api/department/{curriculumId}";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function getDepartments(
+  curriculumId: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.DepartmentDto[]> {
+  let url_ = getBaseUrl() + '/api/department/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetDepartments,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetDepartments?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetDepartments,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetDepartments?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetDepartments(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetDepartments(_response);
     });
 }
 
-function processGetDepartments(response: AxiosResponse): Promise<Types.DepartmentDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetDepartments(
+  response: AxiosResponse,
+): Promise<Types.DepartmentDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initDepartmentDto(item)
-              );
-            }
-        return Promise.resolve<Types.DepartmentDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) => Types.initDepartmentDto(item));
     }
-    return Promise.resolve<Types.DepartmentDto[]>(null as any);
+    return Promise.resolve<Types.DepartmentDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.DepartmentDto[]>(null as any);
 }
 let _requestConfigGetDepartments: Partial<AxiosRequestConfig> | null;
 export function getGetDepartmentsRequestConfig() {
   return _requestConfigGetDepartments;
 }
-export function setGetDepartmentsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetDepartmentsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetDepartments = value;
 }
-export function patchGetDepartmentsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetDepartmentsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetDepartments = patch(_requestConfigGetDepartments ?? {});
 }

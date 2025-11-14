@@ -1,19 +1,19 @@
-import { Badge, Button, List, Popover } from "antd";
+import { Badge, Button, List, Popover } from 'antd';
 import Icon, {
   CaretRightOutlined,
   DeleteOutlined,
   DownOutlined,
   PlusOutlined,
   TagOutlined,
-  UpOutlined
-} from "@ant-design/icons";
-import { AtomType } from "@/api/axios-client.types.ts";
-import { componentsStore } from "@/pages/PlanView/lib/stores/componentsStore/componentsStore.ts";
-import classNames from "classnames";
-import cls from "@/pages/PlanView/ui/widgets/AtomCard/AtomCard.module.scss";
-import React from "react";
-import OptionIcon from "@/shared/assets/icons/more.svg?react";
-import { AtomTypeFullName } from "@/shared/const/enumRecords.tsx";
+  UpOutlined,
+} from '@ant-design/icons';
+import { AtomType } from '@/api/axios-client.types.ts';
+import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
+import classNames from 'classnames';
+import cls from '@/pages/PlanView/ui/widgets/AtomCard/AtomCard.module.scss';
+import React from 'react';
+import OptionIcon from '@/shared/assets/icons/more.svg?react';
+import { AtomTypeFullName } from '@/shared/const/enumRecords.tsx';
 
 interface SubjectContextMenuProps {
   id: string;
@@ -23,119 +23,142 @@ interface SubjectContextMenuProps {
     next: number | null;
   };
 
-  expendSemester(direction: "prev" | "next"): void;
+  expendSemester(direction: 'prev' | 'next'): void;
   deleteSubject(): void;
 }
 
 export const AtomContextMenu = (props: SubjectContextMenuProps) => {
-
-  const {
-    type,
-    id,
-    neighboringSemesters,
-    expendSemester,
-    deleteSubject
-  } = props;
+  const { type, id, neighboringSemesters, expendSemester, deleteSubject } =
+    props;
 
   return (
     <div onClick={(event) => event.stopPropagation()}>
       <Popover
-        trigger={"click"}
-        placement={"right"}
-        overlayInnerStyle={{padding: 0}}
+        trigger={'click'}
+        placement={'right'}
+        overlayInnerStyle={{ padding: 0 }}
         content={
           <List
             size="small"
-            itemLayout={"vertical"}
+            itemLayout={'vertical'}
             dataSource={[
               {
                 key: 'replace',
                 label: 'Изменить тип',
-                icon: <TagOutlined/>,
-                children:
+                icon: <TagOutlined />,
+                children: (
                   <List
-                    size={"small"}
-                    itemLayout={"vertical"}
-                    dataSource={Object.values(AtomType).map(type => {
+                    size={'small'}
+                    itemLayout={'vertical'}
+                    dataSource={Object.values(AtomType).map((type) => {
                       return {
                         key: type,
-                        label: <span className={"flex gap-2"}><Badge
-                          color={AtomTypeFullName[type].color}/>{AtomTypeFullName[type].name}</span>
-                      }
+                        label: (
+                          <span className={'flex gap-2'}>
+                            <Badge color={AtomTypeFullName[type].color} />
+                            {AtomTypeFullName[type].name}
+                          </span>
+                        ),
+                      };
                     })}
-                    renderItem={(item) =>
-                      <li className={"w-full"}>
+                    renderItem={(item) => (
+                      <li className={'w-full'}>
                         <Button
-                          type={"text"}
-                          className={"w-full justify-start"}
+                          type={'text'}
+                          className={'w-full justify-start'}
                           disabled={item.key === type}
-                          onClick={() => componentsStore.updateAtom(id, "type", item.key as AtomType)}
-                        >{item.label}</Button>
+                          onClick={() =>
+                            componentsStore.updateAtom(
+                              id,
+                              'type',
+                              item.key as AtomType,
+                            )
+                          }
+                        >
+                          {item.label}
+                        </Button>
                       </li>
-                    }
-                  />,
-                onClick: () => {
-                }
+                    )}
+                  />
+                ),
+                onClick: () => {},
               },
               {
                 key: 'addSemester',
                 label: 'Продлить на семестр',
-                icon: <PlusOutlined/>,
-                children:
+                icon: <PlusOutlined />,
+                children: (
                   <List
-                    size={"small"}
-                    itemLayout={"vertical"}
-                    dataSource={[{
-                      key: "prev",
-                      icon: <UpOutlined/>,
-                      label: "Раньше"
-                    }, {key: "next", icon: <DownOutlined/>, label: "Позже"}]}
-                    renderItem={(item) =>
-                      <li className={"w-full"}>
+                    size={'small'}
+                    itemLayout={'vertical'}
+                    dataSource={[
+                      {
+                        key: 'prev',
+                        icon: <UpOutlined />,
+                        label: 'Раньше',
+                      },
+                      { key: 'next', icon: <DownOutlined />, label: 'Позже' },
+                    ]}
+                    renderItem={(item) => (
+                      <li className={'w-full'}>
                         <Button
-                          type={"text"}
+                          type={'text'}
                           icon={item.icon}
-                          className={"w-full justify-start"}
+                          className={'w-full justify-start'}
                           onClick={() => expendSemester(item.key)}
-                          disabled={item.key === "prev" && !neighboringSemesters.prev || item.key === "next" && !neighboringSemesters.next}
-                        >{item.label}</Button>
+                          disabled={
+                            (item.key === 'prev' &&
+                              !neighboringSemesters.prev) ||
+                            (item.key === 'next' && !neighboringSemesters.next)
+                          }
+                        >
+                          {item.label}
+                        </Button>
                       </li>
-                    }
-                  />,
+                    )}
+                  />
+                ),
               },
               {
                 key: 'delete',
                 label: 'Удалить',
                 danger: true,
-                icon: <DeleteOutlined/>,
-                onClick: () => deleteSubject()
-              }
+                icon: <DeleteOutlined />,
+                onClick: () => deleteSubject(),
+              },
             ]}
-            renderItem={(item) =>
-              <li className={"w-full"}>
-                {
-                  item.children ?
-                    <Popover content={item.children} placement={"right"}
-                             overlayInnerStyle={{padding: 0}}>
-                      <Button
-                        type={"text"}
-                        onClick={item.onClick}
-                        icon={item.icon}
-                        danger={item.danger}
-                        className={"w-full justify-start"}
-                      >{item.label}<CaretRightOutlined
-                        className={"ml-auto"}/></Button>
-                    </Popover> :
+            renderItem={(item) => (
+              <li className={'w-full'}>
+                {item.children ? (
+                  <Popover
+                    content={item.children}
+                    placement={'right'}
+                    overlayInnerStyle={{ padding: 0 }}
+                  >
                     <Button
-                      type={"text"}
+                      type={'text'}
                       onClick={item.onClick}
                       icon={item.icon}
                       danger={item.danger}
-                      className={"w-full justify-start"}
-                    >{item.label}</Button>
-                }
-              </li>}
-
+                      className={'w-full justify-start'}
+                    >
+                      {item.label}
+                      <CaretRightOutlined className={'ml-auto'} />
+                    </Button>
+                  </Popover>
+                ) : (
+                  <Button
+                    type={'text'}
+                    onClick={item.onClick}
+                    icon={item.icon}
+                    danger={item.danger}
+                    className={'w-full justify-start'}
+                  >
+                    {item.label}
+                  </Button>
+                )}
+              </li>
+            )}
           />
         }
       >
@@ -143,9 +166,9 @@ export const AtomContextMenu = (props: SubjectContextMenuProps) => {
           className={classNames(cls.optionsIcon)}
           onClick={(event) => event.stopPropagation()}
         >
-          <Icon component={OptionIcon}/>
+          <Icon component={OptionIcon} />
         </div>
       </Popover>
     </div>
-  )
-}
+  );
+};

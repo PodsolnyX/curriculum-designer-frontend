@@ -13,335 +13,408 @@ import type { AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
 import { throwException, isAxiosError } from '../axios-client.types';
 import { getAxios, getBaseUrl } from './helpers';
 
-export function createCurriculum(createCurriculumDto: Types.CreateCurriculumDto, config?: AxiosRequestConfig | undefined): Promise<number> {
-    let url_ = getBaseUrl() + "/api/curriculum";
-      url_ = url_.replace(/[?&]$/, "");
+export function createCurriculum(
+  createCurriculumDto: Types.CreateCurriculumDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<number> {
+  let url_ = getBaseUrl() + '/api/curriculum';
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeCreateCurriculumDto(createCurriculumDto);
+  const content_ = Types.serializeCreateCurriculumDto(createCurriculumDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigCreateCurriculum,
-        ...config,
-        data: content_,
-        method: "POST",
-        url: url_,
-        headers: {
-            ..._requestConfigCreateCurriculum?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigCreateCurriculum,
+    ...config,
+    data: content_,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigCreateCurriculum?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processCreateCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processCreateCurriculum(_response);
     });
 }
 
 function processCreateCurriculum(response: AxiosResponse): Promise<number> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-    
-        result200 = resultData200;
-    
-        return Promise.resolve<number>(result200);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
 
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<number>(null as any);
+    result200 = resultData200;
+
+    return Promise.resolve<number>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<number>(null as any);
 }
 
-export function searchCurriculums(config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumShortDto[]> {
-    let url_ = getBaseUrl() + "/api/curriculum";
-      url_ = url_.replace(/[?&]$/, "");
+export function searchCurriculums(
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CurriculumShortDto[]> {
+  let url_ = getBaseUrl() + '/api/curriculum';
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigSearchCurriculums,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigSearchCurriculums?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigSearchCurriculums,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigSearchCurriculums?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processSearchCurriculums(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processSearchCurriculums(_response);
     });
 }
 
-function processSearchCurriculums(response: AxiosResponse): Promise<Types.CurriculumShortDto[]> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processSearchCurriculums(
+  response: AxiosResponse,
+): Promise<Types.CurriculumShortDto[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        if (Array.isArray(resultData200)) {
-              result200 = resultData200.map(item => 
-                Types.initCurriculumShortDto(item)
-              );
-            }
-        return Promise.resolve<Types.CurriculumShortDto[]>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    if (Array.isArray(resultData200)) {
+      result200 = resultData200.map((item) =>
+        Types.initCurriculumShortDto(item),
+      );
     }
-    return Promise.resolve<Types.CurriculumShortDto[]>(null as any);
+    return Promise.resolve<Types.CurriculumShortDto[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CurriculumShortDto[]>(null as any);
 }
 
-export function updateCurriculum(curriculumId: number, updateCurriculumDto: Types.UpdateCurriculumDto, config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumShortDto> {
-    let url_ = getBaseUrl() + "/api/curriculum/{curriculumId}";
-    if (curriculumId === undefined || curriculumId === null)
-      throw new Error("The parameter 'curriculumId' must be defined.");
-    url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-      url_ = url_.replace(/[?&]$/, "");
+export function updateCurriculum(
+  curriculumId: number,
+  updateCurriculumDto: Types.UpdateCurriculumDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CurriculumShortDto> {
+  let url_ = getBaseUrl() + '/api/curriculum/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeUpdateCurriculumDto(updateCurriculumDto);
+  const content_ = Types.serializeUpdateCurriculumDto(updateCurriculumDto);
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigUpdateCurriculum,
-        ...config,
-        data: content_,
-        method: "PATCH",
-        url: url_,
-        headers: {
-            ..._requestConfigUpdateCurriculum?.headers,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigUpdateCurriculum,
+    ...config,
+    data: content_,
+    method: 'PATCH',
+    url: url_,
+    headers: {
+      ..._requestConfigUpdateCurriculum?.headers,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processUpdateCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processUpdateCurriculum(_response);
     });
 }
 
-function processUpdateCurriculum(response: AxiosResponse): Promise<Types.CurriculumShortDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processUpdateCurriculum(
+  response: AxiosResponse,
+): Promise<Types.CurriculumShortDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initCurriculumShortDto(resultData200);
-        return Promise.resolve<Types.CurriculumShortDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.CurriculumShortDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initCurriculumShortDto(resultData200);
+    return Promise.resolve<Types.CurriculumShortDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CurriculumShortDto>(null as any);
 }
 
-export function getCurriculum(id: number, config?: AxiosRequestConfig | undefined): Promise<Types.CurriculumDto> {
-    let url_ = getBaseUrl() + "/api/curriculum/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
-      url_ = url_.replace(/[?&]$/, "");
+export function getCurriculum(
+  id: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<Types.CurriculumDto> {
+  let url_ = getBaseUrl() + '/api/curriculum/{id}';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigGetCurriculum,
-        ...config,
-        method: "GET",
-        url: url_,
-        headers: {
-            ..._requestConfigGetCurriculum?.headers,
-            "Accept": "application/json"
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetCurriculum,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetCurriculum?.headers,
+      Accept: 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processGetCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetCurriculum(_response);
     });
 }
 
-function processGetCurriculum(response: AxiosResponse): Promise<Types.CurriculumDto> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+function processGetCurriculum(
+  response: AxiosResponse,
+): Promise<Types.CurriculumDto> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        let result200: any = null;
-        let resultData200  = _responseText;
-        result200 = Types.initCurriculumDto(resultData200);
-        return Promise.resolve<Types.CurriculumDto>(result200);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
-    return Promise.resolve<Types.CurriculumDto>(null as any);
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = Types.initCurriculumDto(resultData200);
+    return Promise.resolve<Types.CurriculumDto>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<Types.CurriculumDto>(null as any);
 }
 
-export function deleteCurriculum(id: number, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/curriculum/{id}";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
-      url_ = url_.replace(/[?&]$/, "");
+export function deleteCurriculum(
+  id: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/curriculum/{id}';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
+  url_ = url_.replace(/[?&]$/, '');
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigDeleteCurriculum,
-        ...config,
-        method: "DELETE",
-        url: url_,
-        headers: {
-            ..._requestConfigDeleteCurriculum?.headers,
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigDeleteCurriculum,
+    ...config,
+    method: 'DELETE',
+    url: url_,
+    headers: {
+      ..._requestConfigDeleteCurriculum?.headers,
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processDeleteCurriculum(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processDeleteCurriculum(_response);
     });
 }
 
 function processDeleteCurriculum(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 
-export function setCurriculumSettings(id: number, setCurriculumSettingsDto: Types.SetCurriculumSettingsDto, config?: AxiosRequestConfig | undefined): Promise<void> {
-    let url_ = getBaseUrl() + "/api/curriculum/{id}/settings";
-    if (id === undefined || id === null)
-      throw new Error("The parameter 'id' must be defined.");
-    url_ = url_.replace("{id}", encodeURIComponent("" + id));
-      url_ = url_.replace(/[?&]$/, "");
+export function setCurriculumSettings(
+  id: number,
+  setCurriculumSettingsDto: Types.SetCurriculumSettingsDto,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ = getBaseUrl() + '/api/curriculum/{id}/settings';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
+  url_ = url_.replace(/[?&]$/, '');
 
-    const content_ = Types.serializeSetCurriculumSettingsDto(setCurriculumSettingsDto);
+  const content_ = Types.serializeSetCurriculumSettingsDto(
+    setCurriculumSettingsDto,
+  );
 
-    let options_: AxiosRequestConfig = {
-        ..._requestConfigSetCurriculumSettings,
-        ...config,
-        data: content_,
-        method: "PUT",
-        url: url_,
-        headers: {
-            ..._requestConfigSetCurriculumSettings?.headers,
-            "Content-Type": "application/json",
-        }
-    };
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigSetCurriculumSettings,
+    ...config,
+    data: content_,
+    method: 'PUT',
+    url: url_,
+    headers: {
+      ..._requestConfigSetCurriculumSettings?.headers,
+      'Content-Type': 'application/json',
+    },
+  };
 
-    return getAxios().request(options_).catch((_error: any) => {
-        if (isAxiosError(_error) && _error.response) {
-            return _error.response;
-        } else {
-            throw _error;
-        }
-    }).then((_response: AxiosResponse) => {
-        return processSetCurriculumSettings(_response);
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processSetCurriculumSettings(_response);
     });
 }
 
 function processSetCurriculumSettings(response: AxiosResponse): Promise<void> {
-    const status = response.status;
-    let _headers: any = {};
-    if (response.headers && typeof response.headers === "object") {
-        for (let k in response.headers) {
-            if (response.headers.hasOwnProperty(k)) {
-                _headers[k] = response.headers[k];
-            }
-        }
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
     }
-    if (status === 200) {
-        const _responseText = response.data;
-        return Promise.resolve<void>(null as any);
-
-    } else if (status !== 200 && status !== 204) {
-        const _responseText = response.data;
-        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
     return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
 }
 let _requestConfigCreateCurriculum: Partial<AxiosRequestConfig> | null;
 export function getCreateCurriculumRequestConfig() {
   return _requestConfigCreateCurriculum;
 }
-export function setCreateCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setCreateCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateCurriculum = value;
 }
-export function patchCreateCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchCreateCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigCreateCurriculum = patch(_requestConfigCreateCurriculum ?? {});
 }
 
@@ -349,21 +422,31 @@ let _requestConfigSearchCurriculums: Partial<AxiosRequestConfig> | null;
 export function getSearchCurriculumsRequestConfig() {
   return _requestConfigSearchCurriculums;
 }
-export function setSearchCurriculumsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setSearchCurriculumsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigSearchCurriculums = value;
 }
-export function patchSearchCurriculumsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigSearchCurriculums = patch(_requestConfigSearchCurriculums ?? {});
+export function patchSearchCurriculumsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigSearchCurriculums = patch(
+    _requestConfigSearchCurriculums ?? {},
+  );
 }
 
 let _requestConfigUpdateCurriculum: Partial<AxiosRequestConfig> | null;
 export function getUpdateCurriculumRequestConfig() {
   return _requestConfigUpdateCurriculum;
 }
-export function setUpdateCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setUpdateCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateCurriculum = value;
 }
-export function patchUpdateCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchUpdateCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigUpdateCurriculum = patch(_requestConfigUpdateCurriculum ?? {});
 }
 
@@ -371,10 +454,14 @@ let _requestConfigGetCurriculum: Partial<AxiosRequestConfig> | null;
 export function getGetCurriculumRequestConfig() {
   return _requestConfigGetCurriculum;
 }
-export function setGetCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setGetCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetCurriculum = value;
 }
-export function patchGetCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchGetCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigGetCurriculum = patch(_requestConfigGetCurriculum ?? {});
 }
 
@@ -382,10 +469,14 @@ let _requestConfigDeleteCurriculum: Partial<AxiosRequestConfig> | null;
 export function getDeleteCurriculumRequestConfig() {
   return _requestConfigDeleteCurriculum;
 }
-export function setDeleteCurriculumRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setDeleteCurriculumRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteCurriculum = value;
 }
-export function patchDeleteCurriculumRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
+export function patchDeleteCurriculumRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
   _requestConfigDeleteCurriculum = patch(_requestConfigDeleteCurriculum ?? {});
 }
 
@@ -393,9 +484,15 @@ let _requestConfigSetCurriculumSettings: Partial<AxiosRequestConfig> | null;
 export function getSetCurriculumSettingsRequestConfig() {
   return _requestConfigSetCurriculumSettings;
 }
-export function setSetCurriculumSettingsRequestConfig(value: Partial<AxiosRequestConfig>) {
+export function setSetCurriculumSettingsRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
   _requestConfigSetCurriculumSettings = value;
 }
-export function patchSetCurriculumSettingsRequestConfig(patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>) {
-  _requestConfigSetCurriculumSettings = patch(_requestConfigSetCurriculumSettings ?? {});
+export function patchSetCurriculumSettingsRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigSetCurriculumSettings = patch(
+    _requestConfigSetCurriculumSettings ?? {},
+  );
 }

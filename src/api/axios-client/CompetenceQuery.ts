@@ -9,101 +9,151 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './CompetenceClient'
+import * as Client from './CompetenceClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GetCompetencesCompetenceQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type CreateCompetenceCompetenceQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type GetCompetenceIndicatorsCompetenceQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type UpdateCompetenceCompetenceQueryParameters = {
-  competenceId: number ;
-}
+  competenceId: number;
+};
 
 export type DeleteCompetenceCompetenceQueryParameters = {
-  competenceId: number ;
-}
+  competenceId: number;
+};
 
 export type CreateIndicatorCompetenceQueryParameters = {
-  competenceId: number ;
-}
+  competenceId: number;
+};
 
 export type UpdateIndicatorCompetenceQueryParameters = {
-  indicatorId: number ;
-  competenceId: string ;
-}
+  indicatorId: number;
+  competenceId: string;
+};
 
 export type DeleteIndicatorCompetenceQueryParameters = {
-  indicatorId: number ;
-  competenceId: string ;
-}
+  indicatorId: number;
+  competenceId: string;
+};
 
 export function getCompetencesUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getCompetencesDefaultOptions: Omit<UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>, 'queryFn'>> = {
-};
+let getCompetencesDefaultOptions: Omit<
+  UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.CompetenceDto[], unknown, Types.CompetenceDto[]>,
+      'queryFn'
+    >
+  > = {};
 export function getGetCompetencesDefaultOptions() {
   return getCompetencesDefaultOptions;
-};
-export function setGetCompetencesDefaultOptions(options: typeof getCompetencesDefaultOptions) {
+}
+export function setGetCompetencesDefaultOptions(
+  options: typeof getCompetencesDefaultOptions,
+) {
   getCompetencesDefaultOptions = options;
 }
 
 export function getCompetencesQueryKey(curriculumId: number): QueryKey;
 export function getCompetencesQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetCompetencesCompetenceQueryParameters;
+    const { curriculumId } =
+      params[0] as GetCompetencesCompetenceQueryParameters;
 
     return trimArrayEnd([
-        'CompetenceClient',
-        'getCompetences',
-        curriculumId as any,
-      ]);
+      'CompetenceClient',
+      'getCompetences',
+      curriculumId as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'CompetenceClient',
-        'getCompetences',
-        ...params
-      ]);
+    return trimArrayEnd(['CompetenceClient', 'getCompetences', ...params]);
   }
 }
-export function __getCompetences(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getCompetences(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getCompetences(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getCompetences(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(dto: GetCompetencesCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetencesQuery<
+  TSelectData = Types.CompetenceDto[],
+  TError = unknown,
+>(
+  dto: GetCompetencesCompetenceQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.CompetenceDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetCompetencesQuery<
+  TSelectData = Types.CompetenceDto[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetCompetencesQuery<
+  TSelectData = Types.CompetenceDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetCompetencesCompetenceQueryParameters);
+      ({ curriculumId } = params[0] as GetCompetencesCompetenceQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -115,122 +165,220 @@ export function useGetCompetencesQuery<TSelectData = Types.CompetenceDto[], TErr
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.CompetenceDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getCompetences(context, axiosConfig) : __getCompetences,
+    queryFn: axiosConfig
+      ? (context) => __getCompetences(context, axiosConfig)
+      : __getCompetences,
     queryKey: getCompetencesQueryKey(curriculumId),
-    ...getCompetencesDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>, 'queryKey'>,
+    ...(getCompetencesDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.CompetenceDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetCompetencesData(queryClient: QueryClient, updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[], curriculumId: number) {
-  queryClient.setQueryData(getCompetencesQueryKey(curriculumId),
-    updater
-  );
+export function setGetCompetencesData(
+  queryClient: QueryClient,
+  updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[],
+  curriculumId: number,
+) {
+  queryClient.setQueryData(getCompetencesQueryKey(curriculumId), updater);
 }
 
-export function setGetCompetencesDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[]) {
+export function setGetCompetencesDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.CompetenceDto[] | undefined) => Types.CompetenceDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function createCompetenceUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{curriculumId}";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function createCompetenceMutationKey(curriculumId: number): MutationKey {
   return trimArrayEnd([
-      'CompetenceClient',
-      'createCompetence',
-      curriculumId as any,
-    ]);
+    'CompetenceClient',
+    'createCompetence',
+    curriculumId as any,
+  ]);
 }
 
-export function useCreateCompetenceMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<Types.CompetenceDto, unknown, Types.CreateCompetenceDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.CompetenceDto, unknown, Types.CreateCompetenceDto, TContext> {
+export function useCreateCompetenceMutation<TContext>(
+  curriculumId: number,
+  options?: Omit<
+    UseMutationOptions<
+      Types.CompetenceDto,
+      unknown,
+      Types.CreateCompetenceDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  Types.CompetenceDto,
+  unknown,
+  Types.CreateCompetenceDto,
+  TContext
+> {
   const key = createCompetenceMutationKey(curriculumId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createCompetenceDto: Types.CreateCompetenceDto) => Client.createCompetence(curriculumId, createCompetenceDto),
+    mutationFn: (createCompetenceDto: Types.CreateCompetenceDto) =>
+      Client.createCompetence(curriculumId, createCompetenceDto),
     mutationKey: key,
   });
 }
-  
-type CreateCompetence__MutationParameters = CreateCompetenceCompetenceQueryParameters & {
-  createCompetenceDto: Types.CreateCompetenceDto;
-}
 
-export function useCreateCompetenceMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.CompetenceDto, unknown, CreateCompetence__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateCompetenceCompetenceQueryParameters}): UseMutationResult<Types.CompetenceDto, unknown, CreateCompetence__MutationParameters, TContext> {
+type CreateCompetence__MutationParameters =
+  CreateCompetenceCompetenceQueryParameters & {
+    createCompetenceDto: Types.CreateCompetenceDto;
+  };
+
+export function useCreateCompetenceMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.CompetenceDto,
+      unknown,
+      CreateCompetence__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: CreateCompetenceCompetenceQueryParameters },
+): UseMutationResult<
+  Types.CompetenceDto,
+  unknown,
+  CreateCompetence__MutationParameters,
+  TContext
+> {
   const key = createCompetenceMutationKey(options?.parameters?.curriculumId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: CreateCompetence__MutationParameters) => Client.createCompetence(data.curriculumId ?? options?.parameters?.curriculumId!, data.createCompetenceDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: CreateCompetence__MutationParameters) =>
+      Client.createCompetence(
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+        data.createCompetenceDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function getCompetenceIndicatorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{curriculumId}/indicator";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{curriculumId}/indicator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getCompetenceIndicatorsDefaultOptions: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], unknown, Types.CompetenceIndicatorDto[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.CompetenceIndicatorDto[], unknown, Types.CompetenceIndicatorDto[]>, 'queryFn'>> = {
-};
+let getCompetenceIndicatorsDefaultOptions: Omit<
+  UseQueryOptions<
+    Types.CompetenceIndicatorDto[],
+    unknown,
+    Types.CompetenceIndicatorDto[]
+  >,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<
+        Types.CompetenceIndicatorDto[],
+        unknown,
+        Types.CompetenceIndicatorDto[]
+      >,
+      'queryFn'
+    >
+  > = {};
 export function getGetCompetenceIndicatorsDefaultOptions() {
   return getCompetenceIndicatorsDefaultOptions;
-};
-export function setGetCompetenceIndicatorsDefaultOptions(options: typeof getCompetenceIndicatorsDefaultOptions) {
+}
+export function setGetCompetenceIndicatorsDefaultOptions(
+  options: typeof getCompetenceIndicatorsDefaultOptions,
+) {
   getCompetenceIndicatorsDefaultOptions = options;
 }
 
 export function getCompetenceIndicatorsQueryKey(curriculumId: number): QueryKey;
 export function getCompetenceIndicatorsQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetCompetenceIndicatorsCompetenceQueryParameters;
+    const { curriculumId } =
+      params[0] as GetCompetenceIndicatorsCompetenceQueryParameters;
 
     return trimArrayEnd([
-        'CompetenceClient',
-        'getCompetenceIndicators',
-        curriculumId as any,
-      ]);
+      'CompetenceClient',
+      'getCompetenceIndicators',
+      curriculumId as any,
+    ]);
   } else {
     return trimArrayEnd([
-        'CompetenceClient',
-        'getCompetenceIndicators',
-        ...params
-      ]);
+      'CompetenceClient',
+      'getCompetenceIndicators',
+      ...params,
+    ]);
   }
 }
-export function __getCompetenceIndicators(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
+export function __getCompetenceIndicators(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
   return Client.getCompetenceIndicators(
-      context.queryKey[2] as number,axiosConfig    );
+    context.queryKey[2] as number,
+    axiosConfig,
+  );
 }
 
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(dto: GetCompetenceIndicatorsCompetenceQueryParameters, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetCompetenceIndicatorsQuery<
+  TSelectData = Types.CompetenceIndicatorDto[],
+  TError = unknown,
+>(
+  dto: GetCompetenceIndicatorsCompetenceQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIndicatorDto[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetCompetenceIndicatorsQuery<
+  TSelectData = Types.CompetenceIndicatorDto[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetCompetenceIndicatorsQuery<
+  TSelectData = Types.CompetenceIndicatorDto[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetCompetenceIndicatorsCompetenceQueryParameters);
+      ({ curriculumId } =
+        params[0] as GetCompetenceIndicatorsCompetenceQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -242,258 +390,461 @@ export function useGetCompetenceIndicatorsQuery<TSelectData = Types.CompetenceIn
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.CompetenceIndicatorDto[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getCompetenceIndicators(context, axiosConfig) : __getCompetenceIndicators,
+    queryFn: axiosConfig
+      ? (context) => __getCompetenceIndicators(context, axiosConfig)
+      : __getCompetenceIndicators,
     queryKey: getCompetenceIndicatorsQueryKey(curriculumId),
-    ...getCompetenceIndicatorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>, 'queryKey'>,
+    ...(getCompetenceIndicatorsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.CompetenceIndicatorDto[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 
-export function setGetCompetenceIndicatorsData(queryClient: QueryClient, updater: (data: Types.CompetenceIndicatorDto[] | undefined) => Types.CompetenceIndicatorDto[], curriculumId: number) {
-  queryClient.setQueryData(getCompetenceIndicatorsQueryKey(curriculumId),
-    updater
+export function setGetCompetenceIndicatorsData(
+  queryClient: QueryClient,
+  updater: (
+    data: Types.CompetenceIndicatorDto[] | undefined,
+  ) => Types.CompetenceIndicatorDto[],
+  curriculumId: number,
+) {
+  queryClient.setQueryData(
+    getCompetenceIndicatorsQueryKey(curriculumId),
+    updater,
   );
 }
 
-export function setGetCompetenceIndicatorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.CompetenceIndicatorDto[] | undefined) => Types.CompetenceIndicatorDto[]) {
+export function setGetCompetenceIndicatorsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (
+    data: Types.CompetenceIndicatorDto[] | undefined,
+  ) => Types.CompetenceIndicatorDto[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function updateCompetenceUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{competenceId}";
-if (competenceId === undefined || competenceId === null)
-  throw new Error("The parameter 'competenceId' must be defined.");
-url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function updateCompetenceMutationKey(competenceId: number): MutationKey {
   return trimArrayEnd([
-      'CompetenceClient',
-      'updateCompetence',
-      competenceId as any,
-    ]);
+    'CompetenceClient',
+    'updateCompetence',
+    competenceId as any,
+  ]);
 }
 
-export function useUpdateCompetenceMutation<TContext>(competenceId: number, options?: Omit<UseMutationOptions<Types.CompetenceDto, unknown, Types.UpdateCompetenceDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<Types.CompetenceDto, unknown, Types.UpdateCompetenceDto, TContext> {
+export function useUpdateCompetenceMutation<TContext>(
+  competenceId: number,
+  options?: Omit<
+    UseMutationOptions<
+      Types.CompetenceDto,
+      unknown,
+      Types.UpdateCompetenceDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  Types.CompetenceDto,
+  unknown,
+  Types.UpdateCompetenceDto,
+  TContext
+> {
   const key = updateCompetenceMutationKey(competenceId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (updateCompetenceDto: Types.UpdateCompetenceDto) => Client.updateCompetence(competenceId, updateCompetenceDto),
+    mutationFn: (updateCompetenceDto: Types.UpdateCompetenceDto) =>
+      Client.updateCompetence(competenceId, updateCompetenceDto),
     mutationKey: key,
   });
 }
-  
-type UpdateCompetence__MutationParameters = UpdateCompetenceCompetenceQueryParameters & {
-  updateCompetenceDto: Types.UpdateCompetenceDto;
-}
 
-export function useUpdateCompetenceMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<Types.CompetenceDto, unknown, UpdateCompetence__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateCompetenceCompetenceQueryParameters}): UseMutationResult<Types.CompetenceDto, unknown, UpdateCompetence__MutationParameters, TContext> {
+type UpdateCompetence__MutationParameters =
+  UpdateCompetenceCompetenceQueryParameters & {
+    updateCompetenceDto: Types.UpdateCompetenceDto;
+  };
+
+export function useUpdateCompetenceMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      Types.CompetenceDto,
+      unknown,
+      UpdateCompetence__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateCompetenceCompetenceQueryParameters },
+): UseMutationResult<
+  Types.CompetenceDto,
+  unknown,
+  UpdateCompetence__MutationParameters,
+  TContext
+> {
   const key = updateCompetenceMutationKey(options?.parameters?.competenceId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateCompetence__MutationParameters) => Client.updateCompetence(data.competenceId ?? options?.parameters?.competenceId!, data.updateCompetenceDto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: UpdateCompetence__MutationParameters) =>
+      Client.updateCompetence(
+        data.competenceId ?? options?.parameters?.competenceId!,
+        data.updateCompetenceDto,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function deleteCompetenceUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{competenceId}";
-if (competenceId === undefined || competenceId === null)
-  throw new Error("The parameter 'competenceId' must be defined.");
-url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function deleteCompetenceMutationKey(competenceId: number): MutationKey {
   return trimArrayEnd([
-      'CompetenceClient',
-      'deleteCompetence',
-      competenceId as any,
-    ]);
+    'CompetenceClient',
+    'deleteCompetence',
+    competenceId as any,
+  ]);
 }
 
-export function useDeleteCompetenceMutation<TContext>(competenceId: number, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
+export function useDeleteCompetenceMutation<TContext>(
+  competenceId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
   const key = deleteCompetenceMutationKey(competenceId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
     mutationFn: () => Client.deleteCompetence(competenceId),
     mutationKey: key,
   });
 }
-  
-type DeleteCompetence__MutationParameters = DeleteCompetenceCompetenceQueryParameters
 
-export function useDeleteCompetenceMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteCompetence__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteCompetenceCompetenceQueryParameters}): UseMutationResult<void, unknown, DeleteCompetence__MutationParameters, TContext> {
+type DeleteCompetence__MutationParameters =
+  DeleteCompetenceCompetenceQueryParameters;
+
+export function useDeleteCompetenceMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      DeleteCompetence__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: DeleteCompetenceCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  DeleteCompetence__MutationParameters,
+  TContext
+> {
   const key = deleteCompetenceMutationKey(options?.parameters?.competenceId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: DeleteCompetence__MutationParameters) => Client.deleteCompetence(data.competenceId ?? options?.parameters?.competenceId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: DeleteCompetence__MutationParameters) =>
+      Client.deleteCompetence(
+        data.competenceId ?? options?.parameters?.competenceId!,
+      ),
+    mutationKey: key,
+  });
 }
-  
+
 export function createIndicatorUrl(competenceId: number): string {
-  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator";
-if (competenceId === undefined || competenceId === null)
-  throw new Error("The parameter 'competenceId' must be defined.");
-url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/competence/{competenceId}/indicator';
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
 export function createIndicatorMutationKey(competenceId: number): MutationKey {
   return trimArrayEnd([
-      'CompetenceClient',
-      'createIndicator',
-      competenceId as any,
-    ]);
+    'CompetenceClient',
+    'createIndicator',
+    competenceId as any,
+  ]);
 }
 
-export function useCreateIndicatorMutation<TContext>(competenceId: number, options?: Omit<UseMutationOptions<void, unknown, Types.CreateCompetenceIndicatorDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.CreateCompetenceIndicatorDto, TContext> {
+export function useCreateIndicatorMutation<TContext>(
+  competenceId: number,
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      Types.CreateCompetenceIndicatorDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  void,
+  unknown,
+  Types.CreateCompetenceIndicatorDto,
+  TContext
+> {
   const key = createIndicatorMutationKey(competenceId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (createIndicatorDto: Types.CreateCompetenceIndicatorDto) => Client.createIndicator(competenceId, createIndicatorDto),
+    mutationFn: (createIndicatorDto: Types.CreateCompetenceIndicatorDto) =>
+      Client.createIndicator(competenceId, createIndicatorDto),
     mutationKey: key,
   });
 }
-  
-type CreateIndicator__MutationParameters = CreateIndicatorCompetenceQueryParameters & {
-  createIndicatorDto: Types.CreateCompetenceIndicatorDto;
-}
 
-export function useCreateIndicatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, CreateIndicator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateIndicatorCompetenceQueryParameters}): UseMutationResult<void, unknown, CreateIndicator__MutationParameters, TContext> {
+type CreateIndicator__MutationParameters =
+  CreateIndicatorCompetenceQueryParameters & {
+    createIndicatorDto: Types.CreateCompetenceIndicatorDto;
+  };
+
+export function useCreateIndicatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      CreateIndicator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: CreateIndicatorCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  CreateIndicator__MutationParameters,
+  TContext
+> {
   const key = createIndicatorMutationKey(options?.parameters?.competenceId!);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: CreateIndicator__MutationParameters) => Client.createIndicator(data.competenceId ?? options?.parameters?.competenceId!, data.createIndicatorDto),
-  mutationKey: key,
-});
-}
-  
-export function updateIndicatorUrl(indicatorId: number, competenceId: string): string {
-  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
-if (indicatorId === undefined || indicatorId === null)
-  throw new Error("The parameter 'indicatorId' must be defined.");
-url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
-if (competenceId === undefined || competenceId === null)
-  throw new Error("The parameter 'competenceId' must be defined.");
-url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-  url_ = url_.replace(/[?&]$/, "");
-  return url_;
-}
 
-export function updateIndicatorMutationKey(indicatorId: number, competenceId: string): MutationKey {
-  return trimArrayEnd([
-      'CompetenceClient',
-      'updateIndicator',
-      indicatorId as any,
-      competenceId as any,
-    ]);
-}
-
-export function useUpdateIndicatorMutation<TContext>(indicatorId: number, competenceId: string, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateCompetenceIndicatorDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateCompetenceIndicatorDto, TContext> {
-  const key = updateIndicatorMutationKey(indicatorId, competenceId);
-  
-  const metaContext = useContext(QueryMetaContext);
-  options = addMetaToOptions(options, metaContext);
-  
   return useMutation({
     ...options,
-    mutationFn: (updateIndicatorDto: Types.UpdateCompetenceIndicatorDto) => Client.updateIndicator(indicatorId, updateIndicatorDto, competenceId),
+    mutationFn: (data: CreateIndicator__MutationParameters) =>
+      Client.createIndicator(
+        data.competenceId ?? options?.parameters?.competenceId!,
+        data.createIndicatorDto,
+      ),
     mutationKey: key,
   });
 }
-  
-type UpdateIndicator__MutationParameters = UpdateIndicatorCompetenceQueryParameters & {
-  updateIndicatorDto: Types.UpdateCompetenceIndicatorDto;
-}
 
-export function useUpdateIndicatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateIndicator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateIndicatorCompetenceQueryParameters}): UseMutationResult<void, unknown, UpdateIndicator__MutationParameters, TContext> {
-  const key = updateIndicatorMutationKey(options?.parameters?.indicatorId!, options?.parameters?.competenceId!);
-  
-  const metaContext = useContext(QueryMetaContext);
-  options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateIndicator__MutationParameters) => Client.updateIndicator(data.indicatorId ?? options?.parameters?.indicatorId!, data.updateIndicatorDto, data.competenceId ?? options?.parameters?.competenceId!),
-  mutationKey: key,
-});
-}
-  
-export function deleteIndicatorUrl(indicatorId: number, competenceId: string): string {
-  let url_ = getBaseUrl() + "/api/competence/{competenceId}/indicator/{indicatorId}";
-if (indicatorId === undefined || indicatorId === null)
-  throw new Error("The parameter 'indicatorId' must be defined.");
-url_ = url_.replace("{indicatorId}", encodeURIComponent("" + indicatorId));
-if (competenceId === undefined || competenceId === null)
-  throw new Error("The parameter 'competenceId' must be defined.");
-url_ = url_.replace("{competenceId}", encodeURIComponent("" + competenceId));
-  url_ = url_.replace(/[?&]$/, "");
+export function updateIndicatorUrl(
+  indicatorId: number,
+  competenceId: string,
+): string {
+  let url_ =
+    getBaseUrl() + '/api/competence/{competenceId}/indicator/{indicatorId}';
+  if (indicatorId === undefined || indicatorId === null)
+    throw new Error("The parameter 'indicatorId' must be defined.");
+  url_ = url_.replace('{indicatorId}', encodeURIComponent('' + indicatorId));
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function deleteIndicatorMutationKey(indicatorId: number, competenceId: string): MutationKey {
+export function updateIndicatorMutationKey(
+  indicatorId: number,
+  competenceId: string,
+): MutationKey {
   return trimArrayEnd([
-      'CompetenceClient',
-      'deleteIndicator',
-      indicatorId as any,
-      competenceId as any,
-    ]);
+    'CompetenceClient',
+    'updateIndicator',
+    indicatorId as any,
+    competenceId as any,
+  ]);
 }
 
-export function useDeleteIndicatorMutation<TContext>(indicatorId: number, competenceId: string, options?: Omit<UseMutationOptions<void, unknown, void, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, void, TContext> {
-  const key = deleteIndicatorMutationKey(indicatorId, competenceId);
-  
+export function useUpdateIndicatorMutation<TContext>(
+  indicatorId: number,
+  competenceId: string,
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      Types.UpdateCompetenceIndicatorDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  void,
+  unknown,
+  Types.UpdateCompetenceIndicatorDto,
+  TContext
+> {
+  const key = updateIndicatorMutationKey(indicatorId, competenceId);
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
+  return useMutation({
+    ...options,
+    mutationFn: (updateIndicatorDto: Types.UpdateCompetenceIndicatorDto) =>
+      Client.updateIndicator(indicatorId, updateIndicatorDto, competenceId),
+    mutationKey: key,
+  });
+}
+
+type UpdateIndicator__MutationParameters =
+  UpdateIndicatorCompetenceQueryParameters & {
+    updateIndicatorDto: Types.UpdateCompetenceIndicatorDto;
+  };
+
+export function useUpdateIndicatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      UpdateIndicator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateIndicatorCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  UpdateIndicator__MutationParameters,
+  TContext
+> {
+  const key = updateIndicatorMutationKey(
+    options?.parameters?.indicatorId!,
+    options?.parameters?.competenceId!,
+  );
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: UpdateIndicator__MutationParameters) =>
+      Client.updateIndicator(
+        data.indicatorId ?? options?.parameters?.indicatorId!,
+        data.updateIndicatorDto,
+        data.competenceId ?? options?.parameters?.competenceId!,
+      ),
+    mutationKey: key,
+  });
+}
+
+export function deleteIndicatorUrl(
+  indicatorId: number,
+  competenceId: string,
+): string {
+  let url_ =
+    getBaseUrl() + '/api/competence/{competenceId}/indicator/{indicatorId}';
+  if (indicatorId === undefined || indicatorId === null)
+    throw new Error("The parameter 'indicatorId' must be defined.");
+  url_ = url_.replace('{indicatorId}', encodeURIComponent('' + indicatorId));
+  if (competenceId === undefined || competenceId === null)
+    throw new Error("The parameter 'competenceId' must be defined.");
+  url_ = url_.replace('{competenceId}', encodeURIComponent('' + competenceId));
+  url_ = url_.replace(/[?&]$/, '');
+  return url_;
+}
+
+export function deleteIndicatorMutationKey(
+  indicatorId: number,
+  competenceId: string,
+): MutationKey {
+  return trimArrayEnd([
+    'CompetenceClient',
+    'deleteIndicator',
+    indicatorId as any,
+    competenceId as any,
+  ]);
+}
+
+export function useDeleteIndicatorMutation<TContext>(
+  indicatorId: number,
+  competenceId: string,
+  options?: Omit<
+    UseMutationOptions<void, unknown, void, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, void, TContext> {
+  const key = deleteIndicatorMutationKey(indicatorId, competenceId);
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
   return useMutation({
     ...options,
     mutationFn: () => Client.deleteIndicator(indicatorId, competenceId),
     mutationKey: key,
   });
 }
-  
-type DeleteIndicator__MutationParameters = DeleteIndicatorCompetenceQueryParameters
 
-export function useDeleteIndicatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, DeleteIndicator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: DeleteIndicatorCompetenceQueryParameters}): UseMutationResult<void, unknown, DeleteIndicator__MutationParameters, TContext> {
-  const key = deleteIndicatorMutationKey(options?.parameters?.indicatorId!, options?.parameters?.competenceId!);
-  
+type DeleteIndicator__MutationParameters =
+  DeleteIndicatorCompetenceQueryParameters;
+
+export function useDeleteIndicatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      DeleteIndicator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: DeleteIndicatorCompetenceQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  DeleteIndicator__MutationParameters,
+  TContext
+> {
+  const key = deleteIndicatorMutationKey(
+    options?.parameters?.indicatorId!,
+    options?.parameters?.competenceId!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: DeleteIndicator__MutationParameters) => Client.deleteIndicator(data.indicatorId ?? options?.parameters?.indicatorId!, data.competenceId ?? options?.parameters?.competenceId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: DeleteIndicator__MutationParameters) =>
+      Client.deleteIndicator(
+        data.indicatorId ?? options?.parameters?.indicatorId!,
+        data.competenceId ?? options?.parameters?.competenceId!,
+      ),
+    mutationKey: key,
+  });
 }

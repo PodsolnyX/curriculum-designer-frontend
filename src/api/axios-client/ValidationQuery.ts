@@ -9,92 +9,147 @@
 // ReSharper disable InconsistentNaming
 import * as Types from '../axios-client.types';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { UseQueryResult, QueryFunctionContext, UseQueryOptions, QueryClient, QueryKey, MutationKey, UseMutationOptions, UseMutationResult, QueryMeta, MutationMeta } from '@tanstack/react-query';
-import { trimArrayEnd, isParameterObject, getBaseUrl, addMetaToOptions } from './helpers';
+import type {
+  UseQueryResult,
+  QueryFunctionContext,
+  UseQueryOptions,
+  QueryClient,
+  QueryKey,
+  MutationKey,
+  UseMutationOptions,
+  UseMutationResult,
+  QueryMeta,
+  MutationMeta,
+} from '@tanstack/react-query';
+import {
+  trimArrayEnd,
+  isParameterObject,
+  getBaseUrl,
+  addMetaToOptions,
+} from './helpers';
 import type { QueryMetaContextValue } from 'react-query-swagger';
 import { QueryMetaContext } from 'react-query-swagger';
 import { useContext } from 'react';
-import * as Client from './ValidationClient'
+import * as Client from './ValidationClient';
 export { Client };
 import type { AxiosRequestConfig } from 'axios';
 
 export type GetValidationErrorsValidationQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type GetValidatorsValidationQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type CreateCustomValidatorValidationQueryParameters = {
-  curriculumId: number ;
-}
+  curriculumId: number;
+};
 
 export type UpdateCustomValidatorValidationQueryParameters = {
-  validatorId: number ;
-  curriculumId: string ;
-}
+  validatorId: number;
+  curriculumId: string;
+};
 
 export type UpdateStructuralValidatorValidationQueryParameters = {
-  validatorId: number ;
-  curriculumId: string ;
-}
+  validatorId: number;
+  curriculumId: string;
+};
 
 export function getValidationErrorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/error";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/error';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getValidationErrorsDefaultOptions: Omit<UseQueryOptions<Types.ValidationError[], unknown, Types.ValidationError[]>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ValidationError[], unknown, Types.ValidationError[]>, 'queryFn'>> = {
-};
+let getValidationErrorsDefaultOptions: Omit<
+  UseQueryOptions<Types.ValidationError[], unknown, Types.ValidationError[]>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<
+        Types.ValidationError[],
+        unknown,
+        Types.ValidationError[]
+      >,
+      'queryFn'
+    >
+  > = {};
 export function getGetValidationErrorsDefaultOptions() {
   return getValidationErrorsDefaultOptions;
-};
-export function setGetValidationErrorsDefaultOptions(options: typeof getValidationErrorsDefaultOptions) {
+}
+export function setGetValidationErrorsDefaultOptions(
+  options: typeof getValidationErrorsDefaultOptions,
+) {
   getValidationErrorsDefaultOptions = options;
 }
 
 export function getValidationErrorsQueryKey(curriculumId: number): QueryKey;
 export function getValidationErrorsQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetValidationErrorsValidationQueryParameters;
+    const { curriculumId } =
+      params[0] as GetValidationErrorsValidationQueryParameters;
 
     return trimArrayEnd([
-        'ValidationClient',
-        'getValidationErrors',
-        curriculumId as any,
-      ]);
+      'ValidationClient',
+      'getValidationErrors',
+      curriculumId as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'ValidationClient',
-        'getValidationErrors',
-        ...params
-      ]);
+    return trimArrayEnd(['ValidationClient', 'getValidationErrors', ...params]);
   }
 }
-export function __getValidationErrors(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getValidationErrors(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getValidationErrors(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getValidationErrors(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetValidationErrorsQuery<TSelectData = Types.ValidationError[], TError = unknown>(dto: GetValidationErrorsValidationQueryParameters, options?: Omit<UseQueryOptions<Types.ValidationError[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetValidationErrorsQuery<
+  TSelectData = Types.ValidationError[],
+  TError = unknown,
+>(
+  dto: GetValidationErrorsValidationQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.ValidationError[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 /**
  * Get all validation errors for a curriculum
  * @return List of validation errors
  */
-export function useGetValidationErrorsQuery<TSelectData = Types.ValidationError[], TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.ValidationError[], TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetValidationErrorsQuery<TSelectData = Types.ValidationError[], TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.ValidationError[], TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetValidationErrorsQuery<
+  TSelectData = Types.ValidationError[],
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.ValidationError[], TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetValidationErrorsQuery<
+  TSelectData = Types.ValidationError[],
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.ValidationError[], TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetValidationErrorsValidationQueryParameters);
+      ({ curriculumId } =
+        params[0] as GetValidationErrorsValidationQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -106,9 +161,14 @@ export function useGetValidationErrorsQuery<TSelectData = Types.ValidationError[
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.ValidationError[], TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getValidationErrors(context, axiosConfig) : __getValidationErrors,
+    queryFn: axiosConfig
+      ? (context) => __getValidationErrors(context, axiosConfig)
+      : __getValidationErrors,
     queryKey: getValidationErrorsQueryKey(curriculumId),
-    ...getValidationErrorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.ValidationError[], TError, TSelectData>, 'queryKey'>,
+    ...(getValidationErrorsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.ValidationError[], TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
@@ -116,74 +176,118 @@ export function useGetValidationErrorsQuery<TSelectData = Types.ValidationError[
  * Get all validation errors for a curriculum
  * @return List of validation errors
  */
-export function setGetValidationErrorsData(queryClient: QueryClient, updater: (data: Types.ValidationError[] | undefined) => Types.ValidationError[], curriculumId: number) {
-  queryClient.setQueryData(getValidationErrorsQueryKey(curriculumId),
-    updater
-  );
+export function setGetValidationErrorsData(
+  queryClient: QueryClient,
+  updater: (
+    data: Types.ValidationError[] | undefined,
+  ) => Types.ValidationError[],
+  curriculumId: number,
+) {
+  queryClient.setQueryData(getValidationErrorsQueryKey(curriculumId), updater);
 }
 
 /**
  * Get all validation errors for a curriculum
  * @return List of validation errors
  */
-export function setGetValidationErrorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ValidationError[] | undefined) => Types.ValidationError[]) {
+export function setGetValidationErrorsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (
+    data: Types.ValidationError[] | undefined,
+  ) => Types.ValidationError[],
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function getValidatorsUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/validator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-let getValidatorsDefaultOptions: Omit<UseQueryOptions<Types.ValidatorsDto, unknown, Types.ValidatorsDto>, 'queryKey' | 'queryFn'> & Partial<Pick<UseQueryOptions<Types.ValidatorsDto, unknown, Types.ValidatorsDto>, 'queryFn'>> = {
-};
+let getValidatorsDefaultOptions: Omit<
+  UseQueryOptions<Types.ValidatorsDto, unknown, Types.ValidatorsDto>,
+  'queryKey' | 'queryFn'
+> &
+  Partial<
+    Pick<
+      UseQueryOptions<Types.ValidatorsDto, unknown, Types.ValidatorsDto>,
+      'queryFn'
+    >
+  > = {};
 export function getGetValidatorsDefaultOptions() {
   return getValidatorsDefaultOptions;
-};
-export function setGetValidatorsDefaultOptions(options: typeof getValidatorsDefaultOptions) {
+}
+export function setGetValidatorsDefaultOptions(
+  options: typeof getValidatorsDefaultOptions,
+) {
   getValidatorsDefaultOptions = options;
 }
 
 export function getValidatorsQueryKey(curriculumId: number): QueryKey;
 export function getValidatorsQueryKey(...params: any[]): QueryKey {
   if (params.length === 1 && isParameterObject(params[0])) {
-    const { curriculumId,  } = params[0] as GetValidatorsValidationQueryParameters;
+    const { curriculumId } =
+      params[0] as GetValidatorsValidationQueryParameters;
 
     return trimArrayEnd([
-        'ValidationClient',
-        'getValidators',
-        curriculumId as any,
-      ]);
+      'ValidationClient',
+      'getValidators',
+      curriculumId as any,
+    ]);
   } else {
-    return trimArrayEnd([
-        'ValidationClient',
-        'getValidators',
-        ...params
-      ]);
+    return trimArrayEnd(['ValidationClient', 'getValidators', ...params]);
   }
 }
-export function __getValidators(context: QueryFunctionContext, axiosConfig?: AxiosRequestConfig | undefined) {
-  return Client.getValidators(
-      context.queryKey[2] as number,axiosConfig    );
+export function __getValidators(
+  context: QueryFunctionContext,
+  axiosConfig?: AxiosRequestConfig | undefined,
+) {
+  return Client.getValidators(context.queryKey[2] as number, axiosConfig);
 }
 
-export function useGetValidatorsQuery<TSelectData = Types.ValidatorsDto, TError = unknown>(dto: GetValidatorsValidationQueryParameters, options?: Omit<UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
+export function useGetValidatorsQuery<
+  TSelectData = Types.ValidatorsDto,
+  TError = unknown,
+>(
+  dto: GetValidatorsValidationQueryParameters,
+  options?: Omit<
+    UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
 /**
  * Get custom and structural validators for a curriculum
  */
-export function useGetValidatorsQuery<TSelectData = Types.ValidatorsDto, TError = unknown>(curriculumId: number, options?: Omit<UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>, 'queryKey'>, axiosConfig?: Partial<AxiosRequestConfig>): UseQueryResult<TSelectData, TError>;
-export function useGetValidatorsQuery<TSelectData = Types.ValidatorsDto, TError = unknown>(...params: any []): UseQueryResult<TSelectData, TError> {
-  let options: UseQueryOptions<Types.ValidatorsDto, TError, TSelectData> | undefined = undefined;
-  let axiosConfig: AxiosRequestConfig |undefined = undefined;
+export function useGetValidatorsQuery<
+  TSelectData = Types.ValidatorsDto,
+  TError = unknown,
+>(
+  curriculumId: number,
+  options?: Omit<
+    UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>,
+    'queryKey'
+  >,
+  axiosConfig?: Partial<AxiosRequestConfig>,
+): UseQueryResult<TSelectData, TError>;
+export function useGetValidatorsQuery<
+  TSelectData = Types.ValidatorsDto,
+  TError = unknown,
+>(...params: any[]): UseQueryResult<TSelectData, TError> {
+  let options:
+    | UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>
+    | undefined = undefined;
+  let axiosConfig: AxiosRequestConfig | undefined = undefined;
   let curriculumId: any = undefined;
-  
+
   if (params.length > 0) {
     if (isParameterObject(params[0])) {
-      ({ curriculumId,  } = params[0] as GetValidatorsValidationQueryParameters);
+      ({ curriculumId } = params[0] as GetValidatorsValidationQueryParameters);
       options = params[1];
       axiosConfig = params[2];
     } else {
@@ -195,191 +299,323 @@ export function useGetValidatorsQuery<TSelectData = Types.ValidatorsDto, TError 
   options = addMetaToOptions(options, metaContext);
 
   return useQuery<Types.ValidatorsDto, TError, TSelectData>({
-    queryFn: axiosConfig ? (context) => __getValidators(context, axiosConfig) : __getValidators,
+    queryFn: axiosConfig
+      ? (context) => __getValidators(context, axiosConfig)
+      : __getValidators,
     queryKey: getValidatorsQueryKey(curriculumId),
-    ...getValidatorsDefaultOptions as unknown as Omit<UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>, 'queryKey'>,
+    ...(getValidatorsDefaultOptions as unknown as Omit<
+      UseQueryOptions<Types.ValidatorsDto, TError, TSelectData>,
+      'queryKey'
+    >),
     ...options,
   });
 }
 /**
  * Get custom and structural validators for a curriculum
  */
-export function setGetValidatorsData(queryClient: QueryClient, updater: (data: Types.ValidatorsDto | undefined) => Types.ValidatorsDto, curriculumId: number) {
-  queryClient.setQueryData(getValidatorsQueryKey(curriculumId),
-    updater
-  );
+export function setGetValidatorsData(
+  queryClient: QueryClient,
+  updater: (data: Types.ValidatorsDto | undefined) => Types.ValidatorsDto,
+  curriculumId: number,
+) {
+  queryClient.setQueryData(getValidatorsQueryKey(curriculumId), updater);
 }
 
 /**
  * Get custom and structural validators for a curriculum
  */
-export function setGetValidatorsDataByQueryId(queryClient: QueryClient, queryKey: QueryKey, updater: (data: Types.ValidatorsDto | undefined) => Types.ValidatorsDto) {
+export function setGetValidatorsDataByQueryId(
+  queryClient: QueryClient,
+  queryKey: QueryKey,
+  updater: (data: Types.ValidatorsDto | undefined) => Types.ValidatorsDto,
+) {
   queryClient.setQueryData(queryKey, updater);
 }
-    
+
 export function createCustomValidatorUrl(curriculumId: number): string {
-  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator";
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+  let url_ = getBaseUrl() + '/api/validation/{curriculumId}/validator';
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function createCustomValidatorMutationKey(curriculumId: number): MutationKey {
+export function createCustomValidatorMutationKey(
+  curriculumId: number,
+): MutationKey {
   return trimArrayEnd([
-      'ValidationClient',
-      'createCustomValidator',
-      curriculumId as any,
-    ]);
+    'ValidationClient',
+    'createCustomValidator',
+    curriculumId as any,
+  ]);
 }
 
 /**
  * Create a custom validator for a curriculum
  */
-export function useCreateCustomValidatorMutation<TContext>(curriculumId: number, options?: Omit<UseMutationOptions<void, unknown, Types.CreateCustomValidatorDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.CreateCustomValidatorDto, TContext> {
+export function useCreateCustomValidatorMutation<TContext>(
+  curriculumId: number,
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.CreateCustomValidatorDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.CreateCustomValidatorDto, TContext> {
   const key = createCustomValidatorMutationKey(curriculumId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (dto: Types.CreateCustomValidatorDto) => Client.createCustomValidator(curriculumId, dto),
+    mutationFn: (dto: Types.CreateCustomValidatorDto) =>
+      Client.createCustomValidator(curriculumId, dto),
     mutationKey: key,
   });
 }
-  
-type CreateCustomValidator__MutationParameters = CreateCustomValidatorValidationQueryParameters & {
-  dto: Types.CreateCustomValidatorDto;
-}
+
+type CreateCustomValidator__MutationParameters =
+  CreateCustomValidatorValidationQueryParameters & {
+    dto: Types.CreateCustomValidatorDto;
+  };
 
 /**
  * Create a custom validator for a curriculum
  */
-export function useCreateCustomValidatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, CreateCustomValidator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: CreateCustomValidatorValidationQueryParameters}): UseMutationResult<void, unknown, CreateCustomValidator__MutationParameters, TContext> {
-  const key = createCustomValidatorMutationKey(options?.parameters?.curriculumId!);
-  
+export function useCreateCustomValidatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      CreateCustomValidator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: CreateCustomValidatorValidationQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  CreateCustomValidator__MutationParameters,
+  TContext
+> {
+  const key = createCustomValidatorMutationKey(
+    options?.parameters?.curriculumId!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: CreateCustomValidator__MutationParameters) => Client.createCustomValidator(data.curriculumId ?? options?.parameters?.curriculumId!, data.dto),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: CreateCustomValidator__MutationParameters) =>
+      Client.createCustomValidator(
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+        data.dto,
+      ),
+    mutationKey: key,
+  });
 }
-  
-export function updateCustomValidatorUrl(validatorId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/custom";
-if (validatorId === undefined || validatorId === null)
-  throw new Error("The parameter 'validatorId' must be defined.");
-url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
+
+export function updateCustomValidatorUrl(
+  validatorId: number,
+  curriculumId: string,
+): string {
+  let url_ =
+    getBaseUrl() +
+    '/api/validation/{curriculumId}/validator/{validatorId}/custom';
+  if (validatorId === undefined || validatorId === null)
+    throw new Error("The parameter 'validatorId' must be defined.");
+  url_ = url_.replace('{validatorId}', encodeURIComponent('' + validatorId));
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
   return url_;
 }
 
-export function updateCustomValidatorMutationKey(validatorId: number, curriculumId: string): MutationKey {
+export function updateCustomValidatorMutationKey(
+  validatorId: number,
+  curriculumId: string,
+): MutationKey {
   return trimArrayEnd([
-      'ValidationClient',
-      'updateCustomValidator',
-      validatorId as any,
-      curriculumId as any,
-    ]);
+    'ValidationClient',
+    'updateCustomValidator',
+    validatorId as any,
+    curriculumId as any,
+  ]);
 }
 
 /**
  * Update a custom validator
  */
-export function useUpdateCustomValidatorMutation<TContext>(validatorId: number, curriculumId: string, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateCustomValidatorDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateCustomValidatorDto, TContext> {
+export function useUpdateCustomValidatorMutation<TContext>(
+  validatorId: number,
+  curriculumId: string,
+  options?: Omit<
+    UseMutationOptions<void, unknown, Types.UpdateCustomValidatorDto, TContext>,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<void, unknown, Types.UpdateCustomValidatorDto, TContext> {
   const key = updateCustomValidatorMutationKey(validatorId, curriculumId);
-  
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
+
   return useMutation({
     ...options,
-    mutationFn: (dto: Types.UpdateCustomValidatorDto) => Client.updateCustomValidator(validatorId, dto, curriculumId),
+    mutationFn: (dto: Types.UpdateCustomValidatorDto) =>
+      Client.updateCustomValidator(validatorId, dto, curriculumId),
     mutationKey: key,
   });
 }
-  
-type UpdateCustomValidator__MutationParameters = UpdateCustomValidatorValidationQueryParameters & {
-  dto: Types.UpdateCustomValidatorDto;
-}
+
+type UpdateCustomValidator__MutationParameters =
+  UpdateCustomValidatorValidationQueryParameters & {
+    dto: Types.UpdateCustomValidatorDto;
+  };
 
 /**
  * Update a custom validator
  */
-export function useUpdateCustomValidatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateCustomValidator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateCustomValidatorValidationQueryParameters}): UseMutationResult<void, unknown, UpdateCustomValidator__MutationParameters, TContext> {
-  const key = updateCustomValidatorMutationKey(options?.parameters?.validatorId!, options?.parameters?.curriculumId!);
-  
+export function useUpdateCustomValidatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      UpdateCustomValidator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateCustomValidatorValidationQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  UpdateCustomValidator__MutationParameters,
+  TContext
+> {
+  const key = updateCustomValidatorMutationKey(
+    options?.parameters?.validatorId!,
+    options?.parameters?.curriculumId!,
+  );
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateCustomValidator__MutationParameters) => Client.updateCustomValidator(data.validatorId ?? options?.parameters?.validatorId!, data.dto, data.curriculumId ?? options?.parameters?.curriculumId!),
-  mutationKey: key,
-});
-}
-  
-export function updateStructuralValidatorUrl(validatorId: number, curriculumId: string): string {
-  let url_ = getBaseUrl() + "/api/validation/{curriculumId}/validator/{validatorId}/structural";
-if (validatorId === undefined || validatorId === null)
-  throw new Error("The parameter 'validatorId' must be defined.");
-url_ = url_.replace("{validatorId}", encodeURIComponent("" + validatorId));
-if (curriculumId === undefined || curriculumId === null)
-  throw new Error("The parameter 'curriculumId' must be defined.");
-url_ = url_.replace("{curriculumId}", encodeURIComponent("" + curriculumId));
-  url_ = url_.replace(/[?&]$/, "");
-  return url_;
-}
 
-export function updateStructuralValidatorMutationKey(validatorId: number, curriculumId: string): MutationKey {
-  return trimArrayEnd([
-      'ValidationClient',
-      'updateStructuralValidator',
-      validatorId as any,
-      curriculumId as any,
-    ]);
-}
-
-/**
- * Update a structural validator
- */
-export function useUpdateStructuralValidatorMutation<TContext>(validatorId: number, curriculumId: string, options?: Omit<UseMutationOptions<void, unknown, Types.UpdateStructuralValidatorDto, TContext>, 'mutationKey' | 'mutationFn'>): UseMutationResult<void, unknown, Types.UpdateStructuralValidatorDto, TContext> {
-  const key = updateStructuralValidatorMutationKey(validatorId, curriculumId);
-  
-  const metaContext = useContext(QueryMetaContext);
-  options = addMetaToOptions(options, metaContext);
-  
   return useMutation({
     ...options,
-    mutationFn: (dto: Types.UpdateStructuralValidatorDto) => Client.updateStructuralValidator(validatorId, dto, curriculumId),
+    mutationFn: (data: UpdateCustomValidator__MutationParameters) =>
+      Client.updateCustomValidator(
+        data.validatorId ?? options?.parameters?.validatorId!,
+        data.dto,
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+      ),
     mutationKey: key,
   });
 }
-  
-type UpdateStructuralValidator__MutationParameters = UpdateStructuralValidatorValidationQueryParameters & {
-  dto: Types.UpdateStructuralValidatorDto;
+
+export function updateStructuralValidatorUrl(
+  validatorId: number,
+  curriculumId: string,
+): string {
+  let url_ =
+    getBaseUrl() +
+    '/api/validation/{curriculumId}/validator/{validatorId}/structural';
+  if (validatorId === undefined || validatorId === null)
+    throw new Error("The parameter 'validatorId' must be defined.");
+  url_ = url_.replace('{validatorId}', encodeURIComponent('' + validatorId));
+  if (curriculumId === undefined || curriculumId === null)
+    throw new Error("The parameter 'curriculumId' must be defined.");
+  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  url_ = url_.replace(/[?&]$/, '');
+  return url_;
+}
+
+export function updateStructuralValidatorMutationKey(
+  validatorId: number,
+  curriculumId: string,
+): MutationKey {
+  return trimArrayEnd([
+    'ValidationClient',
+    'updateStructuralValidator',
+    validatorId as any,
+    curriculumId as any,
+  ]);
 }
 
 /**
  * Update a structural validator
  */
-export function useUpdateStructuralValidatorMutationWithParameters<TContext>(options?: Omit<UseMutationOptions<void, unknown, UpdateStructuralValidator__MutationParameters, TContext>, 'mutationKey' | 'mutationFn'> & { parameters?: UpdateStructuralValidatorValidationQueryParameters}): UseMutationResult<void, unknown, UpdateStructuralValidator__MutationParameters, TContext> {
-  const key = updateStructuralValidatorMutationKey(options?.parameters?.validatorId!, options?.parameters?.curriculumId!);
-  
+export function useUpdateStructuralValidatorMutation<TContext>(
+  validatorId: number,
+  curriculumId: string,
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      Types.UpdateStructuralValidatorDto,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  >,
+): UseMutationResult<
+  void,
+  unknown,
+  Types.UpdateStructuralValidatorDto,
+  TContext
+> {
+  const key = updateStructuralValidatorMutationKey(validatorId, curriculumId);
+
   const metaContext = useContext(QueryMetaContext);
   options = addMetaToOptions(options, metaContext);
-  
-return useMutation({
-  ...options, 
-  mutationFn: (data: UpdateStructuralValidator__MutationParameters) => Client.updateStructuralValidator(data.validatorId ?? options?.parameters?.validatorId!, data.dto, data.curriculumId ?? options?.parameters?.curriculumId!),
-  mutationKey: key,
-});
+
+  return useMutation({
+    ...options,
+    mutationFn: (dto: Types.UpdateStructuralValidatorDto) =>
+      Client.updateStructuralValidator(validatorId, dto, curriculumId),
+    mutationKey: key,
+  });
+}
+
+type UpdateStructuralValidator__MutationParameters =
+  UpdateStructuralValidatorValidationQueryParameters & {
+    dto: Types.UpdateStructuralValidatorDto;
+  };
+
+/**
+ * Update a structural validator
+ */
+export function useUpdateStructuralValidatorMutationWithParameters<TContext>(
+  options?: Omit<
+    UseMutationOptions<
+      void,
+      unknown,
+      UpdateStructuralValidator__MutationParameters,
+      TContext
+    >,
+    'mutationKey' | 'mutationFn'
+  > & { parameters?: UpdateStructuralValidatorValidationQueryParameters },
+): UseMutationResult<
+  void,
+  unknown,
+  UpdateStructuralValidator__MutationParameters,
+  TContext
+> {
+  const key = updateStructuralValidatorMutationKey(
+    options?.parameters?.validatorId!,
+    options?.parameters?.curriculumId!,
+  );
+
+  const metaContext = useContext(QueryMetaContext);
+  options = addMetaToOptions(options, metaContext);
+
+  return useMutation({
+    ...options,
+    mutationFn: (data: UpdateStructuralValidator__MutationParameters) =>
+      Client.updateStructuralValidator(
+        data.validatorId ?? options?.parameters?.validatorId!,
+        data.dto,
+        data.curriculumId ?? options?.parameters?.curriculumId!,
+      ),
+    mutationKey: key,
+  });
 }

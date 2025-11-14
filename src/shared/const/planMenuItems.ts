@@ -1,52 +1,56 @@
 import {
-    getRoutePlan, getRoutePlanAnalytics,
-    getRoutePlanCompetencies, getRoutePlanDepartments,
-    getRoutePlanSettings,
-    getRoutePlanTitle
-} from "@/shared/const/router.ts";
-import {PlanPageLayoutMenuItem} from "@/widgets/PlanPageLayout/PlanPageLayout.tsx";
-import DocumentIcon from "@/shared/assets/icons/document.svg?react";
-import BoardIcon from "@/shared/assets/icons/board.svg?react";
-import HatIcon from "@/shared/assets/icons/hat.svg?react";
-import HallIcon from "@/shared/assets/icons/hall.svg?react";
-import DiagramIcon from "@/shared/assets/icons/diagram.svg?react";
-import SettingsIcon from "@/shared/assets/icons/settings.svg?react";
+  getRoutePlan,
+  getRoutePlanAnalytics,
+  getRoutePlanCompetencies,
+  getRoutePlanDepartments,
+  getRoutePlanSettings,
+  getRoutePlanTitle,
+} from '@/shared/const/router.ts';
+import { PlanPageLayoutMenuItem } from '@/widgets/PlanPageLayout/PlanPageLayout.tsx';
+import DocumentIcon from '@/shared/assets/icons/document.svg?react';
+import BoardIcon from '@/shared/assets/icons/board.svg?react';
+import HatIcon from '@/shared/assets/icons/hat.svg?react';
+import HallIcon from '@/shared/assets/icons/hall.svg?react';
+import DiagramIcon from '@/shared/assets/icons/diagram.svg?react';
+import SettingsIcon from '@/shared/assets/icons/settings.svg?react';
 
-export const getPlanMenuItems = (id: number | string): PlanPageLayoutMenuItem[] => [
-    {
-        value: "title",
-        name: "Титул",
-        icon: DocumentIcon,
-        path: getRoutePlanTitle(id)
-    },
-    {
-        value: "plan",
-        name: "План",
-        icon: BoardIcon,
-        path: getRoutePlan(id)
-    },
-    {
-        value: "competencies",
-        name: "Компетенции",
-        icon: HatIcon,
-        path: getRoutePlanCompetencies(id)
-    },
-    {
-        value: "departments",
-        name: "Кафедры",
-        icon: HallIcon,
-        path: getRoutePlanDepartments(id)
-    },
-    {
-        value: "analytics",
-        name: "Аналитика",
-        icon: DiagramIcon,
-        path: getRoutePlanAnalytics(id)
-    },
-    {
-        value: "settings",
-        name: "Настройки",
-        icon: SettingsIcon,
-        path: getRoutePlanSettings(id)
-    }
+export const getPlanMenuItems = (
+  id: number | string,
+): PlanPageLayoutMenuItem[] => [
+  {
+    value: 'title',
+    name: 'Титул',
+    icon: DocumentIcon,
+    path: getRoutePlanTitle(id),
+  },
+  {
+    value: 'plan',
+    name: 'План',
+    icon: BoardIcon,
+    path: getRoutePlan(id),
+  },
+  {
+    value: 'competencies',
+    name: 'Компетенции',
+    icon: HatIcon,
+    path: getRoutePlanCompetencies(id),
+  },
+  {
+    value: 'departments',
+    name: 'Кафедры',
+    icon: HallIcon,
+    path: getRoutePlanDepartments(id),
+  },
+  {
+    value: 'analytics',
+    name: 'Аналитика',
+    icon: DiagramIcon,
+    path: getRoutePlanAnalytics(id),
+  },
+  {
+    value: 'settings',
+    name: 'Настройки',
+    icon: SettingsIcon,
+    path: getRoutePlanSettings(id),
+  },
 ];
