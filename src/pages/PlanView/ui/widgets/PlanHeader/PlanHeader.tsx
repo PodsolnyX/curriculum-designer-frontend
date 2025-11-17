@@ -75,7 +75,7 @@ const PlanHeader = () => {
   return (
     <header
       className={
-        'top-0 px-5 py-2 bg-white/[0.8] backdrop-blur z-40 border-b border-b-stone-200 border-solid flex items-center justify-between gap-5 max-w-screen w-full'
+        'top-4 left-4 bg-white/[1] px-5 py-2 fixed backdrop-blur z-40 rounded-2xl shadow-xl flex items-center justify-between gap-5'
       }
     >
       <div className={'flex flex-col gap-0.5'}>

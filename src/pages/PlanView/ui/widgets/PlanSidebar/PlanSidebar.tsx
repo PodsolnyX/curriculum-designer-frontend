@@ -14,8 +14,8 @@ const PlanSidebar = observer(() => {
 
   return (
     <div
-      style={{ height: 'calc(100vh - 64px)' }}
-      className={`shadow-lg overflow-y-auto ${!!content[commonStore.sideBarContent] ? 'max-w-[330px] p-5 ' : 'max-w-[0px] p-0'} transition-all bg-white/[1]  w-full min-h-full border-l border-l-stone-200 border-solid`}
+      style={{ height: 'calc(100vh - 30px)' }}
+      className={`shadow-xl fixed right-4 rounded-[24px] bottom-6 overflow-y-auto ${!!content[commonStore.sideBarContent] ? 'max-w-[330px] p-5 ' : 'max-w-[0px] p-0'} transition-all bg-white/[1]  w-full`}
     >
       <CloseOutlined
         className={`absolute top-3 ${!!content[commonStore.sideBarContent] ? 'block' : 'hidden'} right-3 text-stone-400 hover:text-black transition hover:bg-stone-100 p-1 rounded-full`}

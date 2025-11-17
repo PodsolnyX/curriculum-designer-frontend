@@ -5,24 +5,44 @@ import ViewWrapper from '@/pages/PlanView/ui/widgets/ViewWrapper/ViewWrapper.tsx
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
 import { observer } from 'mobx-react-lite';
 import { useCurriculumData } from '@/pages/PlanView/hooks/useCurriculumData.ts';
-import {
-  SemestersContainer
-} from '@/pages/PlanView/ui/widgets/SemestersContainer/SemestersContainer.tsx';
 import { ModulesContainer } from '@/pages/PlanView/ui/widgets/ModulesContainer/ModulesContainer.tsx';
+import cls from './PlanViewPage.module.scss';
+import { optionsStore } from '@/pages/PlanView/stores/optionsStore.ts';
+import { CursorMode } from '@/pages/PlanView/types/types.ts';
+import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
+import clsx from 'clsx';
+import { useViewWidth } from '@/pages/PlanView/hooks/useViewWidth.ts';
+import { SemestersContainer } from '@/pages/PlanView/ui/widgets/SemestersContainer/SemestersContainer.tsx';
+import { ScaleOffsetRight, ScaleOffsetTop } from '@/pages/PlanView/ui/features/ScaleOffset/ScaleOffset.tsx';
 
 const PlanViewPage = observer(() => {
-
   useCurriculumData({ modulesPlainList: true });
 
+  const viewRef = useViewWidth();
+  const countSemesters = componentsStore.semesters.length;
+
   return (
-    <div className={'flex flex-col bg-stone-100 relative'}>
+    <div className={cls.PlanViewPage}>
       <PageLoader loading={commonStore.isLoadingData} />
       <ViewWrapper
         header={!commonStore.isLoadingData && <PlanHeader />}
         sidebar={<PlanSidebar />}
       >
-        <SemestersContainer/>
-        <ModulesContainer/>
+        <ScaleOffsetTop/>
+        <div
+          className={clsx(cls.ViewGrid, {
+            [cls.ViewMode]:
+              optionsStore.toolsOptions.cursorMode === CursorMode.Hand,
+          })}
+          style={{
+            gridTemplateRows: `repeat(${countSemesters}, auto)`,
+          }}
+          ref={viewRef}
+        >
+          <SemestersContainer />
+          <ModulesContainer />
+          <ScaleOffsetRight/>
+        </div>
       </ViewWrapper>
     </div>
   );

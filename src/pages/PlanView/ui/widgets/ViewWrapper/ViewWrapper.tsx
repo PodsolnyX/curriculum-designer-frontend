@@ -24,7 +24,6 @@ interface ViewWrapperProps {
 }
 
 const ViewWrapper = observer((props: ViewWrapperProps) => {
-
   const { children, header, sidebar } = props;
 
   const sensors = useSensors(
@@ -78,11 +77,11 @@ const ViewWrapper = observer((props: ViewWrapperProps) => {
           return rectIntersection(args);
         }}
       >
-        { header }
         <div className={'flex relative'}>
+          {header}
           <TransformComponent
             wrapperStyle={{
-              height: 'calc(100vh - 64px)',
+              height: '100vh',
               width: '100vw',
               cursor:
                 optionsStore.toolsOptions.cursorMode === CursorMode.Hand
@@ -93,7 +92,7 @@ const ViewWrapper = observer((props: ViewWrapperProps) => {
             {children}
             <Overlay />
           </TransformComponent>
-          { sidebar }
+          {sidebar}
         </div>
       </DndContext>
     </TransformWrapper>

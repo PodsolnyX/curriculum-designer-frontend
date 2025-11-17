@@ -1,0 +1,17 @@
+.ModuleHeader {
+  text-align: center;
+}
+
+.Title {
+  cursor: text;
+  font-size: 14px;
+  font-weight: bold;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Selection {
+  color: #60a5fa;
+}

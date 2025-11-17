@@ -5,7 +5,8 @@ import { Client as AtomClient } from '@/api/axios-client/AtomQuery.ts';
 import { runInAction } from 'mobx';
 import {
   getIdFromPrefix,
-  getParentIdFromPrefix, getPrefixFromId,
+  getParentIdFromPrefix,
+  getPrefixFromId,
   getSemesterIdFromPrefix,
 } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 import { message } from 'antd';
@@ -32,9 +33,10 @@ export class AtomModuleMoveService {
     const activeSemesterId = Number(getSemesterIdFromPrefix(activeId));
     const activeParentModuleId = Number(getParentIdFromPrefix(activeId));
     const overSemesterId = Number(getSemesterIdFromPrefix(overId));
-    const overParentModuleId = getPrefixFromId(overId) === "subjects"
-      ? Number(getParentIdFromPrefix(overId))
-      : Number(getIdFromPrefix(overId));
+    const overParentModuleId =
+      getPrefixFromId(overId) === 'subjects'
+        ? Number(getParentIdFromPrefix(overId))
+        : Number(getIdFromPrefix(overId));
 
     const atom = this.atoms.find((a) => a.id === atomId);
     if (!atom) return;

@@ -6,7 +6,7 @@ import Icon, {
   SwapOutlined,
 } from '@ant-design/icons';
 import cls from './ModuleContextMenu.module.scss';
-import React from 'react';
+import React, { useState } from 'react';
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
 import OptionIcon from '@/shared/assets/icons/more.svg?react';
 import clsx from 'clsx';
@@ -19,11 +19,13 @@ import {
 interface ModuleContextMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   moduleId: string;
   isSelection: boolean;
+  show?: boolean;
 }
 
 export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
-  const { className, moduleId, isSelection, ...rest } = props;
+  const { className, moduleId, isSelection, show = true, ...rest } = props;
 
+  const [popoverVisible, setPopoverVisible] = useState(false);
   const semesters = commonStore.curriculumData?.semesters || [];
 
   return (
@@ -32,6 +34,8 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
         trigger={'click'}
         placement={'right'}
         overlayInnerStyle={{ padding: 0 }}
+        open={popoverVisible}
+        onOpenChange={setPopoverVisible}
         content={
           <List
             size="small"
@@ -134,7 +138,13 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
         }
       >
         <div
-          className={clsx(cls.MenuIcon, className)}
+          className={clsx(
+            cls.MenuIcon,
+            {
+              [cls.Show]: show || popoverVisible,
+            },
+            className,
+          )}
           onClick={(event) => event.stopPropagation()}
         >
           <Icon component={OptionIcon} />

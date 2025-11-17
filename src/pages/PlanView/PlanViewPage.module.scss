@@ -1,0 +1,14 @@
+.PlanViewPage {
+  background: #f5f5f4;
+  position: relative;
+}
+
+.ViewGrid {
+  min-width: 100vw;
+  min-height: 100vh;
+  display: grid;
+}
+
+.ViewMode {
+  pointer-events: none;
+}
