@@ -6,14 +6,12 @@ import { optionsStore } from '@/pages/PlanView/stores/optionsStore.ts';
 import {
   DndContext,
   DragEndEvent,
-  KeyboardSensor,
   PointerSensor,
   pointerWithin,
   rectIntersection,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { Overlay } from './ui/Overlay/Overlay.tsx';
 
@@ -27,10 +25,14 @@ const ViewWrapper = observer((props: ViewWrapperProps) => {
   const { children, header, sidebar } = props;
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
     }),
+    // useSensor(KeyboardSensor, {
+    //   coordinateGetter: sortableKeyboardCoordinates,
+    // }),
   );
 
   return (

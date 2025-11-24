@@ -1,0 +1,35 @@
+@use '@styles/classess' as classess;
+
+.PlanHeader {
+  width: 100%;
+  position: fixed;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1.25rem;
+  z-index: 40;
+}
+
+.MainContainer {
+  @extend .ViewFloatingCard;
+  padding-bottom: 0;
+}
+
+.TitleContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+
+  > h1 {
+    font-size: 16px;
+    color: var(--color-text-primary);
+  }
+}
+
+.ToolsContainer {
+  display: flex;
+  gap: 0.5rem;
+}

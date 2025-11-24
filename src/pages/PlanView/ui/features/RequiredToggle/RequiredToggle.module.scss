@@ -1,0 +1,13 @@
+.RequiredToggle {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  transition: 0.3s;
+  opacity: 0;
+  z-index: 1;
+}
+
+.Selected {
+  opacity: 1;
+  color: #f90c0c;
+}

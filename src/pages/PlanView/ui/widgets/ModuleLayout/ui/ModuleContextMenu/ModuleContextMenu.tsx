@@ -8,7 +8,7 @@ import Icon, {
 import cls from './ModuleContextMenu.module.scss';
 import React, { useState } from 'react';
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
-import OptionIcon from '@/shared/assets/icons/more.svg?react';
+import { ReactComponent as OptionIcon } from '@/shared/assets/icons/fill/more.svg';
 import clsx from 'clsx';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import {

@@ -51,6 +51,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
             token: {
               colorPrimary: '#74a4a8',
               fontFamily: 'Inter, sans-serif',
+              sizePopupArrow: 0,
             },
           }}
         >

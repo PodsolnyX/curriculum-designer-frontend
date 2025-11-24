@@ -1,5 +1,5 @@
 import { Badge, Button, List, Popover } from 'antd';
-import Icon, {
+import {
   CaretRightOutlined,
   DeleteOutlined,
   DownOutlined,
@@ -9,27 +9,40 @@ import Icon, {
 } from '@ant-design/icons';
 import { AtomType } from '@/api/axios-client.types.ts';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
-import classNames from 'classnames';
-import cls from '@/pages/PlanView/ui/widgets/AtomCard/AtomCard.module.scss';
-import React from 'react';
-import OptionIcon from '@/shared/assets/icons/more.svg?react';
+import React, { useState } from 'react';
 import { AtomTypeFullName } from '@/shared/const/enumRecords.tsx';
 
-interface SubjectContextMenuProps {
+export interface AtomContextMenuProps {
   id: string;
   type: AtomType;
   neighboringSemesters: {
     prev: number | null;
     next: number | null;
   };
+  children?: React.ReactNode;
 
   expendSemester(direction: 'prev' | 'next'): void;
+  onOpenChange?: (open: boolean) => void;
   deleteSubject(): void;
 }
 
-export const AtomContextMenu = (props: SubjectContextMenuProps) => {
-  const { type, id, neighboringSemesters, expendSemester, deleteSubject } =
-    props;
+export const AtomContextMenu = (props: AtomContextMenuProps) => {
+  const {
+    type,
+    id,
+    neighboringSemesters,
+    children,
+    expendSemester,
+    onOpenChange,
+    deleteSubject,
+  } = props;
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    onOpenChange?.(newOpen);
+  };
 
   return (
     <div onClick={(event) => event.stopPropagation()}>
@@ -37,6 +50,8 @@ export const AtomContextMenu = (props: SubjectContextMenuProps) => {
         trigger={'click'}
         placement={'right'}
         overlayInnerStyle={{ padding: 0 }}
+        open={open}
+        onOpenChange={handleOpenChange}
         content={
           <List
             size="small"
@@ -162,12 +177,7 @@ export const AtomContextMenu = (props: SubjectContextMenuProps) => {
           />
         }
       >
-        <div
-          className={classNames(cls.optionsIcon)}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <Icon component={OptionIcon} />
-        </div>
+        {children}
       </Popover>
     </div>
   );

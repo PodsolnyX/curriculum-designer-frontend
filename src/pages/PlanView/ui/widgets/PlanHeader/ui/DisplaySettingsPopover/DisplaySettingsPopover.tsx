@@ -65,7 +65,7 @@ const DisplaySettingsPopover = observer(
         content={Content()}
         title={''}
         trigger={'click'}
-        placement={'bottomLeft'}
+        placement={'bottom'}
       >
         {children}
       </Popover>

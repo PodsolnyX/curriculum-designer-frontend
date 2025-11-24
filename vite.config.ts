@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import mkcert from 'vite-plugin-mkcert';
 import ImportMetaEnvPlugin from '@import-meta-env/unplugin';
+import * as path from 'path';
 
 const proxyTarget = process.env.BACKEND_URI ?? 'https://localhost:42360';
 const frontendPort = Number.parseInt(process.env.PORT ?? '5173');
@@ -24,8 +25,21 @@ export default defineConfig({
     }),
     react(),
     tsconfigPaths(),
-    svgr({ include: '**/*.svg?react', svgrOptions: { icon: true } }),
+    svgr({
+      include: ['**/*.svg?react', '**/*.svg'],
+      svgrOptions: {
+        exportType: 'named',
+        ref: true,
+        svgo: false,
+        titleProp: true,
+      },
+    }),
   ],
+  resolve: {
+    alias: {
+      '@styles': path.resolve(__dirname, './src/app/styles'),
+    },
+  },
   server: {
     port: frontendPort as number,
     https: {},
@@ -44,6 +58,7 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         api: 'modern-compiler',
+        includePaths: [path.resolve(__dirname, './src/app/styles')],
       },
     },
   },

@@ -1,0 +1,23 @@
+.icon {
+  width: var(--icon-size, 24px);
+  height: var(--icon-size, 24px);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.icon--fill {
+  color: var(--icon-color, currentColor);
+  fill: currentColor;
+  stroke: none;
+}
+
+.icon--stroke {
+  color: var(--icon-color, currentColor);
+  fill: none;
+  stroke: currentColor;
+}
+
+.icon--force-color {
+  color: var(--icon-color, currentColor);
+}

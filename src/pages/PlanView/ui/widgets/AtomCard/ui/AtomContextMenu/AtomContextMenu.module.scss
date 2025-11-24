@@ -1,0 +1,16 @@
+.OptionsIcon {
+  opacity: var(--hidden-child-opacity);
+  transition: 0.3s;
+
+  &:hover {
+    * {
+      fill: #3b3b3b;
+      color: #3b3b3b;
+    }
+  }
+
+  * {
+    fill: #b6b6b6;
+    stroke: none;
+  }
+}

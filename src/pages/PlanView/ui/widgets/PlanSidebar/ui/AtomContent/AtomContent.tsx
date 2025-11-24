@@ -16,6 +16,7 @@ import DepartmentsSelector from '@/pages/PlanView/ui/features/DepartmentsSelecto
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
 import { observer } from 'mobx-react-lite';
+import { useControls } from 'react-zoom-pan-pinch';
 
 const AtomContent = observer(() => {
   const selectedAtom = commonStore.selectedComponent;
@@ -26,6 +27,12 @@ const AtomContent = observer(() => {
   const [newName, setNewName] = useState('');
 
   const atomInfo = componentsStore.getAtom(atomId);
+
+  const { zoomToElement } = useControls();
+
+  const scrollToTarget = (id: string) => {
+    zoomToElement(document.getElementById(id));
+  };
 
   useEffect(() => {
     if (selectedAtom && atomInfo) {
@@ -49,16 +56,21 @@ const AtomContent = observer(() => {
       </div>
     );
 
-  const targetSubjectSemesterId = concatIds(
-    setPrefixToId(
-      String(
-        atomInfo.semesters.find(
-          (atomSemester, index) => index === selectedSemesterNumber - 1,
-        )?.semester.id || '',
+  const getTargetSubjectSemesterId = (number: number) => {
+    return concatIds(
+      setPrefixToId(
+        String(
+          atomInfo.semesters.find((atomSemester, index) => index === number - 1)
+            ?.semester.id || '',
+        ),
+        'semesters',
       ),
-      'semesters',
-    ),
-    setPrefixToId(atomId, 'subjects'),
+      setPrefixToId(atomId, 'subjects'),
+    );
+  };
+
+  const targetSubjectSemesterId = getTargetSubjectSemesterId(
+    selectedSemesterNumber,
   );
 
   const onNameChange = (value: string) => {
@@ -184,7 +196,10 @@ const AtomContent = observer(() => {
               options={atomInfo.semesters.map((_, index) => index + 1)}
               block
               value={selectedSemesterNumber}
-              onChange={setSelectedSemesterNumber}
+              onChange={(newValue) => {
+                scrollToTarget(getTargetSubjectSemesterId(newValue));
+                setSelectedSemesterNumber(newValue);
+              }}
             />
           </div>
         </>

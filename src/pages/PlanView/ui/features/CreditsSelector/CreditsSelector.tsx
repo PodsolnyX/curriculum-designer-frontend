@@ -16,17 +16,25 @@ const CreditsSelector = ({
 }: CreditsSelectorProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const ref = useRef<HTMLInputElement | null>(null);
-
-  const [newValue, setNewValue] = useState(credits || 0);
+  const [newValue, setNewValue] = useState<number | null>(credits || 0);
 
   useEffect(() => {
     if (credits) setNewValue(credits);
   }, [credits]);
 
   const onSaveValue = () => {
+    const resultValue =
+      newValue === null || newValue < 0 ? 0 : newValue > 30 ? 30 : newValue;
+
+    if (newValue === null || newValue < 0) setNewValue(0);
+    else if (newValue > 30) setNewValue(30);
+
     setIsEdit(false);
-    onChange && newValue !== credits && onChange(newValue);
-    if (ref?.current) ref.current?.blur();
+    onChange && resultValue !== credits && onChange(resultValue);
+
+    const element = ref?.current;
+
+    if (element) element.blur();
   };
 
   return type === 'tag' ? (
@@ -42,11 +50,11 @@ const CreditsSelector = ({
       {isEdit && (
         <InputNumber
           size={'small'}
-          min={0}
-          max={30}
           className={`absolute top-0 left-0 bg-white z-10 w-32`}
           value={newValue}
-          onChange={(value) => setNewValue(Number(value))}
+          onChange={(value) =>
+            setNewValue(value === null ? null : Number(value))
+          }
           onBlur={() => onSaveValue()}
           onKeyDown={(event) => {
             if (event.key === 'Enter') onSaveValue();
@@ -59,12 +67,10 @@ const CreditsSelector = ({
   ) : (
     <InputNumber
       size={'small'}
-      min={0}
-      max={30}
       ref={ref}
       className={'w-full'}
       value={newValue}
-      onChange={(value) => setNewValue(Number(value))}
+      onChange={(value) => setNewValue(value === null ? null : Number(value))}
       onBlur={() => onSaveValue()}
       onKeyDown={(event) => {
         if (event.key === 'Enter') onSaveValue();

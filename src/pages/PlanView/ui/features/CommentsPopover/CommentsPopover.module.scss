@@ -1,0 +1,24 @@
+.CommentsButton {
+  opacity: var(--hidden-child-opacity);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  transition: 0.3s;
+  margin-left: auto;
+
+  &:hover {
+    * {
+      stroke: #3b3b3b;
+      color: #3b3b3b;
+    }
+  }
+
+  * {
+    fill: none;
+    stroke: #b6b6b6;
+  }
+
+  &_selected {
+    opacity: 1;
+  }
+}

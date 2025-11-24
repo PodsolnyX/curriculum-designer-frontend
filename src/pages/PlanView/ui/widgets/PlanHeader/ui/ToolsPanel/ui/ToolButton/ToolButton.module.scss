@@ -1,0 +1,16 @@
+.ToolButton {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  color: var(--color-icon-primary);
+
+  &:hover {
+    background-color: var(--color-bg-primary-hover);
+  }
+}
+
+.Selected {
+  color: var(--color-icon-active);
+  background-color: var(--color-bg-active-accent);
+}

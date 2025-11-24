@@ -1,0 +1,52 @@
+@use '@styles/classess' as classess;
+
+.ValidationPanel {
+  @extend .ViewFloatingCard;
+
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: 0.3s;
+  cursor: pointer;
+
+  span {
+    font-size: 14px;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.Selected {
+  &.Success {
+    border-color: var(--color-success);
+    background-color: var(--color-bg-success);
+  }
+
+  &.Error {
+    border-color: var(--color-error);
+    background-color: var(--color-bg-error);
+  }
+}
+
+.Success {
+  border-radius: 50%;
+  color: var(--color-success);
+
+  &:hover {
+    background-color: var(--color-bg-success);
+  }
+}
+
+.Error {
+  color: var(--color-error);
+
+  &:hover {
+    background-color: var(--color-bg-error);
+  }
+}

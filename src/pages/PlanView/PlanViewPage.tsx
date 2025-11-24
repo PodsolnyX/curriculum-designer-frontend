@@ -13,7 +13,10 @@ import { componentsStore } from '@/pages/PlanView/stores/componentsStore/compone
 import clsx from 'clsx';
 import { useViewWidth } from '@/pages/PlanView/hooks/useViewWidth.ts';
 import { SemestersContainer } from '@/pages/PlanView/ui/widgets/SemestersContainer/SemestersContainer.tsx';
-import { ScaleOffsetRight, ScaleOffsetTop } from '@/pages/PlanView/ui/features/ScaleOffset/ScaleOffset.tsx';
+import {
+  ScaleOffsetRight,
+  ScaleOffsetTop,
+} from '@/pages/PlanView/ui/features/ScaleOffset/ScaleOffset.tsx';
 
 const PlanViewPage = observer(() => {
   useCurriculumData({ modulesPlainList: true });
@@ -28,20 +31,22 @@ const PlanViewPage = observer(() => {
         header={!commonStore.isLoadingData && <PlanHeader />}
         sidebar={<PlanSidebar />}
       >
-        <ScaleOffsetTop/>
-        <div
-          className={clsx(cls.ViewGrid, {
-            [cls.ViewMode]:
-              optionsStore.toolsOptions.cursorMode === CursorMode.Hand,
-          })}
-          style={{
-            gridTemplateRows: `repeat(${countSemesters}, auto)`,
-          }}
-          ref={viewRef}
-        >
-          <SemestersContainer />
-          <ModulesContainer />
-          <ScaleOffsetRight/>
+        <ScaleOffsetTop />
+        <div className={cls.OffsetContainer}>
+          <div
+            className={clsx(cls.ViewGrid, {
+              [cls.ViewMode]:
+                optionsStore.toolsOptions.cursorMode === CursorMode.Hand,
+            })}
+            style={{
+              gridTemplateRows: `repeat(${countSemesters}, auto)`,
+            }}
+            ref={viewRef}
+          >
+            <SemestersContainer />
+            <ModulesContainer />
+          </div>
+          <ScaleOffsetRight />
         </div>
       </ViewWrapper>
     </div>

@@ -1,12 +1,14 @@
 import { Button, Input, Popover } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { useState } from 'react';
+import clsx from 'clsx';
+import cls from './CommentsPopover.module.scss';
+import { Icon } from '@/shared/ui/Icon';
 
 interface CommentsPopoverProps {
-  children: ReactNode;
   comments: string[];
 }
 
-const CommentsPopover = ({ children, comments }: CommentsPopoverProps) => {
+const CommentsPopover = ({ comments }: CommentsPopoverProps) => {
   const [text, setText] = useState('');
 
   const Comments = () => {
@@ -48,7 +50,18 @@ const CommentsPopover = ({ children, comments }: CommentsPopoverProps) => {
 
   return (
     <Popover content={Comments} trigger={'click'} placement={'bottom'}>
-      {children}
+      <div
+        className={clsx(
+          cls.CommentsButton,
+          [].length && cls.CommentsButton_selected,
+        )}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <Icon name={'comment'} size={14} />
+        <span className={'text-[10px] text-stone-400'}>
+          {[].length ? [].length : '+'}
+        </span>
+      </div>
     </Popover>
   );
 };

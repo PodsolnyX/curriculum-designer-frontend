@@ -1,61 +1,16 @@
-.icon {
+@use '@styles/classess' as classess;
+
+.ToolsPanel {
+  @extend .ViewFloatingCard;
   display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 3px;
-  border-radius: 100%;
-
-  &:hover {
-    color: #388be1;
-    background-color: rgba(0, 0, 0, 0.03);
-
-    .fill {
-      * {
-        fill: #388be1;
-      }
-    }
-
-    .stroke {
-      * {
-        fill: none;
-        stroke: #388be1;
-      }
-    }
-  }
-
-  &__selected {
-    color: #388be1;
-
-    .fill {
-      * {
-        fill: #388be1;
-      }
-    }
-
-    .stroke {
-      * {
-        fill: none;
-        stroke: #388be1;
-      }
-    }
-  }
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
+  padding: 0 10px;
 }
 
-.fill {
-  * {
-    fill: #4f4f4f;
-  }
-}
-
-.stroke {
-  * {
-    fill: none;
-    stroke: #4f4f4f;
+.ToolsBlock {
+  display: flex;
+  &:not(:last-child) {
+    border-right: 1px solid var(--color-stroke-secondary);
+    padding-right: 8px;
+    margin-right: 8px;
   }
 }

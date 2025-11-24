@@ -1,0 +1,42 @@
+@use '@styles/classess' as classess;
+
+.Sidebar {
+  max-height: calc(100vh - 85px);
+  position: fixed;
+  top: 70px;
+  width: 380px;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.Visible {
+  right: 12px;
+}
+
+.Hidden {
+  right: -380px;
+}
+
+.MainContent {
+  @extend .ViewFloatingCard;
+  padding: 16px;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: #78716c;
+  transition: all 0.2s;
+  padding: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover {
+    color: #000;
+    background: rgba(243, 243, 243, 0.5);
+  }
+}

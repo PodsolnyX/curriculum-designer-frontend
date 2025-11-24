@@ -20,7 +20,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { CurriculumShortDto } from '@/api/axios-client.types.ts';
 import PlanPageLayout from '@/widgets/PlanPageLayout/PlanPageLayout.tsx';
-import TracksIcon from '@/shared/assets/icons/tracks.svg?react';
+import { ReactComponent as TracksIcon } from '@/shared/assets/icons/fill/tracks.svg';
 import { CurriculumStatusType } from '@/api/axios-client.types.ts';
 import { UpdateStatusPopover } from '@/pages/PlansList/ui/UpdateStatusPopover/UpdateStatusPopover.tsx';
 const PlansListPage = () => {

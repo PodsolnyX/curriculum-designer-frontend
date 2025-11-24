@@ -1,13 +1,9 @@
 import React from 'react';
 import cls from './AtomCard.module.scss';
-import classNames from 'classnames';
-import { Tag, Tooltip, Typography } from 'antd';
-import CommentIcon from '@/shared/assets/icons/comment.svg?react';
-import Icon from '@ant-design/icons';
+import { Tag, Tooltip } from 'antd';
 import CompetenceSelector from '@/pages/PlanView/ui/features/CompetenceSelector/CompetenceSelector.tsx';
 import AttestationTypeSelector from '@/pages/PlanView/ui/features/AttestationTypeSelector/AttestationTypeSelector.tsx';
 import CreditsSelector from '@/pages/PlanView/ui/features/CreditsSelector/CreditsSelector.tsx';
-import CommentsPopover from '@/pages/PlanView/ui/features/CommentsPopover/CommentsPopover.tsx';
 import { AtomDto } from '@/api/axios-client.ts';
 import AcademicHoursPanel from '@/pages/PlanView/ui/features/AcademicHoursPanel/AcademicHoursPanel.tsx';
 import {
@@ -21,7 +17,9 @@ import { observer } from 'mobx-react-lite';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
 import { NameInput } from '@/pages/PlanView/ui/features/NameInput/NameInput.tsx';
-import { AtomContextMenu } from '@/pages/PlanView/ui/widgets/AtomCard/ui/AtomContextMenu/AtomContextMenu.tsx';
+import clsx from 'clsx';
+import { RequiredToggle } from '@/pages/PlanView/ui/features/RequiredToggle/RequiredToggle.tsx';
+import { AtomMenu } from '@/pages/PlanView/ui/widgets/AtomCard/ui/AtomMenu/AtomMenu.tsx';
 
 export enum Position {
   Before = -1,
@@ -35,7 +33,6 @@ export interface SubjectCardProps extends Omit<AtomDto, 'id'> {
   credits?: number;
   isSelected?: boolean;
   insertPosition?: Position;
-  isReplaceMode?: boolean;
 }
 
 export const AtomCard = observer((props: SubjectCardProps) => {
@@ -54,7 +51,6 @@ export const AtomCard = observer((props: SubjectCardProps) => {
     isSelected,
     clone,
     insertPosition,
-    isReplaceMode,
   } = props;
 
   if (
@@ -117,53 +113,37 @@ export const AtomCard = observer((props: SubjectCardProps) => {
 
   return (
     <li
-      className={classNames(
-        cls.subjectCardWrapper,
+      className={clsx(
+        cls.DraggableWrapper,
         active && cls.active,
         clone && cls.clone,
-        isReplaceMode && cls.replaceMode,
         insertPosition === Position.Before && cls.insertBefore,
         insertPosition === Position.After && cls.insertAfter,
       )}
-      onClick={() => {
-        if (isReplaceMode) return;
-        commonStore.selectComponent(id);
-        commonStore.setSideBarContent('atom');
-      }}
-      id={concatIds(
-        setPrefixToId(getSemesterIdFromPrefix(id), 'semesters'),
-        setPrefixToId(getIdFromPrefix(id), 'subjects'),
-      )}
     >
       <div
-        className={classNames(
-          cls.subjectCard,
-          cls[type],
-          isSelected && cls.selected,
+        className={clsx(cls.AtomCard, cls[type], isSelected && cls.Selected)}
+        onClick={() => {
+          commonStore.selectComponent(id);
+          commonStore.setSideBarContent('atom');
+        }}
+        id={concatIds(
+          setPrefixToId(getSemesterIdFromPrefix(id), 'semesters'),
+          setPrefixToId(getIdFromPrefix(id), 'subjects'),
         )}
       >
         {optionsStore.displaySettings.required && (
-          <Tooltip
-            title={isRequired ? 'Сделать по выбору' : 'Сделать обязательным'}
-          >
-            <span
-              onClick={(event) => {
-                event.stopPropagation();
-                componentsStore.updateAtom(id, 'isRequired', !isRequired);
-              }}
-              className={classNames(
-                cls.requiredIcon,
-                isRequired && cls.requiredIcon_selected,
-              )}
-            >
-              *
-            </span>
-          </Tooltip>
+          <RequiredToggle id={id} isRequired={isRequired} />
         )}
-        <div
-          className={'flex flex-col flex-1'}
-          onClick={(event) => event.stopPropagation()}
-        >
+        <AtomMenu
+          id={id}
+          type={type}
+          neighboringSemesters={neighboringSemesters}
+          expendSemester={onExpendSemester}
+          deleteSubject={() => componentsStore.removeAtom(id)}
+          isRequired={isRequired}
+        />
+        <div className={'flex flex-col flex-1'}>
           <div className={'flex gap-1 items-center'}>
             {optionsStore.displaySettings.index && (
               <span className={'text-[10px] text-stone-400'}>
@@ -185,18 +165,13 @@ export const AtomCard = observer((props: SubjectCardProps) => {
               name !== value && componentsStore.updateAtom(id, 'name', value);
             }}
           >
-            <Typography.Text
-              title={name}
-              className={
-                'text-black text-[12px] line-clamp-2 min-h-[36px] cursor-text hover:underline'
-              }
-            >
+            <span title={name} className={cls.Title}>
               {name}
-            </Typography.Text>
+            </span>
           </NameInput>
         </div>
         <div
-          className={'flex gap-1 flex-wrap'}
+          className={'flex gap-1 flex-wrap w-max'}
           onClick={(event) => event.stopPropagation()}
         >
           {optionsStore.displaySettings.credits && (
@@ -222,29 +197,6 @@ export const AtomCard = observer((props: SubjectCardProps) => {
               </Tag>
             </Tooltip>
           )}
-          {optionsStore.displaySettings.notesNumber && (
-            <CommentsPopover comments={[]}>
-              <div
-                className={classNames(
-                  cls.notesIcon,
-                  [].length && cls.notesIcon_selected,
-                )}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <Icon component={CommentIcon} />
-                <span className={'text-[10px] text-stone-400'}>
-                  {[].length ? [].length : '+'}
-                </span>
-              </div>
-            </CommentsPopover>
-          )}
-          <AtomContextMenu
-            id={id}
-            type={type}
-            neighboringSemesters={neighboringSemesters}
-            expendSemester={onExpendSemester}
-            deleteSubject={() => componentsStore.removeAtom(id)}
-          />
         </div>
         {optionsStore.displaySettings.academicHours && (
           <AcademicHoursPanel

@@ -1,0 +1,31 @@
+.Menu {
+  display: flex;
+  align-items: center;
+  margin-left: -8px;
+}
+
+.MenuItem {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  background: white;
+  color: var(--color-icon-primary);
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+
+  transition: 0.2s;
+
+  &:hover {
+    background: var(--color-bg-primary-hover);
+    color: var(--color-icon-active);
+
+    > span {
+      color: var(--color-icon-active);
+    }
+  }
+
+  > span {
+    color: var(--color-text-primary);
+  }
+}

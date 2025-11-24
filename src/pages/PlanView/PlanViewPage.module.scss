@@ -3,6 +3,10 @@
   position: relative;
 }
 
+.OffsetContainer {
+  display: flex;
+}
+
 .ViewGrid {
   min-width: 100vw;
   min-height: 100vh;

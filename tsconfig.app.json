@@ -8,7 +8,8 @@
     "skipLibCheck": true,
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@styles/*": ["./src/app/styles/*"]
     },
 
     /* Bundler mode */

@@ -1,0 +1,46 @@
+.Menu {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 2;
+  display: flex;
+  border: 1px solid var(--color-stroke-secondary);
+  border-radius: 4px;
+  opacity: var(--hidden-child-opacity);
+  background-color: var(--color-bg-primary);
+  transition: 0.3s;
+}
+
+.Opened {
+  opacity: 1;
+}
+
+.MenuItem {
+  padding: 3px;
+  color: var(--color-icon-primary);
+  background-color: var(--color-bg-primary);
+
+  &:hover {
+    background-color: var(--color-bg-primary-hover);
+  }
+
+  &:first-child {
+    border-radius: 4px 0 0 4px;
+  }
+
+  &:last-child {
+    border-radius: 0 4px 4px 0;
+  }
+
+  &:not(:last-child) {
+    border-right: 1px solid var(--color-stroke-secondary);
+  }
+}
+
+.RequiredItem {
+  color: var(--color-error);
+}
+
+.Selected {
+  background-color: var(--color-bg-primary-hover);
+}

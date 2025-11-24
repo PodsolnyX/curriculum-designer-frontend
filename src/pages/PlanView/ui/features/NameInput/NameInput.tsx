@@ -51,8 +51,13 @@ export const NameInput = (props: NameInputProps) => {
     }
   };
 
+  const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    setEdit(true);
+  };
+
   return (
-    <div ref={ref} onClick={() => setEdit(true)}>
+    <div ref={ref} onClick={onClick}>
       {children}
       {edit && (
         <textarea
