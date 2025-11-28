@@ -667,6 +667,239 @@ export function prepareSerializeHoursDistributionDto(
     prepareSerializeAcademicActivityDto(_data.academicActivity);
   return data as HoursDistributionDto;
 }
+export interface SelectionDto {
+  semesters: CreditPerSemesterDto[];
+}
+export function deserializeSelectionDto(json: string): SelectionDto {
+  const data = JSON.parse(json) as SelectionDto;
+  initSelectionDto(data);
+  return data;
+}
+export function initSelectionDto(_data: SelectionDto) {
+  if (_data) {
+    if (Array.isArray(_data['semesters'])) {
+      _data.semesters = _data['semesters'].map((item) =>
+        initCreditPerSemesterDto(item),
+      );
+    }
+  }
+  return _data;
+}
+export function serializeSelectionDto(_data: SelectionDto | undefined) {
+  if (_data) {
+    _data = prepareSerializeSelectionDto(_data as SelectionDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeSelectionDto(
+  _data: SelectionDto,
+): SelectionDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.semesters)) {
+    data['semesters'] = _data.semesters.map((item) =>
+      prepareSerializeCreditPerSemesterDto(item),
+    );
+  }
+  return data as SelectionDto;
+}
+export interface CreditPerSemesterDto {
+  semesterId: number;
+  credit: number;
+}
+export function deserializeCreditPerSemesterDto(
+  json: string,
+): CreditPerSemesterDto {
+  const data = JSON.parse(json) as CreditPerSemesterDto;
+  initCreditPerSemesterDto(data);
+  return data;
+}
+export function initCreditPerSemesterDto(_data: CreditPerSemesterDto) {
+  return _data;
+}
+export function serializeCreditPerSemesterDto(
+  _data: CreditPerSemesterDto | undefined,
+) {
+  if (_data) {
+    _data = prepareSerializeCreditPerSemesterDto(_data as CreditPerSemesterDto);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreditPerSemesterDto(
+  _data: CreditPerSemesterDto,
+): CreditPerSemesterDto {
+  const data: Record<string, any> = { ..._data };
+  return data as CreditPerSemesterDto;
+}
+export interface CreateUpdateSelectionDto {
+  semesters?: CreditPerSemesterDto[] | null;
+}
+export function deserializeCreateUpdateSelectionDto(
+  json: string,
+): CreateUpdateSelectionDto {
+  const data = JSON.parse(json) as CreateUpdateSelectionDto;
+  initCreateUpdateSelectionDto(data);
+  return data;
+}
+export function initCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto) {
+  if (_data) {
+    if (Array.isArray(_data['semesters'])) {
+      _data.semesters = _data['semesters'].map((item) =>
+        initCreditPerSemesterDto(item),
+      );
+    }
+  }
+  return _data;
+}
+export function serializeCreateUpdateSelectionDto(
+  _data: CreateUpdateSelectionDto | undefined,
+) {
+  if (_data) {
+    _data = prepareSerializeCreateUpdateSelectionDto(
+      _data as CreateUpdateSelectionDto,
+    );
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeCreateUpdateSelectionDto(
+  _data: CreateUpdateSelectionDto,
+): CreateUpdateSelectionDto {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.semesters)) {
+    data['semesters'] = _data.semesters.map((item) =>
+      prepareSerializeCreditPerSemesterDto(item),
+    );
+  }
+  return data as CreateUpdateSelectionDto;
+}
+export interface ReadResponse {
+  tuples: Tuple[];
+  continuation_token: string;
+  [key: string]: any;
+}
+export function deserializeReadResponse(json: string): ReadResponse {
+  const data = JSON.parse(json) as ReadResponse;
+  initReadResponse(data);
+  return data;
+}
+export function initReadResponse(_data: ReadResponse) {
+  if (_data) {
+    if (Array.isArray(_data['tuples'])) {
+      _data.tuples = _data['tuples'].map((item) => initTuple(item));
+    }
+  }
+  return _data;
+}
+export function serializeReadResponse(_data: ReadResponse | undefined) {
+  if (_data) {
+    _data = prepareSerializeReadResponse(_data as ReadResponse);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeReadResponse(
+  _data: ReadResponse,
+): ReadResponse {
+  const data: Record<string, any> = { ..._data };
+  if (Array.isArray(_data.tuples)) {
+    data['tuples'] = _data.tuples.map((item) => prepareSerializeTuple(item));
+  }
+  return data as ReadResponse;
+}
+export interface Tuple {
+  key: TupleKey;
+  timestamp: Date;
+  [key: string]: any;
+}
+export function deserializeTuple(json: string): Tuple {
+  const data = JSON.parse(json) as Tuple;
+  initTuple(data);
+  return data;
+}
+export function initTuple(_data: Tuple) {
+  if (_data) {
+    _data.key = _data['key'] && initTupleKey(_data['key']);
+    _data.timestamp = _data['timestamp']
+      ? new Date(_data['timestamp'].toString())
+      : <any>null;
+  }
+  return _data;
+}
+export function serializeTuple(_data: Tuple | undefined) {
+  if (_data) {
+    _data = prepareSerializeTuple(_data as Tuple);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeTuple(_data: Tuple): Tuple {
+  const data: Record<string, any> = { ..._data };
+  data['key'] = _data.key && prepareSerializeTupleKey(_data.key);
+  data['timestamp'] = _data.timestamp && _data.timestamp.toISOString();
+  return data as Tuple;
+}
+export interface TupleKey {
+  user: string;
+  relation: string;
+  object: string;
+  condition?: RelationshipCondition | null;
+  [key: string]: any;
+}
+export function deserializeTupleKey(json: string): TupleKey {
+  const data = JSON.parse(json) as TupleKey;
+  initTupleKey(data);
+  return data;
+}
+export function initTupleKey(_data: TupleKey) {
+  if (_data) {
+    _data.condition =
+      _data['condition'] && initRelationshipCondition(_data['condition']);
+  }
+  return _data;
+}
+export function serializeTupleKey(_data: TupleKey | undefined) {
+  if (_data) {
+    _data = prepareSerializeTupleKey(_data as TupleKey);
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeTupleKey(_data: TupleKey): TupleKey {
+  const data: Record<string, any> = { ..._data };
+  data['condition'] =
+    _data.condition && prepareSerializeRelationshipCondition(_data.condition);
+  return data as TupleKey;
+}
+export interface RelationshipCondition {
+  name: string;
+  context?: any | null;
+  [key: string]: any;
+}
+export function deserializeRelationshipCondition(
+  json: string,
+): RelationshipCondition {
+  const data = JSON.parse(json) as RelationshipCondition;
+  initRelationshipCondition(data);
+  return data;
+}
+export function initRelationshipCondition(_data: RelationshipCondition) {
+  if (_data) {
+    _data.context = _data['context'];
+  }
+  return _data;
+}
+export function serializeRelationshipCondition(
+  _data: RelationshipCondition | undefined,
+) {
+  if (_data) {
+    _data = prepareSerializeRelationshipCondition(
+      _data as RelationshipCondition,
+    );
+  }
+  return JSON.stringify(_data);
+}
+export function prepareSerializeRelationshipCondition(
+  _data: RelationshipCondition,
+): RelationshipCondition {
+  const data: Record<string, any> = { ..._data };
+  return data as RelationshipCondition;
+}
 export enum TableType {
   Summary = 'Summary',
   Competences = 'Competences',
@@ -910,110 +1143,6 @@ export function prepareSerializeSetCurriculumSettingsDto(
   const data: Record<string, any> = { ..._data };
   return data as SetCurriculumSettingsDto;
 }
-export interface SelectionDto {
-  semesters: CreditPerSemesterDto[];
-}
-export function deserializeSelectionDto(json: string): SelectionDto {
-  const data = JSON.parse(json) as SelectionDto;
-  initSelectionDto(data);
-  return data;
-}
-export function initSelectionDto(_data: SelectionDto) {
-  if (_data) {
-    if (Array.isArray(_data['semesters'])) {
-      _data.semesters = _data['semesters'].map((item) =>
-        initCreditPerSemesterDto(item),
-      );
-    }
-  }
-  return _data;
-}
-export function serializeSelectionDto(_data: SelectionDto | undefined) {
-  if (_data) {
-    _data = prepareSerializeSelectionDto(_data as SelectionDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeSelectionDto(
-  _data: SelectionDto,
-): SelectionDto {
-  const data: Record<string, any> = { ..._data };
-  if (Array.isArray(_data.semesters)) {
-    data['semesters'] = _data.semesters.map((item) =>
-      prepareSerializeCreditPerSemesterDto(item),
-    );
-  }
-  return data as SelectionDto;
-}
-export interface CreditPerSemesterDto {
-  semesterId: number;
-  credit: number;
-}
-export function deserializeCreditPerSemesterDto(
-  json: string,
-): CreditPerSemesterDto {
-  const data = JSON.parse(json) as CreditPerSemesterDto;
-  initCreditPerSemesterDto(data);
-  return data;
-}
-export function initCreditPerSemesterDto(_data: CreditPerSemesterDto) {
-  return _data;
-}
-export function serializeCreditPerSemesterDto(
-  _data: CreditPerSemesterDto | undefined,
-) {
-  if (_data) {
-    _data = prepareSerializeCreditPerSemesterDto(_data as CreditPerSemesterDto);
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeCreditPerSemesterDto(
-  _data: CreditPerSemesterDto,
-): CreditPerSemesterDto {
-  const data: Record<string, any> = { ..._data };
-  return data as CreditPerSemesterDto;
-}
-export interface CreateUpdateSelectionDto {
-  semesters?: CreditPerSemesterDto[] | null;
-}
-export function deserializeCreateUpdateSelectionDto(
-  json: string,
-): CreateUpdateSelectionDto {
-  const data = JSON.parse(json) as CreateUpdateSelectionDto;
-  initCreateUpdateSelectionDto(data);
-  return data;
-}
-export function initCreateUpdateSelectionDto(_data: CreateUpdateSelectionDto) {
-  if (_data) {
-    if (Array.isArray(_data['semesters'])) {
-      _data.semesters = _data['semesters'].map((item) =>
-        initCreditPerSemesterDto(item),
-      );
-    }
-  }
-  return _data;
-}
-export function serializeCreateUpdateSelectionDto(
-  _data: CreateUpdateSelectionDto | undefined,
-) {
-  if (_data) {
-    _data = prepareSerializeCreateUpdateSelectionDto(
-      _data as CreateUpdateSelectionDto,
-    );
-  }
-  return JSON.stringify(_data);
-}
-export function prepareSerializeCreateUpdateSelectionDto(
-  _data: CreateUpdateSelectionDto,
-): CreateUpdateSelectionDto {
-  const data: Record<string, any> = { ..._data };
-  if (Array.isArray(_data.semesters)) {
-    data['semesters'] = _data.semesters.map((item) =>
-      prepareSerializeCreditPerSemesterDto(item),
-    );
-  }
-  return data as CreateUpdateSelectionDto;
-}
 export interface TupleOfIntegerAndString {
   item1?: number;
   item2?: string | null;
@@ -1050,6 +1179,7 @@ export interface CreateModuleDto {
   parentSemesterId: number;
   order?: number | null;
   name: string;
+  color?: string;
 }
 export function deserializeCreateModuleDto(json: string): CreateModuleDto {
   const data = JSON.parse(json) as CreateModuleDto;
@@ -1118,6 +1248,7 @@ export interface ModuleDto {
   id: number;
   parentModuleId?: number | null;
   index?: string | null;
+  color?: string;
   curriculumId: number;
   parentSemesterId: number;
   name: string;
@@ -1271,6 +1402,7 @@ export interface UpdateModuleDto {
   parentSemesterId?: number | null;
   order?: number | null;
   name?: string | null;
+  color?: string | null;
 }
 export function deserializeUpdateModuleDto(json: string): UpdateModuleDto {
   const data = JSON.parse(json) as UpdateModuleDto;

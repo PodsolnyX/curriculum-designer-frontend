@@ -1,9 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
-import {
-  CursorMode,
-  ModuleSemestersPosition,
-} from '@/pages/PlanView/types/types.ts';
+import { CursorMode, ModuleSemestersPosition } from '@/pages/PlanView/types/types.ts';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { getIdFromPrefix } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 import { getModuleAtomsIds } from '@/pages/PlanView/ui/widgets/ModuleLayout/lib/getModuleAtomsIds.ts';
@@ -94,7 +91,7 @@ export const TrackLayout = observer((props: TrackLayoutProps) => {
             />
           </div>
         ) : null}
-        <div className={`flex flex-col gap-3 items-center pt-14`}>
+        <div className={`grid grid-cols-1 gap-3 items-center pt-14`}>
           <SortableContext items={atomsIds} id={id}>
             {atomsIds.map((atom) => (
               <SortableSubjectCard key={atom} id={atom} />

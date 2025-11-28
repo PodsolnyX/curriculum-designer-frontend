@@ -1,105 +1,190 @@
-import React, { useMemo, useState } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 import {
   concatIds,
   setPrefixToId,
 } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 import { ModuleShortDto } from '@/pages/PlanView/types/types.ts';
-import TracksSelectionLayout from '@/pages/PlanView/ui/widgets/TracksSelectionLayout/TracksSelectionLayout.tsx';
 import { observer } from 'mobx-react-lite';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { SortableModuleSemesterCell } from '@/pages/PlanView/ui/widgets/ModuleLayout/ui/SortableModuleSemesterCell/SortableModuleSemesterCell.tsx';
 import { getModuleAtomsIds } from '@/pages/PlanView/ui/widgets/ModuleLayout/lib/getModuleAtomsIds.ts';
 import cls from './ModuleLayout.module.scss';
 import clsx from 'clsx';
+import { ModuleHeader } from '@/pages/PlanView/ui/widgets/ModuleLayout/ui/ModuleHeader/ModuleHeader.tsx';
+import { ModuleSemesterHeader } from './ui/ModuleSemesterHeader/ModuleSemesterHeader.tsx';
+import { SeparatorLine } from '@/pages/PlanView/ui/widgets/ModuleLayout/ui/SeparatorLine/SeparatorLine.tsx';
+import { getModuleColors } from '@/pages/PlanView/ui/widgets/ModuleLayout/lib/getColorVariantsByHex.ts';
+import { validateHEXStroke } from '@/pages/PlanView/ui/widgets/ModuleLayout/lib/validateHEXStroke.ts';
 
-interface ModuleLayoutProps extends ModuleShortDto {}
+interface ModuleLayoutProps extends ModuleShortDto {
+  deep?: number;
+  parentModuleFirstSemesterNumber?: number;
+  parentCreatedId?: string;
+}
 
 const ModuleLayout = observer((props: ModuleLayoutProps) => {
-  const { id, name, semesters, selection, atoms, modules } = props;
+  const {
+    deep = 0,
+    id,
+    name,
+    color,
+    semesters,
+    selection,
+    atoms,
+    modules,
+    parentModuleFirstSemesterNumber,
+    parentCreatedId,
+  } = props;
 
-  const [isHover, setIsHover] = useState(false);
+  const sortedSemesters = [...semesters].sort(
+    (a, b) => a.semester.number - b.semester.number,
+  );
+
   const atomsInfo = useMemo(() => componentsStore.getAtoms(atoms), [atoms]);
 
-  const gridColumnsCount = useMemo(() => {
+  const atomsColumnsCount = useMemo(() => {
+    if (!atomsInfo.length && !!modules.length) return 0;
+
     const averageAtomsCount =
       atomsInfo.reduce((sum, atom) => sum + atom.semesters.length, 0) /
       semesters.length;
     return ~~((averageAtomsCount + 1) / 2) || 1;
   }, [atomsInfo, semesters]);
 
-  const getModuleId = (id: number, semesterId: number) =>
-    concatIds(
-      setPrefixToId(semesterId, 'semesters'),
-      setPrefixToId(id, 'modules'),
-    );
+  const modulesColumnsCount = useMemo(() => {
+    return modules.length;
+  }, [modules, semesters]);
 
-  const firstSemesterNumber = semesters[0].semester.number;
-  const semestersCount = semesters.length;
-  const isSelection = selection && !modules.length;
+  const getModuleId = (semesterId: number) => {
+    if (parentCreatedId)
+      return concatIds(
+        concatIds(setPrefixToId(semesterId, 'semesters'), parentCreatedId),
+        setPrefixToId(id, 'modules'),
+      );
+    else
+      return concatIds(
+        setPrefixToId(semesterId, 'semesters'),
+        setPrefixToId(id, 'modules'),
+      );
+  };
+
+  const getModuleIdWithoutSemester = () => {
+    if (parentCreatedId)
+      return concatIds(parentCreatedId, setPrefixToId(id, 'modules'));
+    else return setPrefixToId(id, 'modules');
+  };
+
+  const moduleId = getModuleId(sortedSemesters[0].semester.id);
+  const firstSemesterNumber = sortedSemesters[0].semester.number;
+  const semestersCount = sortedSemesters.length;
+  const isSelection = !!selection;
+
+  const withTopPadding =
+    !!deep && parentModuleFirstSemesterNumber === firstSemesterNumber;
+
+  const firstRowIndex = (() => {
+    if (!parentModuleFirstSemesterNumber) return firstSemesterNumber;
+    const difference = firstSemesterNumber - parentModuleFirstSemesterNumber;
+
+    if (difference >= 0) return difference + 1;
+    else return 1;
+  })();
+
+  const styles: CSSProperties = {
+    gridRow: `${firstRowIndex} / span ${semestersCount}`,
+    gridColumn: `auto / span ${atomsColumnsCount + modulesColumnsCount}`,
+    paddingTop: 26,
+    marginTop:
+      !!deep && parentModuleFirstSemesterNumber !== firstSemesterNumber
+        ? 50
+        : undefined,
+  };
+
+  const defaultSelectionColor = '#60a5fa';
+  const defaultModuleColor = '#44403c';
+  const defaultColor = isSelection ? defaultSelectionColor : defaultModuleColor;
+  const moduleColors = getModuleColors(
+    !!color && validateHEXStroke(color) ? color : defaultColor,
+  );
+
+  const colorVars = {
+    '--color-module-text': moduleColors.text,
+    '--color-module-background': moduleColors.background,
+    '--color-module-stroke': moduleColors.stroke,
+  } as CSSProperties;
 
   return (
     <div
       className={clsx(cls.ModuleLayout, {
         [cls.Selection]: isSelection,
       })}
-      style={{
-        gridRow: `${firstSemesterNumber} / span ${semestersCount}`,
-        gridColumn: `auto / span ${gridColumnsCount}`,
-      }}
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
+      style={{ ...styles, ...colorVars }}
+      id={getModuleId(sortedSemesters[0].semester.id)}
     >
-      {[...semesters]
-        .sort((a, b) => a.semester.number - b.semester.number)
-        .map((semester, index) => {
-          const moduleId = getModuleId(id, semester.semester.id);
-
-          return selection && modules.length ? (
-            <TracksSelectionLayout
-              id={moduleId}
-              key={`track-${semester.semester.id}`}
-              semesterNumber={index + 1}
-              credits={selection.semesters[index]?.credit || 0}
-              semesterId={semester.semester.id}
-              tracks={modules}
-              name={name}
-              position={
-                index === 0 && semesters.length <= 1
-                  ? 'single'
-                  : index === 0
-                    ? 'first'
-                    : index === semesters.length - 1
-                      ? 'last'
-                      : 'middle'
-              }
-            />
-          ) : (
+      <ModuleHeader
+        id={moduleId}
+        name={name}
+        isSelection={isSelection}
+        moduleColor={color ?? null}
+      />
+      {sortedSemesters.map((semester, index) => (
+        <>
+          <ModuleSemesterHeader
+            moduleId={id}
+            rowIndex={index}
+            semester={semester}
+            selection={selection}
+            deep={deep}
+            withTopPadding={withTopPadding}
+            withNamePadding={index === 0}
+            withChildrenNamePadding={!!modules.length && index === 0}
+          />
+          {index !== 0 && (
+            <SeparatorLine isSelection={isSelection} rowIndex={index} />
+          )}
+        </>
+      ))}
+      {(atoms.length > 0 || !modules.length) && (
+        <div
+          className={cls.AtomsContainer}
+          style={{
+            gridRow: `1 / span ${semestersCount}`,
+            gridColumn: `auto / span ${atomsColumnsCount}`,
+          }}
+        >
+          {sortedSemesters.map((semester, index) => (
             <SortableModuleSemesterCell
               key={`sortable-${semester.semester.id}`}
-              id={moduleId}
-              gridColumnsCount={gridColumnsCount}
-              name={name}
-              semester={semester}
-              selection={selection}
-              semesterIndex={index}
-              isModuleHovered={isHover}
-              position={
-                index === 0 && semesters.length <= 1
-                  ? 'single'
-                  : index === 0
-                    ? 'first'
-                    : index === semesters.length - 1
-                      ? 'last'
-                      : 'middle'
-              }
+              id={getModuleId(semester.semester.id)}
+              gridColumnsCount={atomsColumnsCount}
+              deep={deep}
+              withNamePadding={index === 0}
+              withTopPadding={withTopPadding}
+              withChildrenNamePadding={!!modules.length && index === 0}
               atomsIds={getModuleAtomsIds(
                 atomsInfo,
                 semester.semester.id,
-                moduleId,
+                getModuleId(semester.semester.id),
               )}
             />
-          );
-        })}
+          ))}
+        </div>
+      )}
+      {modules.map((module) => {
+        const moduleInfo = componentsStore.getModule(module);
+        if (!moduleInfo) return null;
+        return (
+          <ModuleLayout
+            {...moduleInfo}
+            key={module}
+            deep={deep + 1}
+            parentModuleFirstSemesterNumber={
+              sortedSemesters?.[0]?.semester.number
+            }
+            parentCreatedId={getModuleIdWithoutSemester()}
+          />
+        );
+      })}
     </div>
   );
 });

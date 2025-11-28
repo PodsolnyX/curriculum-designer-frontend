@@ -16,7 +16,6 @@ export type IconName =
   | 'more'
   | 'plus-lens'
   | 'profile'
-  | 'selection'
   | 'settings'
   | 'success'
   | 'tracks'
@@ -30,6 +29,7 @@ export type IconName =
   | 'module'
   | 'move'
   | 'plus'
+  | 'selection'
   | 'subject';
 
 export interface IconProps extends React.SVGProps<SVGSVGElement> {

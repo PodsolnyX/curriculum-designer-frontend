@@ -3,6 +3,7 @@ import {
   AtomType,
   CreateAtomDto,
   RefAtomSemesterDto,
+  RefModuleSemesterDto,
   SemesterDto,
 } from '@/api/axios-client.types.ts';
 import {
@@ -140,6 +141,11 @@ export class AtomUpdateService {
           : [...atom.semesters, newSemester];
     });
 
+    runInAction(() => {
+      if (!atom.parentModuleId) return;
+      this.expandModule(atom.parentModuleId, semester, direction);
+    });
+
     AtomInSemesterClient.createAtomInSemester(atomId, semesterId).then(() => {
       queryClient.invalidateQueries({
         queryKey: getSemestersQueryKey(commonStore.curriculumData?.id || 0),
@@ -151,6 +157,55 @@ export class AtomUpdateService {
       });
       message.success(ATOM_SUCCESS_UPDATE_MESSAGE);
     });
+  }
+
+  private expandModule(
+    moduleId: number,
+    semester: SemesterDto,
+    direction: 'prev' | 'next',
+  ) {
+    const module = this.modules.find((module) => module.id === moduleId);
+    if (!module) {
+      console.warn(`Модуль с id = ${moduleId} не найден`);
+      return;
+    }
+
+    const alreadyExpanded = module.semesters.some(
+      (modSem) => modSem.semester.id === semester.id,
+    );
+    if (alreadyExpanded) return;
+
+    const newSemester: RefModuleSemesterDto = {
+      semester: semester,
+      nonElective: {
+        credit: 0,
+        attestations: [],
+        academicActivityHours: [],
+      },
+      elective: {
+        credit: 0,
+        attestations: [],
+        academicActivityHours: [],
+      },
+    };
+
+    module.semesters =
+      direction === 'prev'
+        ? [newSemester, ...module.semesters]
+        : [...module.semesters, newSemester];
+
+    if (!!module.parentModuleId) {
+      const parentModule = this.modules.find(
+        (m) => m.id === module.parentModuleId,
+      );
+      if (!parentModule) {
+        console.warn(
+          `Родительский модуль с id = ${module.parentModuleId} не найден`,
+        );
+        return;
+      }
+      this.expandModule(module.parentModuleId, semester, direction);
+    }
   }
 
   removeAtom(id: string) {

@@ -1,10 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import { useDroppable } from '@dnd-kit/core';
-import {
-  TrackLayout,
-  TrackLayoutProps,
-} from '@/pages/PlanView/ui/widgets/TrackLayout/TrackLayout.tsx';
+import { TrackLayout, TrackLayoutProps } from '@/pages/PlanView/ui/widgets/TrackLayout/TrackLayout.tsx';
 import React from 'react';
 
 export const SortableTrack = observer((props: TrackLayoutProps) => {
@@ -15,7 +12,7 @@ export const SortableTrack = observer((props: TrackLayoutProps) => {
   });
 
   return (
-    <div ref={setNodeRef} className={'h-full'}>
+    <div ref={setNodeRef}>
       <TrackLayout {...props} isOver={isOver} />
     </div>
   );

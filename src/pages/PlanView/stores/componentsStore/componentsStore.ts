@@ -180,6 +180,10 @@ class ComponentsStore {
     this.moduleUpdateService.updateModuleName(id, newName);
   }
 
+  updateModuleColor(id: string, color: string | null) {
+    this.moduleUpdateService.updateModuleColor(id, color);
+  }
+
   transformModuleToSelection(id: string) {
     this.moduleUpdateService.transformModuleToSelection(id);
   }

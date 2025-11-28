@@ -1,5 +1,6 @@
-import { Button, List, Popover } from 'antd';
-import Icon, {
+import { Badge, Button, List, Popover } from 'antd';
+import {
+  BgColorsOutlined,
   CaretRightOutlined,
   DeleteOutlined,
   PlusOutlined,
@@ -8,22 +9,23 @@ import Icon, {
 import cls from './ModuleContextMenu.module.scss';
 import React, { useState } from 'react';
 import { commonStore } from '@/pages/PlanView/stores/commonStore.ts';
-import { ReactComponent as OptionIcon } from '@/shared/assets/icons/fill/more.svg';
 import clsx from 'clsx';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
 import {
   getSemesterIdFromPrefix,
   setPrefixToId,
 } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
+import { Icon } from '@/shared/ui/Icon';
+import { moduleColorsPresets } from '@/pages/PlanView/const/moduleColorsPresets.ts';
 
 interface ModuleContextMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   moduleId: string;
   isSelection: boolean;
-  show?: boolean;
+  moduleColor: string | null;
 }
 
 export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
-  const { className, moduleId, isSelection, show = true, ...rest } = props;
+  const { className, moduleId, isSelection, moduleColor, ...rest } = props;
 
   const [popoverVisible, setPopoverVisible] = useState(false);
   const semesters = commonStore.curriculumData?.semesters || [];
@@ -41,6 +43,44 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
             size="small"
             itemLayout={'vertical'}
             dataSource={[
+              {
+                key: 'color',
+                label: 'Цвет',
+                icon: <BgColorsOutlined />,
+                children: (
+                  <List
+                    size={'small'}
+                    itemLayout={'vertical'}
+                    dataSource={moduleColorsPresets.map((preset) => ({
+                      key: preset.name,
+                      value: preset.color,
+                      label: (
+                        <span className={'flex gap-2'}>
+                          <Badge color={preset.color ?? undefined} />
+                          {preset.name}
+                        </span>
+                      ),
+                      disabled: preset.color === moduleColor,
+                    }))}
+                    renderItem={(item) => (
+                      <li className={'w-full'}>
+                        <Button
+                          type={'text'}
+                          disabled={item?.disabled}
+                          onClick={() =>
+                            componentsStore.updateModuleColor(
+                              moduleId,
+                              item.value,
+                            )
+                          }
+                        >
+                          {item.label}
+                        </Button>
+                      </li>
+                    )}
+                  />
+                ),
+              },
               {
                 key: 'move',
                 label: 'Переместить',
@@ -141,13 +181,13 @@ export const ModuleContextMenu = (props: ModuleContextMenuProps) => {
           className={clsx(
             cls.MenuIcon,
             {
-              [cls.Show]: show || popoverVisible,
+              [cls.Show]: popoverVisible,
             },
             className,
           )}
           onClick={(event) => event.stopPropagation()}
         >
-          <Icon component={OptionIcon} />
+          <Icon name={'more'} size={12} />
         </div>
       </Popover>
     </div>

@@ -145,14 +145,14 @@ function processSearchCurriculums(
 }
 
 export function updateCurriculum(
-  curriculumId: number,
+  id: number,
   updateCurriculumDto: Types.UpdateCurriculumDto,
   config?: AxiosRequestConfig | undefined,
 ): Promise<Types.CurriculumShortDto> {
-  let url_ = getBaseUrl() + '/api/curriculum/{curriculumId}';
-  if (curriculumId === undefined || curriculumId === null)
-    throw new Error("The parameter 'curriculumId' must be defined.");
-  url_ = url_.replace('{curriculumId}', encodeURIComponent('' + curriculumId));
+  let url_ = getBaseUrl() + '/api/curriculum/{id}';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
   url_ = url_.replace(/[?&]$/, '');
 
   const content_ = Types.serializeUpdateCurriculumDto(updateCurriculumDto);
@@ -403,6 +403,139 @@ function processSetCurriculumSettings(response: AxiosResponse): Promise<void> {
   }
   return Promise.resolve<void>(null as any);
 }
+
+export function getUserPermissionsForCurriculumById(
+  id: number,
+  config?: AxiosRequestConfig | undefined,
+): Promise<string[]> {
+  let url_ =
+    getBaseUrl() + '/api/curriculum/user-permissions-for-curriculum/{id}';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
+  url_ = url_.replace(/[?&]$/, '');
+
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigGetUserPermissionsForCurriculumById,
+    ...config,
+    method: 'GET',
+    url: url_,
+    headers: {
+      ..._requestConfigGetUserPermissionsForCurriculumById?.headers,
+      Accept: 'application/json',
+    },
+  };
+
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processGetUserPermissionsForCurriculumById(_response);
+    });
+}
+
+function processGetUserPermissionsForCurriculumById(
+  response: AxiosResponse,
+): Promise<string[]> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
+    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    let result200: any = null;
+    let resultData200 = _responseText;
+    result200 = resultData200;
+    return Promise.resolve<string[]>(result200);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<string[]>(null as any);
+}
+
+export function connectCurriculumWithDivision(
+  id: number,
+  curriculumId?: number | undefined,
+  config?: AxiosRequestConfig | undefined,
+): Promise<void> {
+  let url_ =
+    getBaseUrl() + '/api/curriculum/connect-curriculum-with-division/{id}?';
+  if (id === undefined || id === null)
+    throw new Error("The parameter 'id' must be defined.");
+  url_ = url_.replace('{id}', encodeURIComponent('' + id));
+  if (curriculumId === null)
+    throw new Error("The parameter 'curriculumId' cannot be null.");
+  else if (curriculumId !== undefined)
+    url_ += 'curriculumId=' + encodeURIComponent('' + curriculumId) + '&';
+  url_ = url_.replace(/[?&]$/, '');
+
+  let options_: AxiosRequestConfig = {
+    ..._requestConfigConnectCurriculumWithDivision,
+    ...config,
+    method: 'POST',
+    url: url_,
+    headers: {
+      ..._requestConfigConnectCurriculumWithDivision?.headers,
+    },
+  };
+
+  return getAxios()
+    .request(options_)
+    .catch((_error: any) => {
+      if (isAxiosError(_error) && _error.response) {
+        return _error.response;
+      } else {
+        throw _error;
+      }
+    })
+    .then((_response: AxiosResponse) => {
+      return processConnectCurriculumWithDivision(_response);
+    });
+}
+
+function processConnectCurriculumWithDivision(
+  response: AxiosResponse,
+): Promise<void> {
+  const status = response.status;
+  let _headers: any = {};
+  if (response.headers && typeof response.headers === 'object') {
+    for (let k in response.headers) {
+      if (response.headers.hasOwnProperty(k)) {
+        _headers[k] = response.headers[k];
+      }
+    }
+  }
+  if (status === 200) {
+    const _responseText = response.data;
+    return Promise.resolve<void>(null as any);
+  } else if (status !== 200 && status !== 204) {
+    const _responseText = response.data;
+    return throwException(
+      'An unexpected server error occurred.',
+      status,
+      _responseText,
+      _headers,
+    );
+  }
+  return Promise.resolve<void>(null as any);
+}
 let _requestConfigCreateCurriculum: Partial<AxiosRequestConfig> | null;
 export function getCreateCurriculumRequestConfig() {
   return _requestConfigCreateCurriculum;
@@ -494,5 +627,39 @@ export function patchSetCurriculumSettingsRequestConfig(
 ) {
   _requestConfigSetCurriculumSettings = patch(
     _requestConfigSetCurriculumSettings ?? {},
+  );
+}
+
+let _requestConfigGetUserPermissionsForCurriculumById: Partial<AxiosRequestConfig> | null;
+export function getGetUserPermissionsForCurriculumByIdRequestConfig() {
+  return _requestConfigGetUserPermissionsForCurriculumById;
+}
+export function setGetUserPermissionsForCurriculumByIdRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetUserPermissionsForCurriculumById = value;
+}
+export function patchGetUserPermissionsForCurriculumByIdRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigGetUserPermissionsForCurriculumById = patch(
+    _requestConfigGetUserPermissionsForCurriculumById ?? {},
+  );
+}
+
+let _requestConfigConnectCurriculumWithDivision: Partial<AxiosRequestConfig> | null;
+export function getConnectCurriculumWithDivisionRequestConfig() {
+  return _requestConfigConnectCurriculumWithDivision;
+}
+export function setConnectCurriculumWithDivisionRequestConfig(
+  value: Partial<AxiosRequestConfig>,
+) {
+  _requestConfigConnectCurriculumWithDivision = value;
+}
+export function patchConnectCurriculumWithDivisionRequestConfig(
+  patch: (value: Partial<AxiosRequestConfig>) => Partial<AxiosRequestConfig>,
+) {
+  _requestConfigConnectCurriculumWithDivision = patch(
+    _requestConfigConnectCurriculumWithDivision ?? {},
   );
 }

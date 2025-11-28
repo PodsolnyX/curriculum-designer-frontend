@@ -1,15 +1,13 @@
 import { SortableContext } from '@dnd-kit/sortable';
 import SortableSubjectCard from '@/pages/PlanView/ui/widgets/AtomCard/ui/SortableAtomCard/SortableAtomCard.tsx';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { CursorMode } from '@/pages/PlanView/types/types.ts';
-import { ImperativePanelHandle } from 'react-resizable-panels';
 import SemesterHeader from '@/pages/PlanView/ui/widgets/SemesterLayout/ui/SemesterHeader/SemesterHeader.tsx';
 import { SemesterDto } from '@/api/axios-client.types.ts';
 import { setPrefixToId } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 import { observer } from 'mobx-react-lite';
 import { optionsStore } from '@/pages/PlanView/stores/optionsStore.ts';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
-import { positionsStore } from '@/pages/PlanView/stores/positionsStore.ts';
 import cls from './SemesterLayout.module.scss';
 import clsx from 'clsx';
 
@@ -26,13 +24,6 @@ export const SemesterLayout = observer(
       const containerId = setPrefixToId(id, 'semesters');
 
       const [isHovered, setIsHovered] = useState(false);
-
-      const subjectsPanelRef = useRef<ImperativePanelHandle | null>(null);
-
-      useEffect(() => {
-        if (subjectsPanelRef.current)
-          subjectsPanelRef.current?.resize(positionsStore.atomsContainerWidth);
-      }, [positionsStore.atomsContainerWidth]);
 
       const onHoverSemester = () => {
         if (optionsStore.toolsOptions.cursorMode === CursorMode.Create)

@@ -30,6 +30,7 @@ const ViewWrapper = observer((props: ViewWrapperProps) => {
         distance: 8,
       },
     }),
+    // @todo пофиксить баг, когда сабмитишь какую-нибудь форму и нажимаешь enter, а срабатывает перемещение
     // useSensor(KeyboardSensor, {
     //   coordinateGetter: sortableKeyboardCoordinates,
     // }),
@@ -64,15 +65,21 @@ const ViewWrapper = observer((props: ViewWrapperProps) => {
             !event.active?.id ||
             !event.over?.id ||
             event.active.id === event.over.id
-          )
+          ) {
+            componentsStore.setOverId(null);
+            componentsStore.setActiveId(null);
             return;
+          }
 
           const activeId = event.active?.id as string;
           const overId = event.over?.id as string;
 
           componentsStore.moveAtoms(activeId, overId);
         }}
-        onDragCancel={() => componentsStore.setOverId(null)}
+        onDragCancel={() => {
+          componentsStore.setOverId(null);
+          componentsStore.setActiveId(null);
+        }}
         collisionDetection={(args) => {
           const pointerCollisions = pointerWithin(args);
           if (pointerCollisions.length > 0) return pointerCollisions;

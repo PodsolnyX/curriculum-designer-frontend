@@ -120,16 +120,28 @@ export class AtomModuleMoveService {
   }
 
   private removeAtomFromModule(module: ModuleShortDto, atomId: number) {
-    const updatedSemesters = module.semesters.filter((modSem) =>
-      module.atoms
-        .filter((id) => id !== atomId)
-        .some((otherAtomId) => {
-          const otherAtom = this.getAtom(otherAtomId);
-          return otherAtom?.semesters.some(
-            (s) => s.semester.id === modSem.semester.id,
-          );
-        }),
-    );
+    module.atoms = module.atoms.filter((id) => id !== atomId);
+    this.clearModuleFromEmptySemesters(module);
+  }
+
+  private clearModuleFromEmptySemesters(module: ModuleShortDto) {
+    const updatedSemesters = module.semesters.filter((modSem) => {
+      const semesterIncludeAtoms = module.atoms.some((atomId) => {
+        const atom = this.getAtom(atomId);
+        return atom?.semesters.some(
+          (s) => s.semester.id === modSem.semester.id,
+        );
+      });
+
+      const semesterIncludeModules = module.modules.some((moduleId) => {
+        const module = this.modules.find((m) => m.id === moduleId);
+        return module?.semesters.some(
+          (s) => s.semester.id === modSem.semester.id,
+        );
+      });
+
+      return semesterIncludeAtoms || semesterIncludeModules;
+    });
 
     if (!updatedSemesters.length) {
       const parentSemester = this.semesters.find(
@@ -148,14 +160,27 @@ export class AtomModuleMoveService {
       }
     }
 
-    module.atoms = module.atoms.filter((id) => id !== atomId);
     module.semesters = updatedSemesters;
+
+    if (!!module.parentModuleId) {
+      const parentModule = this.modules.find(
+        (m) => m.id === module.parentModuleId,
+      );
+      if (!parentModule) {
+        console.warn(
+          `Родительский модуль с id = ${module.parentModuleId} не найден`,
+        );
+        return;
+      }
+      this.clearModuleFromEmptySemesters(parentModule);
+    }
   }
 
   private mergeAtomIntoModule(
     module: ModuleShortDto,
     atomId: number,
     newSemesters: SemesterDto[],
+    withMergeAtomId: boolean = true,
   ) {
     const mergedMap = new Map<number, SemesterDto>();
 
@@ -188,7 +213,22 @@ export class AtomModuleMoveService {
       },
     }));
 
-    module.atoms = [...module.atoms, atomId];
+    if (withMergeAtomId) {
+      module.atoms = [...module.atoms, atomId];
+    }
+
+    if (!!module.parentModuleId) {
+      const parentModule = this.modules.find(
+        (m) => m.id === module.parentModuleId,
+      );
+
+      if (!parentModule) {
+        console.warn(`Модуль с id = ${module.parentModuleId} не найден`);
+        return;
+      }
+
+      this.mergeAtomIntoModule(parentModule, atomId, newSemesters, false);
+    }
   }
 
   private async updateAtomServer(

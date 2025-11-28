@@ -31,9 +31,17 @@ export * as SemestersClient from './axios-client/SemestersClient';
 
 export * as SemestersQuery from './axios-client/SemestersQuery';
 
+export * as SelectionClient from './axios-client/SelectionClient';
+
+export * as SelectionQuery from './axios-client/SelectionQuery';
+
 export * as ImportClient from './axios-client/ImportClient';
 
 export * as ImportQuery from './axios-client/ImportQuery';
+
+export * as FGAClient from './axios-client/FGAClient';
+
+export * as FGAQuery from './axios-client/FGAQuery';
 
 export * as DocumentGenerationClient from './axios-client/DocumentGenerationClient';
 
@@ -46,10 +54,6 @@ export * as DepartmentQuery from './axios-client/DepartmentQuery';
 export * as CurriculumClient from './axios-client/CurriculumClient';
 
 export * as CurriculumQuery from './axios-client/CurriculumQuery';
-
-export * as SelectionClient from './axios-client/SelectionClient';
-
-export * as SelectionQuery from './axios-client/SelectionQuery';
 
 export * as ComponentClient from './axios-client/ComponentClient';
 
@@ -90,6 +94,10 @@ export * as AcademicActivityQuery from './axios-client/AcademicActivityQuery';
 export * as HoursDistributionClient from './axios-client/HoursDistributionClient';
 
 export * as HoursDistributionQuery from './axios-client/HoursDistributionQuery';
+
+export * as VersionClient from './axios-client/VersionClient';
+
+export * as VersionQuery from './axios-client/VersionQuery';
 
 import { addResultTypeFactory } from './axios-client/helpers';
 export { setBaseUrl, getBaseUrl } from './axios-client/helpers';
@@ -202,6 +210,10 @@ export function initPersister() {
 
   addResultTypeFactory('SemestersClient___getSemesters', (data: any) =>
     Types.initRefModuleSemesterDto(data),
+  );
+
+  addResultTypeFactory('FGAClient___getFgaStore', (data: any) =>
+    Types.initReadResponse(data),
   );
 
   addResultTypeFactory('DepartmentClient___getDepartments', (data: any) =>

@@ -6,12 +6,7 @@ import AttestationTypeSelector from '@/pages/PlanView/ui/features/AttestationTyp
 import CreditsSelector from '@/pages/PlanView/ui/features/CreditsSelector/CreditsSelector.tsx';
 import { AtomDto } from '@/api/axios-client.ts';
 import AcademicHoursPanel from '@/pages/PlanView/ui/features/AcademicHoursPanel/AcademicHoursPanel.tsx';
-import {
-  concatIds,
-  getIdFromPrefix,
-  getSemesterIdFromPrefix,
-  setPrefixToId,
-} from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
+import { getSemesterIdFromPrefix } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
 import { optionsStore } from '@/pages/PlanView/stores/optionsStore.ts';
 import { observer } from 'mobx-react-lite';
 import { componentsStore } from '@/pages/PlanView/stores/componentsStore/componentsStore.ts';
@@ -127,10 +122,7 @@ export const AtomCard = observer((props: SubjectCardProps) => {
           commonStore.selectComponent(id);
           commonStore.setSideBarContent('atom');
         }}
-        id={concatIds(
-          setPrefixToId(getSemesterIdFromPrefix(id), 'semesters'),
-          setPrefixToId(getIdFromPrefix(id), 'subjects'),
-        )}
+        id={id}
       >
         {optionsStore.displaySettings.required && (
           <RequiredToggle id={id} isRequired={isRequired} />

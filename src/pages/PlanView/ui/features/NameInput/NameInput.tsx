@@ -5,11 +5,12 @@ import { useOutsideClick } from '@/shared/lib/hooks/useOutsideClick.ts';
 interface NameInputProps {
   value?: string;
   children?: React.ReactNode;
+  height?: number | string;
   onChange?(value: string): void;
 }
 
 export const NameInput = (props: NameInputProps) => {
-  const { value = '', children, onChange } = props;
+  const { value = '', children, onChange, height } = props;
   const [edit, setEdit] = useState(false);
   const [localValue, setLocalValue] = useState(value);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -66,6 +67,9 @@ export const NameInput = (props: NameInputProps) => {
           value={localValue}
           onChange={(e) => setLocalValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          style={{
+            height: height || '100%',
+          }}
         />
       )}
     </div>

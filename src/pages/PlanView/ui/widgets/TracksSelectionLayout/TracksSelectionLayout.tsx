@@ -1,10 +1,15 @@
 import React from 'react';
-import { ModuleSemestersPosition } from '@/pages/PlanView/types/types.ts';
+import {
+  ModuleSemestersPosition,
+} from '@/pages/PlanView/types/types.ts';
 import CreditsSelector from '@/pages/PlanView/ui/features/CreditsSelector/CreditsSelector.tsx';
 import {
   concatIds,
+  cutSemesterIdFromId,
   setPrefixToId,
 } from '@/pages/PlanView/helpers/prefixIdHelpers.ts';
+import { PositionContainer } from '@/pages/PlanView/ui/features/PositionContainer/PositionContainer.tsx';
+import { getModuleRootStyles } from '@/pages/PlanView/ui/widgets/ModuleLayout/lib/getModuleRootStyles.ts';
 import { SortableTrack } from '@/pages/PlanView/ui/widgets/TrackLayout/ui/SortableTrack/SortableTrack.tsx';
 
 interface TrackSelectionProps {
@@ -31,7 +36,15 @@ const TracksSelectionLayout = (props: TrackSelectionProps) => {
   // const errors = commonStore.getValidationErrors(id);
 
   return (
-    <div className={'h-full'}>
+    <PositionContainer
+      id={cutSemesterIdFromId(id)}
+      rowId={setPrefixToId(semesterId, 'semesters')}
+      countHeights={true}
+      countHorizontalCoordinates={true}
+      rootStyles={(height) => getModuleRootStyles(height, position)}
+      rootClassName={`relative px-2 flex`}
+      childrenClassName={'flex flex-1 flex-col min-h-max'}
+    >
       {position === 'first' || position === 'single' ? (
         <div className={'flex justify-center py-2 min-w-[200px]'}>
           <span
@@ -60,9 +73,9 @@ const TracksSelectionLayout = (props: TrackSelectionProps) => {
           </div>
         </div>
         <div
-          className={`h-full grid gap-3 ${position === 'last' ? 'pb-2' : ''}`}
+          className={`grid gap-3 ${position === 'last' ? 'pb-2' : ''}`}
           style={{
-            gridTemplateColumns: `repeat(${tracks.length}, auto)`,
+            gridTemplateColumns: `repeat(${tracks.length}, 1fr)`,
           }}
         >
           {tracks.map((track, index) => {
@@ -80,7 +93,7 @@ const TracksSelectionLayout = (props: TrackSelectionProps) => {
           })}
         </div>
       </div>
-    </div>
+    </PositionContainer>
   );
 };
 

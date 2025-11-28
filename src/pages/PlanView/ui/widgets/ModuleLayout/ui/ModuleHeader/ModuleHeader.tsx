@@ -4,37 +4,40 @@ import { ModuleContextMenu } from '@/pages/PlanView/ui/widgets/ModuleLayout/ui/M
 import React from 'react';
 import cls from './ModuleHeader.module.scss';
 import clsx from 'clsx';
+import { Icon } from '@/shared/ui/Icon';
 
 interface ModuleHeaderProps {
   id: string;
   name: string;
   isSelection: boolean;
-  gridColumnsCount: number;
-  showMenu?: boolean;
+  moduleColor: string | null;
 }
 
 export const ModuleHeader = (props: ModuleHeaderProps) => {
-  const { id, name, isSelection, gridColumnsCount, showMenu } = props;
+  const { id, name, isSelection, moduleColor } = props;
 
   return (
-    <div style={{ width: gridColumnsCount * 200 }} className={cls.ModuleHeader}>
+    <div
+      className={clsx(cls.ModuleHeader, {
+        [cls.Selection]: isSelection,
+      })}
+    >
+      {isSelection && (
+        <Icon size={20} name={'selection'} className={cls.Icon} />
+      )}
       <NameInput
         value={name}
         onChange={(value) => componentsStore.updateModuleName(id, value)}
+        height={200}
       >
-        <div
-          className={clsx(cls.Title, {
-            [cls.Selection]: isSelection,
-          })}
-          title={name}
-        >
+        <div className={cls.Title} title={name}>
           {name}
         </div>
       </NameInput>
       <ModuleContextMenu
         moduleId={id}
         isSelection={isSelection}
-        show={showMenu}
+        moduleColor={moduleColor}
       />
     </div>
   );

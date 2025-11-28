@@ -1,35 +1,21 @@
 .MenuIcon {
   position: absolute;
-  right: 6px;
-  top: 6px;
+  right: 3px;
+  top: 2px;
   transition: 0.3s;
-  opacity: 0;
-  background-color: rgb(255, 255, 255);
-  min-width: 20px;
-  min-height: 20px;
+  opacity: var(--hidden-child-opacity);
+  background-color: var(--color-bg-primary);
+  padding: 3px;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
-
-  svg {
-    transform: rotate(90deg);
-  }
+  border: 1px solid var(--color-stroke-secondary);
+  color: var(--color-icon-primary);
 
   &:hover {
     background-color: rgb(243, 243, 243);
-
-    * {
-      fill: #3b3b3b;
-      color: #3b3b3b;
-    }
-  }
-
-  * {
-    fill: #545454;
-    stroke: none;
   }
 }
 

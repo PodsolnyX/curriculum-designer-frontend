@@ -121,6 +121,24 @@ export class ModuleUpdateService {
     });
   }
 
+  updateModuleColor(id: string, color: string | null) {
+    const moduleId = Number(getIdFromPrefix(id));
+    const module = this.modules.find((module) => module.id === moduleId);
+
+    if (!module) {
+      console.warn(`Модуль с id = ${moduleId} не обнаружен`);
+      return;
+    }
+
+    runInAction(() => {
+      module.color = color ?? undefined;
+    });
+
+    ModuleClient.updateModule(moduleId, { color }).then(() => {
+      message.success(MODULE_SUCCESS_UPDATE_MESSAGE);
+    });
+  }
+
   transformModuleToSelection(id: string) {
     const moduleId = Number(getIdFromPrefix(id));
     const module = this.modules.find((module) => module.id === moduleId);
